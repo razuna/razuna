@@ -812,7 +812,7 @@
 		<cfset var datacols = "">
 		<cfset var fields = "">
 		<!--- Get metafields --->
-		<cfinvoke component="settings" method="get_notifications" returnvariable="fields">
+		<cfinvoke component="settings" method="get_notifications" returnvariable="fields" datasource="#application.razuna.datasource#" dbprefix="#session.hostdbprefix#" host_id="#host_id#">
 		<!--- Get Email subject --->
 		<cfif fields.set2_folder_subscribe_email_sub NEQ "">
 			<cfset email_subject = "#fields.set2_folder_subscribe_email_sub#">
@@ -1071,7 +1071,7 @@
 	</cfquery>
 	<!--- Get users that are in groups which have access to the expired assets and notify them about the expiry --->
 	<cfquery datasource="#application.razuna.datasource#" name="getusers2notify">
-	SELECT i.img_id id, i.img_filename name, f.folder_id, f.folder_name, u.user_email, u.user_Id, 'img' type, path_to_asset, thumb_extension thumb, cloud_url cloud_thumb
+	SELECT i.img_id id, i.img_filename name, i.host_id, f.folder_id, f.folder_name, u.user_email, u.user_Id, 'img' type, path_to_asset, thumb_extension thumb, cloud_url cloud_thumb
 	FROM raz1_images i, raz1_folders f,raz1_folders_groups fg, ct_groups_users cu, users u
 	WHERE i.folder_id_r = f.folder_id
 	AND f.folder_id = fg.folder_id_r
@@ -1082,7 +1082,7 @@
 	AND expiry_date < <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#">
 	AND NOT EXISTS (SELECT 1 FROM ct_labels WHERE ct_id_r=i.img_id AND ct_label_id IN (SELECT label_id FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=i.host_id  AND label_id_r = '0'))
 	UNION ALL
-	SELECT a.aud_id id, a.aud_name name, f.folder_id, f.folder_name, u.user_email, u.user_Id, 'aud' type, path_to_asset, '' thumb, '' cloud_thumb
+	SELECT a.aud_id id, a.aud_name name, a.host_id, f.folder_id, f.folder_name, u.user_email, u.user_Id, 'aud' type, path_to_asset, '' thumb, '' cloud_thumb
 	FROM raz1_audios a, raz1_folders f,raz1_folders_groups fg, ct_groups_users cu, users u
 	WHERE a.folder_id_r = f.folder_id
 	AND f.folder_id = fg.folder_id_r
@@ -1093,7 +1093,7 @@
 	AND expiry_date < <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#">
 	AND NOT EXISTS (SELECT 1 FROM ct_labels WHERE ct_id_r=a.aud_id AND ct_label_id IN (SELECT label_id FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=a.host_id AND label_id_r = '0'))
 	UNION ALL
-	SELECT v.vid_id id, v.vid_filename name, f.folder_id, f.folder_name, u.user_email, u.user_Id, 'vid' type, path_to_asset, vid_name_image thumb, cloud_url cloud_thumb
+	SELECT v.vid_id id, v.vid_filename name, v.host_id, f.folder_id, f.folder_name, u.user_email, u.user_Id, 'vid' type, path_to_asset, vid_name_image thumb, cloud_url cloud_thumb
 	FROM raz1_videos v, raz1_folders f,raz1_folders_groups fg, ct_groups_users cu, users u
 	WHERE v.folder_id_r = f.folder_id
 	AND f.folder_id = fg.folder_id_r
@@ -1104,7 +1104,7 @@
 	AND expiry_date < <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#">
 	AND NOT EXISTS (SELECT 1 FROM ct_labels WHERE ct_id_r=v.vid_id AND ct_label_id IN (SELECT label_id FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=v.host_id AND label_id_r = '0'))
 	UNION ALL
-	SELECT fi.file_id id, fi.file_name name, f.folder_id, f.folder_name, u.user_email, u.user_Id, 'doc' type, path_to_asset, '' thumb, '' cloud_thumb
+	SELECT fi.file_id id, fi.file_name name, fi.host_id, f.folder_id, f.folder_name, u.user_email, u.user_Id, 'doc' type, path_to_asset, '' thumb, '' cloud_thumb
 	FROM raz1_files fi, raz1_folders f,raz1_folders_groups fg, ct_groups_users cu, users u
 	WHERE fi.folder_id_r = f.folder_id
 	AND f.folder_id = fg.folder_id_r
@@ -1117,7 +1117,7 @@
 	</cfquery>
 	<!--- Extract user information from query --->
 	<cfquery dbtype="query" name="getuserinfo">
-		SELECT user_email, user_id FROM getusers2notify GROUP BY user_id,user_email
+		SELECT user_email, user_id, host_id FROM getusers2notify GROUP BY user_id,user_email
 	</cfquery>
 	<!--- Before we send out notification emails lets expire the assets first --->
 	<!--- Set expired label for assets that have expired and update indexing status to re-index --->
@@ -1192,29 +1192,29 @@
 		<cfset resetcachetoken("labels","true")>
 	</cfif>
 
-	<cfset var data= "">
-	<cfset var datacols= "">
-	<cfset var fields= "">
-	<!--- Get metafields --->
-	<cfinvoke component="global.cfc.settings" method="get_notifications" returnvariable="fields">
-	<!--- Get columns --->
-	<cfinvoke component="global.cfc.settings" method="getmeta_asset" assetid= "#getusers2notify.id#" metafields="#fields.set2_asset_expiry_meta#" returnvariable="datacols">
-
-	<!--- Send out notification email about expiry to users in groups that have access to the expired assets--->
-	<!--- Get Email subject --->
-	<cfif fields.set2_asset_expiry_email_sub NEQ "">
-		<cfset email_subject = "#fields.set2_asset_expiry_email_sub#">
-	<cfelse>
-		<cfinvoke component="defaults" method="trans" transid="expiry_email_subject" returnvariable="email_subject">
-	</cfif>
-	<!--- Get Email Introduction--->
-	<cfif len(fields.set2_asset_expiry_email_body) GT 10>
-		<cfset email_intro = "#fields.set2_asset_expiry_email_body#">
-	<cfelse>
-		<cfinvoke component="defaults" method="trans" transid="expiry_email_content" returnvariable="email_intro">
-	</cfif>
-	<cfset var msgbody = "">
 	<cfloop query ="getuserinfo">
+		<cfset var data= "">
+		<cfset var datacols= "">
+		<cfset var fields= "">
+		<!--- Get metafields --->
+		<cfinvoke component="global.cfc.settings" method="get_notifications" returnvariable="fields" datasource="#application.razuna.datasource#" dbprefix="#session.hostdbprefix#" host_id="#host_id#">
+		<!--- Get columns --->
+		<cfinvoke component="global.cfc.settings" method="getmeta_asset" assetid= "#getusers2notify.id#" metafields="#fields.set2_asset_expiry_meta#" returnvariable="datacols">
+
+		<!--- Send out notification email about expiry to users in groups that have access to the expired assets--->
+		<!--- Get Email subject --->
+		<cfif fields.set2_asset_expiry_email_sub NEQ "">
+			<cfset email_subject = "#fields.set2_asset_expiry_email_sub#">
+		<cfelse>
+			<cfinvoke component="defaults" method="trans" transid="expiry_email_subject" returnvariable="email_subject">
+		</cfif>
+		<!--- Get Email Introduction--->
+		<cfif len(fields.set2_asset_expiry_email_body) GT 10>
+			<cfset email_intro = "#fields.set2_asset_expiry_email_body#">
+		<cfelse>
+			<cfinvoke component="defaults" method="trans" transid="expiry_email_content" returnvariable="email_intro">
+		</cfif>
+		<cfset var msgbody = "">
 		<cfquery dbtype="query" name="getusers2email">
 		SELECT * FROM getusers2notify WHERE user_email =<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#getuserinfo.user_email#">
 		</cfquery>
