@@ -95,7 +95,7 @@
 			VALUES(
 			<cfqueryparam value="#newcfid#" cfsqltype="CF_SQL_VARCHAR">,
 			<cfqueryparam value="#langindex#" cfsqltype="cf_sql_numeric">,
-			<cfqueryparam value="#evaluate(thetext)#" cfsqltype="cf_sql_varchar">,
+			<cfqueryparam value="#trim(evaluate(thetext))#" cfsqltype="cf_sql_varchar">,
 			<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
 			<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 			)
@@ -103,7 +103,7 @@
 		</cfif>
 	</cfloop>
 	<!--- Flush Cache --->
-	<cfset variables.cachetoken = resetcachetoken("general")>
+	<cfset resetcachetoken("general")>
 	<!--- Return --->
 	<cfreturn newcfid />
 </cffunction>
@@ -307,7 +307,7 @@
 	</cfloop>
 	<!--- Flush Cache --->
 	<cfset resetcachetoken("search")>
-	<cfset variables.cachetoken = resetcachetoken("general")>
+	<cfset resetcachetoken("general")>
 </cffunction>
 
 <!--- Save batch field values --->
@@ -392,7 +392,7 @@
 	</cfloop>
 	<!--- Flush Cache --->
 	<cfset resetcachetoken("search")>
-	<cfset variables.cachetoken = resetcachetoken("general")>
+	<cfset resetcachetoken("general")>
 	<!--- Lucene is indexing these values in the video.cfc already thus we are done here --->
 </cffunction>
 
@@ -431,7 +431,7 @@
 			<cfif thetext CONTAINS "#langindex#">
 				<cfquery datasource="#application.razuna.datasource#">
 				UPDATE #session.hostdbprefix#custom_fields_text
-				SET cf_text = <cfqueryparam value="#evaluate(thetext)#" cfsqltype="cf_sql_varchar">
+				SET cf_text = <cfqueryparam value="#trim(evaluate(thetext))#" cfsqltype="cf_sql_varchar">
 				WHERE cf_id_r = <cfqueryparam value="#arguments.thestruct.cf_id#" cfsqltype="CF_SQL_VARCHAR">
 				AND lang_id_r = <cfqueryparam value="#langindex#" cfsqltype="cf_sql_numeric">
 				</cfquery>
@@ -443,7 +443,7 @@
 		</cfif>
 		<!--- Flush Cache --->
 		<cfset resetcachetoken("search")>
-		<cfset variables.cachetoken = resetcachetoken("general")>
+		<cfset resetcachetoken("general")>
 	<cfreturn />
 </cffunction>
 
@@ -468,7 +468,7 @@
 	</cfquery>
 	<!--- Flush Cache --->
 	<cfset resetcachetoken("search")>
-	<cfset variables.cachetoken = resetcachetoken("general")>
+	<cfset resetcachetoken("general")>
 </cffunction>
 
 <!--- Save order --->
@@ -490,7 +490,7 @@
 		</cfif>
 	</cfloop>
 	<!--- Flush Cache --->
-	<cfset variables.cachetoken = resetcachetoken("general")>
+	<cfset resetcachetoken("general")>
 	<cfreturn />
 </cffunction>
 
@@ -504,7 +504,7 @@
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
 	<!--- Flush Cache --->
-	<cfset variables.cachetoken = resetcachetoken("general")>
+	<cfset resetcachetoken("general")>
 	<cfreturn />
 </cffunction>
 
