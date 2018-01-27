@@ -3786,18 +3786,122 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	FROM #session.hostdbprefix#upc_template
 	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	AND upc_temp_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.upc_temp_id#">
+	ORDER BY upc_name
 	</cfquery>
 	<!--- Get template values --->
 	<cfquery datasource="#application.razuna.datasource#" name="qry.template_values" cachedwithin="1" region="razcache">
-	SELECT /* #cachetoken#getUpcTemplateValues */ upc_temp_id_r, upc_field, upc_map
+	SELECT /* #cachetoken#getUpcTemplateValues */ upc_temp_id_r, upc_field, upc_is_original
 	FROM #session.hostdbprefix#upc_template_val
 	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	AND upc_temp_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.upc_temp_id#">
+	ORDER BY upc_field
 	</cfquery>
-
 	<cfreturn qry>
 </cffunction>
 
+<!--- Set UPC Template --->
+<cffunction name="setUpcTemplate">
+	<cfargument name="thestruct" type="struct" required="yes">
+	<!--- <cfset consoleoutput(true)>
+	<cfset console(arguments.thestruct)> --->
 
+	<!--- Param --->
+	<cfparam name="arguments.thestruct.upc_active" default="0">
+	<!--- Delete all records with this ID in the MAIN DB --->
+	<cfquery datasource="#application.razuna.datasource#">
+	DELETE FROM #session.hostdbprefix#upc_template
+	WHERE upc_temp_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.upc_temp_id#">
+	</cfquery>
+	<!--- Save to main DB --->
+	<cfquery datasource="#application.razuna.datasource#">
+	INSERT INTO #session.hostdbprefix#upc_template
+	(upc_temp_id, upc_date_create, upc_date_update, upc_who, upc_active, host_id, upc_name, upc_description)
+	VALUES(
+	<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.upc_temp_id#">,
+	<cfqueryparam cfsqltype="CF_SQL_TIMESTAMP" value="#now()#">,
+	<cfqueryparam cfsqltype="CF_SQL_TIMESTAMP" value="#now()#">,
+	<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.theuserid#">,
+	<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.upc_active#">,
+	<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+	<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.upc_name#">,
+	<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.upc_description#">
+	)
+	</cfquery>
+	<!--- Delete all records with this ID in the DB --->
+	<cfquery datasource="#application.razuna.datasource#">
+	DELETE FROM #session.hostdbprefix#upc_template_val
+	WHERE upc_temp_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.upc_temp_id#">
+	</cfquery>
+	<!--- Get the name and select fields --->
+	<cfset var thefield = "">
+	<cfset var theoriginal = "">
+	<cfset var thedelete = "">
+	<cfloop collection="#arguments.thestruct#" item="i">
+		<!--- If delete do not include --->
+		<cfif i CONTAINS "field_">
+			<!--- Get values --->
+			<cfset f = listfirst(i,"_")>
+			<cfset fn = listlast(i,"_")>
+			<cfset fg = f & "_" & fn>
+			<cfset thefield = thefield & "," & fg>
+		</cfif>
+		<cfif i CONTAINS "original_">
+			<!--- Get values --->
+			<cfset s = listfirst(i,"_")>
+			<cfset sn = listlast(i,"_")>
+			<cfset sg = s & "_" & sn>
+			<cfset theoriginal = theoriginal & "," & sg>
+		</cfif>
+		<cfif i CONTAINS "delete_">
+			<!--- Get values --->
+			<cfset dn = listlast(i,"_")>
+			<cfset thedelete = thedelete & "," & dn>
+		</cfif>
+	</cfloop>
+	<!--- loop over list amount and do insert and listgetat --->
+	<cfloop from="1" to="#listlen(thefield)#" index="i">
+		<cfif ! listfindnocase(thedelete,i)>
+			<cfset fi = listgetat(thefield, listfindnocase(thefield,"field_#i#"))>
+			<cfset se = listgetat(theoriginal, listfindnocase(theoriginal,"original_#i#"))>
+			<cfset fi_value = arguments.thestruct["#fi#"]>
+			<cfset se_value = arguments.thestruct["#se#"]>
+			<cfquery datasource="#application.razuna.datasource#">
+			INSERT INTO #session.hostdbprefix#upc_template_val
+			(upc_temp_id_r, host_id, rec_uuid, upc_field, upc_is_original)
+			VALUES(
+			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.upc_temp_id#">,
+			<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#createuuid()#">,
+			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#fi_value#">,
+			<cfqueryparam cfsqltype="CF_SQL_DOUBLE" value="#se_value#">
+			)
+			</cfquery>
+		</cfif>
+	</cfloop>
+	<!--- Flush --->
+	<cfset resetcachetoken("settings")>
+	<!--- Return --->
+	<cfreturn />
+</cffunction>
+
+<!--- Set UPC settings --->
+<cffunction name="delUpcTemplate">
+	<cfargument name="thestruct" type="struct" required="yes">
+	<!--- Query --->
+	<cfquery datasource="#application.razuna.datasource#">
+	DELETE FROM #session.hostdbprefix#upc_template
+	WHERE upc_temp_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.id#">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	</cfquery>
+	<cfquery datasource="#application.razuna.datasource#">
+	DELETE FROM #session.hostdbprefix#upc_template_val
+	WHERE upc_temp_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.id#">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	</cfquery>
+	<!--- Flush --->
+	<cfset resetcachetoken("settings")>
+	<cfreturn >
+</cffunction>
 
 </cfcomponent>
+

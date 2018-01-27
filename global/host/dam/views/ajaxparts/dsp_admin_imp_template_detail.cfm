@@ -126,7 +126,7 @@
 				});
 			},
 			rules: {
-				imp_name: "required"			   
+				imp_name: "required"
 			 }
 		});
 	});
@@ -143,47 +143,47 @@
 		$('##btnAdd').click(function() {
 	        var num     = $('.clonedInput').length; // how many "duplicatable" input fields we currently have
 	        var newNum  = new Number(num + 1);      // the numeric ID of the new input field being added
-			
+
 	        // create the new element via clone(), and manipulate it's ID using newNum value
 	        var newElem = $('##input' + num).clone().attr('id', 'input' + newNum);
-	
+
 	        // manipulate the name/id values of the input inside the new element
 	        newElem.children(':first').attr('id', 'field_' + newNum).attr('name', 'field_' + newNum);
 	        newElem.children(':nth-child(2)').attr('id', 'select_' + newNum).attr('name', 'select_' + newNum);
 	        /* newElem.children(':nth-child(3)').attr('id', 'radio_' + newNum); */
-	      	
+
 	        // Add the fields to the page
 	        $('##input' + num).after(newElem)
-	        
+
 	        // enable the "remove" button
 	        $('##btnDel').css('display','');
-			
+
 			// Add the new num as the new radio value
 	       /*  $('##radio_' + newNum).val(newNum); */
 	         // Reset the values for the new field set
 	        $('##field_' + newNum).val('');
 	        $('##select_' + newNum).val($('option:first', this).val());
 	        /* $('##radio_' + newNum).prop('checked',false); */
-	        
+
 	        // business rule: you can only add 5 names
 	        /*
 	        	if (newNum == 5)
 	            $('##btnAdd').attr('disabled','disabled');
 	    	*/
 	    });
-	
+
 	    $('##btnDel').click(function() {
 	        var num = $('.clonedInput').length; // how many "duplicatable" input fields we currently have
 	        $('##input' + num).remove();     // remove the last element
-	
+
 	        // enable the "add" button
 	        $('##btnAdd').attr('disabled',false);
-	
+
 	        // if only one element remains, disable the "remove" button
 	        if (num-1 == 1)
 	            $('##btnDel').css('display','none');
 	    });
-	
+
 	});
 </script>
 </cfoutput>

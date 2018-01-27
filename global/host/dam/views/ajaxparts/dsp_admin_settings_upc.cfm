@@ -24,18 +24,52 @@
 *
 --->
 <cfoutput>
-	<cfdump var="#qry_upc#">
+	<!--- <cfdump var="#qry_upc#"> --->
 	<!--- <cfabort> --->
-	<h2>UPC</h2>
+	<div style="float:left;">
+		<h2>UPC</h2>
+	</div>
+	<div style="float:right;padding-top:20px;">
+		<a href="##" onclick="showwindow('#myself#c.admin_upc_template&upc_temp_id=0','New UPC settings',650,1);" class="awesome button green small">Add a new UPC template</a>
+	</div>
+	<cfmodule template="../../modules/clearfix.cfm" padding="0" />
 	<div style="float:left;">Razuna also works with UPC (Universal Product Code)...</div>
-	<div style="float:right;"><a href="##" onclick="showwindow('#myself#c.admin_upc_template&upc_temp_id=0','New UPC settings',650,1);">New UPC settings</a></div>
-	<div class='clearfix'></div>
-	<div style="padding-top:20px;"></div>
+	<cfmodule template="../../modules/clearfix.cfm" padding="10" />
 	<!--- <hr> --->
 
-	<!--- Set Languages --->
+	<!--- <hr> --->
+
+	<!--- Status --->
+	<div id="form_admin_settings_upc_status" style="float:left;font-weight:bold;color:green;"></div>
+
+
+	<!--- Table with upc settings --->
+	<cfif qry_upc.templates.recordcount>
+		<h3>#myFusebox.getApplicationData().defaults.trans("templates")#</h3>
+		<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
+			<tr>
+				<th width="20%" nowrap="true">#myFusebox.getApplicationData().defaults.trans("template")#</th>
+				<th width="80%">#myFusebox.getApplicationData().defaults.trans("description")#</th>
+				<th width="1%" nowrap="true"></th>
+				<th width="1%" nowrap="true"></th>
+			</tr>
+			<!--- Loop over all scheduled events in database table --->
+			<cfloop query="qry_upc.templates">
+				<tr class="list">
+					<td nowrap="true" valign="top"><a href="##" onclick="showwindow('#myself#c.admin_upc_template&upc_temp_id=#upc_temp_id#','#upc_name#',650,1);">#upc_name#</a></td>
+					<td valign="top">#upc_description#</td>
+					<td nowrap="true" valign="top" align="center"><cfif upc_active EQ 1><img src="#dynpath#/global/host/dam/images/checked.png" width="16" height="16" border="0"></cfif></td>
+					<td nowrap="true" valign="top" align="center"><a href="##" onclick="showwindow('#myself#ajax.remove_record&what=admin_upc_template&id=#upc_temp_id#&loaddiv=upc','#myFusebox.getApplicationData().defaults.trans("remove_selected")#',400,1);return false"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0"></a></td>
+				</tr>
+			</cfloop>
+		</table>
+	</cfif>
+
+	<cfmodule template="../../modules/clearfix.cfm" padding="20" />
+
+	<!--- Set upc --->
 	<form name="form_admin_settings_upc" id="form_admin_settings_upc" method="post" action="#self#">
-	<input type="hidden" name="#theaction#" value="c.admin_upc_save">
+		<input type="hidden" name="#theaction#" value="c.admin_upc_save">
 		<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 			<!--- UPC Enabled --->
 			<tr>
@@ -52,39 +86,8 @@
 				</td>
 			</tr>
 		</table>
-
-		<hr>
-
-		<!--- Status --->
-		<div id="form_admin_settings_upc_status" style="float:left;font-weight:bold;color:green;"></div>
-		<div class='clearfix'></div>
-		<div style="padding-top:20px;"></div>
-
-		<!--- Table with upc settings --->
-		<!--- <table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
-			<cfif qry_templates.recordcount NEQ 0>
-				<tr>
-					<th width="50%" nowrap="true">#myFusebox.getApplicationData().defaults.trans("import_templates")#</th>
-					<th width="50%" nowrap="true">#myFusebox.getApplicationData().defaults.trans("description")#</th>
-					<th width="1%" nowrap="true"></th>
-					<th width="1%" nowrap="true"></th>
-				</tr>
-			</cfif>
-			<!--- Loop over all scheduled events in database table --->
-			<cfloop query="qry_templates">
-				<tr class="list">
-					<td nowrap="true" valign="top"><a href="##" onclick="showwindow('#myself#c.imp_template_detail&imp_temp_id=#imp_temp_id#','#imp_name#',650,1);">#imp_name#</a></td>
-					<td nowrap="true" valign="top">#imp_description#</td>
-					<td nowrap="true" valign="top" align="center"><cfif imp_active EQ 1><img src="#dynpath#/global/host/dam/images/checked.png" width="16" height="16" border="0"></cfif></td>
-					<td nowrap="true" valign="top" align="center"><a href="##" onclick="showwindow('#myself#ajax.remove_record&what=imp_templates&id=#imp_temp_id#&loaddiv=admin_imp_templates','#myFusebox.getApplicationData().defaults.trans("remove_selected")#',400,1);return false"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0"></a></td>
-				</tr>
-			</cfloop>
-		</table> --->
-
-		
-
 	</form>
-	<br />
+
 	<!--- JS --->
 	<script type="text/javascript">
 		// Submit Form

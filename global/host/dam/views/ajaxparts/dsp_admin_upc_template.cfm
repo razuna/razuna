@@ -30,83 +30,72 @@
 <!--- Set first field as the key --->
 <input type="hidden" name="radio_key" id="radio_1" value="1" />
 <!--- Output --->
-<div id="tab_imp_temp">
+<div id="tab_upc_temp">
 	<ul>
-		<li><a href="##tab_imp_temp_all">#myFusebox.getApplicationData().defaults.trans("settings")#</a></li>
-		<li><a href="##tab_imp_temp_fields">#myFusebox.getApplicationData().defaults.trans("mapping")#</a></li>
+		<li><a href="##tab_upc_temp_all">#myFusebox.getApplicationData().defaults.trans("settings")#</a></li>
+		<li><a href="##tab_upc_temp_fields">#myFusebox.getApplicationData().defaults.trans("mapping")#</a></li>
 	</ul>
 	<!--- Settings --->
-	<div id="tab_imp_temp_all">
+	<div id="tab_upc_temp_all">
 		<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
 			<tr>
 				<th colspan="2">#myFusebox.getApplicationData().defaults.trans("settings")#</td>
 			</tr>
 			<tr>
 				<td nowrap="nowrap">Template active</td>
-				<td><input type="checkbox" name="imp_active" value="1"<cfif qry_detail.template.upc_active EQ 1> checked="checked"</cfif>></td>
+				<td><input type="checkbox" name="upc_active" value="1"<cfif qry_detail.template.upc_active EQ 1> checked="checked"</cfif>></td>
 			</tr>
 			<tr>
 				<td>#myFusebox.getApplicationData().defaults.trans("admin_upload_templates_name")#*</td>
-				<td><input type="text" name="imp_name" id="imp_name" class="text" value="#qry_detail.template.upc_name#" style="width:300px;"><label for="imp_name" class="error" style="color:red;"><br>Enter a name for the template!</label></td>
+				<td><input type="text" name="upc_name" id="upc_name" class="text" value="#qry_detail.template.upc_name#" style="width:300px;"><label for="upc_name" class="error" style="color:red;"><br>Enter a name for the template!</label></td>
 			</tr>
 			<tr>
 				<td nowrap="nowrap" valign="top">#myFusebox.getApplicationData().defaults.trans("description")#</td>
-				<td><textarea name="imp_description" style="width:300px;height:60px;">#qry_detail.template.upc_description#</textarea></td>
+				<td><textarea name="upc_description" style="width:300px;height:60px;">#qry_detail.template.upc_description#</textarea></td>
 			</tr>
 		</table>
 	</div>
 	<!--- Fields --->
-	<!--- <div id="tab_imp_temp_fields">
-		<div>#myFusebox.getApplicationData().defaults.trans("admin_import_templates_desc")#</div>
-		<br />
+	<div id="tab_upc_temp_fields">
+		<div>Define your extension below which should follow the UPC guidelines. For each set you should add only ONE "Original" and all the others will be "Renditions", e.g. "filename.1.tga" (Original), "filename.2.tga" (Rendition), "filename.3.tga" (Rendition).<br><br>You can define as many extensions as you like per template. Remember that UPC only takes effect on folders that are also labeled as "UPC".</div>
+		<cfmodule template="../../modules/clearfix.cfm" padding="20" />
 		<!--- List the mapped fields --->
 		<cfloop query="qry_detail.template_values">
-			<cfset theimpmap = imp_map>
 			<div id="input#currentRow#" style="margin-bottom:4px;" class="clonedInput">
-		        <input type="text" name="field_#currentRow#" id="field_#currentRow#" style="width:250px;" value="#imp_field#" />
-		        <select id="select_#currentRow#" name="select_#currentRow#" style="width:250px;">
-		        	<option selected="selected">#myFusebox.getApplicationData().defaults.trans("map_to")# ...</option>
-		        	<option>--- #myFusebox.getApplicationData().defaults.trans("key_fields")# ---</option>
-		        	<cfloop list="#attributes.meta_keys#" index="i" delimiters=","><option value="#i#"<cfif i EQ imp_map> selected="selected"</cfif>>#i#</option></cfloop>
-		        	<option>--- #myFusebox.getApplicationData().defaults.trans("default")# ---</option>
-		        	<cfloop list="#attributes.meta_default#" index="i" delimiters=","><option value="#i#"<cfif i EQ imp_map> selected="selected"</cfif>>#i#</option></cfloop>
-		        	<option>--- #myFusebox.getApplicationData().defaults.trans("custom_fields_header")# ---</option>
-		        	<cfloop query="attributes.meta_cf">#theimpmap#<option value="#cf_id#"<cfif cf_id EQ theimpmap> selected="selected"</cfif>>#cf_text#</option></cfloop>
-		        	<option>--- #myFusebox.getApplicationData().defaults.trans("for_images")# ---</option>
-		        	<cfloop list="#attributes.meta_img#" index="i" delimiters=","><option value="#i#"<cfif i EQ imp_map> selected="selected"</cfif>>#i#</option></cfloop>
-		        	<option>--- #myFusebox.getApplicationData().defaults.trans("for_documents")# ---</option>
-		        	<cfloop list="#attributes.meta_doc#" index="i" delimiters=","><option value="#i#"<cfif i EQ imp_map> selected="selected"</cfif>>#i#</option></cfloop>
-		        </select>
+		        <div style="float:left">
+		        	<input type="text" name="field_#currentRow#" id="field_#currentRow#" style="width:250px;" value="#upc_field#" />
+		        </div>
+		        <div style="float:left">
+		        	<input type="radio" name="original_#currentRow#" id="original_#currentRow#" value="true"<cfif upc_is_original>checked="checked"</cfif>> Original
+		        	<input type="radio" name="original_#currentRow#" id="original_#currentRow#" value="false"<cfif ! upc_is_original>checked="checked"</cfif>> Rendition
+		        	<input type="checkbox" name="delete_#currentRow#" id="delete_#currentRow#" value="true"> Delete
+		        </div>
+		        <cfmodule template="../../modules/clearfix.cfm" padding="0" />
 		    </div>
 		</cfloop>
-		<!--- Add one to the recodcount --->
+		<!--- Add one to the recordcount --->
 		<cfif qry_detail.template_values.recordcount EQ 0>
 		    <div id="input1" style="margin-bottom:4px;" class="clonedInput">
-		        <input type="text" name="field_1" id="field_1" style="width:250px;" />
-		        <select id="select_1" name="select_1" style="width:250px;">
-		        	<option selected="selected">#myFusebox.getApplicationData().defaults.trans("map_to")# ...</option>
-		        	<option>--- #myFusebox.getApplicationData().defaults.trans("key_fields")# ---</option>
-		        	<cfloop list="#attributes.meta_keys#" index="i" delimiters=","><option value="#i#">#i#</option></cfloop>
-		        	<option>--- #myFusebox.getApplicationData().defaults.trans("default")# ---</option>
-		        	<cfloop list="#attributes.meta_default#" index="i" delimiters=","><option value="#i#">#i#</option></cfloop>
-		        	<option>--- #myFusebox.getApplicationData().defaults.trans("custom_fields_header")# ---</option>
-		        	<cfloop query="attributes.meta_cf"><option value="#cf_id#">#cf_text#</option></cfloop>
-		        	<option>--- #myFusebox.getApplicationData().defaults.trans("for_images")#---</option>
-		        	<cfloop list="#attributes.meta_img#" index="i" delimiters=","><option value="#i#">#i#</option></cfloop>
-		        	<option>--- #myFusebox.getApplicationData().defaults.trans("for_documents")# ---</option>
-		        	<cfloop list="#attributes.meta_doc#" index="i" delimiters=","><option value="#i#">#i#</option></cfloop>
-		        </select>
+		        <div style="float:left">
+   		        	<input type="text" name="field_1" id="field_1" style="width:250px;" value="" />
+   		        </div>
+   		        <div style="float:left;padding-top:5px;padding-left:10px;">
+   		        	<input type="radio" name="original_1" id="original_1" value="true"> Original
+   		        	<input type="radio" name="original_1" id="original_1" value="false" checked="checked"> Rendition
+   		        	<input type="checkbox" name="delete_1" id="delete_1" value="true"> Delete
+   		        </div>
+   		       <cfmodule template="../../modules/clearfix.cfm" padding="0" />
 		    </div>
 	    </cfif>
 	    <div style="width:50px;height:40px;">
 	 		<img src="#dynpath#/global/host/dam/images/list-add-3.png" width="24" height="24" border="0" align="left" id="btnAdd" />
 	    	<img src="#dynpath#/global/host/dam/images/list-remove-3.png" width="24" height="24" border="0" align="right" id="btnDel" />
 		</div>
-	</div> --->
+	</div>
 </div>
 <div id="submit" style="float:right;padding:10px;">
-	<div id="imptempfeedback" style="color:green;padding:10px;display:none;float:left;font-weight:bold;"></div>
-	<input type="submit" name="SubmitUser" value="#myFusebox.getApplicationData().defaults.trans("button_save")#" class="button" style="float:right;">
+	<div id="upc_temp_feedback" style="color:green;padding:10px;display:none;float:left;font-weight:bold;"></div>
+	<input type="submit" name="submit_upc" value="#myFusebox.getApplicationData().defaults.trans("button_save")#" class="button" style="float:right;">
 </div>
 
 </form>
@@ -114,7 +103,7 @@
 <!--- Activate the Tabs --->
 <script type="text/javascript">
 	// Initialize Tabs
-	$("##tab_imp_temp").tabs();
+	$("##tab_upc_temp").tabs();
 	// Init Chosen
 	//$(".chzn-select").chosen({no_results_text: "No results matched"});
 	// Fire the form submit for new or update
@@ -122,19 +111,19 @@
 		$("##form_upc_template").validate({
 			submitHandler: function(form) {
 				jQuery(form).ajaxSubmit({
-					success: form_upc_templatefeedback
+					success: formupc_temp_feedback
 				});
 			},
 			rules: {
-				imp_name: "required"
+				upc_name: "required"
 			 }
 		});
 	});
 	// Feedback when saving form
-	function formimptempfeedback() {
-		$("##imptempfeedback").css("display","");
-		$("##imptempfeedback").html("#JSStringFormat(myFusebox.getApplicationData().defaults.trans("success"))#");
-		$('##admin_imp_templates').load('#myself#c.imp_templates');
+	function formupc_temp_feedback() {
+		$("##upc_temp_feedback").css("display","");
+		$("##upc_temp_feedback").html("#JSStringFormat(myFusebox.getApplicationData().defaults.trans("success"))#");
+		$('##upc').load('#myself#c.admin_upc');
 	}
 	$(document).ready(function() {
 		<cfif qry_detail.template_values.recordcount EQ 0>
@@ -146,11 +135,12 @@
 
 	        // create the new element via clone(), and manipulate it's ID using newNum value
 	        var newElem = $('##input' + num).clone().attr('id', 'input' + newNum);
-
+	        console.log('newElem', newElem);
 	        // manipulate the name/id values of the input inside the new element
-	        newElem.children(':first').attr('id', 'field_' + newNum).attr('name', 'field_' + newNum);
-	        newElem.children(':nth-child(2)').attr('id', 'select_' + newNum).attr('name', 'select_' + newNum);
-	        /* newElem.children(':nth-child(3)').attr('id', 'radio_' + newNum); */
+	        newElem.children(':first').children(':first').attr('id', 'field_' + newNum).attr('name', 'field_' + newNum);
+	        newElem.children(':nth-child(2)').children(':first').attr('id', 'original_' + newNum).attr('name', 'original_' + newNum);
+	        newElem.children(':nth-child(2)').children(':nth-child(2)').attr('id', 'original_' + newNum).attr('name', 'original_' + newNum);
+	        newElem.children(':nth-child(2)').children(':nth-child(3)').attr('id', 'delete_' + newNum).attr('name', 'delete_' + newNum);
 
 	        // Add the fields to the page
 	        $('##input' + num).after(newElem)

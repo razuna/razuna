@@ -10908,7 +10908,6 @@
 	<fuseaction name="admin_upc_save">
 		<!-- save record -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="setUpcSettings(attributes)" />
-
 	</fuseaction>
 
 	<fuseaction name="admin_upc_template">
@@ -10922,7 +10921,18 @@
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="getUpcTemplate(attributes.upc_temp_id)" returnvariable="qry_detail" />
 		<!-- Show -->
 		<do action="ajax.admin_upc_template" />
+	</fuseaction>
 
+	<fuseaction name="admin_upc_template_save">
+		<!-- CFC: get details -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="setUpcTemplate(attributes)" />
+	</fuseaction>
+
+	<fuseaction name="admin_upc_template_remove">
+		<!-- CFC: get details -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="delUpcTemplate(attributes)" />
+		<!-- Show -->
+		<do action="admin_upc" />
 	</fuseaction>
 
 </circuit>
