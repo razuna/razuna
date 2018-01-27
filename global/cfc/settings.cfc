@@ -104,7 +104,6 @@
 	set2_md5check = <cfqueryparam value="#arguments.thestruct.set2_md5check#" cfsqltype="cf_sql_varchar">,
 	set2_custom_file_ext = <cfqueryparam value="#arguments.thestruct.set2_custom_file_ext#" cfsqltype="cf_sql_varchar">,
 	set2_colorspace_rgb = <cfqueryparam value="#arguments.thestruct.set2_colorspace_rgb#" cfsqltype="cf_sql_varchar">,
-	set2_upc_enabled = <cfqueryparam value="#arguments.thestruct.set2_upc_enabled#" cfsqltype="cf_sql_varchar">,
 	set2_rendition_metadata = <cfqueryparam value="#arguments.thestruct.set2_rendition_metadata#" cfsqltype="cf_sql_varchar">,
 	set2_meta_export = <cfqueryparam value="#arguments.thestruct.set2_meta_export#" cfsqltype="cf_sql_varchar">,
 	set2_saml_xmlpath_email = <cfqueryparam value="#arguments.thestruct.set2_saml_email#" cfsqltype="cf_sql_varchar">,
@@ -3738,5 +3737,67 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 <!--- Return --->
 <cfreturn _json[arguments.thenode]>
 </cffunction>
+
+<!--- Get UPC settings --->
+<cffunction name="getUpcSettings" returntype="struct">
+	<!--- Cache --->
+	<cfset var cachetoken = getcachetoken("settings")>
+	<cfset var qry = structnew()>
+	<!--- Settings --->
+	<cfquery datasource="#application.razuna.datasource#" name="qry.settings" cachedwithin="1" region="razcache">
+	SELECT /* #cachetoken#getUpcSettings */ set2_upc_enabled
+	FROM #session.hostdbprefix#settings_2
+	WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	</cfquery>
+	<!--- Templates --->
+	<cfquery datasource="#application.razuna.datasource#" name="qry.templates" cachedwithin="1" region="razcache">
+	SELECT /* #cachetoken#getUpcSettingsTemplates */ upc_temp_id, upc_active, upc_name, upc_description
+	FROM #session.hostdbprefix#upc_template
+	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	</cfquery>
+	<cfreturn qry>
+</cffunction>
+
+<!--- Set UPC settings --->
+<cffunction name="setUpcSettings">
+	<cfargument name="thestruct" type="struct" required="yes">
+	<!--- Update core settings --->
+	<cfquery datasource="#application.razuna.datasource#">
+	UPDATE #session.hostdbprefix#settings_2
+	SET set2_upc_enabled = <cfqueryparam value="#arguments.thestruct.set2_upc_enabled#" cfsqltype="cf_sql_varchar">
+	WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	</cfquery>
+	<!--- Flush --->
+	<cfset resetcachetoken("settings")>
+	<cfreturn >
+</cffunction>
+
+<!--- Set UPC settings --->
+<cffunction name="getUpcTemplate" returntype="struct">
+	<cfargument name="upc_temp_id" type="string" required="yes">
+	<!--- Cache --->
+	<cfset var cachetoken = getcachetoken("settings")>
+	<cfset var qry = structnew()>
+	<!--- Get template --->
+	<cfquery datasource="#application.razuna.datasource#" name="qry.template" cachedwithin="1" region="razcache">
+	SELECT /* #cachetoken#getUpcTemplate */ upc_temp_id, upc_active, upc_name, upc_description
+	FROM #session.hostdbprefix#upc_template
+	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	AND upc_temp_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.upc_temp_id#">
+	</cfquery>
+	<!--- Get template values --->
+	<cfquery datasource="#application.razuna.datasource#" name="qry.template_values" cachedwithin="1" region="razcache">
+	SELECT /* #cachetoken#getUpcTemplateValues */ upc_temp_id_r, upc_field, upc_map
+	FROM #session.hostdbprefix#upc_template_val
+	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	AND upc_temp_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.upc_temp_id#">
+	</cfquery>
+
+	<cfreturn qry>
+</cffunction>
+
+
 
 </cfcomponent>

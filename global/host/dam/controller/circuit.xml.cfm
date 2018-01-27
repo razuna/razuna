@@ -10896,4 +10896,33 @@
 		<invoke object="myFusebox.getApplicationData().files" methodcall="createRenditions(attributes)" />
 	</fuseaction>
 
+	<!-- UPC SETTINGS -->
+
+	<fuseaction name="admin_upc">
+		<!-- Get settings -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="getUpcSettings(attributes)" returnvariable="qry_upc" />
+		<!-- Show -->
+		<do action="ajax.admin_upc" />
+	</fuseaction>
+
+	<fuseaction name="admin_upc_save">
+		<!-- save record -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="setUpcSettings(attributes)" />
+
+	</fuseaction>
+
+	<fuseaction name="admin_upc_template">
+		<!-- Create new ID -->
+		<if condition="attributes.upc_temp_id EQ 0">
+			<true>
+				<set name="attributes.upc_temp_id" value="#createuuid('')#" />
+			</true>
+		</if>
+		<!-- CFC: get details -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="getUpcTemplate(attributes.upc_temp_id)" returnvariable="qry_detail" />
+		<!-- Show -->
+		<do action="ajax.admin_upc_template" />
+
+	</fuseaction>
+
 </circuit>
