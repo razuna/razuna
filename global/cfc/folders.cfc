@@ -8887,6 +8887,7 @@
 	<cfset var cachetoken = getcachetoken("folders")>
 	<!--- Param --->
 	<cfset var qry = "" >
+	<cfset var _qry = "" >
 	<!--- Query folder on root level --->
 	<cfquery dataSource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #cachetoken#getFlatFolderList */ f.folder_of_user, f.folder_id, f.folder_name, '0' as folder_level, f.folder_name as folder_path, <cfif application.razuna.thedatabase EQ "h2">NVL<cfelseif application.razuna.thedatabase EQ "mysql">ifnull<cfelseif application.razuna.thedatabase EQ "mssql">isnull</cfif>(u.user_login_name,'Obsolete') as username
@@ -8912,6 +8913,8 @@
 	<cfargument name="theqry" required="yes">
 	<cfargument name="theoverallqry" required="no" default="#querynew('folder_of_user, folder_id, folder_name, folder_level, folder_path, username')#">
 	<cfargument name="thelevel" required="no" default="0">
+	<!--- Var --->
+	<cfset var local_query = "">
 	<!--- Increase folder level --->
 	<cfset thelevel = arguments.thelevel + 1>
 	<!--- Cache --->

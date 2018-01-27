@@ -1117,7 +1117,7 @@
 	</cfquery>
 	<!--- Extract user information from query --->
 	<cfquery dbtype="query" name="getuserinfo">
-		SELECT user_email, user_id, host_id FROM getusers2notify GROUP BY user_id,user_email
+		SELECT user_email, user_id, host_id FROM getusers2notify GROUP BY user_id, user_email, host_id
 	</cfquery>
 	<!--- Before we send out notification emails lets expire the assets first --->
 	<!--- Set expired label for assets that have expired and update indexing status to re-index --->
