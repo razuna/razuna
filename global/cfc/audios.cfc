@@ -1715,6 +1715,7 @@
 	FROM #session.hostdbprefix#audios
 	WHERE aud_group = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	AND is_available = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">
 	ORDER BY aud_extension
 	</cfquery>
 	<cfreturn qry>

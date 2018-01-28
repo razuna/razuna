@@ -762,13 +762,6 @@
 			<cfif DirectoryExists("#arguments.thestruct.assetpath#/#arguments.thestruct.hostid#/versions/img/#arguments.thestruct.id#") AND arguments.thestruct.id NEQ "">
 				<cfdirectory action="delete" directory="#arguments.thestruct.assetpath#/#arguments.thestruct.hostid#/versions/img/#arguments.thestruct.id#" recurse="true">
 			</cfif>
-		<!--- Nirvanix --->
-		<cfelseif application.razuna.storage EQ "nirvanix">
-			<cfif arguments.thestruct.qrydetail.path_to_asset NEQ "">
-				<cfinvoke component="nirvanix" method="DeleteFolders" nvxsession="#arguments.thestruct.nvxsession#" folderpath="/#arguments.thestruct.qrydetail.path_to_asset#">
-				<!--- Versions --->
-				<cfinvoke component="nirvanix" method="DeleteFolders" nvxsession="#arguments.thestruct.nvxsession#" folderpath="/versions/img/#arguments.thestruct.id#">
-			</cfif>
 		<!--- Amazon --->
 		<cfelseif application.razuna.storage EQ "amazon">
 			<cfif arguments.thestruct.qrydetail.path_to_asset NEQ "">
@@ -1948,6 +1941,7 @@
 	FROM #session.hostdbprefix#images i
 	WHERE i.img_group = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 	AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	AND i.is_available = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">
 	ORDER BY img_create_time DESC
 	</cfquery>
 	<!--- Return --->
