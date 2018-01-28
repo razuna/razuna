@@ -39,8 +39,6 @@
 
 	<!--- <hr> --->
 
-	<!--- Status --->
-	<div id="form_admin_settings_upc_status" style="float:left;font-weight:bold;color:green;"></div>
 
 
 	<!--- Table with upc settings --->
@@ -87,6 +85,11 @@
 			</tr>
 		</table>
 	</form>
+
+	<!--- Status --->
+	<cfmodule template="../../modules/clearfix.cfm" padding="10" />
+	<div id="form_admin_settings_upc_status" style="float:left;font-weight:bold;color:green;"></div>
+	<cfmodule template="../../modules/clearfix.cfm" padding="20" />
 
 	<!--- JS --->
 	<script type="text/javascript">

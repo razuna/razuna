@@ -64,7 +64,7 @@
 					<tr>
 						<td>
 							<strong>#myFusebox.getApplicationData().defaults.trans("group_upc_size_text")#</strong><br/>
-							<select name="editupcsize" id="editupcsize" style="width:50px;">
+							<select name="editupcsize" id="editupcsize">
 								<option value="">None</option>
 								<option value="10" <cfif qry_detail.upc_size EQ 10 >selected=selected</cfif>>10</option>
 								<option value="11" <cfif qry_detail.upc_size EQ 11 >selected=selected</cfif>>11</option>

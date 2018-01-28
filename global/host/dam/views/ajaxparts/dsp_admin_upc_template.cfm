@@ -135,11 +135,12 @@
 
 	        // create the new element via clone(), and manipulate it's ID using newNum value
 	        var newElem = $('##input' + num).clone().attr('id', 'input' + newNum);
-	        console.log('newElem', newElem);
+	        // console.log('newElem', newElem);
 	        // manipulate the name/id values of the input inside the new element
 	        newElem.children(':first').children(':first').attr('id', 'field_' + newNum).attr('name', 'field_' + newNum);
 	        newElem.children(':nth-child(2)').children(':first').attr('id', 'original_' + newNum).attr('name', 'original_' + newNum);
 	        newElem.children(':nth-child(2)').children(':nth-child(2)').attr('id', 'original_' + newNum).attr('name', 'original_' + newNum);
+	        newElem.children(':nth-child(2)').children(':nth-child(2)').prop('checked', 'checked');
 	        newElem.children(':nth-child(2)').children(':nth-child(3)').attr('id', 'delete_' + newNum).attr('name', 'delete_' + newNum);
 
 	        // Add the fields to the page

@@ -91,7 +91,7 @@
 						</cfif>
 					</div>
 					<div id="dive#vid_id#" style="display:none;">
-						<cfset eh = vid_height + 40>
+						<cfset eh = vid_height ? vid_height + 40 : 50>
 						<textarea id="inpute#vid_id#" style="width:500px;height:60px;" readonly="readonly"><iframe frameborder="0" src="//#cgi.http_host##cgi.script_name#?#theaction#=c.sv&f=#vid_id#&v=o" scrolling="auto" width="100%" height="#eh#"></iframe></textarea>
 					</div>
 				</td>

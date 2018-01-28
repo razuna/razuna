@@ -94,11 +94,6 @@
 						</cfif>
 					</div>
 					<br>
-					<!--- Nirvanix --->
-					<cfif application.razuna.storage EQ "nirvanix" AND attributes.s EQ "T">
-						<i>#application.razuna.nvxurlservices#/razuna/#session.hostid#/#path_to_asset#/#img_filename#</i>
-						<br>
-					</cfif>
 				</td>
 			</tr>
 		</cfloop>
