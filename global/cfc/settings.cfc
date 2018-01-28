@@ -3872,7 +3872,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.upc_temp_id#">,
 			<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
 			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#createuuid()#">,
-			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#fi_value#">,
+			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#trim(fi_value)#">,
 			<cfqueryparam cfsqltype="CF_SQL_DOUBLE" value="#se_value#">
 			)
 			</cfquery>
@@ -3901,6 +3901,27 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<!--- Flush --->
 	<cfset resetcachetoken("settings")>
 	<cfreturn >
+</cffunction>
+
+<!--- Get UPC extension --->
+<cffunction name="getUpcExtension" returntype="query">
+	<cfargument name="upc_extension" type="string" required="yes">
+	<!--- Cache --->
+	<cfset var cachetoken = getcachetoken("settings")>
+	<!--- Param --->
+	<cfset var qry = "">
+	<!--- Query --->
+	<cfquery datasource="#application.razuna.datasource#" name="qry">
+	SELECT /* #cachetoken#getUpcExtension */ v.upc_is_original, v.upc_field
+	FROM #session.hostdbprefix#upc_template_val v, #session.hostdbprefix#upc_template t
+	WHERE v.upc_temp_id_r = t.upc_temp_id
+	AND t.upc_active = <cfqueryparam cfsqltype="CF_SQL_DOUBLE" value="true">
+	AND t.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	AND v.upc_field = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.upc_extension#">
+	</cfquery>
+	<!--- Return --->
+	<cfreturn qry>
 </cffunction>
 
 </cfcomponent>
