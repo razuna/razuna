@@ -684,12 +684,17 @@
 
 	<cffunction name="removefilemany" output="true">
 		<cfargument name="thestruct" type="struct">
-		<cfset arguments.thestruct.file_id = session.file_id>
+		<!--- <cfset arguments.thestruct.file_id = session.file_id>
 		<cfset arguments.thestruct.hostdbprefix = session.hostdbprefix>
 		<cfset arguments.thestruct.theuserid = session.theuserid>
 		<cfthread intstruct="#arguments.thestruct#">
 			<cfinvoke method="removefilemanythread" thestruct="#attributes.intstruct#" />
-		</cfthread>
+		</cfthread> --->
+		<!--- Set Params --->
+		<cfset session.hostdbprefix = arguments.thestruct.hostdbprefix>
+		<cfset session.hostid = arguments.thestruct.hostid>
+		<cfset session.theuserid = arguments.thestruct.theuserid>
+		<cfinvoke method="removefilemanythread" thestruct="#arguments.thestruct#" />
 		<cfreturn />
 	</cffunction>
 
@@ -697,9 +702,9 @@
 	<cffunction name="removefilemanythread" output="true">
 		<cfargument name="thestruct" type="struct">
 		<!--- Set Params --->
-		<cfset session.hostdbprefix = arguments.thestruct.hostdbprefix>
+		<!--- <cfset session.hostdbprefix = arguments.thestruct.hostdbprefix>
 		<cfset session.hostid = arguments.thestruct.hostid>
-		<cfset session.theuserid = arguments.thestruct.theuserid>
+		<cfset session.theuserid = arguments.thestruct.theuserid> --->
 		<cfparam name="arguments.thestruct.fromfolderremove" default="false" />
 		<!--- Get storage --->
 		<cfset var qry_storage = "">
