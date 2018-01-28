@@ -2156,10 +2156,11 @@
 			asset_keywords				varchar(3) DEFAULT 'F',
 			asset_description			varchar(3) DEFAULT 'F',
 			auto_entry	varchar(5) DEFAULT 'false',
-			 PRIMARY KEY (fs_id)
+			PRIMARY KEY (fs_id)
 		)
 		</cfquery>
 
+		<!--- Approval --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.host_db_prefix#approval 
 		(
@@ -2174,6 +2175,7 @@
 		) 
 		</cfquery>
 
+		<!--- Approval --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.host_db_prefix#approval_done 
 		(
@@ -2181,6 +2183,33 @@
 			approval_date 	timestamp null default null,
 			file_id 		varchar(100) default null
 		) 
+		</cfquery>
+
+		<!--- UPC --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE #arguments.thestruct.host_db_prefix#upc_template (
+		upc_temp_id 		varchar(100),
+  		upc_date_create	 	timestamp,
+  		upc_date_update		timestamp,
+  		upc_who				varchar(100),
+  		upc_active 			varchar(1) DEFAULT '0',
+  		host_id				bigint,
+  		upc_name			varchar(200),
+  		upc_description 	varchar(2000),
+  		PRIMARY KEY (upc_temp_id)
+		)
+		</cfquery>
+		
+		<!--- UPC --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE #arguments.thestruct.host_db_prefix#upc_template_val (
+  		upc_temp_id_r		varchar(100),
+  		rec_uuid			varchar(100),
+  		upc_field			varchar(200),
+  		upc_is_original		boolean default '0',
+  		host_id				bigint,
+  		PRIMARY KEY (upc_temp_id_r)
+		)
 		</cfquery>
 
 
