@@ -587,6 +587,7 @@
 			id 				varchar(100) DEFAULT NULL,
 			type 			varchar(10) DEFAULT NULL,
 			host_id 		int DEFAULT NULL,
+			time_stamp 		datetime,
 			PRIMARY KEY (id)
 		) 
 		</cfquery>

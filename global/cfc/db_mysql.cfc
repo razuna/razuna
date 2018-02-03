@@ -491,8 +491,12 @@
 			id 				varchar(100),
 			type 			varchar(10) DEFAULT NULL,
 			host_id 		int DEFAULT NULL,
-			PRIMARY KEY (id)
-		)
+			time_stamp 		timestamp,
+			PRIMARY KEY (id),
+			KEY l_type_idx (type),
+			KEY l_host_id_idx (host_id),
+			KEY l_rime_stamp_idx (time_stamp)
+		) #this.tableoptions#
 		</cfquery>
 
 

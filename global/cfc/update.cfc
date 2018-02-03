@@ -204,6 +204,12 @@
 				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
 			</cftry>
 			<cftry>
+				<cfquery datasource="razuna_default">
+				ALTER TABLE lucene add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> time_stamp #thetimestamp#
+				</cfquery>
+				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+			</cftry>
+			<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
 				ALTER TABLE news add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> news_excerpt #thevarchar#(2000) DEFAULT NULL
 				</cfquery>

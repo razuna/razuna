@@ -441,6 +441,7 @@
 			id 				varchar(100) DEFAULT NULL,
 			type 			varchar(10) DEFAULT NULL,
 			host_id 		bigint DEFAULT NULL,
+			time_stamp 		timestamp,
 			PRIMARY KEY (id)
 		) 
 		</cfquery>
