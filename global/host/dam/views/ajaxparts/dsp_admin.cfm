@@ -112,8 +112,12 @@
 			<cfif isadmin>
 				<li><a href="##approval" onclick="loadcontent('approval','#myself#c.admin_approval');">Approval</a></li>
 			</cfif>
+			<!--- UPC --->
+			<cfif isadmin>
+				<li><a href="##upc" onclick="loadcontent('upc','#myself#c.admin_upc');">UPC Settings</a></li>
+			</cfif>
 		</ul>
-		
+
 		<!--- Users --->
 		<cfif isadmin OR (structkeyexists(tabaccess_struct,"users_access") AND tabaccess_struct.users_access)>
 			<div id="admin_users"></div>
@@ -244,6 +248,10 @@
 		<!--- Approval --->
 		<cfif isadmin>
 			<div id="approval"></div>
+		</cfif>
+		<!--- UPC --->
+		<cfif isadmin>
+			<div id="upc"></div>
 		</cfif>
 	</div>
 	<!--- <div style="float:right;"><a href="##" onclick="destroywindow(1);return false;">#myFusebox.getApplicationData().defaults.trans("scheduler_close_cap")#</a></div> --->

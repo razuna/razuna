@@ -882,12 +882,16 @@
 
 <cffunction name="removeaudiomany" output="true">
 	<cfargument name="thestruct" type="struct">
-	<cfset arguments.thestruct.file_id = session.file_id>
+	<!--- <cfset arguments.thestruct.file_id = session.file_id>
 	<cfset arguments.thestruct.hostdbprefix = session.hostdbprefix>
-	<cfset arguments.thestruct.theuserid = session.theuserid>
-	<cfthread intstruct="#arguments.thestruct#">
-		<cfinvoke method="removeaudiomanythread" thestruct="#attributes.intstruct#" />
-	</cfthread>
+	<cfset arguments.thestruct.theuserid = session.theuserid> --->
+	<!--- Set Params --->
+	<cfset session.hostdbprefix = arguments.thestruct.hostdbprefix>
+	<cfset session.hostid = arguments.thestruct.hostid>
+	<cfset session.theuserid = arguments.thestruct.theuserid>
+	<!--- <cfthread intstruct="#arguments.thestruct#"> --->
+		<cfinvoke method="removeaudiomanythread" thestruct="#arguments.thestruct#" />
+	<!--- </cfthread> --->
 	<cfreturn />
 </cffunction>
 
@@ -895,9 +899,9 @@
 <cffunction name="removeaudiomanythread" output="false" access="public">
 	<cfargument name="thestruct" type="struct">
 	<!--- Set Params --->
-	<cfset session.hostdbprefix = arguments.thestruct.hostdbprefix>
+	<!--- <cfset session.hostdbprefix = arguments.thestruct.hostdbprefix>
 	<cfset session.hostid = arguments.thestruct.hostid>
-	<cfset session.theuserid = arguments.thestruct.theuserid>
+	<cfset session.theuserid = arguments.thestruct.theuserid> --->
 	<cfparam name="arguments.thestruct.fromfolderremove" default="false" />
 	<!--- Get storage --->
 	<cfset var qry_storage = "">
@@ -1715,6 +1719,7 @@
 	FROM #session.hostdbprefix#audios
 	WHERE aud_group = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	AND is_available = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">
 	ORDER BY aud_extension
 	</cfquery>
 	<cfreturn qry>

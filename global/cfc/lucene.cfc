@@ -35,11 +35,12 @@
 			<!--- Add to lucene delete table --->
 			<cfquery datasource="#application.razuna.datasource#">
 			INSERT INTO lucene
-			(id, type, host_id)
+			(id, type, host_id, time_stamp)
 			VALUES (
 				<cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">,
 				<cfqueryparam value="#arguments.category#" cfsqltype="CF_SQL_VARCHAR">,
-				<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+				<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">
 			)
 			</cfquery>
 			<cfcatch type="any">

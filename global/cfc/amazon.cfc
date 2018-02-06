@@ -166,7 +166,7 @@
 		<!--- Create object --->
 		<cfset var renobj = createObject("component","global.cfc.s3").init(accessKeyId=application.razuna.awskey,secretAccessKey=application.razuna.awskeysecret,storagelocation = application.razuna.awslocation)>
 		<!--- Rename --->
-		<cfset renobj.renameObject(oldBucketName='#attributes.intstruct.awsbucket#', newBucketName ="#attributes.intstruct.awsbucket#", oldFileKey = "#attributes.intstruct.qryfile.folder_id#/img/#attributes.intstruct.newid#/#attributes.intstruct.qryfile.filename#",  newFileKey = "#attributes.intstruct.qryfile.folder_id#/img/#attributes.intstruct.newid#/#attributes.intstruct.image_name#.#attributes.intstruct.qryfile.extension#")>
+		<cfset renobj.renameObject(oldBucketName='#arguments.oldBucketName#', newBucketName ="#arguments.newBucketName#", oldFileKey = "#arguments.oldFileKey#",  newFileKey = "#arguments.newFileKey#")>
 		<!--- Return --->
 		<cfreturn />
 	</cffunction>
@@ -270,6 +270,14 @@
 		<cfargument name="tenant_bucket" type="string" required="false" />
 		<cfargument name="config" type="query" required="false" />
 		<cfargument name="from_cron" type="string" required="false" default="false" />
+
+		<!--- If config does not exits --->
+		<cfif !structKeyExists(arguments, "config")>
+			<cfquery datasource="razuna_default" name="arguments.config">
+			SELECT conf_aws_access_key, conf_aws_secret_access_key, conf_aws_location
+			FROM razuna_config
+			</cfquery>
+		</cfif>
 
 		<cfset var _s3ds = getDataSource( from_cron=arguments.from_cron, conf_aws_access_key=arguments.config.conf_aws_access_key, conf_aws_secret_access_key=arguments.config.conf_aws_secret_access_key, conf_aws_location=arguments.config.conf_aws_location )>
 

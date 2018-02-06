@@ -587,6 +587,7 @@
 			id 				varchar(100) DEFAULT NULL,
 			type 			varchar(10) DEFAULT NULL,
 			host_id 		int DEFAULT NULL,
+			time_stamp 		datetime,
 			PRIMARY KEY (id)
 		) 
 		</cfquery>
@@ -2560,6 +2561,35 @@
 			approval_date 	datetime null default null,
 			file_id 		varchar(100) default null
 		) 
+		</cfquery>
+
+		<!--- UPC --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#upc_template (
+		upc_temp_id 		varchar(100),
+  		upc_date_create	 	datetime,
+  		upc_date_update		datetime,
+  		upc_who				varchar(100),
+  		upc_active 			varchar(1) DEFAULT '0',
+  		host_id				int,
+  		upc_name			varchar(200),
+  		upc_description 	varchar(2000),
+  		PRIMARY KEY (upc_temp_id)
+		)
+		#this.tableoptions#
+		</cfquery>
+		
+		<!--- UPC --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#upc_template_val (
+  		upc_temp_id_r		varchar(100),
+  		rec_uuid			varchar(100),
+  		upc_field			varchar(200),
+  		upc_is_original		boolean default '0',
+  		host_id				int,
+  		PRIMARY KEY (upc_temp_id_r)
+		)
+		#this.tableoptions#
 		</cfquery>
 
 	</cffunction>

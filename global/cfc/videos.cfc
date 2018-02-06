@@ -509,6 +509,7 @@
 	FROM #session.hostdbprefix#videos v
 	WHERE v.vid_group = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 	AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	AND v.is_available = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">
 	ORDER BY vid_extension
 	</cfquery>
 	<cfreturn qry>
@@ -1819,38 +1820,6 @@
 					<!--- Move still image --->
 					<cffile action="move" source="#thisfolder#/#previewimage#" destination="#arguments.thestruct.assetpath#/#session.hostid#/#arguments.thestruct.qrydetail.folder_id_r#/vid/#arguments.thestruct.newid#" mode="775">
 					<cfthread name="uploadconvert#ttexe##theformat#" intstruct="#arguments.thestruct#"></cfthread>
-				<!--- Nirvanix --->
-				<cfelseif application.razuna.storage EQ "nirvanix">
-					<!--- Set params for thread --->
-					<cfset arguments.thestruct.thispreviewimage = thispreviewimage>
-					<cfset arguments.thestruct.previewimage = previewimage>
-					<cfset arguments.thestruct.previewvideo = previewvideo>
-					<!--- IMAGEMAGICK: copy over the existing still image and resize --->
-					<cfexecute name="#theimexe#" arguments="#inputpathimage# -resize #thewidth#x#theheight# #thispreviewimage#" timeout="5" />
-					<!--- Copy the video image --->
-					<cfthread name="uploadconvertc#ttexe##theformat#" intstruct="#arguments.thestruct#">
-						<cfinvoke component="nirvanix" method="Upload">
-							<cfinvokeargument name="destFolderPath" value="/#attributes.intstruct.qrydetail.folder_id_r#/vid/#attributes.intstruct.newid#">
-							<cfinvokeargument name="uploadfile" value="#attributes.intstruct.thispreviewimage#">
-							<cfinvokeargument name="nvxsession" value="#attributes.intstruct.nvxsession#">
-						</cfinvoke>
-					</cfthread>
-					<!--- Wait for this thread to finish --->
-					<cfthread action="join" name="uploadconvertc#ttexe##theformat#" />
-					<!--- Upload: Video --->
-					<cfthread name="uploadconvertu#ttexe##theformat#" intstruct="#arguments.thestruct#">
-						<cfinvoke component="nirvanix" method="Upload">
-							<cfinvokeargument name="destFolderPath" value="/#attributes.intstruct.qrydetail.folder_id_r#/vid/#attributes.intstruct.newid#">
-							<cfinvokeargument name="uploadfile" value="#attributes.intstruct.this_folder#/#attributes.intstruct.previewvideo#">
-							<cfinvokeargument name="nvxsession" value="#attributes.intstruct.nvxsession#">
-						</cfinvoke>
-					</cfthread>
-					<!--- Wait for this thread to finish --->
-					<cfthread action="join" name="uploadconvertu#ttexe##theformat#" />
-					<!--- Get signed URLS --->
-					<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url" theasset="#arguments.thestruct.qrydetail.folder_id_r#/vid/#arguments.thestruct.newid#/#arguments.thestruct.previewimage#" nvxsession="#arguments.thestruct.nvxsession#">
-					<!--- Get signed URLS --->
-					<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url_org" theasset="#arguments.thestruct.qrydetail.folder_id_r#/vid/#arguments.thestruct.newid#/#arguments.thestruct.previewvideo#" nvxsession="#arguments.thestruct.nvxsession#">
 				<!--- Amazon --->
 				<cfelseif application.razuna.storage EQ "amazon">
 					<!--- Set params for thread --->
@@ -1869,8 +1838,8 @@
 						</cfinvoke>
 						<!--- Upload: Still Image --->
 						<cfinvoke component="amazon" method="Upload">
-							<cfinvokeargument name="key" value="/#attributes.intstruct.qrydetail.folder_id_r#/vid/#attributes.intstruct.newid#/#attributes.intstruct.thispreviewimage#">
-							<cfinvokeargument name="theasset" value="#attributes.intstruct.this_folder#/#attributes.intstruct.previewimage#">
+							<cfinvokeargument name="key" value="/#attributes.intstruct.qrydetail.folder_id_r#/vid/#attributes.intstruct.newid#/#attributes.intstruct.previewimage#">
+							<cfinvokeargument name="theasset" value="#attributes.intstruct.thispreviewimage#">
 							<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
 						</cfinvoke>
 					</cfthread>

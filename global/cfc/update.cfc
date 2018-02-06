@@ -204,6 +204,12 @@
 				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
 			</cftry>
 			<cftry>
+				<cfquery datasource="razuna_default">
+				ALTER TABLE lucene add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> time_stamp #thetimestamp#
+				</cfquery>
+				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+			</cftry>
+			<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
 				ALTER TABLE news add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> news_excerpt #thevarchar#(2000) DEFAULT NULL
 				</cfquery>
@@ -212,6 +218,34 @@
 			<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
 				ALTER TABLE news add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> news_frontpage #theboolean# DEFAULT '0'
+				</cfquery>
+				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+			</cftry>
+			<!--- UPC --->
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+				CREATE TABLE raz1_upc_template (
+				upc_temp_id 		#thevarchar#(100),
+		  		upc_date_create	 	#thetimestamp#,
+		  		upc_date_update		#thetimestamp#,
+		  		upc_who				#thevarchar#(100),
+		  		upc_active 			#thevarchar#(1) DEFAULT '0',
+		  		host_id				#theint#,
+		  		upc_name			#thevarchar#(200),
+		  		upc_description 	#thevarchar#(2000)
+				) #tableoptions#
+				</cfquery>
+				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+			</cftry>
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+				CREATE TABLE raz1_upc_template_val (
+				upc_temp_id_r 		#thevarchar#(100),
+		  		rec_uuid			#thevarchar#(100),
+		  		upc_field 			#thevarchar#(200),
+		  		upc_is_original		#theboolean# DEFAULT '0',
+		  		host_id				#theint#
+				) #tableoptions#
 				</cfquery>
 				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
 			</cftry>

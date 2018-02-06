@@ -925,6 +925,15 @@
 		<include template="dsp_admin_approval" />
 	</fuseaction>
 
+	<!-- Admin UPC -->
+	<fuseaction name="admin_upc">
+		<include template="dsp_admin_settings_upc" />
+	</fuseaction>
+	<!-- Admin UPC Template -->
+	<fuseaction name="admin_upc_template">
+		<include template="dsp_admin_upc_template" />
+	</fuseaction>
+
 	<!-- Staging -->
 	<fuseaction name="staging">
 		<include template="dsp_staging" />

@@ -42,7 +42,7 @@
 				<td colspan="2"><br /></td>
 			</tr>
 			<!--- UPC Enabled --->
-			<tr>
+			<!--- <tr>
 				<th class="textbold" colspan="2">#myFusebox.getApplicationData().defaults.trans("upc_enabled")#</th>
 			</tr>
 			<tr>
@@ -54,7 +54,7 @@
 			
 				<tr class="list">
 					<td colspan="2"><br /></td>
-				</tr>
+				</tr> --->
 
 			<!--- Image Settings --->
 			<tr>

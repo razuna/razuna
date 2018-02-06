@@ -373,11 +373,12 @@
 			<!--- Add to lucene delete table --->
 			<cfquery datasource="#_db#">
 			INSERT INTO lucene
-			(id, type, host_id)
+			(id, type, host_id, time_stamp)
 			VALUES (
 				<cfqueryparam value="#arguments.file_data.id#" cfsqltype="CF_SQL_VARCHAR">,
 				<cfqueryparam value="#arguments.category#" cfsqltype="CF_SQL_VARCHAR">,
-				<cfqueryparam value="#arguments.host_id#" cfsqltype="cf_sql_numeric">
+				<cfqueryparam value="#arguments.host_id#" cfsqltype="cf_sql_numeric">,
+				<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">
 			)
 			</cfquery>
 			<!--- Delete File --->

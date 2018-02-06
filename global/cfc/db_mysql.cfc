@@ -491,8 +491,12 @@
 			id 				varchar(100),
 			type 			varchar(10) DEFAULT NULL,
 			host_id 		int DEFAULT NULL,
-			PRIMARY KEY (id)
-		)
+			time_stamp 		timestamp,
+			PRIMARY KEY (id),
+			KEY l_type_idx (type),
+			KEY l_host_id_idx (host_id),
+			KEY l_rime_stamp_idx (time_stamp)
+		) #this.tableoptions#
 		</cfquery>
 
 
@@ -2764,6 +2768,37 @@
 			user_id 		varchar(100) default null,
 			approval_date 	timestamp null default null,
 			file_id 		varchar(100) default null
+		)
+		#this.tableoptions#
+		</cfquery>
+
+		<!--- UPC --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#upc_template (
+		upc_temp_id 		varchar(100),
+  		upc_date_create	 	timestamp,
+  		upc_date_update		timestamp,
+  		upc_who				varchar(100),
+  		upc_active 			varchar(1) DEFAULT '0',
+  		host_id				int,
+  		upc_name			varchar(200),
+  		upc_description 	varchar(2000),
+  		PRIMARY KEY (upc_temp_id)
+		)
+		#this.tableoptions#
+		</cfquery>
+		
+		<!--- UPC --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#upc_template_val (
+  		upc_temp_id_r		varchar(100),
+  		rec_uuid			varchar(100),
+  		upc_field			varchar(200),
+  		upc_is_original		boolean default '0',
+  		host_id				int,
+  		PRIMARY KEY (upc_temp_id_r),
+  		key #arguments.thestruct.host_db_prefix#upc_field (upc_field),
+  		key #arguments.thestruct.host_db_prefix#upc_is_original (upc_is_original)
 		)
 		#this.tableoptions#
 		</cfquery>
