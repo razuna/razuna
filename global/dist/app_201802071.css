@@ -3076,9 +3076,9 @@ font-weight: bold;
 .ui-dialog .ui-dialog-titlebar-close {
 	top: 10%;
 }
-.chosen-container-multi .chosen-choices { 
+.chosen-container-multi .chosen-choices {
 	overflow: auto;
- } 
+ }
 
 /* Choose label updates*/
 .labelRemove{
@@ -3105,7 +3105,7 @@ font-weight: bold;
 	padding: 3px 20px 3px 5px;
 	position: relative;
 	float:left;
- } 
+ }
  .labelContainer{
 	-moz-box-sizing: border-box;
 	background-color: #FFFFFF;
@@ -3183,7 +3183,7 @@ font-weight: bold;
 }
 
 /* Override width */
-.chzn-container { 
+.chzn-container {
 	width: 250px !important;
 }
 
@@ -3204,15 +3204,15 @@ a:link .nolink{text-decoration: none;}
 }
 
 .grid-masonry-item {
-	width: 20%;
-	/* max-width: 180px;
-	min-height: 230px; */
+	/* width: 20%; */
+	max-width: 180px;
+	min-height: 230px;
 	/* margin-bottom: 10px; */
 	/* float: left; */
 }
 .grid-masonry-folder {
-	/* width: 120px; */
-	width: 20%;
+	max-width: 120px;
+	/* width: 20%; */
 }
 
 .white-popup {
