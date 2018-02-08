@@ -1289,6 +1289,8 @@
 		<cfset cloud_url_org.newepoch = 0>
 		<cfparam name="arguments.thestruct.upl_template" default="0">
 		<cfparam name="arguments.thestruct.link_kind" default="">
+		<cfparam name="arguments.thestruct.save_renditions" default="true">
+		<cfparam name="arguments.thestruct.renditions_on_the_fly" default="false">
 		<!--- Get Tools --->
 		<cfinvoke component="settings" method="get_tools" returnVariable="arguments.thestruct.thetools" />
 		<!--- Go grab the platform --->
@@ -1409,14 +1411,6 @@
 			<!--- Create a new ID for the audio --->
 			<cfset var newid = structnew()>
 			<cfset newid.id = createuuid("")>
-			<cfquery datasource="#application.razuna.datasource#">
-			INSERT INTO #session.hostdbprefix#audios
-			(aud_id, host_id)
-			VALUES(
-			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#newid.id#">,
-			<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-			)
-			</cfquery>
 			<!--- If from upload templates --->
 			<cfif arguments.thestruct.upl_template NEQ 0 AND arguments.thestruct.upl_template NEQ "undefined"  AND arguments.thestruct.upl_template NEQ "">
 				<cfquery datasource="#application.razuna.datasource#" name="qry_b">
@@ -1512,11 +1506,13 @@
 				</cfif>
 				<!--- Storage: Local --->
 				<cfif application.razuna.storage EQ "local">
+					<!--- For Renditions on the fly we just copy the files instead of move --->
+					<cfset var _file_action = arguments.thestruct.renditions_on_the_fly ? 'copy' : 'move'>
 					<!--- Now move the files to its own folder --->
 					<!--- Create folder first --->
 					<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#arguments.thestruct.qry_detail.detail.folder_id_r#/aud/#newid.id#" mode="775">
 					<!--- Move Audio --->
-					<cffile action="move" source="#thisfolder#/#finalaudioname#" destination="#arguments.thestruct.assetpath#/#session.hostid#/#arguments.thestruct.qry_detail.detail.folder_id_r#/aud/#newid.id#" mode="775">
+					<cffile action="#_file_action#" source="#thisfolder#/#finalaudioname#" destination="#arguments.thestruct.assetpath#/#session.hostid#/#arguments.thestruct.qry_detail.detail.folder_id_r#/aud/#newid.id#" mode="775">
 					<cfthread name="uploadconvert#newid.id#"></cfthread>
 				<!--- Nirvanix --->
 				<cfelseif application.razuna.storage EQ "nirvanix">
@@ -1569,130 +1565,150 @@
 					<!--- Wait for this thread to finish --->
 					<cfthread action="join" name="uploadconvert#newid.id#" />
 				</cfif>
-				<!--- Add to shared options --->
-				<cfquery datasource="#application.razuna.datasource#">
-				INSERT INTO #session.hostdbprefix#share_options
-				(asset_id_r, host_id, group_asset_id, folder_id_r, asset_type, asset_format, asset_dl, asset_order, rec_uuid)
-				VALUES(
-				<cfqueryparam value="#newid.id#" cfsqltype="CF_SQL_VARCHAR">,
-				<cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric">,
-				<cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">,
-				<cfqueryparam value="#arguments.thestruct.qry_detail.detail.folder_id_r#" cfsqltype="CF_SQL_VARCHAR">,
-				<cfqueryparam value="aud" cfsqltype="cf_sql_varchar">,
-				<cfqueryparam value="#newid.id#" cfsqltype="cf_sql_varchar">,
-				<cfqueryparam value="1" cfsqltype="cf_sql_varchar">,
-				<cfqueryparam value="1" cfsqltype="cf_sql_varchar">,
-				<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
-				)
-				</cfquery>
 
-				<!--- Check if UPC criterion is satisfied and needs to be enabled--->
-				<cfinvoke component="global" method="isUPC" returnvariable="upcstruct">
-					<cfinvokeargument name="folder_id" value="#arguments.thestruct.qry_detail.detail.folder_id_r#"/>
-				</cfinvoke>
-				<!--- If UPC is enabled then rename rendition according to UPC naming convention --->
-				 <cfif upcstruct.upcenabled>
-				 	<cfset var get_upc ="">
-				 	<!--- Get UPC number for asset  from database --->
-					<cfquery datasource="#application.razuna.datasource#" name="get_upc">
-						SELECT aud_upc_number as upcnumber FROM  #session.hostdbprefix#audios
-						WHERE aud_id =
-						 <cfif isDefined('arguments.thestruct.aud_group_id') AND arguments.thestruct.aud_group_id NEQ ''>
-							<cfqueryparam value="#arguments.thestruct.aud_group_id#" cfsqltype="cf_sql_varchar">
-						<cfelse>
-							<cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
-						</cfif>
+				<cfif arguments.thestruct.save_renditions>
+					<cfquery datasource="#application.razuna.datasource#">
+					INSERT INTO #session.hostdbprefix#audios
+					(aud_id, host_id)
+					VALUES(
+					<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#newid.id#">,
+					<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					)
 					</cfquery>
 
-					<cfinvoke component="global" method="ExtractUPCInfo" returnvariable="upcinfo">
-						<cfinvokeargument name="upcnumber" value="#get_upc.upcnumber#"/>
-						<cfinvokeargument name="upcgrpsize" value="#upcstruct.upcgrpsize#"/>
+					<!--- Add to shared options --->
+					<cfquery datasource="#application.razuna.datasource#">
+					INSERT INTO #session.hostdbprefix#share_options
+					(asset_id_r, host_id, group_asset_id, folder_id_r, asset_type, asset_format, asset_dl, asset_order, rec_uuid)
+					VALUES(
+					<cfqueryparam value="#newid.id#" cfsqltype="CF_SQL_VARCHAR">,
+					<cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric">,
+					<cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">,
+					<cfqueryparam value="#arguments.thestruct.qry_detail.detail.folder_id_r#" cfsqltype="CF_SQL_VARCHAR">,
+					<cfqueryparam value="aud" cfsqltype="cf_sql_varchar">,
+					<cfqueryparam value="#newid.id#" cfsqltype="cf_sql_varchar">,
+					<cfqueryparam value="1" cfsqltype="cf_sql_varchar">,
+					<cfqueryparam value="1" cfsqltype="cf_sql_varchar">,
+					<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
+					)
+					</cfquery>
+
+					<!--- Check if UPC criterion is satisfied and needs to be enabled--->
+					<cfinvoke component="global" method="isUPC" returnvariable="upcstruct">
+						<cfinvokeargument name="folder_id" value="#arguments.thestruct.qry_detail.detail.folder_id_r#"/>
 					</cfinvoke>
-				</cfif>
-
-				<!--- Update the audio record with other information --->
-				<cfquery datasource="#application.razuna.datasource#">
-				UPDATE #session.hostdbprefix#audios
-				SET
-				<cfif isDefined('arguments.thestruct.aud_group_id') AND arguments.thestruct.aud_group_id NEQ ''>
-					aud_group = <cfqueryparam value="#arguments.thestruct.aud_group_id#" cfsqltype="cf_sql_varchar">,
-				<cfelse>
-					aud_group = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">,
-				</cfif>
-				<!--- If UPC is enabled and product string is numeric then change filename --->
-				aud_name = 	<cfif upcstruct.upcenabled and isNumeric(upcinfo.upcprodstr)>
-							<cfqueryparam value="#upcinfo.upcprodstr#.#theformat#" cfsqltype="cf_sql_varchar">
-						<cfelse>
-							<cfqueryparam value="#finalaudioname#" cfsqltype="cf_sql_varchar">
-						</cfif>,
-				aud_owner = <cfqueryparam value="#session.theuserid#" cfsqltype="CF_SQL_VARCHAR">,
-				aud_create_date = <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">,
-				aud_change_date = <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">,
-				aud_create_time = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
-				aud_change_time = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
-				aud_extension = <cfqueryparam value="#theformat#" cfsqltype="cf_sql_varchar">,
-				aud_name_org = <cfqueryparam cfsqltype="cf_sql_varchar" value="#finalaudioname#">,
-				folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.qry_detail.detail.folder_id_r#">,
-			 	aud_size = <cfqueryparam cfsqltype="cf_sql_varchar" value="#orgsize#">,
-			 	path_to_asset = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.qry_detail.detail.folder_id_r#/aud/#newid.id#">,
-			 	cloud_url_org = <cfqueryparam value="#cloud_url_org.theurl#" cfsqltype="cf_sql_varchar">,
-				cloud_url_exp = <cfqueryparam value="#cloud_url_org.newepoch#" cfsqltype="CF_SQL_NUMERIC">,
-				is_available = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">,
-				hashtag = <cfqueryparam value="#md5hash#" cfsqltype="cf_sql_varchar">
-				WHERE aud_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#newid.id#">
-				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				</cfquery>
-				<!--- RAZ-2837 : Copy/Update original file's metadata to rendition --->
-				<cfif structKeyExists(arguments.thestruct,'option_rendition_meta') AND arguments.thestruct.option_rendition_meta EQ 'true'>
-					<!--- Get descriptions and keywords  --->
-					<cfquery datasource="#application.razuna.datasource#" name="qry_theaudtxt">
-						SELECT lang_id_r,aud_description as thedesc,aud_keywords as thekeys
-						FROM #session.hostdbprefix#audios_text
-						WHERE aud_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.file_id#">
-						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-					</cfquery>
-					<cfif qry_theaudtxt.recordcount neq 0>
-						<!--- Add to descriptions and keywords--->
-						<cfquery datasource="#application.razuna.datasource#">
-							INSERT INTO #session.hostdbprefix#audios_text
-							(id_inc, aud_id_r, lang_id_r, aud_description, aud_keywords, host_id)
-							VALUES(
-							<cfqueryparam value="#createuuid()#" cfsqltype="CF_SQL_VARCHAR">,
-							<cfqueryparam value="#newid.id#" cfsqltype="CF_SQL_VARCHAR">,
-							<cfqueryparam value="#qry_theaudtxt.lang_id_r#" cfsqltype="cf_sql_numeric">,
-							<cfqueryparam value="#ltrim(qry_theaudtxt.thedesc)#" cfsqltype="cf_sql_varchar">,
-							<cfqueryparam value="#ltrim(qry_theaudtxt.thekeys)#" cfsqltype="cf_sql_varchar">,
-							<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-							)
+					<!--- If UPC is enabled then rename rendition according to UPC naming convention --->
+					 <cfif upcstruct.upcenabled>
+					 	<cfset var get_upc ="">
+					 	<!--- Get UPC number for asset  from database --->
+						<cfquery datasource="#application.razuna.datasource#" name="get_upc">
+							SELECT aud_upc_number as upcnumber FROM  #session.hostdbprefix#audios
+							WHERE aud_id =
+							 <cfif isDefined('arguments.thestruct.aud_group_id') AND arguments.thestruct.aud_group_id NEQ ''>
+								<cfqueryparam value="#arguments.thestruct.aud_group_id#" cfsqltype="cf_sql_varchar">
+							<cfelse>
+								<cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
+							</cfif>
 						</cfquery>
+
+						<cfinvoke component="global" method="ExtractUPCInfo" returnvariable="upcinfo">
+							<cfinvokeargument name="upcnumber" value="#get_upc.upcnumber#"/>
+							<cfinvokeargument name="upcgrpsize" value="#upcstruct.upcgrpsize#"/>
+						</cfinvoke>
 					</cfif>
-					<cfif structKeyExists(arguments.thestruct,'qry_cf') AND arguments.thestruct.qry_cf.recordcount NEQ 0>
-						<cfloop query="arguments.thestruct.qry_cf">
+
+					<!--- Update the audio record with other information --->
+					<cfquery datasource="#application.razuna.datasource#">
+					UPDATE #session.hostdbprefix#audios
+					SET
+					<cfif isDefined('arguments.thestruct.aud_group_id') AND arguments.thestruct.aud_group_id NEQ ''>
+						aud_group = <cfqueryparam value="#arguments.thestruct.aud_group_id#" cfsqltype="cf_sql_varchar">,
+					<cfelse>
+						aud_group = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">,
+					</cfif>
+					<!--- If UPC is enabled and product string is numeric then change filename --->
+					aud_name = 	<cfif upcstruct.upcenabled and isNumeric(upcinfo.upcprodstr)>
+								<cfqueryparam value="#upcinfo.upcprodstr#.#theformat#" cfsqltype="cf_sql_varchar">
+							<cfelse>
+								<cfqueryparam value="#finalaudioname#" cfsqltype="cf_sql_varchar">
+							</cfif>,
+					aud_owner = <cfqueryparam value="#session.theuserid#" cfsqltype="CF_SQL_VARCHAR">,
+					aud_create_date = <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">,
+					aud_change_date = <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">,
+					aud_create_time = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
+					aud_change_time = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
+					aud_extension = <cfqueryparam value="#theformat#" cfsqltype="cf_sql_varchar">,
+					aud_name_org = <cfqueryparam cfsqltype="cf_sql_varchar" value="#finalaudioname#">,
+					folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.qry_detail.detail.folder_id_r#">,
+				 	aud_size = <cfqueryparam cfsqltype="cf_sql_varchar" value="#orgsize#">,
+				 	path_to_asset = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.qry_detail.detail.folder_id_r#/aud/#newid.id#">,
+				 	cloud_url_org = <cfqueryparam value="#cloud_url_org.theurl#" cfsqltype="cf_sql_varchar">,
+					cloud_url_exp = <cfqueryparam value="#cloud_url_org.newepoch#" cfsqltype="CF_SQL_NUMERIC">,
+					is_available = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">,
+					hashtag = <cfqueryparam value="#md5hash#" cfsqltype="cf_sql_varchar">
+					WHERE aud_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#newid.id#">
+					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					</cfquery>
+					<!--- RAZ-2837 : Copy/Update original file's metadata to rendition --->
+					<cfif structKeyExists(arguments.thestruct,'option_rendition_meta') AND arguments.thestruct.option_rendition_meta EQ 'true'>
+						<!--- Get descriptions and keywords  --->
+						<cfquery datasource="#application.razuna.datasource#" name="qry_theaudtxt">
+							SELECT lang_id_r,aud_description as thedesc,aud_keywords as thekeys
+							FROM #session.hostdbprefix#audios_text
+							WHERE aud_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.file_id#">
+							AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+						</cfquery>
+						<cfif qry_theaudtxt.recordcount neq 0>
+							<!--- Add to descriptions and keywords--->
 							<cfquery datasource="#application.razuna.datasource#">
-								INSERT INTO #session.hostdbprefix#custom_fields_values
-								(cf_id_r, asset_id_r, cf_value, host_id, rec_uuid)
+								INSERT INTO #session.hostdbprefix#audios_text
+								(id_inc, aud_id_r, lang_id_r, aud_description, aud_keywords, host_id)
 								VALUES(
-								<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#cf_id#">,
-								<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#newid.id#">,
-								<cfqueryparam cfsqltype="cf_sql_varchar" value="#cf_value#">,
-								<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
-								<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
+								<cfqueryparam value="#createuuid()#" cfsqltype="CF_SQL_VARCHAR">,
+								<cfqueryparam value="#newid.id#" cfsqltype="CF_SQL_VARCHAR">,
+								<cfqueryparam value="#qry_theaudtxt.lang_id_r#" cfsqltype="cf_sql_numeric">,
+								<cfqueryparam value="#ltrim(qry_theaudtxt.thedesc)#" cfsqltype="cf_sql_varchar">,
+								<cfqueryparam value="#ltrim(qry_theaudtxt.thekeys)#" cfsqltype="cf_sql_varchar">,
+								<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 								)
 							</cfquery>
-						</cfloop>
+						</cfif>
+						<cfif structKeyExists(arguments.thestruct,'qry_cf') AND arguments.thestruct.qry_cf.recordcount NEQ 0>
+							<cfloop query="arguments.thestruct.qry_cf">
+								<cfquery datasource="#application.razuna.datasource#">
+									INSERT INTO #session.hostdbprefix#custom_fields_values
+									(cf_id_r, asset_id_r, cf_value, host_id, rec_uuid)
+									VALUES(
+									<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#cf_id#">,
+									<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#newid.id#">,
+									<cfqueryparam cfsqltype="cf_sql_varchar" value="#cf_value#">,
+									<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+									<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
+									)
+								</cfquery>
+							</cfloop>
+						</cfif>
 					</cfif>
+					<!--- Call Plugins --->
+					<cfset arguments.thestruct.fileid = newid.id>
+					<cfset arguments.thestruct.file_name = finalaudioname>
+					<cfset arguments.thestruct.folder_id = arguments.thestruct.qry_detail.detail.folder_id_r>
+					<cfset arguments.thestruct.thefiletype = "aud">
+					<cfset arguments.thestruct.folder_action = false>
+					<!--- Check on any plugin that call the on_rendition_add action --->
+					<cfinvoke component="plugins" method="getactions" theaction="on_rendition_add" args="#arguments.thestruct#" />
 				</cfif>
+
 				<!--- Log --->
 				<cfinvoke component="defaults" method="trans" transid="converted" returnvariable="converted" />
 				<cfset log_assets(theuserid=session.theuserid,logaction='Convert',logdesc='#converted#: #arguments.thestruct.qry_detail.detail.aud_name# to #finalaudioname#',logfiletype='aud',assetid='#arguments.thestruct.file_id#',folderid='#arguments.thestruct.qry_detail.detail.folder_id_r#')>
-				<!--- Call Plugins --->
-				<cfset arguments.thestruct.fileid = newid.id>
-				<cfset arguments.thestruct.file_name = finalaudioname>
-				<cfset arguments.thestruct.folder_id = arguments.thestruct.qry_detail.detail.folder_id_r>
-				<cfset arguments.thestruct.thefiletype = "aud">
-				<cfset arguments.thestruct.folder_action = false>
-				<!--- Check on any plugin that call the on_rendition_add action --->
-				<cfinvoke component="plugins" method="getactions" theaction="on_rendition_add" args="#arguments.thestruct#" />
+
+				<!--- For renditions on the fly we move all the renditons into a folder --->
+				<cfif arguments.thestruct.renditions_on_the_fly>
+					<cfset var _file = "#finalaudioname#">
+					<cffile action="move" source="#thisfolder#/#_file#" destination="#arguments.thestruct.renditions_on_the_fly_folder#/#_file#" mode="775">
+				</cfif>
+
 			</cfif>
 		</cfloop>
 		<!--- Flush Cache --->

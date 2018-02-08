@@ -1873,12 +1873,18 @@
 	<cffunction name="createRenditions" output="true" access="public">
 		<cfargument name="thestruct" type="struct">
 		<!--- <cfset consoleoutput(true)>
-		<cfset console(arguments.thestruct)>
-		<cfset console(session.file_id)> --->
+		<cfset console(arguments.thestruct)> --->
 
 		<cfparam name="arguments.thestruct.convert_img" default="">
 		<cfparam name="arguments.thestruct.convert_vid" default="">
 		<cfparam name="arguments.thestruct.convert_aud" default="">
+		<cfparam name="arguments.thestruct.renditions_on_the_fly" default="true">
+		<cfparam name="arguments.thestruct.renditions_on_the_fly_id" default="#createuuid()#">
+		<cfparam name="arguments.thestruct.renditions_on_the_fly_folder" default="#arguments.thestruct.thepath#/incoming/#arguments.thestruct.renditions_on_the_fly_id#">
+
+		<!--- Create folder for ZIP --->
+		<!--- Create the temp folder in the incoming dir --->
+		<cfdirectory action="create" directory="#arguments.thestruct.renditions_on_the_fly_folder#" mode="775">
 
 		<!--- Feedback --->
 		<cfoutput><h2>Creating your renditions now</h2><br></cfoutput>
@@ -2031,7 +2037,32 @@
 			<cfoutput><h2 style="color:red;">I did not receive any formats to convert!</h2><br></cfoutput>
 			<cfflush>
 		<cfelse>
-			<cfoutput><h2 style="color:green;">All renditions are now available!</h2><br></cfoutput>
+
+			<!--- Create a ZIP for downloading --->
+			<cfoutput><h3>Creating a ZIP for downloading...</h3></cfoutput>
+			<cfflush>
+
+			<cfset var _date = DateTimeFormat( now(), "YMMdd-hhmmss" )>
+			<cfset arguments.thestruct.zipname = "Omnipix_#_date#.zip">
+
+			<!--- Zip the folder --->
+			<cfthread name="#arguments.thestruct.renditions_on_the_fly_id#" intstruct="#arguments.thestruct#">
+				<cfzip action="create" ZIPFILE="#attributes.intstruct.thepath#/outgoing/#attributes.intstruct.zipname#" source="#attributes.intstruct.renditions_on_the_fly_folder#" recurse="true" timeout="300" />
+			</cfthread>
+			<!--- Get thread status --->
+			<cfset var thethread=cfthread["#arguments.thestruct.renditions_on_the_fly_id#"]>
+			<!--- Output to page to prevent it from timing out while thread is running --->
+			<cfloop condition="#thethread.status# EQ 'RUNNING' OR thethread.Status EQ 'NOT_STARTED' "> <!--- Wait till thread is finished --->
+				<cfoutput> . </cfoutput>
+				<cfset sleep(3000)>
+				<cfflush>
+			</cfloop>
+			<cfthread action="join" name="#arguments.thestruct.renditions_on_the_fly_id#" />
+			<!--- Remove the temp folder --->
+			<cfdirectory action="delete" directory="#arguments.thestruct.renditions_on_the_fly_folder#" recurse="yes">
+			<cfset var sn = replacenocase(cgi.script_name,"/index.cfm","","one")>
+			<!--- Output --->
+			<cfoutput><h2 style="color:green;">Renditions are <a href="#session.thehttp##cgi.HTTP_HOST##sn#/outgoing/#arguments.thestruct.zipname#" style="color:green;">now ready for download</a></h2></cfoutput>
 			<cfflush>
 		</cfif>
 

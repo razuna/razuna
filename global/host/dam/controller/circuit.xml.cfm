@@ -10884,6 +10884,7 @@
 		<set name="attributes.dynpath" value="#dynpath#" />
 		<set name="attributes.httphost" value="#cgi.http_host#" />
 		<set name="attributes.rootpath" value="#ExpandPath('../..')#" />
+		<set name="attributes.save_renditions" value="false" overwrite="false" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- Action: Storage -->

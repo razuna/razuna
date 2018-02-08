@@ -59,12 +59,12 @@
 			</cfif>
 			<!--- Padding --->
 			<cfmodule template="../../modules/padding_tr.cfm" colspan="4" padding="15">
-			<!--- <tr>
+			<tr>
 				<td colspan="4">
-					<input type="checkbox" name="save_renditions" value="false">
-					<span>Save renditions</span>
+					<input type="checkbox" name="save_renditions" id="save_renditions" value="true">
+					<span><a href="##" onclick="clickcbk2('save_renditions')" style="text-decoration: none;">Save renditions</a></span>
 				</td>
-			</tr> --->
+			</tr>
 			<!--- Padding --->
 			<cfmodule template="../../modules/padding_tr.cfm" colspan="4" padding="20">
 		</table>
