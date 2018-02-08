@@ -97,8 +97,8 @@
 			<cfset _deleteDocs( file_qry = qry_doc, prefix = host_shard_group, host_id = host_id, host_settings = qry_host_settings )>
 		</cfif>
 
-		<cfinvoke component="global.cfc.global" method="resetCacheExternal" type="search" host_id="#host_id#"/>
-		<cfinvoke component="global.cfc.global" method="resetCacheExternal" type="folders" host_id="#host_id#"/>
+		<cfinvoke component="global.cfc.global" method="resetCacheExternal" type="search" host_id="#host_id#" dataSource="#_db#"/>
+		<cfinvoke component="global.cfc.global" method="resetCacheExternal" type="folders" host_id="#host_id#" dataSource="#_db#"/>
 
 	</cfloop>
 
@@ -165,7 +165,7 @@
 			<cfset _deleteFile(file_data = s, prefix = arguments.prefix, host_id = arguments.host_id, host_settings = arguments.host_settings, category = "img")>
 		</cfloop>
 		<!--- Reset cache --->
-		<cfinvoke component="global.cfc.global" method="resetCacheExternal" type="images" host_id="#arguments.host_id#"/>
+		<cfinvoke component="global.cfc.global" method="resetCacheExternal" type="images" host_id="#arguments.host_id#" dataSource="#_db#" />
 	</cffunction>
 
 	<cffunction name="_deleteVideos">
@@ -231,7 +231,7 @@
 			<cfset _deleteFile(file_data = s, prefix = arguments.prefix, host_id = arguments.host_id, host_settings = arguments.host_settings, category = "vid")>
 		</cfloop>
 		<!--- Reset cache --->
-		<cfinvoke component="global.cfc.global" method="resetCacheExternal" type="videos" host_id="#arguments.host_id#"/>
+		<cfinvoke component="global.cfc.global" method="resetCacheExternal" type="videos" host_id="#arguments.host_id#" dataSource="#_db#"/>
 	</cffunction>
 
 	<cffunction name="_deleteAudios">
@@ -297,7 +297,7 @@
 			<cfset _deleteFile(file_data = s, prefix = arguments.prefix, host_id = arguments.host_id, host_settings = arguments.host_settings, category = "aud")>
 		</cfloop>
 		<!--- Reset cache --->
-		<cfinvoke component="global.cfc.global" method="resetCacheExternal" type="audios" host_id="#arguments.host_id#"/>
+		<cfinvoke component="global.cfc.global" method="resetCacheExternal" type="audios" host_id="#arguments.host_id#" dataSource="#_db#"/>
 	</cffunction>
 
 	<cffunction name="_deleteDocs">
@@ -358,7 +358,7 @@
 			<cfset _deleteFile(file_data = s, prefix = arguments.prefix, host_id = arguments.host_id, host_settings = arguments.host_settings, category = "doc")>
 		</cfloop>
 		<!--- Reset cache --->
-		<cfinvoke component="global.cfc.global" method="resetCacheExternal" type="files" host_id="#arguments.host_id#"/>
+		<cfinvoke component="global.cfc.global" method="resetCacheExternal" type="files" host_id="#arguments.host_id#" dataSource="#_db#"/>
 	</cffunction>
 
 	<!--- Filesytem remove --->

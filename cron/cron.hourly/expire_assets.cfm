@@ -76,7 +76,7 @@
 		<cfset getreset_assets = _resetAssets(datasource=_db, host_id=host_id)>
 		<!--- Reset labels cache if labels have been modified--->
 		<cfif getexpired_assets.recordcount NEQ 0 OR getreset_assets.recordcount NEQ 0>
-			<cfinvoke component="global.cfc.global" method="resetCacheExternal" type="labels" host_id="#host_id#">
+			<cfinvoke component="global.cfc.global" method="resetCacheExternal" type="labels" host_id="#host_id#" dataSource="#_db#">
 		</cfif>
 		<!--- Send email --->
 		<cfset _sendEmail(datasource=_db, host_id=host_id, getuserinfo=getuserinfo, getusers2notify=getusers2notify, dbprefix=host_shard_group)>
