@@ -57,7 +57,7 @@
 	</div>
 	<!--- Fields --->
 	<div id="tab_upc_temp_fields">
-		<div>Define your extension below which should follow the UPC guidelines. For each set you should add only ONE "Original" and all the others will be "Renditions", e.g. "filename.1.tga" (Original), "filename.2.tga" (Rendition), "filename.3.tga" (Rendition).<br><br>You can define as many extensions as you like per template. Remember that UPC only takes effect on folders that are also labeled as "UPC".</div>
+		<div>Define your extension below which should follow the UPC guidelines. For each set you should add only ONE "Original" and all the others will be "Renditions", e.g. "filename.1.tga" (Original), "filename.2.tga" (Rendition), "filename.3.tga" (Rendition). You can also use the LAST "underscorce" as a rendition number, e.g. _v1.jpg, _v2.jpg, _v3.jpg.<br><br>You can define as many extensions as you like per template. Remember that UPC only takes effect on folders that are also labeled as "UPC".</div>
 		<cfmodule template="../../modules/clearfix.cfm" padding="20" />
 		<!--- List the mapped fields --->
 		<cfloop query="qry_detail.template_values">

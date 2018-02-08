@@ -447,11 +447,11 @@
 	// Load renditions
 	function loadren() {
 		<cfif qry_detail.detail.link_kind NEQ "url">
-			$('##relatedimages').load('#myself#c.images_detail_related&file_id=#attributes.file_id#&what=images&loaddiv=#attributes.loaddiv#&folder_id=#qry_detail.detail.folder_id_r#&s=#qry_detail.detail.shared#');
+			$('##relatedimages').load('#myself#c.images_detail_related&file_id=#attributes.file_id#&what=images&loaddiv=#attributes.loaddiv#&folder_id=#qry_detail.detail.folder_id_r#&s=#qry_detail.detail.shared#', function() { $("##bodyoverlay").remove(); });
 		</cfif>
-		$('##additionalversions').load('#myself#c.av_load&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#');
+		$('##additionalversions').load('#myself#c.av_load&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#', function() { $("##bodyoverlay").remove(); });
 		<cfif cs.tab_additional_renditions>
-			$('##moreversions').load('#myself#c.adi_versions&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#&type=#attributes.cf_show#');
+			$('##moreversions').load('#myself#c.adi_versions&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#&type=#attributes.cf_show#', function() { $("##bodyoverlay").remove(); });
 		</cfif>
 	}
 

@@ -33,7 +33,7 @@ function sendtobasket(theform, from){
 	var thekind = '';
    	// If we come from search we need to get the searchids again since we overwrite it with editids
    	if (typeof from !== 'undefined' && from === 'search') {
-   		theids = $('#searchlistids').val(); 
+   		theids = $('#searchlistids').val();
    		thekind = 'search';
    	};
    	// Get values

@@ -3863,8 +3863,8 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 		<cfif ! listfindnocase(thedelete,i)>
 			<cfset fi = listgetat(thefield, listfindnocase(thefield,"field_#i#"))>
 			<cfset se = listgetat(theoriginal, listfindnocase(theoriginal,"original_#i#"))>
-			<cfset fi_value = arguments.thestruct["#fi#"]>
-			<cfset se_value = arguments.thestruct["#se#"]>
+			<cfset fi_value = lcase(arguments.thestruct["#fi#"])>
+			<cfset se_value = lcase(arguments.thestruct["#se#"])>
 			<cfquery datasource="#application.razuna.datasource#">
 			INSERT INTO #session.hostdbprefix#upc_template_val
 			(upc_temp_id_r, host_id, rec_uuid, upc_field, upc_is_original)

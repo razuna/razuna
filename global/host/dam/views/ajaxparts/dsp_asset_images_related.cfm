@@ -24,6 +24,8 @@
 *
 --->
 <cfoutput>
+<!--- <cfdump var="#qry_related#">
+<cfabort> --->
 <cfif qry_related.recordcount NEQ 0>
 	<br />
 	<table border="0" cellpadding="0" cellspacing="0" width="100%">
@@ -34,7 +36,7 @@
 					 <cfset args = structNew()>
 					 <cfset args.thumb_img_id= img_id>
 					 <cfinvoke component="global.cfc.global" method="get_share_options" thestruct="#args#" returnvariable="qry_share_options">
-					 <cfif application.razuna.storage EQ 'local' AND qry_share_options.group_asset_id NEQ ''> 
+					 <cfif application.razuna.storage EQ 'local' AND qry_share_options.group_asset_id NEQ ''>
 					 	<a href="//#cgi.http_host##dynpath#/assets/#session.hostid#/#path_to_asset#/thumb_#qry_share_options.group_asset_id#.#qry_related.thumb_extension#?_v=#hashtag#" target="_blank">
 					 		<img src="//#cgi.http_host##dynpath#/assets/#session.hostid#/#path_to_asset#/thumb_#qry_share_options.group_asset_id#.#qry_related.thumb_extension#?_v=#hashtag#" style="max-height:50px;max-width:100px;">
 					 	</a>
@@ -112,7 +114,10 @@ function remren(id){
 		buttons: {
 			"#myFusebox.getApplicationData().defaults.trans("remove_rend_ok")#": function() {
 				$( this ).dialog( "close" );
-				$('##div_forall').load('#myself#c.images_remove_related&file_id=#attributes.file_id#&what=images&loaddiv=#attributes.loaddiv#&folder_id=#attributes.folder_id#&s=#attributes.s#&id=' + id, function(){ loadren(); });
+				loadoverlay();
+				$('##div_forall').load('#myself#c.images_remove_related&file_id=#attributes.file_id#&what=images&loaddiv=#attributes.loaddiv#&folder_id=#attributes.folder_id#&s=#attributes.s#&id=' + id, function() {
+						loadren();
+					});
 			},
 			"Cancel": function() {
 				$( this ).dialog( "close" );
