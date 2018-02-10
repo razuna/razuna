@@ -1630,6 +1630,10 @@
 	    KEY #arguments.thestruct.host_db_prefix#files_folderid (folder_id_r),
 	    KEY #arguments.thestruct.host_db_prefix#files_is_available (IS_AVAILABLE),
 	    KEY #arguments.thestruct.host_db_prefix#files_expiry_date (EXPIRY_DATE),
+	    KEY #arguments.thestruct.host_db_prefix#aud_trash (in_trash),
+	    KEY #arguments.thestruct.host_db_prefix#aud_indexed (is_indexed),
+	    KEY #arguments.thestruct.host_db_prefix#aud_path_to_asset (path_to_asset),
+	    KEY #arguments.thestruct.host_db_prefix#aud_create_time (file_CREATE_TIME),
 		FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE
 		)
 		#this.tableoptions#
@@ -1720,6 +1724,10 @@
 	  	KEY #arguments.thestruct.host_db_prefix#img_is_available (IS_AVAILABLE),
 	  	KEY #arguments.thestruct.host_db_prefix#img_expiry_date (EXPIRY_DATE),
 	  	KEY #arguments.thestruct.host_db_prefix#img_group (IMG_GROUP),
+	  	KEY #arguments.thestruct.host_db_prefix#img_create_time (img_create_time),
+	  	KEY #arguments.thestruct.host_db_prefix#img_trash (in_trash),
+	  	KEY #arguments.thestruct.host_db_prefix#img_indexed (is_indexed),
+	  	KEY #arguments.thestruct.host_db_prefix#img_path_to_asset (path_to_asset),
 		FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE
 		)
 		#this.tableoptions#
@@ -2149,6 +2157,10 @@
 	    KEY #arguments.thestruct.host_db_prefix#vid_is_available (IS_AVAILABLE),
 	    KEY #arguments.thestruct.host_db_prefix#vid_expiry_date (EXPIRY_DATE),
     	KEY #arguments.thestruct.host_db_prefix#vid_group (VID_GROUP),
+    	KEY #arguments.thestruct.host_db_prefix#vid_trash (in_trash),
+    	KEY #arguments.thestruct.host_db_prefix#vid_path_to_asset (path_to_asset),
+    	KEY #arguments.thestruct.host_db_prefix#vid_create_time (vid_create_time),
+    	KEY #arguments.thestruct.host_db_prefix#vid_indexed (is_indexed),
 		FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE
 		)
 		#this.tableoptions#
@@ -2407,6 +2419,10 @@
      		KEY #arguments.thestruct.host_db_prefix#aud_is_available (IS_AVAILABLE),
      		KEY #arguments.thestruct.host_db_prefix#aud_expiry_date (EXPIRY_DATE),
  			KEY #arguments.thestruct.host_db_prefix#aud_group (AUD_GROUP),
+ 			KEY #arguments.thestruct.host_db_prefix#aud_trash (in_trash),
+ 			KEY #arguments.thestruct.host_db_prefix#aud_indexed (is_indexed),
+ 			KEY #arguments.thestruct.host_db_prefix#aud_path_to_asset (path_to_asset),
+ 			KEY #arguments.thestruct.host_db_prefix#aud_create_time (aud_CREATE_TIME),
 			FOREIGN KEY (HOST_ID) REFERENCES hosts (HOST_ID) ON DELETE CASCADE
 		)
 		#this.tableoptions#
