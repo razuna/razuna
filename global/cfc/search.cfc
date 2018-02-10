@@ -1337,10 +1337,12 @@
 
 		<cfset session.search.searchupc = true>
 
+		<cfset var _search_text = "">
+
 		<!--- Create search criteria --->
 		<cfloop list="#arguments.thestruct.search_upc#" index="single_upc_string">
 			<cfset _search_text = _search_text EQ "" ? '' : _search_text & " OR ">
-			<cfset _search_text = _search_text & "filename:(#single_upc_string#*) OR filename_reverse:(#single_upc_string#*) OR upc:(#single_upc_string#*) OR upc_reverse:(#single_upc_string#*)">
+			<cfset _search_text = _search_text & "filename:(#single_upc_string#*) OR filename_reverse:(#Reverse(single_upc_string)#*) OR upc:(#single_upc_string#*) OR upc_reverse:(#Reverse(single_upc_string)#*)">
 		</cfloop>
 
 		<cfset arguments.thestruct.searchtext = _search_text>
