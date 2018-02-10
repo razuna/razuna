@@ -29,7 +29,8 @@
 
 	<cffunction name="newSearch" output="true">
 		<cfargument name="thestruct" type="struct">
-
+		<!--- <cfdump var="#arguments.thestruct#">
+		<cfabort> --->
 		<!--- <cfset console(session.search.search_file_ids)> --->
 
 		<!--- Default params --->
@@ -1268,35 +1269,6 @@
 				<cfif arguments.thestruct.folder_id EQ 0 AND arguments.thestruct.iscol EQ "F">
 					AND permfolder IS NOT NULL
 				</cfif>
-				<!---
-				<cfif structKeyExists(arguments.thestruct,'avoidpagination') AND arguments.thestruct.avoidpagination EQ "False">
-					AND RowNum >
-						CASE WHEN
-							(
-								SELECT count(RowNum) FROM myresult
-								<cfif arguments.thestruct.thetype NEQ "all" >
-									where kind='#arguments.thestruct.thetype#'
-								</cfif>
-							) > #arguments.thestruct.mysqloffset#
-
-							THEN #arguments.thestruct.mysqloffset#
-							ELSE 0
-							END
-					AND
-					RowNum <=
-						CASE WHEN
-							(
-								SELECT count(RowNum) FROM myresult
-								<cfif arguments.thestruct.thetype NEQ "all" >
-									where kind='#arguments.thestruct.thetype#'
-								</cfif>
-							) > #arguments.thestruct.mysqloffset#
-
-							THEN #arguments.thestruct.mysqloffset+session.rowmaxpage#
-							ELSE #session.rowmaxpage#
-							END
-				</cfif>
-				--->
 			<!--- MySql OR H2 --->
 			<cfelseif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">
 				) as t
@@ -1311,85 +1283,6 @@
 		<!--- Return --->
 		<cfreturn qry />
 	</cffunction>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	<!--- SEARCH: FILES --->
-	<!--- <cffunction name="search_files">
-		<cfargument name="thestruct" type="struct">
-			<!--- Get the document results only.  --->
-			<cfif !structKeyExists(arguments.thestruct,'search_upc')>
-				<cfinvoke method="search_all" thestruct="#arguments.thestruct#" returnvariable="qry">
-			<cfelse>
-				<!--- UPC Search --->
-				<cfinvoke method="search_upc" thestruct="#arguments.thestruct#" returnvariable="qry">
-			</cfif>
-		<!--- Return query --->
-		<cfreturn qry>
-	</cffunction> --->
-
-	<!--- SEARCH: IMAGES --->
-	<!--- <cffunction name="search_images">
-		<cfargument name="thestruct" type="struct">
-		<!--- Get the images results only.  --->
-			<cfif !structKeyExists(arguments.thestruct,'search_upc')>
-				<cfinvoke method="search_all" thestruct="#arguments.thestruct#" returnvariable="qry">
-			<cfelse>
-				<!--- UPC Search --->
-				<cfinvoke method="search_upc" thestruct="#arguments.thestruct#" returnvariable="qry">
-			</cfif>
-		<!--- Return query --->
-		<cfreturn qry>
-	</cffunction> --->
-
-	<!--- SEARCH: VIDEOS --->
-	<!--- <cffunction name="search_videos">
-		<cfargument name="thestruct" type="struct">
-		<!--- Get the video results only.  --->
-			<cfif !structKeyExists(arguments.thestruct,'search_upc')>
-				<cfinvoke method="search_all" thestruct="#arguments.thestruct#" returnvariable="qry">
-			<cfelse>
-				<!--- UPC Search --->
-				<cfinvoke method="search_upc" thestruct="#arguments.thestruct#" returnvariable="qry">
-			</cfif>
-		<!--- Return query --->
-		<cfreturn qry>
-	</cffunction> --->
-
-	<!--- SEARCH: AUDIOS --->
-	<!--- <cffunction name="search_audios">
-		<cfargument name="thestruct" type="struct">
-		<!--- Get the audio results only.  --->
-			<cfif !structKeyExists(arguments.thestruct,'search_upc')>
-				<cfinvoke method="search_all" thestruct="#arguments.thestruct#" returnvariable="qry">
-			<cfelse>
-				<!--- UPC Search --->
-				<cfinvoke method="search_upc" thestruct="#arguments.thestruct#" returnvariable="qry">
-			</cfif>
-		<!--- Return query --->
-		<cfreturn qry>
-	</cffunction> --->
-
-
-
-
-
-
 
 	<!--- Call Search API --->
 	<cffunction name="search_api" access="public" output="false">
@@ -1441,634 +1334,27 @@
 	<!--- RAZ-2820 Search UPC --->
 	<cffunction name="search_upc" access="public" output="false">
 		<cfargument name="thestruct" type="struct" required="true">
-		<cfparam default="0" name="arguments.thestruct.folder_id">
-		<cfparam default="F" name="arguments.thestruct.iscol">
-
-		<cfparam name="session.search.edit_ids" default = "0">
-		<cfparam default="0" name="session.search.total_records">
-
-		<!--- Get the cachetoken for here --->
-		<cfset variables.cachetoken = getcachetoken("search")>
-		<cfset variables.cachetokenlogs = getcachetoken("logs")>
-		<!--- Only applicable for files --->
-		<cfparam default="" name="arguments.thestruct.doctype">
-		<cfparam default="False" name="arguments.thestruct.avoidpagination">
-		<!--- Set sortby variable --->
-		<cfset var sortby = session.sortby>
-		<!--- Set the order by --->
-		<cfif session.sortby EQ "name">
-			<cfset var sortby = "filename_forsort">
-		<cfelseif session.sortby EQ "sizedesc">
-			<cfset var sortby = "size DESC">
-		<cfelseif session.sortby EQ "sizeasc">
-			<cfset var sortby = "size ASC">
-		<cfelseif session.sortby EQ "dateadd">
-			<cfset var sortby = "date_create DESC">
-		<cfelseif session.sortby EQ "datechanged">
-			<cfset var sortby = "date_change DESC">
-		</cfif>
-
-		<!--- if we come from all set the category --->
-		<cfif arguments.thestruct.thetype EQ "all">
-			<cfset var thetype = "doc,vid,img,aud" />
-		<cfelse>
-			<cfset var thetype = arguments.thestruct.thetype />
-		</cfif>
-
-		<!--- Check rendition search setting --->
-		<cfset var _search_rendition = arguments.thestruct.prefs.set2_rendition_search >
 
 		<cfset session.search.searchupc = true>
-		<cfset session.search.searchtext = arguments.thestruct.search_upc>
-		<cfset session.search.searchtype = thetype>
-		<cfset session.search.searchfolderid = arguments.thestruct.folder_id>
-		<cfset session.search.searchrenditions = arguments.thestruct.prefs.set2_rendition_search>
 
-		<cfset var qry = "">
-			<!--- MySQL Offset --->
-			<cfset var mysqloffset = session.offset * session.rowmaxpage>
-				<cfquery datasource="#application.razuna.datasource#" name="qry" cachedWithin="1" region="razcache">
-					<cfif application.razuna.thedatabase EQ "mssql">
-					with myresult as (
-						SELECT ROW_NUMBER() OVER ( ORDER BY #sortby# ) AS RowNum,sorted_inline_view.*   FROM (
-					</cfif>
-				<cfif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">
-					<cfif structKeyExists(arguments.thestruct,'isCountOnly') AND arguments.thestruct.isCountOnly EQ 1>
-						SELECT COUNT(t.id) AS individualCount,kind FROM (
-					<cfelse>
-						SELECT  * FROM (
-					</cfif>
-				</cfif>
-					<cfif (arguments.thestruct.thetype EQ "all" or arguments.thestruct.thetype EQ "img")>
-					SELECT /* #variables.cachetoken#search_upc_images */i.img_id id, i.img_filename filename, i.folder_id_r, i.img_group groupid,
-					i.thumb_extension ext, i.img_filename_org filename_org,'img' AS kind, i.is_available,
-					i.img_create_time date_create, i.img_change_date date_change, i.link_kind, i.link_path_url,
-					i.path_to_asset,i.cloud_url, i.cloud_url_org, i.in_trash, it.img_description description, it.img_keywords keywords,
-					'0' AS vwidth, '0' AS vheight, '0' AS isalias,
-					(
-					SELECT so.asset_format
-					FROM raz1_share_options so
-					WHERE i.img_id = so.group_asset_id
-					AND so.folder_id_r = i.folder_id_r
-					AND so.asset_type = 'img'
-					AND so.asset_selected = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="1">
-					) AS theformat,
-					i.img_filename filename_forsort,
-					cast(i.img_size as decimal(12,0)) size,
-					i.hashtag,
-					fo.folder_name,
-					'' AS labels,
-					i.img_width width, i.img_height height, x.xres xres, x.yres yres, x.colorspace colorspace, CASE WHEN NOT (i.img_group is null OR i.img_group='') THEN (SELECT expiry_date FROM #session.hostdbprefix#images WHERE img_id=i.img_group) ELSE i.expiry_date END  expiry_date_actual,
-					<!--- Check if this folder belongs to a user and lock/unlock --->
-					<cfif session.is_system_admin OR session.is_administrator>
-						'unlocked' AS perm,
-					<cfelse>
-						CASE
-							<!--- Check permission on this folder --->
-							WHEN EXISTS(
-								SELECT fg.folder_id_r
-								FROM #session.hostdbprefix#folders_groups fg
-								WHERE fg.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-								AND fg.folder_id_r = i.folder_id_r
-								AND fg.grp_permission IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
-								AND fg.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
-								) THEN 'unlocked'
-							<!--- When folder is shared for everyone --->
-							WHEN EXISTS(
-								SELECT fg2.folder_id_r
-								FROM #session.hostdbprefix#folders_groups fg2
-								WHERE fg2.grp_id_r = '0'
-								AND fg2.folder_id_r = i.folder_id_r
-								AND fg2.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-								AND fg2.grp_permission IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
-								) THEN 'unlocked'
-							WHEN fo.folder_owner = '#session.theuserid#' THEN 'unlocked'
-							ELSE 'locked'
-						END as perm,
-					</cfif>
-					<cfif session.is_system_admin OR session.is_administrator AND session.customaccess EQ "">
-						'X' AS permfolder
-					<cfelseif session.customaccess NEQ "">
-						'#session.customaccess#' as permfolder
-					<cfelse>
-						'R' as permfolder
-					</cfif>
-					,
-					<cfif application.razuna.thedatabase EQ "mssql">i.img_id + '-img'<cfelse>concat(i.img_id,'-img')</cfif> as listid
-					<!--- custom metadata fields to show --->
-					<cfif arguments.thestruct.cs.images_metadata NEQ "">
-						<cfloop list="#arguments.thestruct.cs.images_metadata#" index="m" delimiters=",">
-							,<cfif m CONTAINS "keywords" OR m CONTAINS "description">it
-							<cfelseif m CONTAINS "_id" OR m CONTAINS "_time" OR m CONTAINS "_width" OR m CONTAINS "_height" OR m CONTAINS "_size" OR m CONTAINS "_filename" OR m CONTAINS "_number" OR m CONTAINS "expiry_date">i
-							<cfelse>x
-							</cfif>.#m#
-						</cfloop>
-					</cfif>
-					<cfif arguments.thestruct.cs.videos_metadata NEQ "">
-						<cfloop list="#arguments.thestruct.cs.videos_metadata#" index="m" delimiters=",">
-							,'' AS #listlast(m," ")#
-						</cfloop>
-					</cfif>
-					<cfif arguments.thestruct.cs.files_metadata NEQ "">
-						<cfloop list="#arguments.thestruct.cs.files_metadata#" index="m" delimiters=",">
-							,'' AS #listlast(m," ")#
-						</cfloop>
-					</cfif>
-					<cfif arguments.thestruct.cs.audios_metadata NEQ "">
-						<cfloop list="#arguments.thestruct.cs.audios_metadata#" index="m" delimiters=",">
-							,'' AS #listlast(m," ")#
-						</cfloop>
-					</cfif>
-					FROM #session.hostdbprefix#images i
-					LEFT JOIN #session.hostdbprefix#xmp x ON i.img_id = x.id_r AND i.host_id = x.host_id
-					LEFT JOIN #session.hostdbprefix#folders fo ON fo.folder_id = i.folder_id_r AND i.host_id = fo.host_id
-					LEFT JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = <cfqueryparam value="#session.thelangid#" cfsqltype="cf_sql_numeric"> AND i.host_id = it.host_id
-					WHERE i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-					AND i.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
-					AND (
-						<cfset var upcListLen = listlen(arguments.thestruct.search_upc)>
-						<cfset var currentListPos = 1>
-					<cfloop list="#arguments.thestruct.search_upc#" index="single_upc_string">
-						i.img_filename LIKE <cfqueryparam value="%#single_upc_string#%" cfsqltype="cf_sql_varchar" >
-						OR
-						i.img_upc_number LIKE <cfqueryparam value="%#single_upc_string#%" cfsqltype="cf_sql_varchar" >
+		<!--- Create search criteria --->
+		<cfloop list="#arguments.thestruct.search_upc#" index="single_upc_string">
+			<cfset _search_text = _search_text EQ "" ? '' : _search_text & " OR ">
+			<cfset _search_text = _search_text & "filename:(#single_upc_string#*) OR filename_reverse:(#single_upc_string#*) OR upc:(#single_upc_string#*) OR upc_reverse:(#single_upc_string#*)">
+		</cfloop>
 
-						<cfif currentListPos neq upcListLen> OR </cfif>
-						<cfset currentListPos = currentListPos+1>
-					</cfloop>
-					)
-					 <!--- Check if asset has expired and if user has only read only permissions in which case we hide asset --->
-					AND CASE
-					<!--- Check if admin user --->
-					WHEN EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#session.theuserid#' and ct_g_u_grp_id in ('1','2')) THEN 1
-					<!---  Check if asset is in folder for which user has read only permissions and asset has expired in which case we do not display asset to user --->
-					WHEN EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND i.folder_id_r = f.folder_id_r AND c.ct_g_u_grp_id = f.grp_id_r AND grp_permission NOT IN  ('W','X') AND i.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />) THEN 0
-					<!--- If rendition then look at expiry_date for original asset --->
-					WHEN NOT (i.img_group is null OR i.img_group='')
-						THEN CASE WHEN  EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND i.folder_id_r = f.folder_id_r AND c.ct_g_u_grp_id = f.grp_id_r AND grp_permission NOT IN  ('W','X') AND (SELECT expiry_date FROM  #session.hostdbprefix#images WHERE img_id = i.img_group) < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />) THEN 0 ELSE 1 END
-					ELSE 1 END  = 1
-					<!--- Filter renditions --->
-					<cfif _search_rendition EQ "t">
-						AND ( i.img_group IS NULL OR i.img_group = '' )
-					</cfif>
-					GROUP BY i.img_id, i.img_filename, i.folder_id_r, i.thumb_extension, i.img_filename_org, i.is_available, i.img_create_time, i.img_change_date, i.link_kind, i.link_path_url, i.path_to_asset, i.cloud_url, i.cloud_url_org, it.img_description, it.img_keywords, i.img_size, i.img_width, i.img_height, x.xres, x.yres, x.colorspace, i.hashtag, fo.folder_name, i.img_group, fo.folder_of_user, fo.folder_owner, i.in_trash, i.img_upc_number, i.expiry_date
-					</cfif><!--- Images Search end here --->
+		<cfset arguments.thestruct.searchtext = _search_text>
 
-					<!--- Document Search start here --->
-					<cfif (arguments.thestruct.thetype EQ "all" or arguments.thestruct.thetype EQ "doc")>
-						<cfif arguments.thestruct.thetype EQ "all">
-							UNION ALL
-						</cfif>
-					SELECT /* #variables.cachetoken#search_upc_files */ f.file_id id, f.file_name filename, f.folder_id_r, '' AS groupid,
-					f.file_extension ext, f.file_name_org filename_org, f.file_type AS kind,f.is_available,
-					f.file_create_time date_create, f.file_change_date date_change, f.link_kind, f.link_path_url,
-					f.path_to_asset, f.cloud_url,f.cloud_url_org, f.in_trash, fd.file_desc description, fd.file_keywords keywords,
-					'0' AS vwidth, '0' AS vheight, '0' AS isalias,'0' AS theformat,f.file_name filename_forsort, cast(f.file_size as decimal(12,0)) size, f.hashtag,
-					fo.folder_name,
-					'' AS labels,
-					'0' AS width, '0' AS height, '' AS xres, '' AS yres,'' AS colorspace, f.expiry_date expiry_date_actual,
-					<cfif session.is_system_admin OR session.is_administrator>
-					'unlocked' AS perm,
-					<cfelse>
-							CASE
-								<!--- Check permission on this folder --->
-								WHEN EXISTS(
-									SELECT fg.folder_id_r
-									FROM #session.hostdbprefix#folders_groups fg
-									WHERE fg.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-									AND fg.folder_id_r = f.folder_id_r
-									AND fg.grp_permission IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
-									AND fg.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
-									) THEN 'unlocked'
-								<!--- When folder is shared for everyone --->
-								WHEN EXISTS(
-									SELECT fg2.folder_id_r
-									FROM #session.hostdbprefix#folders_groups fg2
-									WHERE fg2.grp_id_r = '0'
-									AND fg2.folder_id_r = f.folder_id_r
-									AND fg2.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-									AND fg2.grp_permission IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
-									) THEN 'unlocked'
-								WHEN fo.folder_owner = '#session.theuserid#' THEN 'unlocked'
-								ELSE 'locked'
-							END as perm,
-					</cfif>
-					<cfif session.is_system_admin OR session.is_administrator AND session.customaccess EQ "">
-						'X' as permfolder
-					<cfelseif session.customaccess NEQ "">
-						'#session.customaccess#' as permfolder
-					<cfelse>
-						'R' as permfolder
-					</cfif>
-					,
-					<cfif application.razuna.thedatabase EQ "mssql">f.file_id + '-doc'<cfelse>concat(f.file_id,'-doc')</cfif> as listid
-					<!--- custom metadata fields to show --->
-						<cfif arguments.thestruct.cs.images_metadata NEQ "">
-							<cfloop list="#arguments.thestruct.cs.images_metadata#" index="m" delimiters=",">
-								,'' AS #listlast(m," ")#
-							</cfloop>
-						</cfif>
-						<cfif arguments.thestruct.cs.videos_metadata NEQ "">
-							<cfloop list="#arguments.thestruct.cs.videos_metadata#" index="m" delimiters=",">
-								,'' AS #listlast(m," ")#
-							</cfloop>
-						</cfif>
-						<cfif arguments.thestruct.cs.files_metadata NEQ "">
-							<cfloop list="#arguments.thestruct.cs.files_metadata#" index="m" delimiters=",">
-								,<cfif m CONTAINS "keywords" OR m CONTAINS "description">fd
-								<cfelseif m CONTAINS "_id" OR m CONTAINS "_time" OR m CONTAINS "_size" OR m CONTAINS "_filename" OR m CONTAINS "_number" OR m CONTAINS "expiry_date">f
-								<cfelse>x
-								</cfif>.#m#
-							</cfloop>
-						</cfif>
-						<cfif arguments.thestruct.cs.audios_metadata NEQ "">
-							<cfloop list="#arguments.thestruct.cs.audios_metadata#" index="m" delimiters=",">
-								,'' AS #listlast(m," ")#
-							</cfloop>
-						</cfif>
-						FROM #session.hostdbprefix#files f
-						LEFT JOIN #session.hostdbprefix#folders fo ON fo.folder_id = f.folder_id_r AND f.host_id = fo.host_id
-						LEFT JOIN #session.hostdbprefix#files_desc fd ON f.file_id = fd.file_id_r AND fd.lang_id_r = <cfqueryparam value="#session.thelangid#" cfsqltype="cf_sql_numeric"> AND f.host_id = fd.host_id
-						LEFT JOIN #session.hostdbprefix#files_xmp x ON x.asset_id_r = f.file_id AND f.host_id = x.host_id
-						WHERE f.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
-						AND (
-							<cfset var upcListLen = listlen(arguments.thestruct.search_upc)>
-							<cfset var currentListPos = 1>
-						<cfloop list="#arguments.thestruct.search_upc#" index="single_upc_string">
-							f.file_name LIKE <cfqueryparam value="%#single_upc_string#%" cfsqltype="cf_sql_varchar" >
-							OR
-							f.file_upc_number LIKE <cfqueryparam value="%#single_upc_string#%" cfsqltype="cf_sql_varchar" >
+		<!--- Call search --->
+		<cfset var qry = newSearch(thestruct=arguments.thestruct)>
 
-							<cfif currentListPos neq upcListLen> OR </cfif>
-							<cfset currentListPos = currentListPos+1>
-						</cfloop>
-						)
-						<!--- Check if asset has expired and if user has only read only permissions in which case we hide asset --->
-						AND CASE
-						<!--- Check if admin user --->
-						WHEN EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#session.theuserid#' and ct_g_u_grp_id in ('1','2')) THEN 1
-						<!---  Check if asset is in folder for which user has read only permissions and asset has expired in which case we do not display asset to user --->
-						WHEN EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups fg WHERE ct_g_u_user_id ='#session.theuserid#' AND f.folder_id_r = fg.folder_id_r AND c.ct_g_u_grp_id = fg.grp_id_r AND grp_permission NOT IN  ('W','X') AND f.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />) THEN 0
-						ELSE 1 END  = 1
-						GROUP BY f.file_id, f.file_name, f.folder_id_r, f.file_extension, f.file_name_org, f.file_type, f.is_available, f.file_create_time, f.file_change_date, f.link_kind, f.link_path_url, f.path_to_asset, f.cloud_url, f.cloud_url_org, fd.file_desc, fd.file_keywords, f.file_name, cast(f.file_size as decimal(12,0)), f.hashtag, fo.folder_name, fo.folder_of_user, fo.folder_owner, f.in_trash, f.file_upc_number, f.expiry_date
-					</cfif><!--- Docs search end here --->
-
-					<!--- Video search start here --->
-					<cfif (arguments.thestruct.thetype EQ "all" or arguments.thestruct.thetype EQ "vid")>
-						<cfif arguments.thestruct.thetype EQ "all">
-							UNION ALL
-						</cfif>
-						SELECT /* #variables.cachetoken#search_upc_files */ v.vid_id id, v.vid_filename filename, v.folder_id_r, v.vid_group groupid,
-						v.vid_extension ext, v.vid_name_image filename_org,'vid' AS kind, v.is_available,
-						v.vid_create_time date_create, v.vid_change_date date_change, v.link_kind, v.link_path_url,
-						v.path_to_asset,v.cloud_url, v.cloud_url_org, v.in_trash, vt.vid_description description, vt.vid_keywords keywords, CAST(v.vid_width AS CHAR) AS vwidth,CAST(v.vid_height AS CHAR) AS vheight, '0' AS isalias,
-						(
-						SELECT so.asset_format
-							FROM #session.hostdbprefix#share_options so
-							WHERE v.vid_id = so.group_asset_id
-							AND so.folder_id_r = v.folder_id_r
-							AND so.asset_type = 'vid'
-							AND so.asset_selected = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="1">
-						 ) AS theformat,
-						 v.vid_filename filename_forsort,
-						 cast(v.vid_size as decimal(12,0)) size, v.hashtag,
-						 fo.folder_name,
-						 '' AS labels, '0' AS width, '0' AS height, '' AS xres, '' AS yres, '' AS colorspace, CASE WHEN NOT (v.vid_group is null OR v.vid_group='') THEN (SELECT expiry_date FROM #session.hostdbprefix#videos WHERE vid_id=v.vid_group) ELSE v.expiry_date END  expiry_date_actual,
-						 <!--- Check if this folder belongs to a user and lock/unlock --->
-						<cfif session.is_system_admin OR session.is_administrator>
-							'unlocked' AS perm,
-						<cfelse>
-							CASE
-								<!--- Check permission on this folder --->
-								WHEN EXISTS(
-									SELECT fg.folder_id_r
-									FROM #session.hostdbprefix#folders_groups fg
-									WHERE fg.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-									AND fg.folder_id_r = v.folder_id_r
-									AND fg.grp_permission IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
-									AND fg.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
-									) THEN 'unlocked'
-								<!--- When folder is shared for everyone --->
-								WHEN EXISTS(
-									SELECT fg2.folder_id_r
-									FROM #session.hostdbprefix#folders_groups fg2
-									WHERE fg2.grp_id_r = '0'
-									AND fg2.folder_id_r = v.folder_id_r
-									AND fg2.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-									AND fg2.grp_permission IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
-									) THEN 'unlocked'
-								WHEN fo.folder_owner = '#session.theuserid#' THEN 'unlocked'
-								ELSE 'locked'
-							END as perm,
-						</cfif>
-						<cfif session.is_system_admin OR session.is_administrator AND session.customaccess EQ "">
-							'X' as permfolder
-						<cfelseif session.customaccess NEQ "">
-							'#session.customaccess#' as permfolder
-						<cfelse>
-							'R' as permfolder
-						</cfif>
-						,
-						<cfif application.razuna.thedatabase EQ "mssql">v.vid_id + '-vid'<cfelse>concat(v.vid_id,'-vid')</cfif> as listid
-						<!--- custom metadata fields to show --->
-						<cfif arguments.thestruct.cs.images_metadata NEQ "">
-							<cfloop list="#arguments.thestruct.cs.images_metadata#" index="m" delimiters=",">
-								,'' AS #listlast(m," ")#
-							</cfloop>
-						</cfif>
-						<cfif arguments.thestruct.cs.videos_metadata NEQ "">
-							<cfloop list="#arguments.thestruct.cs.videos_metadata#" index="m" delimiters=",">
-								,<cfif m CONTAINS "keywords" OR m CONTAINS "description">vt
-								<cfelse>v
-								</cfif>.#m#
-							</cfloop>
-						</cfif>
-						<cfif arguments.thestruct.cs.files_metadata NEQ "">
-							<cfloop list="#arguments.thestruct.cs.files_metadata#" index="m" delimiters=",">
-								,'' AS #listlast(m," ")#
-							</cfloop>
-						</cfif>
-						<cfif arguments.thestruct.cs.audios_metadata NEQ "">
-							<cfloop list="#arguments.thestruct.cs.audios_metadata#" index="m" delimiters=",">
-								,'' AS #listlast(m," ")#
-							</cfloop>
-						</cfif>
-						FROM #session.hostdbprefix#videos v
-						LEFT JOIN #session.hostdbprefix#videos_text vt ON vt.vid_id_r = v.vid_id AND vt.lang_id_r = <cfqueryparam value="#session.thelangid#" cfsqltype="cf_sql_numeric"> AND v.host_id = vt.host_id
-						LEFT JOIN #session.hostdbprefix#folders fo ON fo.folder_id = v.folder_id_r AND v.host_id = fo.host_id
-						WHERE v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-						AND v.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
-
-						AND (
-							<cfset var upcListLen = listlen(arguments.thestruct.search_upc)>
-							<cfset var currentListPos = 1>
-						<cfloop list="#arguments.thestruct.search_upc#" index="single_upc_string">
-							v.vid_filename LIKE <cfqueryparam value="%#single_upc_string#%" cfsqltype="cf_sql_varchar" >
-							OR
-							v.vid_upc_number LIKE <cfqueryparam value="%#single_upc_string#%" cfsqltype="cf_sql_varchar" >
-
-							<cfif currentListPos neq upcListLen> OR </cfif>
-							<cfset currentListPos = currentListPos+1>
-						</cfloop>
-						)
-						<!--- Check if asset has expired and if user has only read only permissions in which case we hide asset --->
-						AND CASE
-						<!--- Check if admin user --->
-						WHEN EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#session.theuserid#' and ct_g_u_grp_id in ('1','2')) THEN 1
-						<!---  Check if asset is in folder for which user has read only permissions and asset has expired in which case we do not display asset to user --->
-						WHEN EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups fg WHERE ct_g_u_user_id ='#session.theuserid#' AND v.folder_id_r = fg.folder_id_r AND c.ct_g_u_grp_id = fg.grp_id_r AND grp_permission NOT IN  ('W','X') AND v.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />) THEN 0
-						<!--- If rendition then look at expiry_date for original asset --->
-						WHEN NOT (v.vid_group is null OR v.vid_group='')
-						 THEN CASE WHEN  EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND v.folder_id_r = f.folder_id_r AND c.ct_g_u_grp_id = f.grp_id_r AND grp_permission NOT IN  ('W','X') AND (SELECT expiry_date FROM  #session.hostdbprefix#videos WHERE vid_id = v.vid_group) < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />) THEN 0 ELSE 1 END
-						ELSE 1 END  = 1
-						<!--- Filter renditions --->
-						<cfif _search_rendition EQ "t">
-							AND ( v.vid_group IS NULL OR v.vid_group = '' )
-						</cfif>
-						GROUP BY v.vid_id, v.vid_filename, v.folder_id_r, v.vid_extension, v.vid_name_image, v.is_available, v.vid_create_time, v.vid_change_date, v.link_kind, v.link_path_url, v.path_to_asset, v.cloud_url, v.cloud_url_org, vt.vid_description, vt.vid_keywords, v.vid_width, v.vid_height, v.vid_size, v.hashtag, fo.folder_name, v.vid_group, fo.folder_of_user, fo.folder_owner, v.in_trash, v.vid_upc_number, v.expiry_date
-						</cfif><!--- Video search end here --->
-
-						<!--- Audio Search Start here --->
-						<cfif (arguments.thestruct.thetype EQ "all" or arguments.thestruct.thetype EQ "aud")>
-							<cfif arguments.thestruct.thetype EQ "all">
-								UNION ALL
-							</cfif>
-						SELECT /* #variables.cachetoken#search_upc_audios */ a.aud_id id, a.aud_name filename, a.folder_id_r, a.aud_group groupid,
-						a.aud_extension ext, a.aud_name_org filename_org, 'aud' AS kind,a.is_available,
-						a.aud_create_time date_create, a.aud_change_date date_change, a.link_kind, a.link_path_url,
-						a.path_to_asset, a.cloud_url,a.cloud_url_org, a.in_trash, aut.aud_description description, aut.aud_keywords keywords,'0' AS vwidth, '0' AS vheight, '0' AS isalias,
-						(
-							SELECT so.asset_format
-							FROM #session.hostdbprefix#share_options so
-							WHERE a.aud_id = so.group_asset_id
-							AND so.folder_id_r = a.folder_id_r
-							AND so.asset_type = 'aud'
-							AND so.asset_selected = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="1">
-						) AS theformat,
-						a.aud_name filename_forsort,
-						cast(a.aud_size as decimal(12,0)) size,
-						a.hashtag,
-						fo.folder_name,
-						'' as labels,
-						'0' as width, '0' as height, '' as xres, '' as yres, '' as colorspace, CASE WHEN NOT (a.aud_group is null OR a.aud_group='') THEN (SELECT expiry_date FROM #session.hostdbprefix#audios WHERE aud_id=a.aud_group) ELSE a.expiry_date END  expiry_date_actual,
-						<!--- Check if this folder belongs to a user and lock/unlock --->
-						<cfif session.is_system_admin OR session.is_administrator>
-							'unlocked' as perm,
-						<cfelse>
-							CASE
-								<!--- Check permission on this folder --->
-								WHEN EXISTS(
-									SELECT fg.folder_id_r
-									FROM #session.hostdbprefix#folders_groups fg
-									WHERE fg.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-									AND fg.folder_id_r = a.folder_id_r
-									AND fg.grp_permission IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
-									AND fg.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
-									) THEN 'unlocked'
-								<!--- When folder is shared for everyone --->
-								WHEN EXISTS(
-									SELECT fg2.folder_id_r
-									FROM #session.hostdbprefix#folders_groups fg2
-									WHERE fg2.grp_id_r = '0'
-									AND fg2.folder_id_r = a.folder_id_r
-									AND fg2.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-									AND fg2.grp_permission IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
-									) THEN 'unlocked'
-								WHEN fo.folder_owner = '#session.theuserid#' THEN 'unlocked'
-								ELSE 'locked'
-							END as perm,
-						</cfif>
-						<cfif session.is_system_admin OR session.is_administrator AND session.customaccess EQ "">
-							'X' as permfolder
-						<cfelseif session.customaccess NEQ "">
-							'#session.customaccess#' as permfolder
-						<cfelse>
-							'R' as permfolder
-						</cfif>
-						,
-						<cfif application.razuna.thedatabase EQ "mssql">a.aud_id + '-aud'<cfelse>concat(a.aud_id,'-aud')</cfif> as listid
-						<!--- custom metadata fields to show --->
-						<cfif arguments.thestruct.cs.images_metadata NEQ "">
-							<cfloop list="#arguments.thestruct.cs.images_metadata#" index="m" delimiters=",">
-								,'' AS #listlast(m," ")#
-							</cfloop>
-						</cfif>
-						<cfif arguments.thestruct.cs.videos_metadata NEQ "">
-							<cfloop list="#arguments.thestruct.cs.videos_metadata#" index="m" delimiters=",">
-								,'' AS #listlast(m," ")#
-							</cfloop>
-						</cfif>
-						<cfif arguments.thestruct.cs.files_metadata NEQ "">
-							<cfloop list="#arguments.thestruct.cs.files_metadata#" index="m" delimiters=",">
-								,'' AS #listlast(m," ")#
-							</cfloop>
-						</cfif>
-						<cfif arguments.thestruct.cs.audios_metadata NEQ "">
-							<cfloop list="#arguments.thestruct.cs.audios_metadata#" index="m" delimiters=",">
-								,<cfif m CONTAINS "keywords" OR m CONTAINS "description">aut
-								<cfelse>a
-								</cfif>.#m#
-							</cfloop>
-						</cfif>
-						FROM #session.hostdbprefix#audios a
-						LEFT JOIN #session.hostdbprefix#audios_text aut ON aut.aud_id_r = a.aud_id AND aut.lang_id_r = <cfqueryparam value="#session.thelangid#" cfsqltype="cf_sql_numeric"> AND a.host_id = aut.host_id
-						LEFT JOIN #session.hostdbprefix#folders fo ON fo.folder_id = a.folder_id_r AND a.host_id = fo.host_id
-						WHERE  a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-						AND a.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
-
-						AND (
-							<cfset var upcListLen = listlen(arguments.thestruct.search_upc)>
-							<cfset var currentListPos = 1>
-						<cfloop list="#arguments.thestruct.search_upc#" index="single_upc_string">
-							a.aud_name LIKE <cfqueryparam value="%#single_upc_string#%" cfsqltype="cf_sql_varchar" >
-							OR
-							a.aud_upc_number LIKE <cfqueryparam value="%#single_upc_string#%" cfsqltype="cf_sql_varchar" >
-
-							<cfif currentListPos neq upcListLen> OR </cfif>
-							<cfset currentListPos = currentListPos+1>
-						</cfloop>
-						)
-						<!--- Check if asset has expired and if user has only read only permissions in which case we hide asset --->
-						AND CASE
-						<!--- Check if admin user --->
-						WHEN EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#session.theuserid#' and ct_g_u_grp_id in ('1','2')) THEN 1
-						<!---  Check if asset is in folder for which user has read only permissions and asset has expired in which case we do not display asset to user --->
-						WHEN EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups fg WHERE ct_g_u_user_id ='#session.theuserid#' AND a.folder_id_r = fg.folder_id_r AND c.ct_g_u_grp_id = fg.grp_id_r AND grp_permission NOT IN  ('W','X') AND a.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />) THEN 0
-						<!--- If rendition then look at expiry_date for original asset --->
-						WHEN NOT (a.aud_group is null OR a.aud_group='')
-						 THEN CASE WHEN  EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND a.folder_id_r = f.folder_id_r AND c.ct_g_u_grp_id = f.grp_id_r AND grp_permission NOT IN  ('W','X') AND (SELECT expiry_date FROM  #session.hostdbprefix#audios WHERE aud_id = a.aud_group) < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />) THEN 0 ELSE 1 END
-						ELSE 1 END  = 1
-						<!--- Filter renditions --->
-						<cfif _search_rendition EQ "t">
-							AND ( a.aud_group IS NULL OR a.aud_group = '' )
-						</cfif>
-						GROUP BY a.aud_id, a.aud_name, a.folder_id_r, a.aud_extension, a.aud_name_org, a.is_available, a.aud_create_time, a.aud_change_date, a.link_kind, a.link_path_url, a.path_to_asset, a.cloud_url, a.cloud_url_org, aut.aud_description, aut.aud_keywords, a.aud_size, a.hashtag, fo.folder_name, a.aud_group, fo.folder_of_user, fo.folder_owner, a.in_trash, a.aud_upc_number, a.expiry_date
-						</cfif>
-						<!--- Audio search end here --->
-						<!--- MySql OR H2 --->
-						<cfif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">
-							) as t
-					WHERE t.perm = <cfqueryparam cfsqltype="cf_sql_varchar" value="unlocked">
-					<cfif arguments.thestruct.folder_id EQ 0 AND arguments.thestruct.iscol EQ "F">
-						AND permfolder IS NOT NULL
-					</cfif>
-					AND kind IS NOT NULL
-					<cfif structKeyExists(arguments.thestruct,'isCountOnly') AND arguments.thestruct.isCountOnly EQ 0>
-						ORDER BY #sortby#
-						<cfif structKeyExists(arguments.thestruct,'avoidpagination') AND arguments.thestruct.avoidpagination EQ "False">
-							LIMIT #mysqloffset#,#session.rowmaxpage#
-						</cfif>
-					<cfelse>
-						GROUP BY kind
-					</cfif>
-				</cfif>
-					<cfif application.razuna.thedatabase EQ "mssql">
-						) sorted_inline_view
-						)select *,
-				    	(SELECT count(RowNum) FROM myresult) AS 'cnt',(SELECT count(kind) FROM myresult where kind='img') as img_cnt,
-				    	(SELECT count(kind) FROM myresult where kind='doc') as doc_cnt,(SELECT count(kind) FROM myresult where kind='vid') as vid_cnt,
-				    	(SELECT count(kind) FROM myresult where kind='aud') as aud_cnt,(SELECT count(kind) FROM myresult where kind='other') as other_cnt from myresult
-				    	WHERE perm = <cfqueryparam cfsqltype="cf_sql_varchar" value="unlocked">
-						<cfif arguments.thestruct.folder_id EQ 0 AND arguments.thestruct.iscol EQ "F">
-							AND permfolder IS NOT NULL
-						</cfif>
-						AND kind IS NOT NULL
-						<cfif structKeyExists(arguments.thestruct,'avoidpagination') AND arguments.thestruct.avoidpagination EQ "False">
-								AND RowNum >
-									CASE WHEN
-										(
-											SELECT count(RowNum) FROM myresult
-											<cfif arguments.thestruct.thetype NEQ "all" >
-												where kind='#arguments.thestruct.thetype#'
-											</cfif>
-										) > #mysqloffset#
-
-										THEN #mysqloffset#
-										ELSE 0
-										END
-								AND
-								RowNum <=
-									CASE WHEN
-										(
-											SELECT count(RowNum) FROM myresult
-											<cfif arguments.thestruct.thetype NEQ "all" >
-												where kind='#arguments.thestruct.thetype#'
-											</cfif>
-										) > #mysqloffset#
-										THEN #mysqloffset+session.rowmaxpage#
-										ELSE #session.rowmaxpage#
-										END
-						</cfif>
-					</cfif>
-				</cfquery>
-
-				<!--- <cfset consoleoutput(true)>
-				<cfset console(qry.recordcount)>
-				<cfset console(qry)> --->
-				<!--- <cfabort> --->
-
-
-				<!--- Select only records that are unlocked --->
-				<cfif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">
-					<!---<cfquery datasource="#application.razuna.datasource#" name="qryCount">
-						SELECT found_rows() as total
-					</cfquery>--->
-					<cfif structKeyExists(arguments.thestruct,'isCountOnly') AND arguments.thestruct.isCountOnly EQ 1>
-						<cfquery dbtype="query" name="qryCount">
-							SELECT sum(individualCount) as cnt from qry
-						</cfquery>
-						<cfset var newQuery = queryNew("cnt,img_cnt,doc_cnt,aud_cnt,vid_cnt,other_cnt","Integer,Integer,Integer,Integer,Integer,Integer")>
-						<cfset queryAddRow(newQuery)>
-						<cfset querySetCell(newQuery, "cnt", qryCount.cnt)>
-						<cfoutput  query="qry" >
-							<cfset querySetCell(newQuery, qry.kind&"_cnt", val(individualCount))>
-						</cfoutput>
-						<cfset qry =newQuery/>
-						<!--- Total --->
-						<cfset session.search.total_records = qryCount.cnt>
-					</cfif>
-				</cfif>
-
-				<!--- <cfset consoleoutput(true)>
-				<cfset console(qry)> --->
-				<!--- <cfset console(qry_all)> --->
-
-				<!--- Init var for new fileid --->
-				<cfset var editids = "0,">
-				<cfset var fileids = "">
-				<cfset var counter = 0>
-
-				<cfif structKeyExists(arguments.thestruct,'isCountOnly') AND arguments.thestruct.isCountOnly EQ 0>
-					<!--- Get proper folderaccess --->
-					<cfif qry.recordcount>
-						<cfloop query="qry">
-							<cfinvoke component="folders" method="setaccess" returnvariable="theaccess" folder_id="#folder_id_r#"  />
-							<cfif theaccess NEQ "R" AND theaccess NEQ "n">
-								<cfset editids = editids & listid & ",">
-								<cfset counter = counter + 1>
-							</cfif>
-							<cfset fileids = fileids & listid & ",">
-							<cftry>
-								<cfset QuerySetCell(qry, "permfolder", theaccess, currentRow)>
-								<cfcatch></cfcatch>
-							</cftry>
-						</cfloop>
-					</cfif>
-					<!--- Save the editable ids in a session --->
-					<cfset session.search.edit_ids = editids>
-					<!--- Save fileids into session --->
-					<cfset session.search.search_file_ids = fileids>
-					<!--- Total --->
-					<cfset session.search.total_records = counter>
-				</cfif>
-
-				<!--- Qry Return --->
-				<cfreturn qry>
+		<!--- Qry Return --->
+		<cfreturn qry>
 	</cffunction>
 
 	<cffunction name="search_combine_upc">
 		<cfargument name="thestruct" type="struct">
-		<!--- <cfset consoleoutput(true)> --->
+		<cfset var qry = "">
 		<!--- Trim UPC --->
 		<cfset arguments.thestruct.search_upc = ListItemtrim(arguments.thestruct.search_upc, ",")>
 		<!--- Get the all asset results.  --->
@@ -2076,13 +1362,10 @@
 		<cfif structkeyexists(arguments.thestruct,"offset")>
 			<cfset session.offset = arguments.thestruct.offset>
 		</cfif>
-		<!--- <cfset console(session.search.total_records)>
-		<cfset console(session.rowmaxpage)> --->
 		<!--- Set the session for offset correctly if the total count of assets in lower then the total rowmaxpage --->
 		<cfif session.search.total_records LTE session.rowmaxpage>
 			<cfset session.offset = 0>
 		</cfif>
-		<!--- <cfset console(session.offset)> --->
 		<!--- Return --->
 		<cfreturn qry>
 	</cffunction>
@@ -2109,12 +1392,7 @@
 
 		<cfinvoke component="search" method="#_func#" searchupc="#arguments.searchupc#" searchtext="#arguments.searchtext#" searchtype="#arguments.searchtype#" searchrenditions="#arguments.searchrenditions#" searchfolderid="#arguments.searchfolderid#" hostid="#arguments.hostid#" returnvariable="ids">
 
-		<!--- <cfset consoleoutput(true)>
-		<cfset console(_func)>
-		<cfset console(ids)> --->
-
 		<cfreturn ids>
-
 	</cffunction>
 
 	<!--- Get all ids if search is all --->
@@ -2124,8 +1402,6 @@
 		<cfargument name="searchrenditions" type="string">
 		<cfargument name="searchfolderid" type="string">
 		<cfargument name="hostid" type="numeric">
-		<!--- <cfset consoleoutput(true)>
-		<cfset console(sessions)> --->
 		<!--- Var --->
 		<cfset var qry_lucene ="">
 		<cfset var _ids ="0,">
@@ -2135,16 +1411,11 @@
 		<cfloop query="qry_lucene">
 			<cfinvoke component="folders" method="setaccess" returnvariable="theaccess" folder_id="#folder#" />
 			<!--- Get trash or not --->
-			<!--- <cfset _in_trash = checkFilesForTrashStatus(type=category, id=categorytree)> --->
 			<!--- Store only file_ids where folder access is not R --->
 			<cfif theaccess NEQ "R" AND theaccess NEQ "n">
 				<cfset _ids = _ids & full_id & ",">
 			</cfif>
 		</cfloop>
-		<!--- <cfset consoleoutput(true)> --->
-		<!--- <cfset console(_ids)> --->
-		<!--- <cfset console(listlen(_ids))> --->
-
 		<!--- Return --->
 		<cfreturn _ids>
 	</cffunction>
@@ -2161,85 +1432,101 @@
 		<!--- Var --->
 		<cfset var qry_lucene ="">
 		<cfset var _ids ="0,">
+		<cfset var _qry_img = "">
+		<cfset var _qry_vid = "">
+		<cfset var _qry_aud = "">
+		<cfset var _qry_doc = "">
 		<!--- Get the cachetoken for here --->
 		<cfset var _cachetoken = getcachetoken("search")>
 		<!--- Get all records --->
-		<cfquery datasource="#application.razuna.datasource#" name="qry_lucene" cachedWithin="1" region="razcache">
-		SELECT /* #_cachetoken#search_upc_files_all */ folder_id_r, <cfif application.razuna.thedatabase EQ "mssql">img_id + '-img'<cfelse>concat(img_id,'-img')</cfif> as listid
-		FROM #session.hostdbprefix#images
-		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
-		AND (
-			<cfset var upcListLen = listlen(arguments.searchtext)>
-			<cfset var currentListPos = 1>
-			<cfloop list="#arguments.searchtext#" index="single_upc_string">
-				img_filename LIKE <cfqueryparam value="%#single_upc_string#%" cfsqltype="cf_sql_varchar" >
-				OR
-				img_upc_number LIKE <cfqueryparam value="%#single_upc_string#%" cfsqltype="cf_sql_varchar" >
-				<cfif currentListPos neq upcListLen> OR </cfif>
-				<cfset currentListPos = currentListPos+1>
-			</cfloop>
-		)
-		<!--- Filter renditions --->
-		<cfif arguments.searchrenditions EQ "t">
-			AND ( img_group IS NULL OR img_group = '' )
-		</cfif>
-		UNION ALL
-		SELECT folder_id_r, <cfif application.razuna.thedatabase EQ "mssql">vid_id + '-vid'<cfelse>concat(vid_id,'-vid')</cfif> as listid
-		FROM #session.hostdbprefix#videos
-		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
-		AND (
-			<cfset var upcListLen = listlen(arguments.searchtext)>
-			<cfset var currentListPos = 1>
-			<cfloop list="#arguments.searchtext#" index="single_upc_string">
-				vid_filename LIKE <cfqueryparam value="%#single_upc_string#%" cfsqltype="cf_sql_varchar" >
-				OR
-				vid_upc_number LIKE <cfqueryparam value="%#single_upc_string#%" cfsqltype="cf_sql_varchar" >
-				<cfif currentListPos neq upcListLen> OR </cfif>
-				<cfset currentListPos = currentListPos+1>
-			</cfloop>
-		)
-		<!--- Filter renditions --->
-		<cfif arguments.searchrenditions EQ "t">
-			AND ( vid_group IS NULL OR vid_group = '' )
-		</cfif>
-		UNION ALL
-		SELECT folder_id_r, <cfif application.razuna.thedatabase EQ "mssql">aud_id + '-aud'<cfelse>concat(aud_id,'-aud')</cfif> as listid
-		FROM #session.hostdbprefix#audios
-		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
-		AND (
-			<cfset var upcListLen = listlen(arguments.searchtext)>
-			<cfset var currentListPos = 1>
-			<cfloop list="#arguments.searchtext#" index="single_upc_string">
-				aud_name LIKE <cfqueryparam value="%#single_upc_string#%" cfsqltype="cf_sql_varchar" >
-				OR
-				aud_upc_number LIKE <cfqueryparam value="%#single_upc_string#%" cfsqltype="cf_sql_varchar" >
-				<cfif currentListPos neq upcListLen> OR </cfif>
-				<cfset currentListPos = currentListPos+1>
-			</cfloop>
-		)
-		<!--- Filter renditions --->
-		<cfif arguments.searchrenditions EQ "t">
-			AND ( aud_group IS NULL OR aud_group = '' )
-		</cfif>
-		UNION ALL
-		SELECT folder_id_r, <cfif application.razuna.thedatabase EQ "mssql">file_id + '-doc'<cfelse>concat(file_id,'-doc')</cfif> as listid
-		FROM #session.hostdbprefix#files
-		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
-		AND (
-			<cfset var upcListLen = listlen(arguments.searchtext)>
-			<cfset var currentListPos = 1>
-			<cfloop list="#arguments.searchtext#" index="single_upc_string">
-				file_name LIKE <cfqueryparam value="%#single_upc_string#%" cfsqltype="cf_sql_varchar" >
-				OR
-				file_upc_number LIKE <cfqueryparam value="%#single_upc_string#%" cfsqltype="cf_sql_varchar" >
-				<cfif currentListPos neq upcListLen> OR </cfif>
-				<cfset currentListPos = currentListPos+1>
-			</cfloop>
-		)
+		<cfquery datasource="#application.razuna.datasource#" name="_qry_img" cachedWithin="1" region="razcache">
+			SELECT /* #_cachetoken#search_upc_files_img */ folder_id_r, <cfif application.razuna.thedatabase EQ "mssql">img_id + '-img'<cfelse>concat(img_id,'-img')</cfif> as listid
+			FROM #session.hostdbprefix#images
+			WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
+			AND (
+				<cfset var upcListLen = listlen(arguments.searchtext)>
+				<cfset var currentListPos = 1>
+				<cfloop list="#arguments.searchtext#" index="single_upc_string">
+					img_filename LIKE <cfqueryparam value="%#single_upc_string#%" cfsqltype="cf_sql_varchar" >
+					OR
+					img_upc_number LIKE <cfqueryparam value="%#single_upc_string#%" cfsqltype="cf_sql_varchar" >
+					<cfif currentListPos neq upcListLen> OR </cfif>
+					<cfset currentListPos = currentListPos+1>
+				</cfloop>
+			)
+			<!--- Filter renditions --->
+			<cfif arguments.searchrenditions EQ "t">
+				AND ( img_group IS NULL OR img_group = '' )
+			</cfif>
+		</cfquery>
+		<cfquery datasource="#application.razuna.datasource#" name="_qry_vid" cachedWithin="1" region="razcache">
+			SELECT /* #_cachetoken#search_upc_files_vid */ folder_id_r, <cfif application.razuna.thedatabase EQ "mssql">vid_id + '-vid'<cfelse>concat(vid_id,'-vid')</cfif> as listid
+			FROM #session.hostdbprefix#videos
+			WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
+			AND (
+				<cfset var upcListLen = listlen(arguments.searchtext)>
+				<cfset var currentListPos = 1>
+				<cfloop list="#arguments.searchtext#" index="single_upc_string">
+					vid_filename LIKE <cfqueryparam value="%#single_upc_string#%" cfsqltype="cf_sql_varchar" >
+					OR
+					vid_upc_number LIKE <cfqueryparam value="%#single_upc_string#%" cfsqltype="cf_sql_varchar" >
+					<cfif currentListPos neq upcListLen> OR </cfif>
+					<cfset currentListPos = currentListPos+1>
+				</cfloop>
+			)
+			<!--- Filter renditions --->
+			<cfif arguments.searchrenditions EQ "t">
+				AND ( vid_group IS NULL OR vid_group = '' )
+			</cfif>
+		</cfquery>
+		<cfquery datasource="#application.razuna.datasource#" name="_qry_aud" cachedWithin="1" region="razcache">
+			SELECT /* #_cachetoken#search_upc_files_aud */ folder_id_r, <cfif application.razuna.thedatabase EQ "mssql">aud_id + '-aud'<cfelse>concat(aud_id,'-aud')</cfif> as listid
+			FROM #session.hostdbprefix#audios
+			WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
+			AND (
+				<cfset var upcListLen = listlen(arguments.searchtext)>
+				<cfset var currentListPos = 1>
+				<cfloop list="#arguments.searchtext#" index="single_upc_string">
+					aud_name LIKE <cfqueryparam value="%#single_upc_string#%" cfsqltype="cf_sql_varchar" >
+					OR
+					aud_upc_number LIKE <cfqueryparam value="%#single_upc_string#%" cfsqltype="cf_sql_varchar" >
+					<cfif currentListPos neq upcListLen> OR </cfif>
+					<cfset currentListPos = currentListPos+1>
+				</cfloop>
+			)
+			<!--- Filter renditions --->
+			<cfif arguments.searchrenditions EQ "t">
+				AND ( aud_group IS NULL OR aud_group = '' )
+			</cfif>
+		</cfquery>
+		<cfquery datasource="#application.razuna.datasource#" name="_qry_doc" cachedWithin="1" region="razcache">
+			SELECT /* #_cachetoken#search_upc_files_doc */ folder_id_r, <cfif application.razuna.thedatabase EQ "mssql">file_id + '-doc'<cfelse>concat(file_id,'-doc')</cfif> as listid
+			FROM #session.hostdbprefix#files
+			WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
+			AND (
+				<cfset var upcListLen = listlen(arguments.searchtext)>
+				<cfset var currentListPos = 1>
+				<cfloop list="#arguments.searchtext#" index="single_upc_string">
+					file_name LIKE <cfqueryparam value="%#single_upc_string#%" cfsqltype="cf_sql_varchar" >
+					OR
+					file_upc_number LIKE <cfqueryparam value="%#single_upc_string#%" cfsqltype="cf_sql_varchar" >
+					<cfif currentListPos neq upcListLen> OR </cfif>
+					<cfset currentListPos = currentListPos+1>
+				</cfloop>
+			)
+		</cfquery>
+		<cfquery dbtype="query" name="qry_lucene">
+			SELECT * FROM _qry_img
+			UNION
+			SELECT * FROM _qry_vid
+			UNION
+			SELECT * FROM _qry_doc
+			UNION
+			SELECT * FROM _qry_aud
 		</cfquery>
 		<!--- Loop over results --->
 		<cfloop query="qry_lucene">
