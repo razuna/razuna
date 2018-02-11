@@ -2,7 +2,7 @@
 <!DOCTYPE circuit>
 
 <circuit access="internal">
-	
+
 	<!--
 		Apply a standard layout to the result of all display fuseactions.
 		This is fine for simple applications that have just one layout but
@@ -10,12 +10,12 @@
 		multiple view circuits or a view circuit and a layout circuit and
 		may have to explicitly call a layout fuseaction from your other
 		display fuseactions.
-	
+
 	<postfuseaction>
 		<include template="lay_template" />
 	</postfuseaction>
 	-->
-	
+
 	<!--
 	This is the layout for the login screen. We load the index page and within that we load the login layout
 	-->
@@ -34,7 +34,7 @@
 		<!-- <include template="lay_footer" contentvariable="footercontent" /> -->
   		<include template="lay_index" />
 	</fuseaction>
-	
+
 	<!--
 	This is the layout for the application itself
 	-->
@@ -79,7 +79,7 @@
 		<include template="lay_footer_drop" contentvariable="footerdrop" />
   		<include template="lay_main" />
 	</fuseaction>
-	
+
 	<!--
 	Serve Assets
 	-->
@@ -87,7 +87,7 @@
   		<include template="lay_showcontent" contentvariable="showcontent" />
   		<include template="lay_assets" />
 	</fuseaction>
-	
+
 	<!--
 	Share: Folder / Collection
 	-->
@@ -95,13 +95,21 @@
 		<xfa name="switchlang" value="c.switchlang" />
 		<do action="c.languages" />
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="getconfig('version')" returnvariable="version" />
+		<!-- CFC: Get wl -->
+		<if condition="application.razuna.whitelabel">
+			<true>
+				<invoke object="myFusebox.getApplicationData().settings" methodcall="get_options_one_host('wl_login_links_#session.hostid#')" returnvariable="wl" />
+				<invoke object="myFusebox.getApplicationData().settings" methodcall="get_options_one_host('wl_html_title_#session.hostid#')" returnvariable="wl_html_title" />
+				<invoke object="myFusebox.getApplicationData().settings" methodcall="get_options_one_host('wl_thecss_#session.hostid#')" returnvariable="wl_thecss" />
+  			</true>
+  		</if>
 		<include template="lay_header_share" contentvariable="headercontent" />
 		<include template="lay_left" contentvariable="leftcontent" />
 		<include template="lay_right" contentvariable="maincontent" />
 		<include template="lay_footer" contentvariable="footercontent" />
   		<include template="lay_share" />
 	</fuseaction>
-	
+
 	<!--
 	Mini: Login Page
 	-->
@@ -111,7 +119,7 @@
   		<include template="lay_login_mini" contentvariable="thecontent" />
   		<include template="lay_index_mini" />
 	</fuseaction>
-	
+
 	<!--
 	Mini: Browser
 	-->
@@ -128,5 +136,5 @@
   		<include template="lay_custom" />
 	</fuseaction>
 
-	
+
 </circuit>
