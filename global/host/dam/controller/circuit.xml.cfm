@@ -8071,6 +8071,15 @@
 		<!-- Check if folder is shared, secured. If so display log in -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="sharecheckperm(attributes)" returnvariable="shared" />
 
+		<!-- CFC: Get wl -->
+		<if condition="application.razuna.whitelabel">
+			<true>
+				<invoke object="myFusebox.getApplicationData().settings" methodcall="get_options_one_host('wl_login_links_#session.hostid#')" returnvariable="wl" />
+				<invoke object="myFusebox.getApplicationData().settings" methodcall="get_options_one_host('wl_html_title_#session.hostid#')" returnvariable="wl_html_title" />
+				<invoke object="myFusebox.getApplicationData().settings" methodcall="get_options_one_host('wl_thecss_#session.hostid#')" returnvariable="wl_thecss" />
+  			</true>
+  		</if>
+
 		<!-- If folder is open to everyone then bypass login checks -->
 		<if condition="#shared.everyone# EQ 'F'">
 			<true>
