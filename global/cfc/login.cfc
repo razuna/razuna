@@ -240,7 +240,7 @@
 						interval="500"
 					>
 					<!--- RAZ-549 As a user I want to share a file URL with an expiration date --->
-					<cfschedule action="update"
+					<!--- <cfschedule action="update"
 						task="RazAssetExpiry" 
 						operation="HTTPRequest"
 						url="#attributes.intvar#/index.cfm?fa=c.w_asset_expiry_task"
@@ -248,9 +248,9 @@
 						startTime="00:01 AM"
 						endTime="23:59 PM"
 						interval="300"
-					>
+					> --->
 					<!--- Save FTP Task in CFML scheduling engine --->
-					<cfschedule action="update"
+					<!--- <cfschedule action="update"
 						task="RazFTPNotifications" 
 						operation="HTTPRequest"
 						url="#attributes.intvar#/index.cfm?fa=c.w_ftp_notifications_task"
@@ -258,7 +258,7 @@
 						startTime="00:01 AM"
 						endTime="23:59 PM"
 						interval="3600"
-					>
+					> --->
 				</cfthread>
 				<cfcatch type="any"></cfcatch>
 			</cftry>

@@ -1255,7 +1255,7 @@
 				interval="120"
 			>
 			<!--- RAZ-549 As a user I want to share a file URL with an expiration date --->
-			<cfschedule action="update"
+			<!--- <cfschedule action="update"
 				task="RazAssetExpiry"
 				operation="HTTPRequest"
 				url="#taskpath#/index.cfm?fa=c.w_asset_expiry_task"
@@ -1263,7 +1263,7 @@
 				startTime="00:01 AM"
 				endTime="23:59 PM"
 				interval="300"
-			>
+			> --->
 			<!--- RAZ-2815 Add FOLDER_ID Column in raz1_log_assets --->
 			<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
