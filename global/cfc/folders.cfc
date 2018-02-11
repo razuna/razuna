@@ -5187,16 +5187,25 @@
 <cffunction name="getfoldername" output="false">
 	<cfargument name="folder_id" required="yes" type="string">
 	<cfset var qry = "">
+	<cfset var _name = "">
 	<!--- Get the cachetoken for here --->
 	<cfset variables.cachetoken = getcachetoken("folders")>
 	<!--- Query --->
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetoken#getfoldername */ folder_name
-	FROM #session.hostdbprefix#folders
-	WHERE folder_id = <cfqueryparam value="#arguments.folder_id#" cfsqltype="CF_SQL_VARCHAR">
-	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	SELECT /* #variables.cachetoken#getfoldername */ f.folder_name, fn.folder_name as lang_folder_name
+	FROM #session.hostdbprefix#folders f LEFT JOIN #session.hostdbprefix#folders_name fn ON f.folder_id = fn.folder_id_r
+	WHERE f.folder_id = <cfqueryparam value="#arguments.folder_id#" cfsqltype="CF_SQL_VARCHAR">
+	AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	AND fn.lang_id_r = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.thelangid#">
 	</cfquery>
-	<cfreturn qry.folder_name>
+	<!--- Set folder name --->
+	<cfset var _name = qry.folder_name>
+	<!--- If we have a translation --->
+	<cfif qry.lang_folder_name NEQ "">
+		<cfset var _name = qry.lang_folder_name>
+	</cfif>
+	<!--- Return --->
+	<cfreturn _name>
 </cffunction>
 
 <!--- Get username of folder --->
@@ -5575,7 +5584,7 @@
 	<cfset var qRet = "">
 	<!--- Query --->
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetoken#getsubfolders */ f.folder_id, f.folder_name, f.folder_id_r, f.folder_of_user, f.folder_owner, f.folder_level, <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2">NVL<cfelseif application.razuna.thedatabase EQ "mysql">ifnull<cfelseif application.razuna.thedatabase EQ "mssql">isnull</cfif>(u.user_login_name,'Obsolete') as username,
+	SELECT /* #variables.cachetoken#getsubfolders */ f.folder_id, f.folder_id_r, f.folder_of_user, f.folder_owner, f.folder_level, <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2">NVL<cfelseif application.razuna.thedatabase EQ "mysql">ifnull<cfelseif application.razuna.thedatabase EQ "mssql">isnull</cfif>(u.user_login_name,'Obsolete') as username,
 	<!--- Permission follow but not for sysadmin and admin --->
 	<cfif ( not session.is_system_admin and not session.is_administrator ) AND NOT structkeyexists(arguments,"external")>
 		CASE
@@ -5609,8 +5618,11 @@
 	<cfelse>
 		'unlocked' AS perm
 	</cfif>
-	, '0' as filecount
-	FROM #session.hostdbprefix#folders f LEFT JOIN users u ON u.user_id = f.folder_owner
+	, '0' as filecount,
+	if ( (select fn.folder_name as folder_name FROM raz1_folders_name fn WHERE fn.folder_id_r = f.folder_id AND fn.lang_id_r = #session.thelangid#) != '',  (select fn.folder_name as folder_name FROM raz1_folders_name fn WHERE fn.folder_id_r = f.folder_id AND fn.lang_id_r = #session.thelangid#), f.folder_name ) as folder_name
+	FROM #session.hostdbprefix#folders f 
+	LEFT JOIN users u ON u.user_id = f.folder_owner
+	LEFT JOIN #session.hostdbprefix#folders_name fn ON f.folder_id = fn.folder_id_r
 	WHERE
 	<cfif arguments.folder_id gt 0>
 		f.folder_id <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> f.folder_id_r
@@ -5633,7 +5645,8 @@
 	<cfif structkeyexists(arguments,"folder_name") AND arguments.folder_name NEQ ''>
    	 	AND f.folder_name LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.folder_name#%">
 	</cfif>
-	ORDER BY folder_name
+	AND fn.lang_id_r = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.thelangid#">
+	ORDER BY fn.folder_name, f.folder_name
 	</cfquery>
 	<!--- Query to get unlocked folders only --->
 	<cfquery dbtype="query" name="qRet">
@@ -5694,7 +5707,7 @@
 		</cfif>
 		<!--- Query: Get current folder_id_r --->
 		<cfquery datasource="#arguments.dsn#" name="qry" cachedwithin="1" region="razcache">
-		SELECT /* #variables.cachetoken#getbreadcrumb */ f.folder_name, f.folder_id_r, f.folder_id
+		SELECT /* #variables.cachetoken#getbreadcrumb */ f.folder_id_r, f.folder_id
 		<cfif checkperm>
 			<cfif session.iscol EQ "F">
 				,
@@ -5737,6 +5750,8 @@
 				END AS perm
 			</cfif>
 		</cfif>
+		,
+		if ( (select fn.folder_name as folder_name FROM raz1_folders_name fn WHERE fn.folder_id_r = f.folder_id AND fn.lang_id_r = #session.thelangid#) != '',  (select fn.folder_name as folder_name FROM raz1_folders_name fn WHERE fn.folder_id_r = f.folder_id AND fn.lang_id_r = #session.thelangid#), f.folder_name ) as folder_name
 		FROM #arguments.prefix#folders f
 		WHERE f.folder_id = <cfqueryparam value="#arguments.folder_id_r#" cfsqltype="CF_SQL_VARCHAR">
 		AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
