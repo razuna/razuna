@@ -75,28 +75,26 @@
 		<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 			<tr>
 				<td style="border:0px;">
-					<div class="grid-masonry">
-						<!--- Show Subfolders --->
-						<cfloop query="qry_subfolders">
-							<div class="assetbox grid-masonry-folder" style="text-align:center;">
-								<a href="##" onclick="razunatreefocusbranch('#folder_id_r#','#folder_id#');loadcontent('rightside','index.cfm?fa=c.folder&folder_id=#folder_id#');">
-									<div class="theimg">
-										<cfif directoryexists("#ExpandPath("../..")#global/host/folderthumbnail/#session.hostid#/#folder_id#")>
-											<cfdirectory name="myDir" action="list" directory="#ExpandPath("../../")#global/host/folderthumbnail/#session.hostid#/#folder_id#/" type="file">
-											<cfif myDir.RecordCount>
-												<img src="#dynpath#/global/host/folderthumbnail/#session.hostid#/#folder_id#/#myDir.name#" border="0"><br />
-											<cfelse>
-												<img src="#dynpath#/global/host/dam/images/folder-yellow.png" border="0"><br />
-											</cfif>
+					<!--- Show Subfolders --->
+					<cfloop query="qry_subfolders">
+						<div class="assetbox" style="text-align:center;height:200px;">
+							<a href="##" onclick="razunatreefocusbranch('#folder_id_r#','#folder_id#');loadcontent('rightside','index.cfm?fa=c.folder&folder_id=#folder_id#');">
+								<div class="theimg">
+									<cfif directoryexists("#ExpandPath("../..")#global/host/folderthumbnail/#session.hostid#/#folder_id#")>
+										<cfdirectory name="myDir" action="list" directory="#ExpandPath("../../")#global/host/folderthumbnail/#session.hostid#/#folder_id#/" type="file">
+										<cfif myDir.RecordCount>
+											<img src="#dynpath#/global/host/folderthumbnail/#session.hostid#/#folder_id#/#myDir.name#" border="0"><br />
 										<cfelse>
 											<img src="#dynpath#/global/host/dam/images/folder-yellow.png" border="0"><br />
 										</cfif>
-									</div>
-									<strong>#folder_name#</strong>
-								</a>
-							</div>
-						</cfloop>
-					</div>
+									<cfelse>
+										<img src="#dynpath#/global/host/dam/images/folder-yellow.png" border="0"><br />
+									</cfif>
+								</div>
+								<strong>#folder_name#</strong>
+							</a>
+						</div>
+					</cfloop>
 				</td>
 			</tr>
 		</table>
@@ -131,8 +129,6 @@
 			<tr>
 				<td style="border:0px;">
 					<div class="grid-masonry" id="selectme">
-						<!-- .grid-sizer empty element, only used for element sizing -->
-  						<div class="grid-masonry-sizer"></div>
 						<!--- Show Subfolders --->
 						<cfinclude template="inc_folder_thumbnail.cfm">
 						<cfloop query="qry_files">
