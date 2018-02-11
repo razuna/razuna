@@ -505,6 +505,14 @@
 		<set name="attributes.to" value="" overwrite="false" />
 		<!-- CFC -->
 		<invoke object="myFusebox.getApplicationData().global" methodcall="switchlang(attributes.thelang)" />
+		<!-- CFC: Get wl -->
+		<if condition="application.razuna.whitelabel">
+			<true>
+				<invoke object="myFusebox.getApplicationData().settings" methodcall="get_options_one_host('wl_login_links_#session.hostid#')" returnvariable="wl" />
+				<invoke object="myFusebox.getApplicationData().settings" methodcall="get_options_one_host('wl_html_title_#session.hostid#')" returnvariable="wl_html_title" />
+				<invoke object="myFusebox.getApplicationData().settings" methodcall="get_options_one_host('wl_thecss_#session.hostid#')" returnvariable="wl_thecss" />
+  			</true>
+  		</if>
 		<!-- Where to go -->
 		<if condition="attributes.to EQ 'index'">
     		<true>
