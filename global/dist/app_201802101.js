@@ -11,8 +11,8 @@ function callMasonry() {
 			itemSelector: '.grid-masonry-item',
 			horizontalOrder: true,
 			percentPosition: true,
-			// fitWidth: true,
-			transitionDuration: '0.2s'
+			transitionDuration: '0.2s',
+			// columnWidth: '.grid-sizer',
 		});
 	// });
 }

@@ -3203,15 +3203,19 @@ a:link .nolink{text-decoration: none;}
 	/*overflow-x:auto;*/
 }
 
+.grid-masonry-sizer {
+	width: 20%;
+}
+
 .grid-masonry-item {
-	/* width: 20%; */
-	max-width: 180px;
+	width: 20%;
+	/* width: 180px; */
 	min-height: 230px;
 	/* margin-bottom: 10px; */
 	/* float: left; */
 }
 .grid-masonry-folder {
-	max-width: 120px;
+	width: 150px;
 	/* width: 20%; */
 }
 

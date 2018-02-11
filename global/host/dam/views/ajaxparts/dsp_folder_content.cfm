@@ -78,7 +78,7 @@
 					<div class="grid-masonry">
 						<!--- Show Subfolders --->
 						<cfloop query="qry_subfolders">
-							<div class="assetbox grid-masonry-item" style="text-align:center;">
+							<div class="assetbox grid-masonry-folder" style="text-align:center;">
 								<a href="##" onclick="razunatreefocusbranch('#folder_id_r#','#folder_id#');loadcontent('rightside','index.cfm?fa=c.folder&folder_id=#folder_id#');">
 									<div class="theimg">
 										<cfif directoryexists("#ExpandPath("../..")#global/host/folderthumbnail/#session.hostid#/#folder_id#")>
@@ -131,6 +131,8 @@
 			<tr>
 				<td style="border:0px;">
 					<div class="grid-masonry" id="selectme">
+						<!-- .grid-sizer empty element, only used for element sizing -->
+  						<div class="grid-masonry-sizer"></div>
 						<!--- Show Subfolders --->
 						<cfinclude template="inc_folder_thumbnail.cfm">
 						<cfloop query="qry_files">
