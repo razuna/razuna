@@ -26,9 +26,7 @@
 <cfset thecfapp = hash(right(REReplace(getDirectoryFromPath(getCurrentTemplatePath()),'[^A-Za-z]','','all'),64))>
 <cfapplication name="#thecfapp#" sessionmanagement="Yes" sessiontimeout="#CreateTimeSpan(0,3,0,0)#" setClientCookies="yes">
 <!--- Decide on production or dev mode for FB --->
-<!--- <cfdump var="#cgi#">
-<cfabort> --->
-<cfif cgi.http_host CONTAINS "local" OR cgi.REMOTE_ADDR EQ "127.0.0.1">
+<cfif cgi.http_host CONTAINS "local" OR cgi.http_host CONTAINS "127.0.0.1">
 	<cfset application.fusebox.mode = "development-full-load">
 	<cflock name="#thecfapp#" timeout="120" type="exclusive">
 		<cfinclude template="/fusebox5/corefiles/fusebox5.cfm" />

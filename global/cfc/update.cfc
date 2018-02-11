@@ -335,7 +335,6 @@
 					<h2>We are done with the update. Please check the above output for any errors.</h2>
 					<p><a href="#cgi.SCRIPT_NAME#">All good. Take me to Razuna.</a></p>
 				</cfoutput>
-				<cfflush>
 
 			</cfif>
 
