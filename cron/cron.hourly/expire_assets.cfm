@@ -211,7 +211,7 @@
 		AND NOT EXISTS (SELECT 1 FROM ct_labels WHERE ct_id_r=fi.file_id AND ct_label_id IN (SELECT label_id FROM raz1_labels WHERE label_text ='Asset has expired'AND host_id=#arguments.host_id# AND label_id_r = '0'))
 		</cfquery>
 
-		<cfquery datasource="#arguments.datasource#" name="getusers2notify">
+		<cfquery dbtype="query" name="getusers2notify">
 		SELECT * FROM _img
 		UNION
 		SELECT * FROM _vid
@@ -253,7 +253,7 @@
 		SELECT f.file_id id, rec_uuid FROM ct_labels c, raz1_files f WHERE f.file_id=c.ct_id_r AND c.ct_label_id in (SELECT label_id FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=f.host_id AND label_id_r = '0')
 		AND (expiry_date IS NULL OR expiry_date >= <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#">)
 		</cfquery>
-		<cfquery datasource="#_db#" name="getreset_assets">
+		<cfquery dbtype="query" name="getreset_assets">
 		SELECT * FROM _img
 		UNION
 		SELECT * FROM _vid
