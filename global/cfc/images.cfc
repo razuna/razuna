@@ -1378,7 +1378,7 @@
 		<cfparam name="convert_wm_#theformat#" default="" />
 		<cfparam name="convert_dpi_#theformat#" default="" />
 		<!--- Put together the name --->
-		<cfset arguments.thestruct.thenamenoext = arguments.thestruct.thenamenoext & "_" & arguments.thestruct.newid>
+		<cfset arguments.thestruct.thenamenoext = arguments.thestruct.renditions_on_the_fly ? arguments.thestruct.thenamenoext : arguments.thestruct.thenamenoext & "_" & arguments.thestruct.newid>
 		<!--- If from upload templates we select width and height of image --->
 		<cfif arguments.thestruct.upl_template NEQ 0 AND arguments.thestruct.upl_template NEQ "undefined" AND arguments.thestruct.upl_template NEQ "">
 			<!--- Get width --->

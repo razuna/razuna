@@ -1429,7 +1429,7 @@
 			<cfset var theformat = listfirst(theformat,"_")>
 			<!--- Put together the filenames --->
 			<cfset var newname = listfirst(arguments.thestruct.qry_detail.detail.aud_name_org, ".")>
-			<cfset var finalaudioname = "#newname#" & "_" & #newid.id# & "." & #theformat#>
+			<cfset var finalaudioname = arguments.thestruct.renditions_on_the_fly ? "#newname#.#theformat#" : newname & "_" & newid.id & "." & theformat>
 			<cfset var thisfinalaudioname = "#thisfolder#/#finalaudioname#">
 			<cfset var thisfinalaudioname4copy = thisfinalaudioname>
 			<!--- FFMPEG: Set convert parameters for the different types --->
