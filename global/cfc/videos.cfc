@@ -1669,12 +1669,19 @@
 				<cfset var thewidth = Evaluate("arguments.thestruct.convert_width_#theformat#")>
 				<cfset var theheight = Evaluate("arguments.thestruct.convert_height_#theformat#")>
 			</cfif>
+			<!--- Define how to scale the video --->
+			<!--- By default we take the width and scale --->
+			<cfset var _scale = "-vf scale=#thewidth#:-1">
+			<!--- If height is bigger than width than scale different --->
+			<cfif theheight GT thewidth>
+				<cfset var _scale = "-vf scale=-1:#theheight#">
+			</cfif>
 			<!--- From here on we need to remove the number of the format (if any) --->
 			<cfset var theformat = listfirst(theformat,"_")>
 			<!--- Put together the filenames --->
 			<cfset var newname = listfirst(arguments.thestruct.qrydetail.vid_name_org, ".")>
-			<cfset var previewvideo = "#newname#" & "_" & arguments.thestruct.newid & "." & theformat>
-			<cfset var previewimage = "#newname#" & "_" & arguments.thestruct.newid & ".jpg">
+			<cfset var previewvideo = arguments.thestruct.renditions_on_the_fly ? "#newname#." & theformat : "#newname#" & "_" & arguments.thestruct.newid & "." & theformat>
+			<cfset var previewimage = arguments.thestruct.renditions_on_the_fly ? "#newname#.jpg" : "#newname#" & "_" & arguments.thestruct.newid & ".jpg">
 			<!--- Change path according to OS --->
 			<cfif isWindows>
 				<cfset var thispreviewvideo = """#thisfolder#/#previewvideo#""">
@@ -1687,7 +1694,7 @@
 			<cfswitch expression="#theformat#">
 				<!--- if AVI --->
 				<cfcase value="avi">
-					<cfset var theargument="-i #inputpath# -s #thewidth#x#theheight# -vcodec libx264 -pix_fmt yuv420p  -ac 2 -y #thispreviewvideo#">
+					<cfset var theargument="-i #inputpath# #_scale# -vcodec libx264 -pix_fmt yuv420p -ac 2 -y #thispreviewvideo#">
 				</cfcase>
 				<!--- if 3GP --->
 				<cfcase value="3gp">
@@ -1701,24 +1708,24 @@
 					<cfelse>
 						<cfset var theacodec = "copy">
 					</cfif>
-					<cfset var theargument="-i #inputpath# -vcodec h263 -acodec #theacodec# -ac 1 -ar 8000 -r 25 -ab 12.2k -s #thewidth#x#theheight# -y #thispreviewvideo#">
+					<cfset var theargument="-i #inputpath# -vcodec h263 -acodec #theacodec# -ac 1 -ar 8000 -r 25 -ab 12.2k #_scale# -y #thispreviewvideo#">
 				</cfcase>
 				<!--- MXF --->
 				<cfcase value="mxf">
-					<cfset var theargument="-i #inputpath# -s #thewidth#x#theheight# -acodec pcm_s16le -ar 48000 -ac 2 -vsync 2 -y #thispreviewvideo#">
+					<cfset var theargument="-i #inputpath# #_scale# -acodec pcm_s16le -ar 48000 -ac 2 -vsync 2 -y #thispreviewvideo#">
 				</cfcase>
 				<!--- WMV --->
 				<cfcase value="wmv">
-					<cfset var theargument="-i #inputpath# -s #thewidth#x#theheight# -vcodec wmv2 -acodec wmav2 -ar 48000 -ab 400k -ac 2 -vsync 2 -y #thispreviewvideo#">
+					<cfset var theargument="-i #inputpath# #_scale# -vcodec wmv2 -acodec wmav2 -ar 48000 -ab 400k -ac 2 -vsync 2 -y #thispreviewvideo#">
 				</cfcase>
 				<!--- OGV --->
 				<cfcase value="ogv">
-					<cfset var theargument="-i #inputpath# -s #thewidth#x#theheight# -crf 22 -threads 2 -acodec libvorbis -vsync 2 -y #thispreviewvideo#">
+					<cfset var theargument="-i #inputpath# #_scale# -crf 22 -threads 2 -acodec libvorbis -vsync 2 -y #thispreviewvideo#">
 				</cfcase>
 				<!--- WebM --->
 				<cfcase value="webm">
 					<!--- <cfset bitrate = thebitrate * 1024> --->
-					<cfset var theargument="-i #inputpath# -s #thewidth#x#theheight# -crf 22 -threads 2 -vcodec libvpx -acodec libvorbis -y #thispreviewvideo#">
+					<cfset var theargument="-i #inputpath# #_scale# -crf 22 -threads 2 -vcodec libvpx -acodec libvorbis -y #thispreviewvideo#">
 				</cfcase>
 				<cfdefaultcase>
 					<cfif isWindows>
@@ -1727,7 +1734,7 @@
 						<cfset var theaac = "libfaac">
 					</cfif>
 
-					<cfset var theargument="-i #inputpath# -s #thewidth#x#theheight# -vcodec libx264 -pix_fmt yuv420p -acodec #theaac# -crf 22 -threads 2 -y #thispreviewvideo#">
+					<cfset var theargument="-i #inputpath# #_scale# -vcodec libx264 -pix_fmt yuv420p -acodec #theaac# -crf 22 -threads 2 -y #thispreviewvideo#">
 				</cfdefaultcase>
 			</cfswitch>
 			<!--- FFMPEG: CONVERT THE VIDEO --->
@@ -1870,7 +1877,7 @@
 					<!--- Wait for this thread to finish --->
 					<cfthread action="join" name="uploadconvert#ttexe##theformat#" />
 				</cfif>
-				
+
 				<!--- Insert record --->
 				<cfif arguments.thestruct.save_renditions>
 					<cfquery datasource="#application.razuna.datasource#">
