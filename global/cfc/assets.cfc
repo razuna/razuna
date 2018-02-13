@@ -7827,6 +7827,7 @@ This is the main function called directly by a single upload else from addassets
 
 	<!--- Grab first part of file name --->
 	<cfset var _file_name_first = ListFirst(arguments.thestruct.theoriginalfilename, ".")>
+	<cfset var _file_extension = ListLast(arguments.thestruct.theoriginalfilename, ".")>
 	<cfset console("_file_name_first : " & _file_name_first)>
 	<!--- Check also if there is a "underscore" --->
 	<cfif FindOneof("_", _file_name_first)>
@@ -7874,6 +7875,11 @@ This is the main function called directly by a single upload else from addassets
 	<cfset arguments.thestruct.upc_name = _file_name_second_underscore EQ "" ? _file_name_first & "." & _extension_first : _file_name_first>
 	<cfset arguments.thestruct.dl_query.upc_number = _file_name_second_underscore EQ "" ? _file_name_first : _file_name_first_underscore>
 
+	<!--- If this is NOT a TGA tag on extension to the UPC name / filename --->
+	<cfif _file_extension NEQ "tga">
+		<cfset arguments.thestruct.upc_name = arguments.thestruct.upc_name & "." & _file_extension>
+	</cfif>
+
 	<cfset console("arguments.thestruct.upc_name : " & arguments.thestruct.upc_name)>
 	<cfset console("arguments.thestruct.dl_query.upc_number : " & arguments.thestruct.dl_query.upc_number)>
 	<!--- If this is the Original --->
@@ -7884,13 +7890,14 @@ This is the main function called directly by a single upload else from addassets
 		SELECT #field_name# as id
 		FROM #table_name#
 		WHERE #check_field_name# = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.dl_query.upc_number#">
-		AND #col_file_name# = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thefilenamenoext#">
+		AND #col_file_name# = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.upc_name#">
 		AND folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		AND in_trash = <cfqueryparam value="F" cfsqltype="CF_SQL_VARCHAR">
 		</cfquery>
 		<!--- File exists, create version --->
 		<cfif upc_1_exists.recordcount>
+			<cfset console("VERSION !!!!!")>
 			<!--- Remove record from table --->
 			<cfquery datasource="#application.razuna.datasource#">
 			DELETE FROM #table_name#
