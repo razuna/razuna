@@ -237,12 +237,12 @@
 				<!--- Move the current directory images to new version --->
 				<cfinvoke component="amazon" method="movefolder">
 					<cfinvokeargument name="folderpath" value="#arguments.thestruct.qry.path_to_asset#">
-					<cfinvokeargument name="folderpathdest" value="#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.newversion#">
+					<cfinvokeargument name="folderpathdest" value="versions/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.newversion#">
 					<cfinvokeargument name="awsbucket" value="#arguments.thestruct.awsbucket#">
 				</cfinvoke>
 				<!--- Copy the existing version images to current directory --->
 				<cfinvoke component="amazon" method="copyfolder">
-					<cfinvokeargument name="folderpath" value="#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.version#">
+					<cfinvokeargument name="folderpath" value="versions/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.version#">
 					<cfinvokeargument name="folderpathdest" value="#arguments.thestruct.qry.path_to_asset#">
 					<cfinvokeargument name="awsbucket" value="#arguments.thestruct.awsbucket#">
 				</cfinvoke>
@@ -252,14 +252,14 @@
 			<!--- Get SignedURL original --->
 			<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_org" key="#arguments.thestruct.qry.path_to_asset#/#qrycurrentversion.ver_filename_org#" awsbucket="#arguments.thestruct.awsbucket#">
 			<!--- Get SignedURL for the original in the versions --->
-			<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_version" key="#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.newversion#/#arguments.thestruct.qry.filenameorg#" awsbucket="#arguments.thestruct.awsbucket#">
+			<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_version" key="/versions/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.newversion#/#arguments.thestruct.qry.filenameorg#" awsbucket="#arguments.thestruct.awsbucket#">
 			<!--- Get the thumbnail --->
 			<cfif arguments.thestruct.type EQ "img">
-				<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_version_thumb" key="#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.newversion#/thumb_#arguments.thestruct.file_id#.#arguments.thestruct.qrysettings.set2_img_format#" awsbucket="#arguments.thestruct.awsbucket#">
+				<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_version_thumb" key="/versions/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.newversion#/thumb_#arguments.thestruct.file_id#.#arguments.thestruct.qrysettings.set2_img_format#" awsbucket="#arguments.thestruct.awsbucket#">
 			<cfelseif arguments.thestruct.type EQ "vid">
-				<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_version_thumb" key="#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.newversion#/#listFirst(arguments.thestruct.qry.filenameorg,".")#.jpg" awsbucket="#arguments.thestruct.awsbucket#">
+				<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_version_thumb" key="/versions/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.newversion#/#listFirst(arguments.thestruct.qry.filenameorg,".")#.jpg" awsbucket="#arguments.thestruct.awsbucket#">
 			<cfelseif arguments.thestruct.type EQ 'doc' AND arguments.thestruct.qry.orgext EQ 'PDF'>
-				<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_version_thumb" key="#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.newversion#/#listFirst(arguments.thestruct.qry.filenameorg,".")#.jpg" awsbucket="#arguments.thestruct.awsbucket#">
+				<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_version_thumb" key="/versions/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.newversion#/#listFirst(arguments.thestruct.qry.filenameorg,".")#.jpg" awsbucket="#arguments.thestruct.awsbucket#">
 			</cfif>
 		</cfif>
 		<!--- Update the record in versions DB --->
@@ -826,8 +826,8 @@
 			<cfthread name="#mtt#" intstruct="#arguments.thestruct#">
 				<!--- Move --->
 				<cfinvoke component="amazon" method="movefolder">
-					<cfinvokeargument name="folderpath" value="#attributes.intstruct.qryfilelocal.path_to_asset#">
-					<cfinvokeargument name="folderpathdest" value="#attributes.intstruct.hostid#/versions/#attributes.intstruct.type#/#attributes.intstruct.qryfile.file_id#/#attributes.intstruct.newversion#">
+					<cfinvokeargument name="folderpath" value="/#attributes.intstruct.qryfilelocal.path_to_asset#">
+					<cfinvokeargument name="folderpathdest" value="versions/#attributes.intstruct.type#/#attributes.intstruct.qryfile.file_id#/#attributes.intstruct.newversion#">
 					<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
 				</cfinvoke>
 			</cfthread>
@@ -862,14 +862,14 @@
 			<!--- Get SignedURL original --->
 			<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_org" key="#arguments.thestruct.qryfilelocal.path_to_asset#/#arguments.thestruct.qryfile.filename#" awsbucket="#arguments.thestruct.awsbucket#">
 			<!--- Get SignedURL for the original in the versions --->
-			<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_version" key="#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.qryfile.file_id#/#arguments.thestruct.newversion#/#arguments.thestruct.qryfilelocal.file_name_org#" awsbucket="#arguments.thestruct.awsbucket#">
+			<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_version" key="/versions/#arguments.thestruct.type#/#arguments.thestruct.qryfile.file_id#/#arguments.thestruct.newversion#/#arguments.thestruct.qryfilelocal.file_name_org#" awsbucket="#arguments.thestruct.awsbucket#">
 			<!--- Get the thumbnail  --->
 			<cfif arguments.thestruct.type EQ "img">
-				<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_version_thumb" key="#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.qryfile.file_id#/#arguments.thestruct.newversion#/thumb_#arguments.thestruct.qryfile.file_id#.#arguments.thestruct.qrysettings.set2_img_format#" awsbucket="#arguments.thestruct.awsbucket#">
+				<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_version_thumb" key="/versions/#arguments.thestruct.type#/#arguments.thestruct.qryfile.file_id#/#arguments.thestruct.newversion#/thumb_#arguments.thestruct.qryfile.file_id#.#arguments.thestruct.qrysettings.set2_img_format#" awsbucket="#arguments.thestruct.awsbucket#">
 			<cfelseif arguments.thestruct.type EQ "vid">
-				<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_version_thumb" key="#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.qryfile.file_id#/#arguments.thestruct.newversion#/#listFirst(arguments.thestruct.qryfilelocal.file_name_org,".")#.jpg" awsbucket="#arguments.thestruct.awsbucket#">
+				<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_version_thumb" key="/versions/#arguments.thestruct.type#/#arguments.thestruct.qryfile.file_id#/#arguments.thestruct.newversion#/#listFirst(arguments.thestruct.qryfilelocal.file_name_org,".")#.jpg" awsbucket="#arguments.thestruct.awsbucket#">
 			<cfelseif arguments.thestruct.type EQ 'doc' AND (arguments.thestruct.qryfilelocal.orgext EQ 'PDF' OR arguments.thestruct.qryfilelocal.orgext EQ 'INDD')>
-				<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_version_thumb" key="#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.qryfile.file_id#/#arguments.thestruct.newversion#/#listFirst(arguments.thestruct.qryfilelocal.file_name_org,".")#.jpg" awsbucket="#arguments.thestruct.awsbucket#">
+				<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_version_thumb" key="/versions/#arguments.thestruct.type#/#arguments.thestruct.qryfile.file_id#/#arguments.thestruct.newversion#/#listFirst(arguments.thestruct.qryfilelocal.file_name_org,".")#.jpg" awsbucket="#arguments.thestruct.awsbucket#">
 			</cfif>
 		</cfif>
 		<!--- Update the record in versions DB --->
@@ -1453,7 +1453,7 @@
 				<!--- Move --->
 				<cfinvoke component="amazon" method="movefolder">
 					<cfinvokeargument name="folderpath" value="#attributes.intstruct.qryfile.path#">
-					<cfinvokeargument name="folderpathdest" value="/#attributes.intstruct.hostid#/versions/#attributes.intstruct.type#/#attributes.intstruct.qryfile.file_id#/#attributes.intstruct.newversion#">
+					<cfinvokeargument name="folderpathdest" value="versions/#attributes.intstruct.type#/#attributes.intstruct.qryfile.file_id#/#attributes.intstruct.newversion#">
 					<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
 				</cfinvoke>
 			</cfthread>
@@ -1484,10 +1484,10 @@
 				<!--- Wait for the upload thread to finish --->
 				<cfthread action="join" name="ut#arguments.thestruct.therandom#" />
 				<!--- Get SignedURL thumbnail --->
-				<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url" key="/#arguments.thestruct.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.qryfile.file_id#/#arguments.thestruct.newversion#/#arguments.thestruct.thumbnailname_new#" awsbucket="#arguments.thestruct.awsbucket#">
+				<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url" key="/versions/#arguments.thestruct.type#/#arguments.thestruct.qryfile.file_id#/#arguments.thestruct.newversion#/#arguments.thestruct.thumbnailname_new#" awsbucket="#arguments.thestruct.awsbucket#">
 			</cfif>
 			<!--- Get SignedURL for the original in the versions --->
-			<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_version" key="#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.qryfile.file_id#/#arguments.thestruct.newversion#/#arguments.thestruct.qryfile.filename#" awsbucket="#arguments.thestruct.awsbucket#">
+			<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_version" key="/versions/#arguments.thestruct.type#/#arguments.thestruct.qryfile.file_id#/#arguments.thestruct.newversion#/#arguments.thestruct.qryfile.filename#" awsbucket="#arguments.thestruct.awsbucket#">
 		</cfif>
 		<!--- Update the record in versions DB --->
 		<cfquery datasource="#application.razuna.datasource#">
