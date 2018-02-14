@@ -23,7 +23,7 @@
 * along with Razuna. If not, see <http://www.razuna.com/licenses/>.
 *
 --->
-<cfapplication name="#attributes.cfapplicationname#" sessionmanagement="Yes" sessiontimeout="#CreateTimeSpan(0,3,0,0)#" setClientCookies="yes" />
+<cfapplication name="#attributes.cfapplicationname#" sessionmanagement="Yes" sessiontimeout="#CreateTimeSpan(14,0,0,0)#" setClientCookies="yes" />
 <cferror type="exception" template="error.cfm" />
 <cferror type="request" template="error_request.cfm" />
 <!--- Decide on production or dev mode for FB --->
