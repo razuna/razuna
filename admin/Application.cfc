@@ -29,11 +29,11 @@
 	<!--- set application name based on the directory path --->
 	<cfset this.name = hash(right(REReplace(getDirectoryFromPath(getCurrentTemplatePath()),'[^A-Za-z]','','all'),64))>
 	<cfset this.sessionmanagement="Yes">
-	<cfset this.sessiontimeout="#CreateTimeSpan(0,3,0,0)#">
+	<cfset this.sessiontimeout="#CreateTimeSpan(14,0,0,0)#">
 	<cfset this.setClientCookies="yes">
 
-	<!--- <cffunction name="onApplicationStart">
-		<cfquery datasource="razuna_default" name="x">
+	<cffunction name="onApplicationStart">
+		<!--- <cfquery datasource="razuna_default" name="x">
 		select * from razuna_config
 		</cfquery>
 		<cfset cacheregionnew(
@@ -44,11 +44,12 @@
 				waittimeseconds : 5
 			}
 		)>
-		<cfset application.sessionstorage="memcached://127.0.0.1:11211">
-	</cffunction> --->
+		<cfset application.sessionstorage="memcached://127.0.0.1:11211"> --->
+		<cfreturn true>
+	</cffunction>
 
-	<!--- <cffunction name="onRequestStart">
-		<cfset consoleoutput(true)>
+	<cffunction name="onRequestStart">
+		<!--- <cfset consoleoutput(true)>
 
 
 		<cfset var _absolute_path = ExpandPath("../")>
@@ -66,7 +67,7 @@
 
 		<cffile action="write" file="#_file#" output="#_json#" >
 
-		<cfabort>
+		<cfabort> --->
 		<cfif cgi.http_host CONTAINS "local" OR cgi.http_host CONTAINS "127.0.0.1">
 			<cfset application.fusebox.mode = "development-full-load">
 			<cflock name="#application.applicationname#" timeout="120" type="exclusive">
@@ -76,6 +77,6 @@
 			<cfset application.fusebox.mode = "production">
 			<cfinclude template="/fusebox5/corefiles/fusebox5.cfm" />
 		</cfif>
-	</cffunction> --->
+	</cffunction>
 
 </cfcomponent>
