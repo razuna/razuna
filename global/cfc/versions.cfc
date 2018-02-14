@@ -820,13 +820,14 @@
 		<!--- Amazon --->
 		<cfelseif application.razuna.storage EQ "amazon">
 			<cfset arguments.thestruct.newversion = qryversion.newversion>
+			<cfset arguments.thestruct.hostid = session.hostid>
 			<cfset var mtt = createuuid("")>
 			<!--- Move the file to the versions directory --->
 			<cfthread name="#mtt#" intstruct="#arguments.thestruct#">
 				<!--- Move --->
 				<cfinvoke component="amazon" method="movefolder">
 					<cfinvokeargument name="folderpath" value="#attributes.intstruct.qryfilelocal.path_to_asset#">
-					<cfinvokeargument name="folderpathdest" value="#session.hostid#/versions/#attributes.intstruct.type#/#attributes.intstruct.qryfile.file_id#/#attributes.intstruct.newversion#">
+					<cfinvokeargument name="folderpathdest" value="#attributes.intstruct.hostid#/versions/#attributes.intstruct.type#/#attributes.intstruct.qryfile.file_id#/#attributes.intstruct.newversion#">
 					<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
 				</cfinvoke>
 			</cfthread>
