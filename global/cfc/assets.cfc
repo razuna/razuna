@@ -2946,12 +2946,6 @@ This is the main function called directly by a single upload else from addassets
 	<cfif structKeyExists(arguments.thestruct,'upc_name') AND arguments.thestruct.upc_name NEQ ''>
 		<cfset arguments.thestruct.image_name = arguments.thestruct.upc_name>
 		<cfset console(" OUTSIDE IMAGE NAME !!!! : " & arguments.thestruct.image_name)>
-		<!--- <cfif structKeyExists(arguments.thestruct,'upc_record_to_update') AND arguments.thestruct.upc_record_to_update.recordcount>
-			<!--- Store the current temp id --->
-			<cfset arguments.thestruct.current_temp_id = arguments.thestruct.newid >
-			<!--- Store the id of the UPC record we need to update --->
-			<cfset arguments.thestruct.newid = arguments.thestruct.upc_record_to_update.id >
-		</cfif> --->
 	<cfelse>
 		<cfset arguments.thestruct.image_name = arguments.thestruct.theoriginalfilename>
 	</cfif>
@@ -3360,13 +3354,6 @@ This is the main function called directly by a single upload else from addassets
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
 		</cfquery>
 	</cfif>
-	<!--- <cfif ! arguments.thestruct.upcRenditionNum AND structKeyExists(arguments.thestruct,'upc_record_to_update') AND arguments.thestruct.upc_record_to_update.recordcount>
-		<cfquery datasource="#arguments.thestruct.dsn#">
-		DELETE FROM #session.hostdbprefix#images
-		WHERE img_id = <cfqueryparam value="#arguments.thestruct.current_temp_id#" cfsqltype="CF_SQL_VARCHAR">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
-		</cfquery>
-	</cfif> --->
 	<!--- return --->
 	<cfreturn />
 </cffunction>
@@ -3711,12 +3698,6 @@ This is the main function called directly by a single upload else from addassets
 		<cfif structKeyExists(arguments.thestruct,'upc_name') AND arguments.thestruct.upc_name NEQ ''>
 			<cfset arguments.thestruct.vid_name = arguments.thestruct.upc_name>
 			<cfset arguments.thestruct.theoriginalfilename = arguments.thestruct.upc_name>
-			<!--- <cfif structKeyExists(arguments.thestruct,'upc_record_to_update') AND arguments.thestruct.upc_record_to_update.recordcount>
-				<!--- Store the current temp id --->
-				<cfset arguments.thestruct.current_temp_id = arguments.thestruct.newid >
-				<!--- Store the id of the UPC record we need to update --->
-				<cfset arguments.thestruct.newid = arguments.thestruct.upc_record_to_update.id >
-			</cfif> --->
 		<cfelse>
 			<cfset arguments.thestruct.newid = arguments.thestruct.qryfile.tempid>
 		</cfif>
@@ -4637,12 +4618,6 @@ This is the main function called directly by a single upload else from addassets
 		<!--- If for a upc file --->
 		<cfif structKeyExists(arguments.thestruct,'upc_name') AND arguments.thestruct.upc_name NEQ ''>
 			<cfset arguments.thestruct.aud_name = arguments.thestruct.upc_name >
-			<!--- <cfif structKeyExists(arguments.thestruct,'upc_record_to_update') AND arguments.thestruct.upc_record_to_update.recordcount>
-				<!--- Store the current temp id --->
-				<cfset arguments.thestruct.current_temp_id = arguments.thestruct.newid >
-				<!--- Store the id of the UPC record we need to update --->
-				<cfset arguments.thestruct.newid = arguments.thestruct.upc_record_to_update.id >
-			</cfif> --->
 		</cfif>
 		<!--- Dont do this if the link_kind is a url --->
 		<cfif arguments.thestruct.qryfile.link_kind NEQ "url">
@@ -7919,6 +7894,7 @@ This is the main function called directly by a single upload else from addassets
 		</cfif>
 	<!--- If this is for .2, .3, etc. we add it as rendition --->
 	<cfelse>
+
 		<!--- Get original asset to which this rendition will be associated --->
 		<cfquery name="arguments.thestruct.qryGroupDetails" datasource="#application.razuna.datasource#">
 		SELECT #field_name# as id
@@ -7929,8 +7905,33 @@ This is the main function called directly by a single upload else from addassets
 		AND in_trash = <cfqueryparam value="F" cfsqltype="CF_SQL_VARCHAR">
 		</cfquery>
 
-		<cfset console("arguments.thestruct.qryGroupDetails")>
-		<cfset console(arguments.thestruct.qryGroupDetails)>
+		<!--- Check if the file already exists in the database. If so, just update it --->
+		<cfset var upc_record_to_update = "">
+		<cfquery name="upc_record_to_update" datasource="#application.razuna.datasource#">
+		SELECT #field_name# as id
+		FROM #table_name#
+		WHERE #col_file_name# = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.upc_name#">
+		AND #col_group# = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.qryGroupDetails.id#">
+		AND folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND in_trash = <cfqueryparam value="F" cfsqltype="CF_SQL_VARCHAR">
+		</cfquery>
+
+		<cfif upc_record_to_update.recordcount>
+			<!--- Store the current temp id --->
+			<cfset arguments.thestruct.current_temp_id = arguments.thestruct.newid>
+			<!--- Store the id of the UPC record we need to update --->
+			<cfset arguments.thestruct.newid = upc_record_to_update.id>
+			<!--- Delete the record --->
+			<cfquery datasource="#arguments.thestruct.dsn#">
+			DELETE FROM #table_name#
+			WHERE #field_name# = <cfqueryparam value="#arguments.thestruct.current_temp_id#" cfsqltype="CF_SQL_VARCHAR">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
+			</cfquery>
+			<!--- return --->
+			<cfreturn arguments.thestruct.upc_name />
+		</cfif>
+
 		<!--- Update table with group so these files do not show in folder as "in progress" --->
 		<cfquery datasource="#application.razuna.datasource#">
 		UPDATE #table_name#
@@ -7940,6 +7941,7 @@ This is the main function called directly by a single upload else from addassets
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		AND in_trash = <cfqueryparam value="F" cfsqltype="CF_SQL_VARCHAR">
 		</cfquery>
+
 		<!--- If record is not found call this function action with a pause so that .1 might have been uploaded in the meantime --->
 		<cfif ! arguments.thestruct.qryGroupDetails.recordcount>
 			<!--- Update table with group so these files do not show in folder as "in progress" --->
@@ -7976,20 +7978,6 @@ This is the main function called directly by a single upload else from addassets
 			<cfinvoke component="folders" method="Find_Prod_String" returnvariable="arguments.thestruct.upc_name">
 				<cfinvokeargument name="strManuf_UPC" value="#extract_upcnumber#">
 			</cfinvoke> --->
-			<!--- Get the ID of the record to update --->
-			<!--- <cfset console("Query upc_name : " & arguments.thestruct.upc_name)>
-			<cfset console("Query folder_id : " & arguments.thestruct.folder_id)>
-			<cfset console("Query col_file_name : " & col_file_name)> --->
-			<!--- <cfquery name="arguments.thestruct.upc_record_to_update" datasource="#application.razuna.datasource#">
-			SELECT #field_name# as id
-			FROM #table_name#
-			WHERE #col_file_name# = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.upc_name#">
-			AND folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
-			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-			AND in_trash = <cfqueryparam value="F" cfsqltype="CF_SQL_VARCHAR">
-			</cfquery>
-			<cfset console(arguments.thestruct.upc_record_to_update)> --->
-			<cfset console("RETURN: #arguments.thestruct.upc_name#")>
 			<!--- return --->
 			<cfreturn arguments.thestruct.upc_name />
 		</cfif>
