@@ -198,19 +198,21 @@
 	<cffunction name="listkeys" access="public" output="false">
 		<cfargument name="folderpath" type="string" required="true" />
 		<cfargument name="awsbucket" type="string" required="true" />
-		<!--- Get keys --->
-		<!--- <cfinvoke component="s3" method="getbucket" bucketName="#arguments.awsbucket#" prefix="#arguments.folderpath#" returnVariable="thekeys" /> --->
-		<!--- If we store all files in one bucket --->
-		<cfset arguments = tenantCheck(arguments)>
 		<!--- Lenght of key and remove first / --->
-		<cfset _len_folder = len(arguments.folderpath)>
-		<cfset _len_folder = _len_folder - 1>
-		<cfset _folderpath_noprefix = right(arguments.folderpath, _len_folder) & "/">
+		<cfset var _folderpath = arguments.folderpath>
+		<cfset var f = left(_folderpath, 1)>
+		<cfif f EQ "/">
+			<cfset _folderpath_len = len(_folderpath)>
+			<cfset _folderpath_len = _folderpath_len - 1>
+			<cfset _folderpath = mid(_folderpath, 2, _folderpath_len)>
+		</cfif>
+		<!--- Add / at the end --->
+		<cfset _folderpath = _folderpath & "/">
 		<!--- Get keys --->
-		<cfset thekeys = AmazonS3list(
+		<cfset var thekeys = AmazonS3list(
 			datasource=application.razuna.s3ds,
 			bucket=arguments.awsbucket,
-			prefix=_folderpath_noprefix
+			prefix=_folderpath
 		)>
 		<!--- Return --->
 		<cfreturn thekeys />

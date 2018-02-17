@@ -2930,6 +2930,9 @@ This is the main function called directly by a single upload else from addassets
 	<cfif not isdefined("arguments.thestruct.theoriginalfilename") AND isdefined('arguments.thestruct.lanorgname')>
 		<cfset arguments.thestruct.theoriginalfilename = arguments.thestruct.lanorgname>
 	</cfif>
+	<cfset consoleoutput(true)>
+	<cfset console("arguments.thestruct.theoriginalfilename : " & arguments.thestruct.theoriginalfilename)>
+
 	<!--- Check the asset upload based on the UPC  --->
 	<cfinvoke method="uploadUpc" returnvariable="arguments.thestruct.upc_name" >
 		<cfinvokeargument name="thestruct" value="#arguments.thestruct#">
@@ -7737,8 +7740,8 @@ This is the main function called directly by a single upload else from addassets
 <cffunction name="uploadUpc" output="true" >
 	<cfargument name="thestruct" type="struct" required="true" >
 	<cfargument name="assetfrom" type="string" required="true" >
-	<!--- <cfset consoleoutput(false)> --->
-	<!--- <cfset console(arguments.thestruct)> --->
+	<!--- <cfset consoleoutput(false)>
+	<cfset console(arguments.thestruct)> --->
 	<!--- param --->
 	<cfparam name="arguments.thestruct.upc_name" default="" >
 	<cfparam name="arguments.thestruct.theoriginalfilename" default="" >
@@ -7821,14 +7824,14 @@ This is the main function called directly by a single upload else from addassets
 		<cfset var _file_name_upc_extension = "_" & _file_name_second_underscore & _file_name_upc_extension>
 	</cfif>
 
-	<cfset console("_file_name_upc_extension : " & _file_name_upc_extension)>
+	<!--- <cfset console("_file_name_upc_extension : " & _file_name_upc_extension)> --->
 
 	<!--- Get UPC templates with extension --->
 	<cfset var qry_upc_template = "">
 	<cfinvoke component="settings" method="getUpcExtension" upc_extension="#lcase(_file_name_upc_extension)#" returnvariable="qry_upc_template" />
-	<cfset consoleoutput(true)>
+	<!--- <cfset consoleoutput(true)>
 	<cfset console(qry_upc_template)>
-
+	 --->
 	<!--- If nothing found just return --->
 	<cfif ! qry_upc_template.recordCount>
 		<cfreturn arguments.thestruct.upc_name>
@@ -7843,7 +7846,7 @@ This is the main function called directly by a single upload else from addassets
 	<!--- Split extension --->
 	<!--- <cfset var _extension_first = listfirst(_file_name_upc_extension, ".")> --->
 	<cfset var _extension_first = listfirst(_file_name_upc_extension, ".")>
-	<cfset console("_extension_first : " & _extension_first)>
+	<!--- <cfset console("_extension_first : " & _extension_first)> --->
 
 	<!--- <cfset var checkUFName = _file_name_first & "." & _extension_first> --->
 	<!--- <cfset console('checkUFName: #checkUFName#')> --->
@@ -7855,8 +7858,8 @@ This is the main function called directly by a single upload else from addassets
 		<cfset arguments.thestruct.upc_name = arguments.thestruct.upc_name & "." & _file_extension>
 	</cfif>
 
-	<cfset console("arguments.thestruct.upc_name : " & arguments.thestruct.upc_name)>
-	<cfset console("arguments.thestruct.dl_query.upc_number : " & arguments.thestruct.dl_query.upc_number)>
+	<!--- <cfset console("arguments.thestruct.upc_name : " & arguments.thestruct.upc_name)>
+	<cfset console("arguments.thestruct.dl_query.upc_number : " & arguments.thestruct.dl_query.upc_number)> --->
 	<!--- If this is the Original --->
 	<cfif arguments.thestruct.upcRenditionNum>
 		<!--- Check if a file with this already exists --->
@@ -7894,7 +7897,7 @@ This is the main function called directly by a single upload else from addassets
 		</cfif>
 	<!--- If this is for .2, .3, etc. we add it as rendition --->
 	<cfelse>
-
+		<cfset console("Add as rendition")>
 		<!--- Get original asset to which this rendition will be associated --->
 		<cfquery name="arguments.thestruct.qryGroupDetails" datasource="#application.razuna.datasource#">
 		SELECT #field_name# as id
@@ -7904,6 +7907,8 @@ This is the main function called directly by a single upload else from addassets
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		AND in_trash = <cfqueryparam value="F" cfsqltype="CF_SQL_VARCHAR">
 		</cfquery>
+		<!--- <cfset console("arguments.thestruct.qryGroupDetails")>
+		<cfset console(arguments.thestruct.qryGroupDetails)> --->
 
 		<!--- Check if the file already exists in the database. If so, just update it --->
 		<cfset var upc_record_to_update = "">
@@ -7916,6 +7921,8 @@ This is the main function called directly by a single upload else from addassets
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		AND in_trash = <cfqueryparam value="F" cfsqltype="CF_SQL_VARCHAR">
 		</cfquery>
+		<!--- <cfset console("upc_record_to_update : ")>
+		<cfset console(upc_record_to_update)> --->
 
 		<cfif upc_record_to_update.recordcount>
 			<!--- Store the current temp id --->
