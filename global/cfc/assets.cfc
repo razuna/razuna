@@ -7824,20 +7824,24 @@ This is the main function called directly by a single upload else from addassets
 		<cfset var _file_name_upc_extension = "_" & _file_name_second_underscore & _file_name_upc_extension>
 	</cfif>
 
-	<!--- <cfset console("_file_name_upc_extension : " & _file_name_upc_extension)> --->
+	<cfset console("_file_name_upc_extension : " & _file_name_upc_extension)>
 
 	<!--- Get UPC templates with extension --->
 	<cfset var qry_upc_template = "">
 	<cfinvoke component="settings" method="getUpcExtension" upc_extension="#lcase(_file_name_upc_extension)#" returnvariable="qry_upc_template" />
-	<!--- <cfset consoleoutput(true)>
-	<cfset console(qry_upc_template)>
-	 --->
+	<cfset consoleoutput(true)>
+	<cfset console(qry_upc_template.upc_field)>
+	<cfset console("." & _file_extension)>
+
 	<!--- If nothing found just return --->
 	<cfif ! qry_upc_template.recordCount>
 		<cfreturn arguments.thestruct.upc_name>
 	</cfif>
 
 	<!--- UPC extension found. Continue --->
+
+	<!--- Put UPC template extension into var --->
+	<cfset var _upc_template_extension = qry_upc_template.upc_field>
 
 	<!--- If original --->
 	<cfset arguments.thestruct.fn_ischar = qry_upc_template.upc_is_original ? true : false>
@@ -7854,7 +7858,7 @@ This is the main function called directly by a single upload else from addassets
 	<cfset arguments.thestruct.dl_query.upc_number = _file_name_second_underscore EQ "" ? _file_name_first : _file_name_first_underscore>
 
 	<!--- If this is NOT a TGA tag on extension to the UPC name / filename --->
-	<cfif _file_extension NEQ "tga">
+	<cfif _file_extension NEQ "tga" AND _upc_template_extension NEQ "." & _file_extension>
 		<cfset arguments.thestruct.upc_name = arguments.thestruct.upc_name & "." & _file_extension>
 	</cfif>
 
