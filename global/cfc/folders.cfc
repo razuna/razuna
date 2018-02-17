@@ -2924,7 +2924,7 @@
 			AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			AND fi.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			AND fi.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
-			AND fi.is_available = <cfqueryparam cfsqltype="cf_sql_varchar" value="1">
+			AND fi.is_available <cfif application.razuna.thedatabase EQ "mysql"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="cf_sql_varchar" value="2">
 			<cfif arguments.theoverall EQ "f" AND arguments.folder_id NEQ "">
 				AND fi.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 			</cfif>
@@ -2947,7 +2947,7 @@
 			AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			AND i.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
-			AND i.is_available = <cfqueryparam cfsqltype="cf_sql_varchar" value="1">
+			AND i.is_available <cfif application.razuna.thedatabase EQ "mysql"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="cf_sql_varchar" value="2">
 			<cfif arguments.theoverall EQ "F" AND arguments.folder_id NEQ "">
 				AND i.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 			</cfif>
@@ -2970,7 +2970,7 @@
 			AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			AND v.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
-			AND v.is_available = <cfqueryparam cfsqltype="cf_sql_varchar" value="1">
+			AND v.is_available <cfif application.razuna.thedatabase EQ "mysql"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="cf_sql_varchar" value="2">
 			<cfif arguments.theoverall EQ "F" AND arguments.folder_id NEQ "">
 				AND v.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 			</cfif>
@@ -2993,7 +2993,7 @@
 			AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			AND a.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
-			AND a.is_available = <cfqueryparam cfsqltype="cf_sql_varchar" value="1">
+			AND a.is_available <cfif application.razuna.thedatabase EQ "mysql"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="cf_sql_varchar" value="2">
 			<cfif arguments.theoverall EQ "F" AND arguments.folder_id NEQ "">
 				AND a.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 			</cfif>
@@ -3331,7 +3331,7 @@
 		AND SUBSTR<cfif application.razuna.thedatabase EQ "mssql">ING</cfif>(file_extension,1,3) = <cfqueryparam cfsqltype="cf_sql_varchar" value="doc">
 		AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		AND is_available = <cfqueryparam cfsqltype="cf_sql_varchar" value="1">
+		AND is_available <cfif application.razuna.thedatabase EQ "mysql"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="cf_sql_varchar" value="2">
 		<cfif session.customfileid NEQ "">
 			AND file_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.customfileid#" list="true">)
 		</cfif>
@@ -3352,7 +3352,7 @@
 		AND SUBSTR<cfif application.razuna.thedatabase EQ "mssql">ING</cfif>(file_extension,1,3) = <cfqueryparam cfsqltype="cf_sql_varchar" value="xls">
 		AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		AND is_available = <cfqueryparam cfsqltype="cf_sql_varchar" value="1">
+		AND is_available <cfif application.razuna.thedatabase EQ "mysql"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="cf_sql_varchar" value="2">
 		<cfif session.customfileid NEQ "">
 			AND file_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.customfileid#" list="true">)
 		</cfif>
@@ -3371,7 +3371,7 @@
 		AND SUBSTR<cfif application.razuna.thedatabase EQ "mssql">ING</cfif>(file_extension,1,3) = <cfqueryparam cfsqltype="cf_sql_varchar" value="pdf">
 		AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		AND is_available = <cfqueryparam cfsqltype="cf_sql_varchar" value="1">
+		AND is_available <cfif application.razuna.thedatabase EQ "mysql"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="cf_sql_varchar" value="2">
 		<cfif session.customfileid NEQ "">
 			AND file_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.customfileid#" list="true">)
 		</cfif>
@@ -3393,7 +3393,7 @@
 		AND file_extension <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="cf_sql_varchar" value="pdf">)
 		OR  file_type = 'other')
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		AND is_available = <cfqueryparam cfsqltype="cf_sql_varchar" value="1">
+		AND is_available <cfif application.razuna.thedatabase EQ "mysql"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="cf_sql_varchar" value="2">
 		<cfif session.customfileid NEQ "">
 			AND file_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.customfileid#" list="true">)
 		</cfif>
@@ -3412,7 +3412,7 @@
 		AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 		AND (img_group IS NULL OR img_group = '')
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		AND is_available = <cfqueryparam cfsqltype="cf_sql_varchar" value="1">
+		AND is_available <cfif application.razuna.thedatabase EQ "mysql"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="cf_sql_varchar" value="2">
 		<!--- If coming from custom view and the session.customfileid is not empty --->
 		<cfif session.customfileid NEQ "">
 			AND img_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.customfileid#" list="true">)
@@ -3434,7 +3434,7 @@
 		AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 		AND (vid_group IS NULL OR vid_group = '')
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		AND is_available = <cfqueryparam cfsqltype="cf_sql_varchar" value="1">
+		AND is_available <cfif application.razuna.thedatabase EQ "mysql"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="cf_sql_varchar" value="2">
 		<cfif session.customfileid NEQ "">
 			AND vid_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.customfileid#" list="true">)
 		</cfif>
@@ -3455,7 +3455,7 @@
 		AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 		AND (aud_group IS NULL OR aud_group = '')
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		AND is_available = <cfqueryparam cfsqltype="cf_sql_varchar" value="1">
+		AND is_available <cfif application.razuna.thedatabase EQ "mysql"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="cf_sql_varchar" value="2">
 		<cfif session.customfileid NEQ "">
 			AND aud_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.customfileid#" list="true">)
 		</cfif>
@@ -3872,7 +3872,7 @@
 		AND (i.img_group IS NULL OR i.img_group = '')
 		AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		AND i.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
-		AND i.is_available = <cfqueryparam cfsqltype="cf_sql_varchar" value="1">
+		AND i.is_available <cfif application.razuna.thedatabase EQ "mysql"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="cf_sql_varchar" value="2">
 		<cfif arguments.thestruct.folderaccess EQ 'R'>
 			AND (i.expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR i.expiry_date is null)
 		</cfif>
@@ -3933,7 +3933,7 @@
 		AND (v.vid_group IS NULL OR v.vid_group = '')
 		AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		AND v.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
-		AND v.is_available = <cfqueryparam cfsqltype="cf_sql_varchar" value="1">
+		AND v.is_available <cfif application.razuna.thedatabase EQ "mysql"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="cf_sql_varchar" value="2">
 		<cfif arguments.thestruct.folderaccess EQ 'R'>
 			AND (v.expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR v.expiry_date is null)
 		</cfif>
@@ -3995,7 +3995,7 @@
 		AND (a.aud_group IS NULL OR a.aud_group = '')
 		AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		AND a.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
-		AND a.is_available = <cfqueryparam cfsqltype="cf_sql_varchar" value="1">
+		AND a.is_available <cfif application.razuna.thedatabase EQ "mysql"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="cf_sql_varchar" value="2">
 		<cfif arguments.thestruct.folderaccess EQ 'R'>
 			AND (a.expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR a.expiry_date is null)
 		</cfif>
@@ -4045,7 +4045,7 @@
 		WHERE f.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 		AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		AND f.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
-		AND f.is_available = <cfqueryparam cfsqltype="cf_sql_varchar" value="1">
+		AND f.is_available <cfif application.razuna.thedatabase EQ "mysql"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="cf_sql_varchar" value="2">
 		<cfif arguments.thestruct.folderaccess EQ 'R'>
 			AND (f.expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR f.expiry_date is null)
 		</cfif>
