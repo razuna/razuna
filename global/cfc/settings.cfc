@@ -3634,8 +3634,8 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 		</cfif>
 	</cfloop>
 	<!--- if user has no access we need to set the access here --->
-	<cfif !structkeyexists(arguments.thestruct, 'groups_access')>
-		<cfset arguments.thestruct.groups_access = false>
+	<cfif structkeyexists(arguments.thestruct, 'groups_access')>
+		<cfset arguments.thestruct.groups_access = true>
 	</cfif>
 	<cfreturn arguments.thestruct>
 </cffunction>

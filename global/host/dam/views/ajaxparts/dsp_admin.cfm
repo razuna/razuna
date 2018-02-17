@@ -237,7 +237,7 @@
 		<div id="msg" style="text-align:center;display:none;">
 			<h4>
 				<cfif NOT isadmin AND structisempty(tabaccess_struct)>
-					No administrative features available for user
+					No administrative features available
 				</cfif>
 			</h4>
 		</div>
