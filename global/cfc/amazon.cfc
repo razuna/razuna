@@ -118,17 +118,18 @@
 			<!--- If we store all files in one bucket --->
 			<cfset arguments = tenantCheck(arguments)>
 
+			<!--- Cache it for one year --->
+			<cfset var _cacheControl = 31557600>
+
 			<!--- If file size > 5.2 mb use multipart upload --->
 			<cfif theassetsize LT minsize>
 				<cfset var singleobj = createObject("component","global.cfc.s3").init(accessKeyId=arguments.awskey,secretAccessKey=arguments.awssecretkey,storagelocation = arguments.awslocation)>
-				<cfset singleobj.putobject(bucketname='#arguments.awsbucket#', filekey='#arguments.key#', theasset='#arguments.theasset#', contenttype="#arguments.contenttype#")>
+				<cfset singleobj.putobject(bucketname='#arguments.awsbucket#', filekey='#arguments.key#', theasset='#arguments.theasset#', contenttype="#arguments.contenttype#", HTTPtimeout=_cacheControl, cacheControl=_cacheControl)>
 			<cfelse>
 				<cfset var multiobj = createObject("component","global.cfc.s3").init(accessKeyId=arguments.awskey,secretAccessKey=arguments.awssecretkey,storagelocation = arguments.awslocation)>
-				<cfset multiobj.putobjectmultipart(bucketname='#arguments.awsbucket#', filekey='#arguments.key#', theasset='#arguments.theasset#', theassetsize='#int(theassetsize/1000)#', contenttype='#arguments.contenttype#')>
+				<cfset multiobj.putobjectmultipart(bucketname='#arguments.awsbucket#', filekey='#arguments.key#', theasset='#arguments.theasset#', theassetsize='#int(theassetsize/1000)#', contenttype='#arguments.contenttype#', HTTPtimeout=_cacheControl, cacheControl=_cacheControl)>
 			</cfif>
 			<cfcatch>
-				<!--- <cfset cfcatch.custom_message = "Error in function amazon.upload">
-				<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/> --->
 				<cfset consoleoutput(true)>
 				<cfset console(cfcatch)>
 			</cfcatch>
@@ -183,13 +184,17 @@
 		<!--- <cfset var aws = AmazonRegisterDataSource("up",application.razuna.awskey,application.razuna.awskeysecret,application.razuna.awslocation)> --->
 		<cfset var x = structnew()>
 		<!--- Add 10 years to expiration --->
-		<cfset var epoch = dateadd("yyyy", 10, now())>
+		<!--- <cfset var epoch = dateadd("yyyy", 10, now())> --->
 		<!--- Epoch seconds (convert local time to UTC) --->
-		<cfset x.newepoch = dateDiff("s", "January 1 1970 00:00", dateConvert("Local2utc", epoch))>
+		<cfset x.newepoch = 0>
 		<!--- If we store all files in one bucket --->
 		<cfset arguments = tenantCheck(arguments)>
 		<!--- Create the signed URL --->
-		<cfset x.theurl = AmazonS3geturl(datasource=application.razuna.s3ds, bucket=arguments.awsbucket, key=arguments.key, expiration=epoch)>
+		<!--- <cfset x.theurl = AmazonS3geturl(datasource=application.razuna.s3ds, bucket=arguments.awsbucket, key=arguments.key, expiration=epoch)> --->
+
+		<!--- According to region we but URL together --->
+		<cfset x.theurl = _getAwsUrl(awsbucket=arguments.awsbucket, key=arguments.key)>
+
 		<!--- Return --->
 		<cfreturn x />
 	</cffunction>
@@ -631,7 +636,143 @@
 		</cfif>
 
 		<cfreturn _s3ds />
+	</cffunction>
 
+	<!--- Function to create key and bucket --->
+	<cffunction name="_getAwsUrl" access="public">
+		<cfargument name="awsbucket" required="true" type="string">
+		<cfargument name="key" required="true" type="string">
+		<!--- Var --->
+		<cfset var _url = "">
+		<!--- Get Region --->
+		<cfswitch expression="#application.razuna.awslocation#">
+			<cfcase value="us-east">
+				<cfset _url = "https://s3.amazonaws.com">
+			</cfcase>
+			<cfcase value="us-east-2">
+				<cfset _url = "https://s3.us-east-2.amazonaws.com">
+			</cfcase>
+			<cfcase value="us-west-1">
+				<cfset _url = "https://s3.us-west-1.amazonaws.com">
+			</cfcase>
+			<cfcase value="us-west-2">
+				<cfset _url = "https://s3.us-west-2.amazonaws.com">
+			</cfcase>
+			<cfcase value="ca-central-1">
+				<cfset _url = "https://s3.ca-central-1.amazonaws.com">
+			</cfcase>
+			<cfcase value="ap-south-1">
+				<cfset _url = "https://s3.ap-south-1.amazonaws.com">
+			</cfcase>
+			<cfcase value="ap-northeast-1">
+				<cfset _url = "https://s3.ap-northeast-1.amazonaws.com">
+			</cfcase>
+			<cfcase value="ap-northeast-2">
+				<cfset _url = "https://s3.ap-northeast-2.amazonaws.com">
+			</cfcase>
+			<cfcase value="ap-northeast-3">
+				<cfset _url = "https://s3.ap-northeast-3.amazonaws.com">
+			</cfcase>
+			<cfcase value="ap-southeast-1">
+				<cfset _url = "https://s3.ap-southeast-1.amazonaws.com">
+			</cfcase>
+			<cfcase value="ap-southeast-2">
+				<cfset _url = "https://s3.ap-southeast-2.amazonaws.com">
+			</cfcase>
+			<cfcase value="cn-north-1">
+				<cfset _url = "https://s3.cn-north-1.amazonaws.com">
+			</cfcase>
+			<cfcase value="cn-northwest-1">
+				<cfset _url = "https://s3.cn-northwest-1.amazonaws.com">
+			</cfcase>
+			<cfcase value="eu-central-1">
+				<cfset _url = "https://s3.eu-central-1.amazonaws.com">
+			</cfcase>
+			<cfcase value="eu-west-1">
+				<cfset _url = "https://s3.eu-west-1.amazonaws.com">
+			</cfcase>
+			<cfcase value="eu-west-2">
+				<cfset _url = "https://s3.eu-west-2.amazonaws.com">
+			</cfcase>
+			<cfcase value="eu-west-3">
+				<cfset _url = "https://s3.eu-west-3.amazonaws.com">
+			</cfcase>
+			<cfcase value="sa-east-1">
+				<cfset _url = "https://s3.sa-east-1.amazonaws.com">
+			</cfcase>
+		</cfswitch>
+		<!--- Tag on bucket and ket --->
+		<cfset _url = _url & "/" & arguments.awsbucket & "/" & arguments.key>
+		<!--- Return --->
+		<cfreturn _url />
 	</cffunction>
 
 </cfcomponent>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
