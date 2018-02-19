@@ -62,6 +62,11 @@
 		<cfargument name="folderid" type="string">
 		<cfargument name="search_type" type="string">
 		<cfargument name="search_rendition" type="string">
+		<cfargument name="search_upc" type="boolean">
+
+		<!--- <cfset consoleoutput(true, true)>
+		<cfset console("LUCENE SEARCH ARGUMENTS : ", arguments)> --->
+
 
 		<!--- Param --->
 		<cfset var _taskserver = "" />
@@ -86,6 +91,7 @@
 			<cfhttpparam name="folderid" value="#arguments.folderid#" type="formfield" />
 			<cfhttpparam name="search_type" value="#arguments.search_type#" type="formfield" />
 			<cfhttpparam name="search_rendition" value="#arguments.search_rendition#" type="formfield" />
+			<cfhttpparam name="search_upc" value="#arguments.search_upc#" type="formfield" />
 		</cfhttp>
 		<!--- if statuscode is not 200 --->
 		<cfif cfhttp.statuscode CONTAINS "200">
