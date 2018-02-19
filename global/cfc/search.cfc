@@ -57,6 +57,8 @@
 		<cfparam default="0" name="session.search.search_file_ids">
 		<cfparam default="0" name="session.search.total_records">
 
+		<cfparam default="false" name="arguments.thestruct.searchupc">
+
 		<!--- If there is a change then reset offset --->
 		<cfif structKeyExists(arguments.thestruct, "rowmaxpagechange")>
 			<cfset session.offset = 0>
@@ -138,14 +140,15 @@
 			<cfset var _maxrows = 0>
 		</cfif>
 
-		<cfset session.search.searchupc = false>
+		<cfset arguments.thestruct.searchupc = arguments.thestruct.searchupc ? true : false>
+		<cfset session.search.searchupc = arguments.thestruct.searchupc ? true : false>
 		<cfset session.search.searchtext = arguments.thestruct.searchtext>
 		<cfset session.search.searchtype = thetype>
 		<cfset session.search.searchfolderid = arguments.thestruct.folder_id>
 		<cfset session.search.searchrenditions = arguments.thestruct.prefs.set2_rendition_search>
 
 		<!--- Search in Lucene  --->
-		<cfinvoke component="lucene" method="search" criteria="#arguments.thestruct.searchtext#" category="#thetype#" hostid="#session.hostid#" startrow="#_startrow#" maxrows="#_maxrows#" folderid="#arguments.thestruct.list_recfolders#" search_type="#arguments.thestruct.search_type#" search_rendition="#arguments.thestruct.prefs.set2_rendition_search#" returnvariable="qry_lucene">
+		<cfinvoke component="lucene" method="search" criteria="#arguments.thestruct.searchtext#" category="#thetype#" hostid="#session.hostid#" startrow="#_startrow#" maxrows="#_maxrows#" folderid="#arguments.thestruct.list_recfolders#" search_type="#arguments.thestruct.search_type#" search_rendition="#arguments.thestruct.prefs.set2_rendition_search#" search_upc="#arguments.thestruct.searchupc#" returnvariable="qry_lucene">
 		<!--- <cfset console("--- qry_lucene ---")>
 		<cfset console(qry_lucene)> --->
 
@@ -1336,13 +1339,15 @@
 		<cfargument name="thestruct" type="struct" required="true">
 
 		<cfset session.search.searchupc = true>
+		<cfset arguments.thestruct.searchupc = true>
 
 		<cfset var _search_text = "">
 
 		<!--- Create search criteria --->
 		<cfloop list="#arguments.thestruct.search_upc#" index="single_upc_string">
 			<cfset _search_text = _search_text EQ "" ? '' : _search_text & " OR ">
-			<cfset _search_text = _search_text & "filename:(#single_upc_string#*) OR filename_reverse:(#Reverse(single_upc_string)#*) OR upc:(#single_upc_string#*) OR upc_reverse:(#Reverse(single_upc_string)#*)">
+			<!--- <cfset _search_text = _search_text & "filename:(#single_upc_string#*) OR filename_reverse:(#Reverse(single_upc_string)#*) OR upc:(#single_upc_string#*) OR upc_reverse:(#Reverse(single_upc_string)#*)"> --->
+			<cfset _search_text = _search_text & "filename:(*#single_upc_string#*) upc:(*#single_upc_string#*)">
 		</cfloop>
 
 		<cfset arguments.thestruct.searchtext = _search_text>
