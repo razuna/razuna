@@ -68,6 +68,7 @@
         <input type="hidden" name="file_id" value="#attributes.file_id#">
         <input type="hidden" name="preview" value="#attributes.preview#">
         <input type="hidden" name="type" value="#attributes.type#">
+        <input type="hidden" name="version" value="true">
         <input type="file" id="filedata" name="filedata" class="button" />
     </form>
 </cfif>

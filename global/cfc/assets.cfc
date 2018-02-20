@@ -33,6 +33,7 @@
 	<!--- Param --->
 	<cfparam name="arguments.thestruct.file_id" default="0">
 	<cfparam name="arguments.thestruct.skip_event" default="">
+	<cfparam name="arguments.thestruct.version" default="false">
 	<cfset var qry = "">
 	<!--- RAZ-2907 Create tempid --->
 	<cfif structKeyExists(arguments.thestruct,'extjs') AND arguments.thestruct.extjs EQ "T">
@@ -72,7 +73,7 @@
 		<!--- Check if we have to check for md5 records --->
 		<cfinvoke component="settings" method="getmd5check" returnvariable="checkformd5" />
 		<!--- Check for the same MD5 hash in the existing records --->
-		<cfif checkformd5>
+		<cfif checkformd5 AND ! attributes.intstruct.version>
 			<cfinvoke method="checkmd5" returnvariable="md5here" md5hash="#md5hash#" />
 		<cfelse>
 			<cfset md5here = 0>
