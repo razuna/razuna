@@ -25,7 +25,7 @@
 --->
 <cfoutput>
 	<!--- Show if Firebug is enabled --->
-	<div id="firebugalert" style="display:none;"></div>
+	<!--- <div id="firebugalert" style="display:none;"></div> --->
 	<div id="outer">
 		<div id="loginform">
 			<!--- News --->

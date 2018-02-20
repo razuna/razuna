@@ -11,7 +11,7 @@
 
 	<cffunction	name="OnApplicationStart" access="public" returntype="boolean" output="false" hint="Fires when the application is first created.">
 
-		<cfset consoleoutput(true)>
+		<cfset consoleoutput(true, true)>
 		<cfset console('============================ START')>
 
 		<cfset cacheregionnew(

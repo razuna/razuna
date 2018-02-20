@@ -13,7 +13,6 @@ module.exports = function(grunt) {
 			},
 			vendors: {
 				src: [
-					'./global/js/jquery-1.12.4.min.js',
 					'./global/js/jquery.validate.min.js',
 					'./global/js/jquery.form.min.js',
 					'./global/js/jquery-ui-1.12.1.custom/jquery-ui.min.js',
@@ -35,23 +34,25 @@ module.exports = function(grunt) {
 			},
 			app: {
 				src: [
-					'./global/host/dam/js/global.js'
+					'./node_modules/popper.js/dist/umd/popper.js',
+					'./node_modules/bootstrap/dist/js/bootstrap.js',
+					'./global/host/dam/js/global.js',
 				],
 				dest: './global/dist/app_<%= pkg.script_version %>.js'
 			},
 			login: {
 				src: [
-					'./global/js/jquery-1.12.4.min.js',
+					'./node_modules/popper.js/dist/umd/popper.js',
+					'./node_modules/bootstrap/dist/js/bootstrap.js',
 					'./global/js/jquery.validate.min.js',
 					'./global/js/jquery.form.min.js',
 					'./global/js/Magnific-Popup-1.1.0/dist/jquery.magnific-popup.min.js',
 					'./global/host/dam/js/login.js',
 				],
-				dest: './global/dist/login_<%= pkg.script_version %>.js'
+				dest: './global/dist/app_login_<%= pkg.script_version %>.js'
 			},
 			upload: {
 				src: [
-					'./global/js/jquery-1.12.4.min.js',
 					'./global/js/plupload/plupload.full.js',
 					'./global/js/plupload/jquery.plupload.queue/jquery.plupload.queue.js',
 					'./global/js/jquery-ui-1.12.1.custom/jquery-ui.min.js',
@@ -66,16 +67,17 @@ module.exports = function(grunt) {
 					baseDir: './global/dist/fonts',
 				}
 			},
-			// login_css: {
-			// 	src: [
-			// 		'./global/bootstrap/css/bootstrap.min.css',
-			// 		'./global/js/jasny-bootstrap-3.1.3-dist/jasny-bootstrap/css/jasny-bootstrap.min.css',
-			// 		'./global/stylesheets/app/main.css'
-			// 	],
-			// 	dest: './global/dist/app_login_<%= pkg.script_version %>.css'
-			// },
+			login_css: {
+				src: [
+					'./node_modules/bootstrap/dist/css/bootstrap.min.css',
+					'./global/js/Magnific-Popup-1.1.0/dist/magnific-popup.css',
+					'./global/host/dam/views/layouts/main.css'
+				],
+				dest: './global/dist/app_login_<%= pkg.script_version %>.css'
+			},
 			main_css: {
 				src: [
+					'./node_modules/bootstrap/dist/css/bootstrap.css',
 					'./global/js/jquery-ui-1.12.1.custom/jquery-ui.min.css',
 					'./global/js/jquery-ui-1.12.1.custom/jquery-ui.theme.min.css',
 					'./global/stylesheets/font-awesome-4.7.0/css/font-awesome.min.css',
@@ -110,10 +112,10 @@ module.exports = function(grunt) {
 						src: './global/js/plupload/jquery.plupload.queue/css/jquery.plupload.queue.css',
 						dest: './global/dist/upload_<%= pkg.script_version %>.min.css',
 					},
-					{
-						src: './global/host/dam/views/layouts/main.css',
-						dest: './global/dist/main_<%= pkg.script_version %>.min.css',
-					},
+					// {
+					// 	src: './global/host/dam/views/layouts/main.css',
+					// 	dest: './global/dist/main_<%= pkg.script_version %>.min.css',
+					// },
 					{
 						expand: true,
 						cwd: './global/dist',
@@ -156,7 +158,7 @@ module.exports = function(grunt) {
 				files: {
 					'./global/dist/app_<%= pkg.script_version %>.min.js': ['<%= concat.app.dest %>'],
 					'./global/dist/vendors_<%= pkg.script_version %>.min.js': ['<%= concat.vendors.dest %>'],
-					'./global/dist/login_<%= pkg.script_version %>.min.js': ['<%= concat.login.dest %>'],
+					'./global/dist/app_login_<%= pkg.script_version %>.min.js': ['<%= concat.login.dest %>'],
 					'./global/dist/upload_<%= pkg.script_version %>.min.js': ['<%= concat.upload.dest %>'],
 				}
 			}
@@ -274,7 +276,7 @@ module.exports = function(grunt) {
 	});
 
 	// Load the plugin that provides the "uglify" task.
-	grunt.loadNpmTasks('grunt-contrib-uglify');
+	grunt.loadNpmTasks('grunt-contrib-uglify-es');
 	grunt.loadNpmTasks('grunt-contrib-concat');
 	grunt.loadNpmTasks('grunt-contrib-cssmin');
 	grunt.loadNpmTasks('grunt-contrib-copy');

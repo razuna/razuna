@@ -6787,6 +6787,8 @@
 		<invoke object="myFusebox.getApplicationData().scheduler" methodcall="getAllEvents()" returnvariable="qry_schedules" />
 		<!-- CFC: Get schedules -->
 		<invoke object="myFusebox.getApplicationData().scheduler" methodcall="getEvents()" returnvariable="qry_sched" />
+		<!-- Get Scripts -->
+		<invoke object="myFusebox.getApplicationData().scheduler" methodcall="getScripts(hostdbprefix=session.hostdbprefix, hostid=session.hostid, datasource=application.razuna.datasource)" returnvariable="qry_scripts" />
 		<!-- Show -->
 		<do action="ajax.scheduler_list" />
 	</fuseaction>
@@ -6909,6 +6911,38 @@
 			<argument name="ad_domain" value="#attributes.ad_domain#" />
 			<argument name="ldap_dn" value="#attributes.ldap_dn#" />
 		</invoke>
+	</fuseaction>
+
+	<!-- Scheduler scriot detail -->
+	<fuseaction name="scheduler_script_detail">
+		<!-- Detail -->
+		<invoke object="myFusebox.getApplicationData().scheduler" methodcall="getScript(id=attributes.sched_id, hostdbprefix=session.hostdbprefix, hostid=session.hostid, datasource=application.razuna.datasource)" returnvariable="qry_script" />
+		<!-- CFC: Get folders -->
+		<invoke object="myFusebox.getApplicationData().folders" methodcall="getFlatFolderList()" returnvariable="qry_folders" />
+		<!-- Get labels -->
+		<do action="labels" />
+		<!-- Show -->
+		<do action="ajax.scheduler_script_detail" />
+	</fuseaction>
+
+	<!-- Scheduler Script save -->
+	<fuseaction name="scheduler_script_save">
+		<!-- Save -->
+		<invoke object="myFusebox.getApplicationData().scheduler" methodcall="saveScript(thestruct=attributes, hostdbprefix=session.hostdbprefix, hostid=session.hostid)" />
+	</fuseaction>
+
+	<!-- Scheduler Script file search preview -->
+	<fuseaction name="scheduler_script_preview_search">
+		<!-- Search -->
+		<invoke object="myFusebox.getApplicationData().scheduler" methodcall="scriptFileSearch(thestruct=attributes, hostdbprefix=session.hostdbprefix, hostid=session.hostid, datasource=application.razuna.datasource)" returnvariable="qry_search" />
+		<!-- Show -->
+		<do action="ajax.scheduler_script_preview_search" />
+	</fuseaction>
+
+	<!-- Scheduler Script FTP connection -->
+	<fuseaction name="scheduler_script_ftp_connection">
+		<!-- Search -->
+		<invoke object="myFusebox.getApplicationData().scheduler" methodcall="scriptFtpConnection(thestruct=attributes, hostdbprefix=session.hostdbprefix, hostid=session.hostid)" returnvariable="ftp_connection" />
 	</fuseaction>
 
 	<!--  -->

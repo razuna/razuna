@@ -1393,5 +1393,360 @@
 	<cfreturn />
 </cffunction>
 
+<!--- Get scripts --->
+<cffunction name="getScripts" access="public" returntype="query">
+	<cfargument name="hostdbprefix" required="yes" type="string">
+	<cfargument name="hostid" required="yes" type="numeric">
+	<cfset var qry = "">
+	<cfquery datasource="#application.razuna.datasource#" name="qry">
+	SELECT value, date_added, sched_id, 
+		(
+			SELECT value
+			FROM #arguments.hostdbprefix#scheduled_scripts
+			WHERE id_name = <cfqueryparam CFSQLType="cf_sql_varchar" value="sched_script_active">
+			AND host_id = <cfqueryparam CFSQLType="cf_sql_numeric" value="#arguments.hostid#">
+		) as active
+	FROM #arguments.hostdbprefix#scheduled_scripts
+	WHERE id_name = <cfqueryparam CFSQLType="cf_sql_varchar" value="sched_script_name">
+	AND host_id = <cfqueryparam CFSQLType="cf_sql_numeric" value="#arguments.hostid#">
+	GROUP BY sched_id, date_added, value
+	ORDER BY date_added DESC
+	</cfquery>
+	<cfreturn qry>
+</cffunction>
 
+<!--- Get scripts --->
+<cffunction name="getScript" access="public" returntype="struct">
+	<cfargument name="id" required="yes" type="string">
+	<cfargument name="hostdbprefix" required="yes" type="string">
+	<cfargument name="hostid" required="yes" type="numeric">
+	<cfargument name="datasource" required="yes" type="string">
+	<cfset var qry = "">
+	<cfset var _data = structNew()>
+	<cfset _data.new_record = false>
+	<cfquery datasource="#arguments.datasource#" name="qry">
+	SELECT id_name, value, sched_id
+	FROM #arguments.hostdbprefix#scheduled_scripts
+	WHERE sched_id = <cfqueryparam CFSQLType="cf_sql_varchar" value="#arguments.id#">
+	AND host_id = <cfqueryparam CFSQLType="cf_sql_numeric" value="#arguments.hostid#">
+	</cfquery>
+	<!--- Nothing found --->
+	<cfif ! qry.recordcount>
+		<cfset _data.SCHED_SCRIPT_NAME = 'ScriptName'>
+		<cfset _data.SCHED_SCRIPT_ACTION = 'export_to_ftp'>
+		<cfset _data.SCHED_SCRIPT_INTERVAL = 'hourly'>
+		<cfset _data.SCHED_SCRIPT_FILES_TIME = '60'>
+		<cfset _data.SCHED_SCRIPT_FILES_TIME_UNIT = 'minutes'>
+		<cfset _data.SCHED_SCRIPT_FILES_FILENAME = ''>
+		<cfset _data.SCHED_SCRIPT_FILES_FOLDER = ''>
+		<cfset _data.SCHED_SCRIPT_FILES_LABEL = ''>
+		<cfset _data.SCHED_SCRIPT_FILES_INCLUDE_SELECTED = 'false'>
+		<cfset _data.sched_script_files_include_preview = 'false'>
+		<cfset _data.sched_script_files_include_metadata = 'false'>
+		<cfset _data.SCHED_SCRIPT_FTP_HOST = ''>
+		<cfset _data.SCHED_SCRIPT_FTP_USER = ''>
+		<cfset _data.SCHED_SCRIPT_FTP_PASS = ''>
+		<cfset _data.SCHED_SCRIPT_FTP_PORT = '21'>
+		<cfset _data.SCHED_SCRIPT_FTP_FOLDER = ''>
+		<cfset _data.sched_script_img_canvas_width = ''>
+		<cfset _data.sched_script_img_canvas_heigth = ''>
+		<cfset _data.sched_script_img_dpi = '72'>
+		<cfset _data.sched_script_img_format = 'jpg'>
+		<cfset _data.sched_script_active = 'true'>
+		<cfset _data.new_record = true>
+	<cfelse>
+		<cfloop query="qry">
+			<cfset _data[id_name] = value>
+		</cfloop>
+	</cfif>
+	<!--- Return --->
+	<cfreturn _data>
+</cffunction>
+
+<!--- Save scripts --->
+<cffunction name="saveScript" access="public">
+	<cfargument name="thestruct" required="yes" type="struct">
+	<cfargument name="hostdbprefix" required="yes" type="string">
+	<cfargument name="hostid" required="yes" type="numeric">
+	<cfset consoleoutput(true,true)>
+	<cfset console(arguments.thestruct)>
+
+	<!--- Set date for insert (so they all have the same value) --->
+	<cfset _date = now()>
+
+	<!--- If new --->
+	<cfif arguments.thestruct.sched_id EQ "0">
+		<cfset arguments.thestruct.sched_id = createuuid('')>
+	<!--- Else we remove all records for this id --->
+	<cfelse>
+		<cfquery datasource="#application.razuna.datasource#">
+		DELETE FROM #arguments.hostdbprefix#scheduled_scripts
+		WHERE sched_id = <cfqueryparam CFSQLType="cf_sql_varchar" value="#arguments.thestruct.sched_id#">
+		</cfquery>
+	</cfif>
+
+	<!--- Loop over fields --->
+	<cfloop delimiters="," index="field" list="#arguments.thestruct.fieldnames#">
+		<cfif field CONTAINS "sched_script_">
+			<cfset console("Field: ", field, arguments.thestruct['#field#'])>
+			<!--- Insert --->
+			<cfquery datasource="#application.razuna.datasource#">
+			INSERT INTO #arguments.hostdbprefix#scheduled_scripts
+			(id_name, value, host_id, date_added, sched_id)
+			VALUES(
+				<cfqueryparam CFSQLType="cf_sql_varchar" value="#field#">,
+				<cfqueryparam CFSQLType="cf_sql_varchar" value="#arguments.thestruct['#field#']#">,
+				<cfqueryparam CFSQLType="cf_sql_numeric" value="#arguments.hostid#">,
+				<cfqueryparam CFSQLType="cf_sql_timestamp" value="#_date#">,
+				<cfqueryparam CFSQLType="cf_sql_varchar" value="#arguments.thestruct.sched_id#">
+			)
+			</cfquery>
+		</cfif>
+	</cfloop>
+
+	<!--- All inserted. Create script --->
+
+
+	<!--- Return --->
+	<cfreturn />
+</cffunction>
+
+<!--- FTP connection --->
+<cffunction name="scriptFtpConnection" access="public" output="true">
+	<cfargument name="thestruct" required="yes" type="struct">
+	<cfargument name="hostdbprefix" required="yes" type="string">
+	<cfargument name="hostid" required="yes" type="numeric">
+
+	<cfoutput><h5>Trying to connect to the FTP host</h5></cfoutput>
+	<cfflush>
+
+	<cftry>
+		<cfset var _con = Ftpopen( server=arguments.thestruct.host, port=arguments.thestruct.port, username=arguments.thestruct.user, password=arguments.thestruct.pass, timeout=10 )>
+		<cfoutput><h5 style="color:green;">Connected successfully</h5></cfoutput>
+		<cfflush>
+		<cfcatch>
+			<cfoutput>
+				<h6 style="color:red;">Error:</h6>
+				<strong>#cfcatch.message#</strong>
+			</cfoutput>
+			<cfflush>
+			<cfabort>
+		</cfcatch>
+	</cftry>
+
+</cffunction>
+
+<!--- Search files for scripts (used in preview and from script directly) --->
+<cffunction name="scriptFileSearch" access="public" returntype="query">
+	<cfargument name="thestruct" required="yes" type="struct">
+	<cfargument name="hostdbprefix" required="yes" type="string">
+	<cfargument name="hostid" required="yes" type="numeric">
+	<cfargument name="datasource" required="yes" type="string">
+	<cfargument name="files_since" required="false" type="string" default="">
+	<cfargument name="files_since_unit" required="false" type="string" default="">
+
+	<cfset var qry = "">
+	<cfset var _img = "">
+	<cfset var _vid = "">
+	<cfset var _aud = "">
+	<cfset var _doc = "">
+	<cfset var _datepart = "">
+	<cfset var _period = arguments.files_since NEQ "" ? arguments.files_since : "">
+
+	<!--- Fields --->
+	<cfset var _filename = arguments.thestruct.filename>
+	<!--- These are arrays --->
+	<cfset var _folders = Deserializejson( arguments.thestruct.folderid )>
+	<cfset var _labels = Deserializejson( arguments.thestruct.labels )>
+	<!--- Convert to list --->
+	<cfset _folders = ArrayTolist(_folders, ",")>
+	<cfset _labels = ArrayTolist(_labels, ",")>
+
+	<!--- If files since is not empty we need to create a date value to check files for --->
+	<cfif arguments.files_since NEQ "">
+		<!--- Create datepart --->
+		<cfswitch expression="#arguments.files_since_unit#">
+			<cfcase value="minutes">
+				<cfset _datepart = "n">
+			</cfcase>
+			<cfcase value="hours">
+				<cfset _datepart = "h">
+			</cfcase>
+			<cfcase value="days">
+				<cfset _datepart = "d">
+			</cfcase>
+			<cfcase value="weeks">
+				<cfset _period = arguments.files_since * 7>
+				<cfset _datepart = "d">
+			</cfcase>
+			<cfcase value="month">
+				<cfset _datepart = "m">
+			</cfcase>
+		</cfswitch>
+		<cfset var _date = DateAdd( _datepart, LsParsenumber("-" & _period), now() ) >
+		<cfset console("_date : ", _date)>
+	</cfif>
+
+	<!--- Images --->
+	<cfquery datasource="#arguments.datasource#" name="_img">
+	SELECT i.img_filename as filename, i.path_to_asset, i.cloud_url, i.cloud_url_org, 'img' as type, f.folder_name
+	<cfif ListLen(_labels)>
+		, l.label_path
+	<cfelse>
+		, '' as label_path
+	</cfif>
+	FROM #arguments.hostdbprefix#folders f, #arguments.hostdbprefix#images i
+	<cfif ListLen(_labels)>
+		LEFT JOIN ct_labels ct ON ct.ct_id_r = i.img_id
+		LEFT JOIN #arguments.hostdbprefix#labels l ON l.label_id = ct.ct_label_id
+	</cfif>
+	WHERE i.host_id = <cfqueryparam CFSQLType="cf_sql_numeric" value="#arguments.hostid#">
+	AND i.in_trash = <cfqueryparam CFSQLType="cf_sql_varchar" value="f">
+	AND f.folder_id = i.folder_id_r
+	<cfif _filename NEQ "">
+		AND i.img_filename LIKE <cfqueryparam CFSQLType="cf_sql_varchar" value="%#_filename#%">
+	</cfif>
+	<cfif ListLen(_folders)>
+		AND f.folder_id IN (<cfqueryparam CFSQLType="cf_sql_varchar" value="#_folders#" list="true">)
+	</cfif>
+	<cfif ListLen(_labels)>
+		AND ct.ct_label_id IN (<cfqueryparam CFSQLType="cf_sql_varchar" value="#_labels#" list="true">)
+	</cfif>
+	<!--- Limit this if files_since is empty --->
+	<cfif arguments.files_since EQ "">
+		LIMIT 100
+	<cfelse>
+		AND i.img_change_time > <cfqueryparam cfsqltype="cf_sql_timestamp" value="#_date#">
+	</cfif>
+	</cfquery>
+
+	<!--- Videos --->
+	<cfquery datasource="#arguments.datasource#" name="_vid">
+	SELECT i.vid_filename as filename, i.path_to_asset, i.cloud_url, i.cloud_url_org, 'vid' as type, f.folder_name
+	<cfif ListLen(_labels)>
+		, l.label_path
+	<cfelse>
+		, '' as label_path
+	</cfif>
+	FROM #arguments.hostdbprefix#folders f, #arguments.hostdbprefix#videos i
+	<cfif ListLen(_labels)>
+		LEFT JOIN ct_labels ct ON ct.ct_id_r = i.vid_id
+		LEFT JOIN #arguments.hostdbprefix#labels l ON l.label_id = ct.ct_label_id
+	</cfif>
+	WHERE i.host_id = <cfqueryparam CFSQLType="cf_sql_numeric" value="#arguments.hostid#">
+	AND i.in_trash = <cfqueryparam CFSQLType="cf_sql_varchar" value="f">
+	AND f.folder_id = i.folder_id_r
+	<cfif _filename NEQ "">
+		AND i.vid_filename LIKE <cfqueryparam CFSQLType="cf_sql_varchar" value="%#_filename#%">
+	</cfif>
+	<cfif ListLen(_folders)>
+		AND f.folder_id IN (<cfqueryparam CFSQLType="cf_sql_varchar" value="#_folders#" list="true">)
+	</cfif>
+	<cfif ListLen(_labels)>
+		AND ct.ct_label_id IN (<cfqueryparam CFSQLType="cf_sql_varchar" value="#_labels#" list="true">)
+	</cfif>
+	<!--- Limit this if files_since is empty --->
+	<cfif arguments.files_since EQ "">
+		LIMIT 100
+	<cfelse>
+		AND i.vid_change_time > <cfqueryparam cfsqltype="cf_sql_timestamp" value="#_date#">
+	</cfif>
+	</cfquery>
+
+	<!--- Audios --->
+	<cfquery datasource="#arguments.datasource#" name="_aud">
+	SELECT i.aud_name as filename, i.path_to_asset, i.cloud_url, i.cloud_url_org, 'aud' as type, f.folder_name
+	<cfif ListLen(_labels)>
+		, l.label_path
+	<cfelse>
+		, '' as label_path
+	</cfif>
+	FROM #arguments.hostdbprefix#folders f, #arguments.hostdbprefix#audios i
+	<cfif ListLen(_labels)>
+		LEFT JOIN ct_labels ct ON ct.ct_id_r = i.aud_id
+		LEFT JOIN #arguments.hostdbprefix#labels l ON l.label_id = ct.ct_label_id
+	</cfif>
+	WHERE i.host_id = <cfqueryparam CFSQLType="cf_sql_numeric" value="#arguments.hostid#">
+	AND i.in_trash = <cfqueryparam CFSQLType="cf_sql_varchar" value="f">
+	AND f.folder_id = i.folder_id_r
+	<cfif _filename NEQ "">
+		AND i.aud_name LIKE <cfqueryparam CFSQLType="cf_sql_varchar" value="%#_filename#%">
+	</cfif>
+	<cfif ListLen(_folders)>
+		AND f.folder_id IN (<cfqueryparam CFSQLType="cf_sql_varchar" value="#_folders#" list="true">)
+	</cfif>
+	<cfif ListLen(_labels)>
+		AND ct.ct_label_id IN (<cfqueryparam CFSQLType="cf_sql_varchar" value="#_labels#" list="true">)
+	</cfif>
+	<!--- Limit this if files_since is empty --->
+	<cfif arguments.files_since EQ "">
+		LIMIT 100
+	<cfelse>
+		AND i.aud_change_time > <cfqueryparam cfsqltype="cf_sql_timestamp" value="#_date#">
+	</cfif>
+	</cfquery>
+
+	<!--- Files --->
+	<cfquery datasource="#arguments.datasource#" name="_doc">
+	SELECT i.file_name as filename, i.path_to_asset, i.cloud_url, i.cloud_url_org, 'doc' as type, f.folder_name
+	<cfif ListLen(_labels)>
+		, l.label_path
+	<cfelse>
+		, '' as label_path
+	</cfif>
+	FROM #arguments.hostdbprefix#folders f, #arguments.hostdbprefix#files i
+	<cfif ListLen(_labels)>
+		LEFT JOIN ct_labels ct ON ct.ct_id_r = i.file_id
+		LEFT JOIN #arguments.hostdbprefix#labels l ON l.label_id = ct.ct_label_id
+	</cfif>
+	WHERE i.host_id = <cfqueryparam CFSQLType="cf_sql_numeric" value="#arguments.hostid#">
+	AND i.in_trash = <cfqueryparam CFSQLType="cf_sql_varchar" value="f">
+	AND f.folder_id = i.folder_id_r
+	<cfif _filename NEQ "">
+		AND i.file_name LIKE <cfqueryparam CFSQLType="cf_sql_varchar" value="%#_filename#%">
+	</cfif>
+	<cfif ListLen(_folders)>
+		AND f.folder_id IN (<cfqueryparam CFSQLType="cf_sql_varchar" value="#_folders#" list="true">)
+	</cfif>
+	<cfif ListLen(_labels)>
+		AND ct.ct_label_id IN (<cfqueryparam CFSQLType="cf_sql_varchar" value="#_labels#" list="true">)
+	</cfif>
+	<!--- Limit this if files_since is empty --->
+	<cfif arguments.files_since EQ "">
+		LIMIT 100
+	<cfelse>
+		AND i.file_change_time > <cfqueryparam cfsqltype="cf_sql_timestamp" value="#_date#">
+	</cfif>
+	</cfquery>
+
+	<!--- Put searches together --->
+	<cfquery dbtype="query" name="qry">
+	SELECT * FROM _img
+	UNION
+	SELECT * FROM _vid
+	UNION
+	SELECT * FROM _aud
+	UNION
+	SELECT * FROM _doc
+	</cfquery>
+
+	<!--- Return --->
+	<cfreturn qry>
+</cffunction>
+
+<!--- Get scripts that need to be executed in the time frame argument --->
+<cffunction name="getScriptTime" access="public" returntype="query">
+	<cfargument name="script_interval" required="yes" type="string">
+	<cfargument name="datasource" required="yes" type="string">
+	<cfargument name="hostdbprefix" required="yes" type="string">
+	<cfset var qry = "">
+	<cfquery datasource="#arguments.datasource#" name="qry">
+	SELECT host_id, sched_id
+	FROM #arguments.hostdbprefix#scheduled_scripts
+	WHERE id_name = <cfqueryparam CFSQLType="cf_sql_varchar" value="sched_script_interval">
+	AND value = <cfqueryparam CFSQLType="cf_sql_varchar" value="#arguments.script_interval#">
+	</cfquery>
+	<!--- Return --->
+	<cfreturn qry>
+</cffunction>
 </cfcomponent>
