@@ -23,6 +23,18 @@
 * along with Razuna. If not, see <http://www.razuna.com/licenses/>.
 *
 --->
+
+<!--- 
+
+TODO:
+
+- Image conversion with DPI
+- Metadata file
+- Get selected renditions
+
+ --->
+
+
 <cftry>
 
 	<cfset _script_time = "1min">
@@ -122,7 +134,7 @@
 		<!--- <cfset _transcodeFiles( files=qry_files, script=qry_script, storage=_storage, path_temp=_path_temp )> --->
 
 		<!--- Check if we have to create a metadata file --->
-		
+
 
 		<!--- Finally connect to FTP site and transfer all files --->
 
