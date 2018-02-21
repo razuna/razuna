@@ -7863,8 +7863,9 @@ This is the main function called directly by a single upload else from addassets
 		<cfset arguments.thestruct.upc_name = arguments.thestruct.upc_name & "." & _file_extension>
 	</cfif>
 
-	<!--- <cfset console("arguments.thestruct.upc_name : " & arguments.thestruct.upc_name)>
-	<cfset console("arguments.thestruct.dl_query.upc_number : " & arguments.thestruct.dl_query.upc_number)> --->
+	<!--- File not here simply return --->
+	<cfset arguments.thestruct.qryGroupDetails = queryNew('id')>
+	
 	<!--- If this is the Original --->
 	<cfif arguments.thestruct.upcRenditionNum>
 		<!--- Check if a file with this already exists --->
@@ -7895,8 +7896,6 @@ This is the main function called directly by a single upload else from addassets
 			<cfset uploadUpcVersion(arguments.thestruct)>
 			<cfreturn "new_upc_version" />
 		<cfelse>
-			<!--- File not here simply return --->
-			<cfset arguments.thestruct.qryGroupDetails = queryNew('id')>
 			<!--- return --->
 			<cfreturn arguments.thestruct.upc_name />
 		</cfif>
@@ -7912,8 +7911,6 @@ This is the main function called directly by a single upload else from addassets
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		AND in_trash = <cfqueryparam value="F" cfsqltype="CF_SQL_VARCHAR">
 		</cfquery>
-		<!--- <cfset console("arguments.thestruct.qryGroupDetails")>
-		<cfset console(arguments.thestruct.qryGroupDetails)> --->
 
 		<!--- Check if the file already exists in the database. If so, just update it --->
 		<cfset var upc_record_to_update = "">
