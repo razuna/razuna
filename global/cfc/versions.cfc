@@ -606,6 +606,9 @@
 			<!--- Get height and width --->
 			<cfexecute name="#arguments.thestruct.theshh#" timeout="60" variable="theheight" />
 			<cfexecute name="#arguments.thestruct.theshw#" timeout="60" variable="thewidth" />
+			<!--- Get width and height for thumbnail --->
+			<cfexecute name="#arguments.thestruct.theexif#" arguments="-S -s -ImageHeight #arguments.thestruct.qryfile.path#/thumb_#arguments.thestruct.qryfile.file_id#.#arguments.thestruct.qrysettings.set2_img_format#" variable="thumbheight" timeout="60" />
+			<cfexecute name="#arguments.thestruct.theexif#" arguments="-S -s -ImageWidth #arguments.thestruct.qryfile.path#/thumb_#arguments.thestruct.qryfile.file_id#.#arguments.thestruct.qrysettings.set2_img_format#" variable="thumbwidth" timeout="60" />
 			<!--- Exiftool on windows return the whole path with the sizes thus trim and get last --->
 			<cfset var theheight = trim(listlast(theheight," "))>
 			<cfset var thewidth = trim(listlast(thewidth," "))>
@@ -946,14 +949,14 @@
 			img_extension = <cfqueryparam value="#arguments.thestruct.qryfile.extension#" cfsqltype="cf_sql_varchar">,
 			thumb_extension = <cfqueryparam value="#arguments.thestruct.qrysettings.set2_img_format#" cfsqltype="cf_sql_varchar">,
 			thumb_width =
-			<cfif isnumeric(arguments.thestruct.qrysettings.set2_img_thumb_width)>
-				<cfqueryparam value="#arguments.thestruct.qrysettings.set2_img_thumb_width#" cfsqltype="cf_sql_numeric">
+			<cfif isnumeric(thumbwidth)>
+				<cfqueryparam value="#thumbwidth#" cfsqltype="cf_sql_numeric">
 			<cfelse>
 				null
 			</cfif>
 			, thumb_height =
-			<cfif isnumeric(arguments.thestruct.qrysettings.set2_img_thumb_heigth)>
-				<cfqueryparam value="#arguments.thestruct.qrysettings.set2_img_thumb_heigth#" cfsqltype="cf_sql_numeric">
+			<cfif isnumeric(thumbheight)>
+				<cfqueryparam value="#thumbheight#" cfsqltype="cf_sql_numeric">
 			<cfelse>
 				null
 			</cfif>,
