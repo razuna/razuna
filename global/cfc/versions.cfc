@@ -85,7 +85,7 @@
 	<cfelseif application.razuna.storage EQ "nirvanix">
 		<cfinvoke component="nirvanix" method="DeleteFolders" nvxsession="#arguments.thestruct.nvxsession#" folderpath="/versions/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.version#">
 	<cfelseif application.razuna.storage EQ "amazon">
-		<cfinvoke component="amazon" method="deletefolder" folderpath="#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.version#" awsbucket="#arguments.thestruct.awsbucket#" />
+		<cfinvoke component="amazon" method="deletefolder" folderpath="versions/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.version#" awsbucket="#arguments.thestruct.awsbucket#" />
 	</cfif>
 	<cfinvoke component="defaults" method="trans" transid="deleted" returnvariable="deleted" />
 	<cfinvoke component="defaults" method="trans" transid="plugin_version" returnvariable="version" />
@@ -1464,7 +1464,7 @@
 			<cfthread name="u#arguments.thestruct.therandom#" intstruct="#arguments.thestruct#">
 				<!--- Upload Original --->
 				<cfinvoke component="amazon" method="Upload">
-					<cfinvokeargument name="key" value="/#attributes.intstruct.hostid#/versions/#attributes.intstruct.type#/#attributes.intstruct.qryfile.file_id#/#attributes.intstruct.newversion#/#attributes.intstruct.qryfile.filename#">
+					<cfinvokeargument name="key" value="/versions/#attributes.intstruct.type#/#attributes.intstruct.qryfile.file_id#/#attributes.intstruct.newversion#/#attributes.intstruct.qryfile.filename#">
 					<cfinvokeargument name="theasset" value="#attributes.intstruct.qryfile.path#/#attributes.intstruct.qryfile.filename#">
 					<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
 				</cfinvoke>
@@ -1476,7 +1476,7 @@
 				<!--- Upload Thumbnail --->
 				<cfthread name="ut#arguments.thestruct.therandom#" intstruct="#arguments.thestruct#">
 					<cfinvoke component="amazon" method="Upload">
-						<cfinvokeargument name="key" value="/#attributes.intstruct.hostid#/versions/#attributes.intstruct.type#/#attributes.intstruct.qryfile.file_id#/#attributes.intstruct.newversion#/#attributes.intstruct.thumbnailname_new#">
+						<cfinvokeargument name="key" value="/versions/#attributes.intstruct.type#/#attributes.intstruct.qryfile.file_id#/#attributes.intstruct.newversion#/#attributes.intstruct.thumbnailname_new#">
 						<cfinvokeargument name="theasset" value="#attributes.intstruct.qryfile.path#/#attributes.intstruct.thumbnailname_new#">
 						<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
 					</cfinvoke>

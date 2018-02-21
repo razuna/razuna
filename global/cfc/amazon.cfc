@@ -125,9 +125,11 @@
 			<cfif theassetsize LT minsize>
 				<cfset var singleobj = createObject("component","global.cfc.s3").init(accessKeyId=arguments.awskey,secretAccessKey=arguments.awssecretkey,storagelocation = arguments.awslocation)>
 				<cfset singleobj.putobject(bucketname='#arguments.awsbucket#', filekey='#arguments.key#', theasset='#arguments.theasset#', contenttype="#arguments.contenttype#", HTTPtimeout=_cacheControl, cacheControl=_cacheControl)>
+				<cfset _setAcl(bucket=arguments.awsbucket, key=arguments.key)>
 			<cfelse>
 				<cfset var multiobj = createObject("component","global.cfc.s3").init(accessKeyId=arguments.awskey,secretAccessKey=arguments.awssecretkey,storagelocation = arguments.awslocation)>
 				<cfset multiobj.putobjectmultipart(bucketname='#arguments.awsbucket#', filekey='#arguments.key#', theasset='#arguments.theasset#', theassetsize='#int(theassetsize/1000)#', contenttype='#arguments.contenttype#', HTTPtimeout=_cacheControl, cacheControl=_cacheControl)>
+				<cfset _setAcl(bucket=arguments.awsbucket, key=arguments.key)>
 			</cfif>
 			<cfcatch>
 				<cfset consoleoutput(true)>
@@ -168,6 +170,7 @@
 		<cfset var renobj = createObject("component","global.cfc.s3").init(accessKeyId=application.razuna.awskey,secretAccessKey=application.razuna.awskeysecret,storagelocation = application.razuna.awslocation)>
 		<!--- Rename --->
 		<cfset renobj.renameObject(oldBucketName='#arguments.oldBucketName#', newBucketName ="#arguments.newBucketName#", oldFileKey = "#arguments.oldFileKey#",  newFileKey = "#arguments.newFileKey#")>
+		<cfset _setAcl(bucket=arguments.awsbucket, key=arguments.newFileKey)>
 		<!--- Return --->
 		<cfreturn />
 	</cffunction>
@@ -194,6 +197,8 @@
 
 		<!--- According to region we but URL together --->
 		<cfset x.theurl = _getAwsUrl(awsbucket=arguments.awsbucket, key=arguments.key)>
+
+		<cfset _setAcl(bucket=arguments.awsbucket, key=arguments.key)>
 
 		<!--- Return --->
 		<cfreturn x />
@@ -288,29 +293,11 @@
 
 		<cfset var _s3ds = getDataSource( from_cron=arguments.from_cron, conf_aws_access_key=arguments.config.conf_aws_access_key, conf_aws_secret_access_key=arguments.config.conf_aws_secret_access_key, conf_aws_location=arguments.config.conf_aws_location )>
 
-		<!--- <cfif _from_cron>
-			<cfset var _s3ds = AmazonRegisterDataSource("aws","#arguments.config.conf_aws_access_key#","#arguments.config.conf_aws_secret_access_key#","#arguments.config.conf_aws_location#")>
-		<cfelse>
-			<cfset var _s3ds = application.razuna.s3ds>
-		</cfif> --->
-
 		<!--- If we store all files in one bucket --->
 		<cfset arguments = tenantCheck(arguments)>
 
-		<!--- <cfset consoleoutput(true)>
-		<cfset console(arguments)> --->
-
-		<!--- Lenght of key and remove first / --->
-		<cfset _len_folder = len(arguments.folderpath)>
-		<cfset _len_folder = _len_folder - 1>
-		<cfset _folderpath_noprefix = right(arguments.folderpath, _len_folder) & "/">
-
-		<!--- <cfset console(_folderpath_noprefix)> --->
-
 		<!--- Get keys --->
-		<cfset var _keys = AmazonS3list( datasource=_s3ds, bucket=arguments.awsbucket, prefix=_folderpath_noprefix )>
-
-		<!--- <cfset console(_keys)> --->
+		<cfset var _keys = listkeys( awsbucket=arguments.awsbucket, folderpath=arguments.folderpath )>
 
 		<cfloop query="_keys">
 			<cfset AmazonS3delete( datasource=_s3ds, bucket=arguments.awsbucket, key=key )>
@@ -318,18 +305,6 @@
 
 		<cfset AmazonS3delete( datasource=_s3ds, bucket=arguments.awsbucket, key=arguments.folderpath )>
 
-
-		<!--- <cfset var singleobj = createObject("component","global.cfc.s3").init(accessKeyId=application.razuna.awskey,secretAccessKey=application.razuna.awskeysecret,storagelocation =application.razuna.awslocation)>
-		<cfset var thekeys= singleobj.getbucket(arguments.awsbucket,arguments.folderpath)>
-		<cfset console('thekeys: #thekeys#')> --->
-
-		<!--- Loop over the keys and delete them --->
-		<!--- <cfloop array = "#thekeys#" index='struct'>
-			<cfset AmazonS3delete(application.razuna.s3ds,arguments.awsbucket,struct["key"])>
-		</cfloop>
-
-		<!--- Finally remove folder which is empty now --->
-		<cfset AmazonS3delete(application.razuna.s3ds,arguments.awsbucket,arguments.folderpath)> --->
 		<!--- Return --->
 		<cfreturn />
 	</cffunction>
@@ -345,12 +320,13 @@
 		<!--- If we store all files in one bucket --->
 		<cfset arguments = tenantCheck(arguments)>
 		<!--- Get keys --->
-		<cfset thekeys = listkeys(arguments.folderpath,arguments.awsbucket)>
+		<cfset thekeys = listkeys(folderpath=arguments.folderpath, awsbucket=arguments.awsbucket)>
 		<!--- Call the renameobject function which will copy and delete at the same time --->
 		<cfloop query="thekeys" >
 			<cfset thefile = listlast(key,"/")>
 			<cfset var moveobj = createObject("component","global.cfc.s3").init(accessKeyId=arguments.awskey,secretAccessKey=arguments.awssecretkey,storagelocation = arguments.awslocation)>
 			<cfset moveobj.renameObject(oldBucketName='#arguments.awsbucket#', newBucketName ="#arguments.awsbucket#", oldFileKey = "#key#",  newFileKey = "#arguments.folderpathdest#/#thefile#")>
+			<cfset _setAcl(bucket=arguments.awsbucket, key="#arguments.folderpathdest#/#thefile#")>
 		</cfloop>
 		<!--- Return --->
 		<cfreturn />
@@ -367,12 +343,13 @@
 		<!--- If we store all files in one bucket --->
 		<cfset arguments = tenantCheck(arguments)>
 		<!--- Get keys --->
-		<cfset thekeys = listkeys(arguments.folderpath,arguments.awsbucket)>
+		<cfset thekeys = listkeys(folderpath=arguments.folderpath, awsbucket=arguments.awsbucket)>
 		<!--- Call the copyobject function --->
 		<cfloop query="thekeys" >
 			<cfset thefile = listlast(key,"/")>
 			<cfset var copyobj = createObject("component","global.cfc.s3").init(accessKeyId=arguments.awskey,secretAccessKey=arguments.awssecretkey,storagelocation = arguments.awslocation)>
 			<cfset copyobj.copyObject(oldBucketName='#arguments.awsbucket#', newBucketName ="#arguments.awsbucket#", oldFileKey = "#key#",  newFileKey = "#arguments.folderpathdest#/#thefile#")>
+			<cfset _setAcl(bucket=arguments.awsbucket, key="#arguments.folderpathdest#/#thefile#")>
 		</cfloop>
 		<!--- Return --->
 		<cfreturn />
@@ -702,10 +679,23 @@
 			</cfcase>
 		</cfswitch>
 		<!--- Tag on bucket and ket --->
-		<cfset _url = _url & "/" & arguments.awsbucket & "/" & arguments.key>
+		<cfset var _url_x = "/" & arguments.awsbucket & "/" & arguments.key>
+		<cfset _url_x = replaceNoCase(_url_x, "//", "/", "all")>
+		<cfset _url = _url & _url_x>
 		<!--- Return --->
 		<cfreturn _url />
 	</cffunction>
+
+	<!--- Function to create key and bucket --->
+	<cffunction name="_setAcl" access="public">
+		<cfargument name="bucket" required="true" type="string">
+		<cfargument name="key" required="true" type="string">
+		<!--- ACL --->
+		<cfset AmazonS3setacl( datasource=application.razuna.s3ds, bucket=arguments.bucket, key=arguments.key, acl="public-read" )>
+		<!--- Return --->
+		<cfreturn />
+	</cffunction>
+
 
 </cfcomponent>
 
