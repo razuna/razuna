@@ -2,7 +2,7 @@
   "name": "Razuna",
   "description": "Razuna open source digital asset management",
   "version": "1.9.5",
-  "script_version": "201802101",
+  "script_version": "201802201",
   "vendor_version": "201801131",
   "private": true,
   "dependencies": {

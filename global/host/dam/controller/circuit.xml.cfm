@@ -9741,6 +9741,13 @@
 				<set name="session.file_id" value="#attributes.thekind#" />
 			</true>
 		</if>
+		<!-- for labels -->
+		<if condition="attributes.folder_id EQ '0' AND attributes.thekind EQ 'labels'">
+			<true>
+				<!-- CFC: Store trash file ids-->
+				<invoke object="myFusebox.getApplicationData().labels" methodcall="store_values(attributes)" />
+			</true>
+		</if>
 	</fuseaction>
 
 	<!-- Store all ids for search -->

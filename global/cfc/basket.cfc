@@ -38,7 +38,7 @@
 	<cfparam name="arguments.thestruct.datasource" default="#application.razuna.datasource#">
 	<cfparam name="arguments.thestruct.thedatabase" default="#application.razuna.thedatabase#">
 	<cfparam name="arguments.thestruct.sessions" default="#session#">
-<!--- 	<cfset consoleoutput(true)>
+	<!--- <cfset consoleoutput(true, true)>
 	<cfset console(arguments.thestruct)> --->
 
 	<cfthread intstruct="#arguments.thestruct#">
@@ -53,7 +53,7 @@
 				<!--- Set the fileid --->
 				<cfset attributes.intstruct.file_id = ids>
 		</cfif>
-
+	
 		<cfloop index="thenr" delimiters="," list="#attributes.intstruct.file_id#">
 			<!--- If we come from a overview we have numbers with the type --->
 			<cfset thetype = listlast(thenr,"-")>

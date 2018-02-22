@@ -65,7 +65,7 @@
 					<div id="tooltip" style="float:left;width:490px;">
 						<!--- Select --->
 						<cfif cs.icon_select>
-							<a href="##" onClick="CheckAll('label_form','x','x','all');return false;" title="#myFusebox.getApplicationData().defaults.trans("tooltip_select_desc")#">
+							<a href="##" onClick="CheckAll('label_form','#attributes.label_id#','x','labels');return false;" title="#myFusebox.getApplicationData().defaults.trans("tooltip_select_desc")#">
 								<div style="float:left;padding-right:15px;padding-top:5px;text-decoration:underline;">#myFusebox.getApplicationData().defaults.trans("select_all")#</div>
 							</a>
 						</cfif>
