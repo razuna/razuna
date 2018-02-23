@@ -2,11 +2,13 @@
 
 ## NOTE
 
-Java 8 is a required! Additionally, you need to install the dedicated search server. You can find the repository for the search server at https://github.com/razuna/razuna-searchserver.
+Java 8 is a required!
 
 ## Installation
 
-In order for Razuna to run, you need to have a J2EE Application server (Tomcat, JBoss, Jetty, etc.) running.
+In order for Razuna to run, you have to deploy a Java application server, e.g. Tomcat. Additionally, you need to install the dedicated search server. You can find the repository for the search server at https://github.com/razuna/razuna-searchserver
+
+You can also download a ready-to-deploy bundle from http://razuna.org
 
 ## Documentation
 
@@ -14,8 +16,10 @@ Please go to http://wiki.razuna.com for the latest installation and upgrade guid
 
 ## Support
 
-Community help is available on https://getsatisfaction.com/razuna or open a ticket at http://issues.razuna.com. For organization wanting to have a worry-less deployment, we encourage our support plans. Check them out at http://razuna.org/support/subscriptions.
+Community help is available on https://getsatisfaction.com/razuna or post a question at http://help.razuna.com
 
-## Razuna hosted edition and Cloud servers
+For organization wanting to have a worry-less deployment, we encourage our support plans. Check them out at http://razuna.org/support/subscriptions
 
-Many enterprises trust us with their digital assets. Check out our hosted edition and the dedicated cloud server at http://razuna.com.
+## Razuna hosted edition and cloud servers
+
+Many enterprises trust us with their digital assets. Check out our hosted edition and the managed dedicated cloud servers at http://razuna.com
