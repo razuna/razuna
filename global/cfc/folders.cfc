@@ -5462,7 +5462,9 @@
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#getsubfolders */ f.folder_id, f.folder_id_r, f.folder_of_user, f.folder_owner, f.folder_level, <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2">NVL<cfelseif application.razuna.thedatabase EQ "mysql">ifnull<cfelseif application.razuna.thedatabase EQ "mssql">isnull</cfif>(u.user_login_name,'Obsolete') as username,
 	<!--- Permission follow but not for sysadmin and admin --->
-	<cfif ( not session.is_system_admin and not session.is_administrator ) AND NOT structkeyexists(arguments,"external")>
+	<cfif session.is_system_admin OR session.is_administrator>
+		'unlocked' AS perm
+	<cfelse>
 		CASE
 			<!--- Check permission on this folder --->
 			WHEN EXISTS(
@@ -5491,8 +5493,6 @@
 			<!--- If nothing meets the above lock the folder --->
 			ELSE 'locked'
 		END AS perm
-	<cfelse>
-		'unlocked' AS perm
 	</cfif>
 	, '0' as filecount,
 	if ( (select fn.folder_name as folder_name FROM raz1_folders_name fn WHERE fn.folder_id_r = f.folder_id AND fn.lang_id_r = #session.thelangid#) != '',  (select fn.folder_name as folder_name FROM raz1_folders_name fn WHERE fn.folder_id_r = f.folder_id AND fn.lang_id_r = #session.thelangid#), f.folder_name ) as folder_name
