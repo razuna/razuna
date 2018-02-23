@@ -1782,7 +1782,7 @@
 	<!--- Check if this is the very first upload for host --->
 	<cfif not structKeyExists(session, "firstasset")>
 		<cfset var checkasset = "">
-		<cfquery datasource="#application.razuna.datasource#" name="checkasset">
+		<cfquery datasource="#application.razuna.datasource#" name="checkasset" cachedwithin="#CreateTimeSpan(0,0,5,0)#" region="razcache">
 			SELECT hashtag FROM  #session.hostdbprefix#images WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			UNION ALL
 			SELECT hashtag FROM  #session.hostdbprefix#audios WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
