@@ -5521,7 +5521,6 @@
 	<cfif structkeyexists(arguments,"folder_name") AND arguments.folder_name NEQ ''>
    	 	AND f.folder_name LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.folder_name#%">
 	</cfif>
-	AND fn.lang_id_r = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.thelangid#">
 	ORDER BY fn.folder_name, f.folder_name
 	</cfquery>
 	<!--- Query to get unlocked folders only --->
