@@ -2803,11 +2803,13 @@
   		host_id				int,
   		upc_name			varchar(200),
   		upc_description 	varchar(2000),
-  		PRIMARY KEY (upc_temp_id)
+  		PRIMARY KEY (upc_temp_id),
+  		key #arguments.thestruct.host_db_prefix#upc_t_upc_active (upc_active),
+  		key #arguments.thestruct.host_db_prefix#upc_t_host_id (host_id)
 		)
 		#this.tableoptions#
 		</cfquery>
-		
+
 		<!--- UPC --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#upc_template_val (
@@ -2816,9 +2818,9 @@
   		upc_field			varchar(200),
   		upc_is_original		boolean default '0',
   		host_id				int,
-  		PRIMARY KEY (upc_temp_id_r),
-  		key #arguments.thestruct.host_db_prefix#upc_field (upc_field),
-  		key #arguments.thestruct.host_db_prefix#upc_is_original (upc_is_original)
+  		PRIMARY KEY (rec_uuid),
+  		key #arguments.thestruct.host_db_prefix#upc_tv_upc_field (upc_field),
+  		key #arguments.thestruct.host_db_prefix#upc_tv_host_id (host_id)
 		)
 		#this.tableoptions#
 		</cfquery>

@@ -7849,7 +7849,7 @@ This is the main function called directly by a single upload else from addassets
 
 	<!--- File not here simply return --->
 	<cfset arguments.thestruct.qryGroupDetails = queryNew('id')>
-	
+
 	<!--- If this is the Original --->
 	<cfif arguments.thestruct.upcRenditionNum>
 		<!--- Check if a file with this already exists --->
@@ -7946,10 +7946,10 @@ This is the main function called directly by a single upload else from addassets
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			AND in_trash = <cfqueryparam value="F" cfsqltype="CF_SQL_VARCHAR">
 			</cfquery>
-			<cfpause interval="10">
+			<cfpause interval="15">
 			<!--- If wait count is over 20 abort --->
-			<cfif arguments.thestruct.wait_count EQ 20>
-				<cfset console('Wait count exceeded 20 times and aborted adding this rendition !!!')>
+			<cfif arguments.thestruct.wait_count EQ 40>
+				<cfset console('Wait count exceeded 40 times and aborted adding this rendition !!!')>
 				<cfabort>
 			</cfif>
 			<!--- Increase the count --->
