@@ -179,6 +179,8 @@
 
 <!--- Settings for Image --->
 <cffunction name="prefs_image">
+	<!--- Cache --->
+	<cfset var cachetoken = getcachetoken("settings")>
 	<cfset var qry = "">
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#prefs_image */ set2_create_imgfolders_where, set2_cat_intra, set2_cat_web,
@@ -189,8 +191,8 @@
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
 	<!--- The tool paths --->
-	<cfquery datasource="#application.razuna.datasource#" name="qrypaths">
-	SELECT thetool, thepath
+	<cfquery datasource="#application.razuna.datasource#" name="qrypaths" cachedwithin="1" region="razcache">
+	SELECT /* #variables.cachetoken#prefs_image_tools */ thetool, thepath
 	FROM tools
 	</cfquery>
 	<!--- Get tools --->
@@ -208,6 +210,8 @@
 
 <!--- Settings for Video --->
 <cffunction name="prefs_video">
+	<!--- Cache --->
+	<cfset var cachetoken = getcachetoken("settings")>
 	<cfset var qry = "">
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#prefs_video */ set2_create_vidfolders_where, set2_cat_vid_intra, set2_cat_vid_web, <!--- set2_vid_preview_width, set2_vid_preview_heigth, set2_vid_preview_time, set2_vid_preview_start, ---> set2_vid_preview_author, set2_vid_preview_copyright, set2_rendition_metadata
@@ -216,8 +220,8 @@
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
 	<!--- The tool paths --->
-	<cfquery datasource="#application.razuna.datasource#" name="qrypaths">
-	SELECT thetool, thepath
+	<cfquery datasource="#application.razuna.datasource#" name="qrypaths" cachedwithin="1" region="razcache">
+	SELECT /* #variables.cachetoken#prefs_image_tools */ thetool, thepath
 	FROM tools
 	WHERE thetool = <cfqueryparam value="ffmpeg" cfsqltype="CF_SQL_VARCHAR">
 	</cfquery>
@@ -458,9 +462,11 @@
 	<cfparam default="" name="qry.dcraw">
 	<cfparam default="" name="qry.mp4box">
 	<cfparam default="" name="qry.ghostscript">
+	<!--- Cache --->
+	<cfset var cachetoken = getcachetoken("settings")>
 	<!--- Query --->
-	<cfquery datasource="#application.razuna.datasource#" name="qrypaths">
-	SELECT thetool, thepath
+	<cfquery datasource="#application.razuna.datasource#" name="qrypaths" cachedwithin="1" region="razcache">
+	SELECT /* #variables.cachetoken#get_tools */ thetool, thepath
 	FROM tools
 	</cfquery>
 	<!--- Put results into vars --->
@@ -645,6 +651,8 @@
 			</cfif>
 		</cfif>
 	</cfloop>
+	<!--- Reset cache --->
+	<cfset variables.cachetoken = resetcachetoken("settings")>
 </cffunction>
 
 <!--- Save Settings --->
