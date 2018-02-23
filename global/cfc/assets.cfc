@@ -1782,30 +1782,14 @@
 	<!--- Check if this is the very first upload for host --->
 	<cfif not structKeyExists(session, "firstasset")>
 		<cfset var checkasset = "">
-		<cfset var _img = "">
-		<cfset var _vid = "">
-		<cfset var _doc = "">
-		<cfset var _aud = "">
-		<cfquery datasource="#application.razuna.datasource#" name="_img">
-			SELECT hashtag FROM #session.hostdbprefix#images WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		</cfquery>
-		<cfquery datasource="#application.razuna.datasource#" name="_aud">
-			SELECT hashtag FROM #session.hostdbprefix#audios WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		</cfquery>
-		<cfquery datasource="#application.razuna.datasource#" name="_vid">
-			SELECT hashtag FROM #session.hostdbprefix#videos WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		</cfquery>
-		<cfquery datasource="#application.razuna.datasource#" name="_doc">
-			SELECT hashtag FROM #session.hostdbprefix#files WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		</cfquery>
-		<cfquery dbtype="query" name="checkasset">
-			SELECT * FROM _img
-			UNION
-			SELECT * FROM _vid
-			UNION
-			SELECT * FROM _doc
-			UNION
-			SELECT * FROM _aud
+		<cfquery datasource="#application.razuna.datasource#" name="checkasset">
+			SELECT hashtag FROM  #session.hostdbprefix#images WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			UNION ALL
+			SELECT hashtag FROM  #session.hostdbprefix#audios WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			UNION ALL
+			SELECT hashtag FROM  #session.hostdbprefix#videos WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			UNION ALL
+			SELECT hashtag FROM  #session.hostdbprefix#files WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>
 		<cfif checkasset.recordcount EQ 0 OR (checkasset.recordcount EQ 1 AND checkasset.hashtag EQ '')>
 			<cfset session.firstasset = true>
