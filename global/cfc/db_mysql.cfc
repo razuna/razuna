@@ -445,7 +445,10 @@
 			news_text		text,
 			news_date		varchar(20),
 			host_id 		int default 0,
-			PRIMARY KEY (news_id)
+			PRIMARY KEY (news_id),
+			KEY news_host_id (host_id),
+			KEY news_active (news_active),
+			KEY news_date (news_date)
 		)
 		#this.tableoptions#
 		</cfquery>
@@ -1624,7 +1627,7 @@
 		  IN_TRASH		   	   VARCHAR(2) DEFAULT 'F',
 		  IS_INDEXED		   VARCHAR(1) DEFAULT 0,
 		  FILE_UPC_NUMBER	   VARCHAR(15),
-		  EXPIRY_DATE DATE,
+		  EXPIRY_DATE 		   DATE,
 		PRIMARY KEY (FILE_ID),
 		KEY #arguments.thestruct.host_db_prefix#files_hostid (HOST_ID),
 	    KEY #arguments.thestruct.host_db_prefix#files_folderid (folder_id_r),
