@@ -24,13 +24,13 @@
 *
 --->
 
-<!--- 
+<!---
 
 TODO:
 
-- Image conversion with DPI
 - Metadata file
 - Get selected renditions
+- sFTP
 
  --->
 
@@ -214,6 +214,7 @@ TODO:
 				<cfif type EQ "img" AND FileExists( _path_to_file )>
 					<cfset _w = "">
 					<cfset _h = "">
+					<cfset _d = "72">
 					<cfset _ext = listlast(filename, ".")>
 					<cfset _filename_no_ext = replacenocase( filename, ".#_ext#", "" )>
 					<!--- Get sizes of image --->
@@ -227,8 +228,11 @@ TODO:
 					<cfif theheight GT attributes.intstruct.script.SCHED_SCRIPT_IMG_CANVAS_HEIGTH>
 						<cfset _h = attributes.intstruct.script.SCHED_SCRIPT_IMG_CANVAS_HEIGTH>
 					</cfif>
+					<cfif attributes.intstruct.script.SCHED_SCRIPT_IMG_DPI NEQ "">
+						<cfset _d = attributes.intstruct.script.SCHED_SCRIPT_IMG_DPI>
+					</cfif>
 					<!--- Create canvas with file --->
-					<cfexecute name="#attributes.intstruct.convert#" arguments="convert #_path_to_file# -resize #_w#x#_h# -gravity center -background white -extent #attributes.intstruct.script.SCHED_SCRIPT_IMG_CANVAS_WIDTH#x#attributes.intstruct.script.SCHED_SCRIPT_IMG_CANVAS_HEIGTH# #attributes.intstruct.path_temp#/#_filename_no_ext#_extended.jpg" timeout="120" />
+					<cfexecute name="#attributes.intstruct.convert#" arguments="convert #_path_to_file# -resize #_w#x#_h# -gravity center -background white -extent #attributes.intstruct.script.SCHED_SCRIPT_IMG_CANVAS_WIDTH#x#attributes.intstruct.script.SCHED_SCRIPT_IMG_CANVAS_HEIGTH# -density #_d# #attributes.intstruct.path_temp#/#_filename_no_ext#_extended.jpg" timeout="120" />
 				</cfif>
 			</cfloop>
 		</cfthread>

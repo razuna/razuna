@@ -30,7 +30,12 @@
 <head>
 <title>Razuna - Enterprise Digital Asset Management</title>
 <meta http-equiv="content-type" content="text/html;charset=utf-8" />
-<script type="text/javascript" src="js/global.js"></script>
+<!--- CSS --->
+<link rel="stylesheet" type="text/css" href="#dynpath#/global/dist/app_#attributes.cachetag#.min.css" />
+<!--- JS --->
+<script type="text/javascript" src="#dynpath#/global/js/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="#dynpath#/global/dist/app_#attributes.cachetag#.min.js"></script>
+<!--- <script type="text/javascript" src="js/global.js"></script> --->
 
 </head>
 <body>
