@@ -634,7 +634,7 @@
 			<cfquery datasource="#arguments.thestruct.dsn#">
 			INSERT INTO options
 			(opt_id, opt_value, rec_uuid)
-			VALUES ('conf_db_type', '#session.firsttime.database_type#', '#createuuid()#')
+			VALUES ('conf_db_type', '#request.razuna.session.firsttime.database_type#', '#createuuid()#')
 			</cfquery>
 			<!--- USERS --->
 			<cfquery datasource="#arguments.thestruct.dsn#">
@@ -2494,7 +2494,7 @@
 	<!--- Clear database completely --->
 	<cffunction name="clearall" access="public" output="false">
 		<!--- Query Tables --->
-		<cfquery datasource="#session.firsttime.database#" name="qrytables">
+		<cfquery datasource="#request.razuna.session.firsttime.database#" name="qrytables">
 		SELECT lower(table_name) as thetable
 		FROM information_schema.tables
 		WHERE table_catalog = 'RAZUNA'
@@ -2504,24 +2504,24 @@
 		<!--- Loop and drop tables --->
 		<cfloop query="qrytables">
 			<cftry>
-				<cfquery datasource="#session.firsttime.database#">
+				<cfquery datasource="#request.razuna.session.firsttime.database#">
 				ALTER TABLE #thetable# SET REFERENTIAL_INTEGRITY false
 				</cfquery>
-				<cfquery datasource="#session.firsttime.database#">
+				<cfquery datasource="#request.razuna.session.firsttime.database#">
 				DROP TABLE #thetable#
 				</cfquery>
 				<cfcatch type="any"></cfcatch>
 			</cftry>
 		</cfloop>
 		<!--- Query Sequences --->
-		<cfquery datasource="#session.firsttime.database#" name="qryseq">
+		<cfquery datasource="#request.razuna.session.firsttime.database#" name="qryseq">
 		SELECT sequence_name as theseq
 		FROM information_schema.sequences
 		WHERE IS_GENERATED = false
 		</cfquery>
 		<!--- Loop over Sequences and remove them --->
 		<cfloop query="qryseq">
-			<cfquery datasource="#session.firsttime.database#">
+			<cfquery datasource="#request.razuna.session.firsttime.database#">
 			DROP SEQUENCE #theseq#
 			</cfquery>
 		</cfloop>
@@ -2530,7 +2530,7 @@
 	
 	<!--- OPENBD CONFIG INTERACTION --->
 	
-	<cffunction name="bdgetConfig" access="private" output="false" returntype="struct" hint="Returns a struct representation of the OpenBD server configuration (bluedragon.xml)">
+	<cffunction name="bdgetConfig" access="private" output="false" returntype="struct" >
 		<cfset var admin = "" />
 			<cflock scope="Server" type="readonly" timeout="5">
 				<cfset admin = createObject("java", "com.naryx.tagfusion.cfm.engine.cfEngine").getConfig().getCFMLData() />
@@ -2538,8 +2538,8 @@
 		<cfreturn admin.server />
 	</cffunction>
 	
-	<cffunction name="bdsetConfig" access="private" output="false" returntype="void" hint="Sets the server configuration and tells OpenBD to refresh its settings">
-		<cfargument name="currentConfig" type="struct" required="true" hint="The configuration struct, which is a struct representation of bluedragon.xml" />
+	<cffunction name="bdsetConfig" access="private" output="false" returntype="void" >
+		<cfargument name="currentConfig" type="struct" required="true"  />
 			<!--- Initialize Var --->
 			<cfset admin = structnew()>
 			<cflock scope="Server" type="exclusive" timeout="5">
@@ -2551,8 +2551,8 @@
 			</cflock>
 	</cffunction>
 	
-	<cffunction name="bddatasourceExists" access="public" output="false" returntype="boolean" hint="Returns a boolean indicating whether or not a datasource with the specified name exists">
-		<cfargument name="dsn" type="string" required="true" hint="The datasource name to check" />
+	<cffunction name="bddatasourceExists" access="public" output="false" returntype="boolean" >
+		<cfargument name="dsn" type="string" required="true"  />
 		<cfset var dsnExists = true />
 		<cfset var localConfig = bdgetConfig() />
 		<cfset var i = 0 />
@@ -2572,30 +2572,30 @@
 		<cfreturn dsnExists />
 	</cffunction>
 	
-	<cffunction name="BDsetDatasource" access="public" output="false" returntype="void" hint="Creates or updates a datasource">
-		<cfargument name="name" type="string" required="true" hint="OpenBD Datasource Name" />
-		<cfargument name="databasename" type="string" required="false" default="" hint="Database name on the database server" />
-		<cfargument name="server" type="string" required="false" default="" hint="Database server host name or IP address" />
-		<cfargument name="port"	type="numeric" required="false" default="0" hint="Port that is used to access the database server" />
-		<cfargument name="username" type="string" required="false" default="" hint="Database username" />
-		<cfargument name="password" type="string" required="false" default="" hint="Database password" />
-		<cfargument name="hoststring" type="string" required="false" default="" hint="JDBC URL for 'other' database types. Databasename, server, and port arguments are ignored if a hoststring is provided." />
-		<cfargument name="description" type="string" required="false" default="" hint="A description of this data source" />
-		<cfargument name="initstring" type="string" required="false" default="" hint="Additional initialization settings" />
-		<cfargument name="connectiontimeout" type="numeric" required="false" default="120" hint="Number of seconds OpenBD maintains an unused connection before it is destroyed" />
-		<cfargument name="connectionretries" type="numeric" required="false" default="0" hint="Number of connection retry attempts to make" />
-		<cfargument name="logintimeout" type="numeric" required="false" default="120" hint="Number of seconds before OpenBD times out the data source connection login attempt" />
-		<cfargument name="maxconnections" type="numeric" required="false" default="3" hint="Maximum number of simultaneous database connections" />
-		<cfargument name="perrequestconnections" type="boolean" required="false" default="false" hint="Indication of whether or not to pool connections" />
-		<cfargument name="sqlselect" type="boolean" required="false" default="true" hint="Allow SQL SELECT statements from this datasource" />
-		<cfargument name="sqlinsert" type="boolean" required="false" default="true" hint="Allow SQL INSERT statements from this datasource" />
-		<cfargument name="sqlupdate" type="boolean" required="false" default="true" hint="Allow SQL UPDATE statements from this datasource" />
-		<cfargument name="sqldelete" type="boolean" required="false" default="true" hint="Allow SQL DELETE statements from this datasource" />
-		<cfargument name="sqlstoredprocedures" type="boolean" required="false" default="true" hint="Allow SQL stored procedure calls from this datasource" />
-		<cfargument name="drivername" type="string" required="false" default="" hint="JDBC driver class to use" />
-		<cfargument name="action" type="string" required="false" default="create" hint="Action to take on the datasource (create or update)" />
-		<cfargument name="existingDatasourceName" type="string" required="false" default="" hint="The existing (old) datasource name so we know what to delete if this is an update" />
-		<cfargument name="verificationQuery" type="string" required="false" default="" hint="Custom verification query for 'other' driver types" />
+	<cffunction name="BDsetDatasource" access="public" output="false" returntype="void" >
+		<cfargument name="name" type="string" required="true"  />
+		<cfargument name="databasename" type="string" required="false" default=""  />
+		<cfargument name="server" type="string" required="false" default=""  />
+		<cfargument name="port"	type="numeric" required="false" default="0"  />
+		<cfargument name="username" type="string" required="false" default=""  />
+		<cfargument name="password" type="string" required="false" default=""  />
+		<cfargument name="hoststring" type="string" required="false" default=""  />
+		<cfargument name="description" type="string" required="false" default=""  />
+		<cfargument name="initstring" type="string" required="false" default=""  />
+		<cfargument name="connectiontimeout" type="numeric" required="false" default="120"  />
+		<cfargument name="connectionretries" type="numeric" required="false" default="0"  />
+		<cfargument name="logintimeout" type="numeric" required="false" default="120"  />
+		<cfargument name="maxconnections" type="numeric" required="false" default="3"  />
+		<cfargument name="perrequestconnections" type="boolean" required="false" default="false"  />
+		<cfargument name="sqlselect" type="boolean" required="false" default="true"  />
+		<cfargument name="sqlinsert" type="boolean" required="false" default="true"  />
+		<cfargument name="sqlupdate" type="boolean" required="false" default="true"  />
+		<cfargument name="sqldelete" type="boolean" required="false" default="true"  />
+		<cfargument name="sqlstoredprocedures" type="boolean" required="false" default="true"  />
+		<cfargument name="drivername" type="string" required="false" default=""  />
+		<cfargument name="action" type="string" required="false" default="create"  />
+		<cfargument name="existingDatasourceName" type="string" required="false" default=""  />
+		<cfargument name="verificationQuery" type="string" required="false" default=""  />
 		
 		<cfset var localConfig = bdgetConfig() />
 		<cfset var datasourceSettings = structNew() />

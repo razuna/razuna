@@ -85,6 +85,9 @@ TODO:
 	<!--- Create lock file for this script --->
 	<cfinvoke component="global.cfc.global" method="_lockFile" qry="#qry_scripts#" type="script_#_script_time#" returnvariable="_hosts" />
 
+	<!--- SFTP --->
+	<cfinvoke component="global.cfc.sftp" method="init" returnvariable="sftp">
+
 	<!--- START --->
 
 	<!--- Loop over hosts --->
@@ -122,22 +125,43 @@ TODO:
 
 		<!--- Unique id for this script --->
 		<cfset _uuid = createuuid('')>
+		<cfset _file_file_name = "">
+		<cfset _zip_file = "">
 		<!--- Path to temp directory --->
 		<cfset _path_temp = GetTempdirectory() & "/" & _uuid>
+		<cfset _zip_file_name = "Omnipix.zip">
+		<cfset _zip_file = GetTempdirectory() & _zip_file_name>
 
+		<cfset console("_ZIP_FILE : ", _zip_file)>
 		<!--- Check what files we need to grab (Originals and renditions) Guess we could pass this in the search above --->
 
 		<!--- Collect files here --->
-		<!--- <cfset list_files = _collectFiles( files=qry_files, storage=_storage, path_temp=_path_temp )> --->
+		<cfset list_files = _collectFiles( files=qry_files, storage=_storage, path_temp=_path_temp )>
 
 		<!--- Check if we have to transform any files --->
-		<!--- <cfset _transcodeFiles( files=qry_files, script=qry_script, storage=_storage, path_temp=_path_temp )> --->
+		<cfset _transcodeFiles( files=qry_files, script=qry_script, storage=_storage, path_temp=_path_temp )>
 
 		<!--- Check if we have to create a metadata file --->
+		<cfset _metaFile( files=qry_files, script=qry_script, storage=_storage, path_temp=_path_temp )>
 
+		<!--- Create a ZIP file --->
+		<cfthread name="zip_#_uuid#" file="#_zip_file#" source="#_path_temp#">
+			<cfzip action="create" zipfile="#attributes.file#" source="#attributes.source#" overwrite="true" />
+		</cfthread>
+		<!--- Only release when thread is done --->
+		<cfthread action="join" name="zip_#_uuid#" />
 
 		<!--- Finally connect to FTP site and transfer all files --->
+		<cfset _connection = sftp.connect( host=qry_script.SCHED_SCRIPT_FTP_HOST, port=qry_script.SCHED_SCRIPT_FTP_PORT, user=qry_script.SCHED_SCRIPT_FTP_USER, pass=qry_script.SCHED_SCRIPT_FTP_PASS )>
+		<cfset put = sftp.put(file_local=_zip_file, file_remote="/#_zip_file_name#")>
+		<cfset sftp.disconnect()>
 
+		<!--- Check if file could be transfered --->
+		<cfset console("sFTP PUT STATUS : ", put)>
+
+		<!--- Delete temp dir and zip file --->
+		<cfset DirectoryDelete( _path_temp, true )>
+		<cfset fileDelete( _zip_file )>
 
 	</cfloop>
 
@@ -245,6 +269,60 @@ TODO:
 	<cfreturn />
 </cffunction>
 
+<!--- Metadata file --->
+<cffunction name="_metaFile">
+	<cfargument name="files" required="yes" type="query">
+	<cfargument name="script" required="yes" type="struct">
+	<cfargument name="storage" required="yes" type="string">
+	<cfargument name="path_temp" required="yes" type="string">
+
+	<!--- If metadata not empty --->
+	<cfif arguments.script.sched_script_files_include_metadata>
+
+		
+
+		<!--- Name for thread --->
+		<cfset var _tn = createuuid('')>
+
+		<!--- Loop over files but only images --->
+		<!--- <cfthread name="#_tn#" intstruct="#arguments#">
+			<cfloop query=attributes.intstruct.files>
+				<!--- Path to file --->
+				<cfset _path_to_file = "#attributes.intstruct.path_temp#/#filename#">
+				<!--- Check type and exists --->
+				<cfif type EQ "img" AND FileExists( _path_to_file )>
+					<cfset _w = "">
+					<cfset _h = "">
+					<cfset _d = "72">
+					<cfset _ext = listlast(filename, ".")>
+					<cfset _filename_no_ext = replacenocase( filename, ".#_ext#", "" )>
+					<!--- Get sizes of image --->
+					<cfexecute name="#attributes.intstruct.exiftool#" arguments="-S -s -ImageHeight #_path_to_file#" timeout="60" variable="theheight" />
+					<cfexecute name="#attributes.intstruct.exiftool#" arguments="-S -s -ImageWidth #_path_to_file#" timeout="60" variable="thewidth" />
+					<!--- If with is bigger than wanted canvas --->
+					<cfif thewidth GT attributes.intstruct.script.SCHED_SCRIPT_IMG_CANVAS_WIDTH>
+						<cfset _w = attributes.intstruct.script.SCHED_SCRIPT_IMG_CANVAS_WIDTH>
+					</cfif>
+					<!--- If height is bigger than wanted canvas --->
+					<cfif theheight GT attributes.intstruct.script.SCHED_SCRIPT_IMG_CANVAS_HEIGTH>
+						<cfset _h = attributes.intstruct.script.SCHED_SCRIPT_IMG_CANVAS_HEIGTH>
+					</cfif>
+					<cfif attributes.intstruct.script.SCHED_SCRIPT_IMG_DPI NEQ "">
+						<cfset _d = attributes.intstruct.script.SCHED_SCRIPT_IMG_DPI>
+					</cfif>
+					<!--- Create canvas with file --->
+					<cfexecute name="#attributes.intstruct.convert#" arguments="convert #_path_to_file# -resize #_w#x#_h# -gravity center -background white -extent #attributes.intstruct.script.SCHED_SCRIPT_IMG_CANVAS_WIDTH#x#attributes.intstruct.script.SCHED_SCRIPT_IMG_CANVAS_HEIGTH# -density #_d# #attributes.intstruct.path_temp#/#_filename_no_ext#_extended.jpg" timeout="120" />
+				</cfif>
+			</cfloop>
+		</cfthread>
+
+		<!--- Only release when thread is done --->
+		<cfthread action="join" name="#_tn#" /> --->
+
+	</cfif>
+
+	<cfreturn />
+</cffunction>
 
 
 

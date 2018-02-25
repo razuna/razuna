@@ -27,7 +27,7 @@
 
 <cftry>
 
-	<cfset consoleoutput(true)>
+	<cfset consoleoutput(true, true)>
 	<cfset console("#now()# --- Executing cron job folder subscribe")>
 
 	<!--- Path --->

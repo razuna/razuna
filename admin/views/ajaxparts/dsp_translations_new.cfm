@@ -34,7 +34,7 @@
 		<td>ID</td>
 		<td><input type="text" name="trans_id" id="trans_id" class="text" size="40"></td>
 	</tr>
-	<cfloop from="1" to="#defaultsObj.howmanylang("#application.razuna.datasource#")#" index="langindex">
+	<cfloop from="1" to="#defaultsObj.howmanylang("#request.razuna.application.datasource#")#" index="langindex">
 		<input type="hidden" name="transid" value="#langindex#">
 		<tr>
 			<td valign="top">#defaultsObj.thislang("set_lang_#langindex#")#</td>

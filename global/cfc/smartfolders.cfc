@@ -24,32 +24,31 @@
 *
 --->
 <cfcomponent output="false" output="false" extends="extQueryCaching">
-	
-	<!--- Get the cachetoken for here --->
-	<cfset variables.cachetoken = getcachetoken("folders")>
 
 	<!--- Get All --->
 	<cffunction name="getall" access="Public" output="false">
 		<!--- Params --->
 		<cfset var qry = "">
+		<!--- Get the cachetoken for here --->
+		<cfset var cachetoken = getcachetoken(type="folders", hostid=request.razuna.session.hostid)>
 		<!--- Query --->
-		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
-		SELECT /* #variables.cachetoken#sfgetall */ sf_id, sf_name, sf_type, '' AS shared
-		FROM #session.hostdbprefix#smart_folders
-		WHERE sf_type <cfif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="cf_sql_varchar" value="saved_search">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		<cfquery datasource="#request.razuna.application.datasource#" name="qry" cachedwithin="1" region="razcache">
+		SELECT /* #cachetoken#sfgetall */ sf_id, sf_name, sf_type, '' AS shared
+		FROM #request.razuna.session.hostdbprefix#smart_folders
+		WHERE sf_type <cfif request.razuna.application.thedatabase EQ "mysql" OR request.razuna.application.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="cf_sql_varchar" value="saved_search">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 		UNION ALL
-		SELECT /* #variables.cachetoken#sfgetall */ sf_id, sf_name, sf_type, '' AS shared
-		FROM #session.hostdbprefix#smart_folders
-		WHERE sf_who = <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.theuserid#">
+		SELECT /* #cachetoken#sfgetall */ sf_id, sf_name, sf_type, '' AS shared
+		FROM #request.razuna.session.hostdbprefix#smart_folders
+		WHERE sf_who = <cfqueryparam cfsqltype="cf_sql_varchar" value="#request.razuna.session.theuserid#">
 		AND sf_type = <cfqueryparam cfsqltype="cf_sql_varchar" value="saved_search">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 		UNION ALL
 		SELECT sf_id, sf_name, sf_type, 'true' AS shared
-		FROM #session.hostdbprefix#smart_folders sf JOIN #session.hostdbprefix#folders_groups fg ON sf.sf_id = fg.folder_id_r
+		FROM #request.razuna.session.hostdbprefix#smart_folders sf JOIN #request.razuna.session.hostdbprefix#folders_groups fg ON sf.sf_id = fg.folder_id_r
 		AND sf.sf_type = <cfqueryparam cfsqltype="cf_sql_varchar" value="saved_search">
 		AND fg.grp_permission = <cfqueryparam cfsqltype="cf_sql_varchar" value="r">
-		AND sf.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND sf.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 		ORDER BY sf_type DESC, sf_name
 		</cfquery>
 		<!--- Return --->
@@ -61,19 +60,21 @@
 		<cfargument name="sf_id" required="false" default="0">
 		<!--- Params --->
 		<cfset var qry = structnew()>
+		<!--- Get the cachetoken for here --->
+		<cfset var cachetoken = getcachetoken(type="folders", hostid=request.razuna.session.hostid)>
 		<!--- Query --->
-		<cfquery datasource="#application.razuna.datasource#" name="qry.sf" cachedwithin="1" region="razcache">
-		SELECT /* #variables.cachetoken#sfgetone */ sf_id, sf_name, sf_type, sf_description, sf_zipextract
-		FROM #session.hostdbprefix#smart_folders
+		<cfquery datasource="#request.razuna.application.datasource#" name="qry.sf" cachedwithin="1" region="razcache">
+		SELECT /* #cachetoken#sfgetone */ sf_id, sf_name, sf_type, sf_description, sf_zipextract
+		FROM #request.razuna.session.hostdbprefix#smart_folders
 		WHERE sf_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.sf_id#">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 		</cfquery>
 		<!--- Query properties --->
-		<cfquery datasource="#application.razuna.datasource#" name="qry.sfprop" cachedwithin="1" region="razcache">
-		SELECT /* #variables.cachetoken#sfgetoneprop */ sf_prop_id, sf_prop_value
-		FROM #session.hostdbprefix#smart_folders_prop
+		<cfquery datasource="#request.razuna.application.datasource#" name="qry.sfprop" cachedwithin="1" region="razcache">
+		SELECT /* #cachetoken#sfgetoneprop */ sf_prop_id, sf_prop_value
+		FROM #request.razuna.session.hostdbprefix#smart_folders_prop
 		WHERE sf_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.sf_id#">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 		</cfquery>
 		<!--- Return --->
 		<cfreturn qry />
@@ -90,28 +91,28 @@
 			<!--- Create ID --->
 			<cfset arguments.thestruct.sf_id = createUUID("")>
 			<!--- Insert --->
-			<cfquery datasource="#application.razuna.datasource#">
-			INSERT INTO #session.hostdbprefix#smart_folders
+			<cfquery datasource="#request.razuna.application.datasource#">
+			INSERT INTO #request.razuna.session.hostdbprefix#smart_folders
 			(sf_id, host_id, sf_who)
 			VALUES(
 				<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.sf_id#">,
-				<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
-				<cfqueryparam cfsqltype="cf_sql_varchar" value="#session.theuserid#">
+				<cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">,
+				<cfqueryparam cfsqltype="cf_sql_varchar" value="#request.razuna.session.theuserid#">
 			)
 			</cfquery>
 			<!--- Insert Properties --->
-			<cfquery datasource="#application.razuna.datasource#">
-			INSERT INTO #session.hostdbprefix#smart_folders_prop
+			<cfquery datasource="#request.razuna.application.datasource#">
+			INSERT INTO #request.razuna.session.hostdbprefix#smart_folders_prop
 			(sf_id_r, host_id)
 			VALUES(
 				<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.sf_id#">,
-				<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				<cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 			)
 			</cfquery>
 		</cfif>
 		<!--- Update --->
-		<cfquery datasource="#application.razuna.datasource#">
-		UPDATE #session.hostdbprefix#smart_folders
+		<cfquery datasource="#request.razuna.application.datasource#">
+		UPDATE #request.razuna.session.hostdbprefix#smart_folders
 		SET 
 		sf_name = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.sf_name#">,
 		sf_description = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.sf_description#">,
@@ -123,8 +124,8 @@
 		</cfquery>
 		<!--- Save to properties for search --->
 		<cfif arguments.thestruct.sf_type EQ "saved_search" AND arguments.thestruct.searchtext NEQ "">
-			<cfquery datasource="#application.razuna.datasource#">
-			UPDATE #session.hostdbprefix#smart_folders_prop
+			<cfquery datasource="#request.razuna.application.datasource#">
+			UPDATE #request.razuna.session.hostdbprefix#smart_folders_prop
 			SET
 			sf_prop_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="searchtext">,
 			sf_prop_value = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.searchtext#">
@@ -133,8 +134,8 @@
 		</cfif>
 		<!--- Save to properties for S3 --->
 		<cfif arguments.thestruct.sf_type EQ "amazon">
-			<cfquery datasource="#application.razuna.datasource#">
-			UPDATE #session.hostdbprefix#smart_folders_prop
+			<cfquery datasource="#request.razuna.application.datasource#">
+			UPDATE #request.razuna.session.hostdbprefix#smart_folders_prop
 			SET
 			sf_prop_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="bucket">,
 			sf_prop_value = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.sf_s3_bucket#">
@@ -142,10 +143,10 @@
 			</cfquery>	
 		</cfif>
 		<!--- First delete all the groups --->
-		<cfquery datasource="#variables.dsn#">
-		DELETE FROM #session.hostdbprefix#folders_groups
+		<cfquery datasource="#request.razuna.application.datasource#">
+		DELETE FROM #request.razuna.session.hostdbprefix#folders_groups
 		WHERE folder_id_r = <cfqueryparam value="#arguments.thestruct.sf_id#" cfsqltype="CF_SQL_VARCHAR">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 		</cfquery>
 		<!--- Insert the Group and Permission --->
 		<cfloop collection="#arguments.thestruct#" item="myform">
@@ -153,21 +154,21 @@
 				<cfset var grpid = ReplaceNoCase(myform, "grp_", "")>
 				<cfset var grpidno = Replace(grpid, "-", "", "all")>
 				<cfset var theper = "per_" & "#grpidno#">
-				<cfquery datasource="#application.razuna.datasource#">
-				INSERT INTO #session.hostdbprefix#folders_groups
+				<cfquery datasource="#request.razuna.application.datasource#">
+				INSERT INTO #request.razuna.session.hostdbprefix#folders_groups
 				(folder_id_r, grp_id_r, grp_permission, host_id, rec_uuid)
 				VALUES(
 				<cfqueryparam value="#arguments.thestruct.sf_id#" cfsqltype="CF_SQL_VARCHAR">,
 				<cfqueryparam value="#grpid#" cfsqltype="CF_SQL_VARCHAR">,
 				<cfqueryparam value="#evaluate(theper)#" cfsqltype="cf_sql_varchar">,
-				<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+				<cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">,
 				<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 				)
 				</cfquery>
 			</cfif>
 		</cfloop>
 		<!--- Reset cache --->
-		<cfset variables.cachetoken = resetcachetoken("folders")>
+		<cfset resetcachetoken(type="folders", hostid=request.razuna.session.hostid)>
 		<!--- Return --->
 		<cfreturn />
 	</cffunction>
@@ -176,17 +177,17 @@
 	<cffunction name="remove" access="Public" output="false" returntype="void">
 		<cfargument name="sf_id" required="false" default="0">
 		<!--- Remove in master record --->
-		<cfquery datasource="#application.razuna.datasource#">
-		DELETE FROM #session.hostdbprefix#smart_folders
+		<cfquery datasource="#request.razuna.application.datasource#">
+		DELETE FROM #request.razuna.session.hostdbprefix#smart_folders
 		WHERE sf_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.sf_id#">
 		</cfquery>
 		<!--- Remove in properties --->
-		<cfquery datasource="#application.razuna.datasource#">
-		DELETE FROM #session.hostdbprefix#smart_folders_prop
+		<cfquery datasource="#request.razuna.application.datasource#">
+		DELETE FROM #request.razuna.session.hostdbprefix#smart_folders_prop
 		WHERE sf_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.sf_id#">
 		</cfquery>
 		<!--- Reset cache --->
-		<cfset variables.cachetoken = resetcachetoken("folders")>
+		<cfset resetcachetoken(type="folders", hostid=request.razuna.session.hostid)>
 		<!--- Return --->
 		<cfreturn />
 	</cffunction>
@@ -195,25 +196,25 @@
 	<cffunction name="removeWithName" access="Public" output="false" returntype="void">
 		<cfargument name="sf_account" required="false" default="0">
 		<!--- Select record in order for us to delete --->
-		<cfquery datasource="#application.razuna.datasource#" name="qry_sf">
+		<cfquery datasource="#request.razuna.application.datasource#" name="qry_sf">
 		SELECT sf_id 
-		FROM #session.hostdbprefix#smart_folders
+		FROM #request.razuna.session.hostdbprefix#smart_folders
 		WHERE sf_type = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.sf_account#">
 		</cfquery>
 		<cfloop query="qry_sf">
 			<!--- Remove in master record --->
-			<cfquery datasource="#application.razuna.datasource#">
-			DELETE FROM #session.hostdbprefix#smart_folders
+			<cfquery datasource="#request.razuna.application.datasource#">
+			DELETE FROM #request.razuna.session.hostdbprefix#smart_folders
 			WHERE sf_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#sf_id#">
 			</cfquery>
 			<!--- Remove in properties --->
-			<cfquery datasource="#application.razuna.datasource#">
-			DELETE FROM #session.hostdbprefix#smart_folders_prop
+			<cfquery datasource="#request.razuna.application.datasource#">
+			DELETE FROM #request.razuna.session.hostdbprefix#smart_folders_prop
 			WHERE sf_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#sf_id#">
 			</cfquery>
 		</cfloop>
 		<!--- Reset cache --->
-		<cfset variables.cachetoken = resetcachetoken("folders")>
+		<cfset resetcachetoken(type="folders", hostid=request.razuna.session.hostid)>
 		<!--- Return --->
 		<cfreturn />
 	</cffunction>

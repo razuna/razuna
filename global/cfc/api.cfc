@@ -25,6 +25,10 @@
 --->
 <cfcomponent output="false" extends="extQueryCaching">
 
+	<cffunction name="init" returntype="api" access="public" output="false">
+		<cfreturn this />
+	</cffunction>
+
 	<!--- Settings Object --->
 	<cfobject component="global.cfc.settings" name="settingsObj">
 
@@ -36,17 +40,17 @@
 		<cfargument name="func" type="string" required="true" />
 		<cfargument name="args" type="string" required="false" default="" />
 		<!--- Query any same action first --->
-		<cfquery datasource="#application.razuna.datasource#" name="qryp">
+		<cfquery datasource="#request.razuna.application.datasource#" name="qryp">
 		DELETE FROM plugins_actions
 		WHERE p_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.pid#">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 		AND action = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.action#">
 		AND comp = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.comp#">
 		AND func = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.func#">
 		AND args = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.args#">
 		</cfquery>
 		<!--- Add this action to DB --->
-		<cfquery datasource="#application.razuna.datasource#">
+		<cfquery datasource="#request.razuna.application.datasource#">
 		INSERT INTO plugins_actions
 		(action, comp, func, args, p_id, host_id)
 		VALUES(
@@ -55,11 +59,11 @@
 			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.func#">,
 			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.args#">,
 			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.pid#">,
-			<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			<cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 		)
 		</cfquery>
 		<!--- Reset cache --->
-		<cfset resetcachetoken("settings")>
+		<cfset resetcachetoken(type="settings", hostid=request.razuna.session.hostid)>
 	</cffunction>
 
 	<!--- Del action --->
@@ -70,10 +74,10 @@
 		<cfargument name="func" type="string" required="false" default="" />
 		<cfargument name="args" type="string" required="false" default="" />
 		<!--- DB --->
-		<cfquery datasource="#application.razuna.datasource#">
+		<cfquery datasource="#request.razuna.application.datasource#">
 		DELETE FROM plugins_actions
 		WHERE p_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.pid#">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 		<cfif arguments.action NEQ "">
 			AND action = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.action#">
 		</cfif>
@@ -88,7 +92,7 @@
 		</cfif>
 		</cfquery>
 		<!--- Reset cache --->
-		<cfset resetcachetoken("settings")>
+		<cfset resetcachetoken(type="settings", hostid=request.razuna.session.hostid)>
 	</cffunction>
 
 	<!--- Get datasource --->
@@ -113,7 +117,7 @@
 
 	<!--- Get Sessions --->
 	<cffunction name="getHostID" access="public" returntype="String">
-		<cfreturn session.hostid />
+		<cfreturn request.razuna.session.hostid />
 	</cffunction>
 
 	<!--- Get Host --->
@@ -129,12 +133,12 @@
 
 	<!--- Get Sessions --->
 	<cffunction name="getUserID" access="public" returntype="String">
-		<cfreturn session.theuserid />
+		<cfreturn request.razuna.session.theuserid />
 	</cffunction>
 
 	<!--- Get HostDBPrefix --->
 	<cffunction name="getHostPrefix" access="public" returntype="String">
-		<cfreturn session.HostDBPrefix />
+		<cfreturn request.razuna.session.HostDBPrefix />
 	</cffunction>
 
 	<!--- Get Groups --->
@@ -215,8 +219,6 @@
 			<!--- Get id from config file --->
 			<cfset var plugID = getProfileString("#thepath#/plugins/#arguments.pluginname#/config/config.ini", "information", "id")>
 			<cfcatch type="any">
-				<!--- <cfset cfcatch.custom_message = "Error in function api.getMyID">
-				<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/> --->
 			</cfcatch>
 		</cftry>
 		<cfreturn plugID />
@@ -258,9 +260,9 @@
 
 	<!--- Add labels --->
 	<cffunction name="addLabels" access="public" returntype="void">
-		<cfargument name="labelids" type="string" required="true" hint="This is a list of the labeids" />
-		<cfargument name="fileid" type="string" required="true" hint="ID of asset" />
-		<cfargument name="type" type="string" required="true" hint="Type of asset" />
+		<cfargument name="labelids" type="string" required="true" />
+		<cfargument name="fileid" type="string" required="true" />
+		<cfargument name="type" type="string" required="true" />
 		<!--- Params --->
 		<cfset arguments.labels = arguments.labelids>
 		<cfset arguments.thetype = arguments.type>
@@ -270,10 +272,10 @@
 
 	<!--- Execute upload Template --->
 	<cffunction name="execUploadTemplate" access="public" returntype="void">
-		<cfargument name="utid" type="string" required="true" hint="ID of the upload template" />
-		<cfargument name="fileid" type="string" required="true" hint="ID of asset" />
-		<cfargument name="type" type="string" required="true" hint="Type of asset" />
-		<cfargument name="args" type="struct" required="true" hint="Structure" />
+		<cfargument name="utid" type="string" required="true" />
+		<cfargument name="fileid" type="string" required="true" />
+		<cfargument name="type" type="string" required="true" />
+		<cfargument name="args" type="struct" required="true" />
 		<!--- Params --->
 		<cfset arguments.upl_template = arguments.utid>
 		<cfset arguments.file_id = arguments.fileid>
@@ -285,9 +287,9 @@
 
 	<!--- Move File --->
 	<cffunction name="moveFile" access="public" returntype="void">
-		<cfargument name="folderid" type="string" required="true" hint="ID of the folder" />
-		<cfargument name="fileid" type="string" required="true" hint="ID of asset" />
-		<cfargument name="type" type="string" required="true" hint="Type of asset" />
+		<cfargument name="folderid" type="string" required="true" />
+		<cfargument name="fileid" type="string" required="true" />
+		<cfargument name="type" type="string" required="true" />
 		<!--- Params --->
 		<cfset arguments.folder_id = arguments.folderid>
 		<!--- Images --->
@@ -319,26 +321,26 @@
 
 	<!--- Set Metadata --->
 	<cffunction name="setMetadata" access="public" returntype="void">
-		<cfargument name="fileid" type="string" required="true" hint="ID of asset can be a list" />
-		<cfargument name="type" type="string" required="true" hint="Type of asset" />
-		<cfargument name="metadata" type="string" required="true" hint="Metadata as a list separated with a ;" />
+		<cfargument name="fileid" type="string" required="true" />
+		<cfargument name="type" type="string" required="true" />
+		<cfargument name="metadata" type="string" required="true" />
 		<!--- Call function --->
 		<cfinvoke component="xmp" method="setMetadata" fileid="#arguments.fileid#" type="#arguments.type#" metadata="#arguments.metadata#">
 	</cffunction>
 
 	<!--- Set Custom Metadata --->
 	<cffunction name="setMetadataCustom" access="public" returntype="void">
-		<cfargument name="fileid" type="string" required="true" hint="ID of asset can be a list" />
-		<cfargument name="type" type="string" required="true" hint="Type of asset" />
-		<cfargument name="metadata" type="string" required="true" hint="Metadata as a list separated with a ;" />
+		<cfargument name="fileid" type="string" required="true" />
+		<cfargument name="type" type="string" required="true" />
+		<cfargument name="metadata" type="string" required="true" />
 		<!--- Call function --->
 		<cfinvoke component="xmp" method="setMetadataCustom" fileid="#arguments.fileid#" type="#arguments.type#" metadata="#arguments.metadata#">
 	</cffunction>
 
 	<!--- Get Description, keywords and raw metadata --->
 	<cffunction name="getMetadataOfFile" access="public" returntype="struct">
-		<cfargument name="fileid" type="string" required="true" hint="ID of asset can be a list" />
-		<cfargument name="type" type="string" required="true" hint="Type of asset" />
+		<cfargument name="fileid" type="string" required="true" />
+		<cfargument name="type" type="string" required="true" />
 		<!--- Params --->
 		<cfset var s = structNew()>
 		<cfset s.file_id = arguments.fileid>
@@ -375,11 +377,11 @@
 
 	<!--- Get temp files --->
 	<cffunction name="getFilesTemp" access="public" returntype="query">
-		<cfargument name="fileid" type="string" required="true" hint="ID of asset can be a list" />
+		<cfargument name="fileid" type="string" required="true" />
 		<!--- Param --->
 		<cfset var qry = "">
 		<!--- Query --->
-		<cfquery datasource="#application.razuna.datasource#" name="qry">
+		<cfquery datasource="#request.razuna.application.datasource#" name="qry">
 		SELECT 
 		t.tempid AS id,
 		t.filename,
@@ -390,7 +392,7 @@
 		END AS type
 		FROM #getHostPrefix()#assets_temp t LEFT JOIN file_types f ON f.type_id = t.extension
 		WHERE t.tempid IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.fileid#" list="true">)
-		AND t.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND t.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 		</cfquery>
 		<!--- Return --->
 		<cfreturn qry />
@@ -398,11 +400,11 @@
 
 	<!--- Get Description, keywords and raw metadata --->
 	<cffunction name="getFile" access="public" returntype="query">
-		<cfargument name="fileid" type="string" required="true" hint="ID of asset can be a list" />
+		<cfargument name="fileid" type="string" required="true" />
 		<!--- Param --->
 		<cfset var qry = "">
 		<!--- Query --->
-		<cfquery datasource="#application.razuna.datasource#" name="qry">
+		<cfquery datasource="#request.razuna.application.datasource#" name="qry">
 		SELECT
 		'img' as type,
 		i.img_id id, 
@@ -423,7 +425,7 @@
 		i.hashtag AS md5hash
 		FROM #getHostPrefix()#images i LEFT JOIN #getHostPrefix()#xmp x ON x.id_r = i.img_id
 		WHERE i.img_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.fileid#" list="true">)
-		AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 		UNION ALL
 		SELECT
 		'vid' as type,
@@ -445,7 +447,7 @@
 		v.hashtag AS md5hash
 		FROM #getHostPrefix()#videos v 
 		WHERE v.vid_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.fileid#" list="true">)
-		AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 		UNION ALL
 		SELECT
 		'aud' as type,
@@ -467,7 +469,7 @@
 		a.hashtag AS md5hash
 		FROM #getHostPrefix()#audios a
 		WHERE a.aud_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.fileid#" list="true">)
-		AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 		UNION ALL
 		SELECT
 		'doc' as type,
@@ -489,7 +491,7 @@
 		f.hashtag AS md5hash
 		FROM #getHostPrefix()#files f 
 		WHERE f.file_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.fileid#" list="true">)
-		AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 		</cfquery>
 		<!--- Return --->
 		<cfreturn qry />
@@ -519,7 +521,7 @@
 	<!--- Update Dates on files --->
 	<cffunction name="updateDate" access="public" returntype="void">
 		<cfargument name="fileid" type="string" required="true" />
-		<cfargument name="type" type="string" required="true" hint="Type of asset" />
+		<cfargument name="type" type="string" required="true" />
 		<!--- Call function --->
 		<cfinvoke component="global" method="update_dates" fileid="#arguments.fileid#" type="#arguments.type#" />
 	</cffunction>

@@ -23,23 +23,7 @@
 * along with Razuna. If not, see <http://www.razuna.com/licenses/>.
 *
 --->
-
-<!--- <cfcomponent output="false"> --->
 <cfcomponent output="false">
-
-	<!--- set application name based on the directory path --->
-	<!--- <cfset this.name = hash(right(REReplace(getDirectoryFromPath(getCurrentTemplatePath()),'[^A-Za-z]','','all'),64))>
-	<cfset this.sessionmanagement="Yes">
-	<cfset this.sessiontimeout="#CreateTimeSpan(14,0,0,0)#">
-	<cfset this.setClientCookies="yes">
-
-	<!--- enable debugging --->
-	<cfset FUSEBOX_PARAMETERS.debug = false />
-	<!--- force the directory in which we start to ensure CFC initialization works: --->
-	<cfset FUSEBOX_CALLER_PATH = getDirectoryFromPath(getCurrentTemplatePath()) />
-
-	<cfset FUSEBOX_PARAMETERS.strictMode = true>
-	<cfset FUSEBOX_PARAMETERS.conditionalParse = false> --->
 
 	<cffunction name="onApplicationStart">
 		<!--- <cfquery datasource="razuna_default" name="x">
@@ -92,31 +76,28 @@
 
 		<cfset super.onFuseboxApplicationStart() />
 
-		code formerly in fusebox.appinit.cfm or the appinit global fuseaction
-		<!--- <cfset myFusebox.getApplicationData().startTime = now() /> --->
+		<!--- <cfset myFusebox.getApplicationData().appPath = "/" /> --->
 
-	</cffunction> --->
+	</cffunction>
 
-	<!--- <cffunction name="onRequestStart">
+	<cffunction name="onRequestStart">
 		<cfargument name="targetPage" />
 
 		<cfif cgi.http_host CONTAINS "local" OR cgi.http_host CONTAINS "127.0.0.1">
 			<cfset FUSEBOX_PARAMETERS.mode = "development-full-load">
-			<cfset application.fusebox.mode = "development-full-load">
-			<cflock name="#this.name#" timeout="120" type="exclusive">
-				<!--- <cfset super.onRequestStart(arguments.targetPage) /> --->
-				<cfinclude template="/fusebox5/corefiles/fusebox5.cfm" />
-			</cflock>
 		<cfelse>
 			<cfset FUSEBOX_PARAMETERS.mode = "production">
-			<cfset application.fusebox.mode = "production">
-			<!--- <cfset super.onRequestStart(arguments.targetPage) /> --->
-			<cfinclude template="/fusebox5/corefiles/fusebox5.cfm" />
 		</cfif>
 
+		<cfset super.onRequestStart(arguments.targetPage) />
+
 		<!--- formerly in fusebox.init.cfm --->
-		<!--- <cfset self = myFusebox.getSelf() />
-		<cfset myself = myFusebox.getMyself() /> --->
+		<cfset self = myFusebox.getSelf() />
+		<cfset myself = myFusebox.getMyself() />
+
+		<cfdump var="#myfusebox.getApplicationData()#">
+		<!--- <cfabort> --->
+
 
 	</cffunction> --->
 

@@ -39,7 +39,7 @@
 				<td><input type="text" name="trans_id" class="text" size="40" value="#trans_id#" disabled></td>
 			</tr>
 		</cfif>
-		<cfloop from="1" to="#defaultsObj.howmanylang("#application.razuna.datasource#")#" index="langindex">
+		<cfloop from="1" to="#defaultsObj.howmanylang("#request.razuna.application.datasource#")#" index="langindex">
 			<cfif #langindex# EQ "#lang_id_r#">
 			<input type="hidden" name="transid" value="#langindex#">
 				<tr>

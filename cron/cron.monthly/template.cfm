@@ -26,7 +26,7 @@
 <cfabort>
 <cftry>
 
-	<cfset consoleoutput(true)>
+	<cfset consoleoutput(true, true)>
 	<cfset console("#now()# --- Executing cron job expiring assets")>
 
 	<!--- Path --->

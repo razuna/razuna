@@ -33,7 +33,7 @@
     <cfset qry.dirname = "">
     <!--- Open Connection to FTP Server --->
     <cftry>
-    	<cfset var o = ftpopen(server=session.ftp_server,username=session.ftp_user,password=session.ftp_pass,passive=session.ftp_passive,stoponerror=true)>
+    	<cfset var o = ftpopen(server=request.razuna.session.ftp_server,username=request.razuna.session.ftp_user,password=request.razuna.session.ftp_pass,passive=request.razuna.session.ftp_passive,stoponerror=true)>
     	<cfcatch>
     		<cfset var transvalues = arraynew()>
 	    	<cfset transvalues[1] = cfcatch.message>
@@ -50,14 +50,14 @@
             <!--- Get the current directory name --->
             <cfset thedirname = ftpgetcurrentdir(o)>
             <!--- Get a listing of the directory --->
-            <cfset dirlist = ftplist(o,thedirname,session.ftp_passive)>
+            <cfset dirlist = ftplist(o,thedirname,request.razuna.session.ftp_passive)>
         <cfelse>
         	<cftry>
         	     <!--- Append '/' to folderpath if nto present as some FTP servers will not return the directory listing properly without it --->
                 <cfif left(arguments.thestruct.folderpath,1) NEQ '/'>
                 	<cfset arguments.thestruct.folderpath  = '/' & arguments.thestruct.folderpath>
                 </cfif>
-                <cfset dirlist = ftplist(o,arguments.thestruct.folderpath,session.ftp_passive)>
+                <cfset dirlist = ftplist(o,arguments.thestruct.folderpath,request.razuna.session.ftp_passive)>
             	<cfcatch type="any">
             		<cfparam name="folder_id" default="0" />
             		<cfinvoke component="defaults" method="trans" transid="ftp_read_error" returnvariable="ftp_read_error" />
@@ -100,21 +100,21 @@
 </cffunction>
 
 <!--- PUT THE FILE ON THE FTP SITE --------------------------------------------------------------->
-<cffunction hint="PUT THE FILE ON THE FTP SITE" name="putfile" output="true">
+<cffunction  name="putfile" output="true">
 	<cfargument name="thestruct" type="struct">
 	<cftry>
         <!--- Open ftp connection --->
-        <cfset var o = ftpopen(server=session.ftp_server,username=session.ftp_user,password=session.ftp_pass,passive=session.ftp_passive,stoponerror=false, timeout=3000)>
-		<cfif structKeyExists(session,"createzip") AND session.createzip EQ 'no'>
+        <cfset var o = ftpopen(server=request.razuna.session.ftp_server,username=request.razuna.session.ftp_user,password=request.razuna.session.ftp_pass,passive=request.razuna.session.ftp_passive,stoponerror=false, timeout=3000)>
+		<cfif structKeyExists(request.razuna.session,"createzip") AND request.razuna.session.createzip EQ 'no'>
 			<!--- Get the directories --->
 			<cfdirectory action="list" directory="#arguments.thestruct.thepath#/outgoing/#arguments.thestruct.thefile#" name="myDir" type="dir">
 			<cfif myDir.RecordCount>
 				<cfloop query="myDir">
 					<!--- Get the files --->
 					<cfdirectory action="list" directory="#arguments.thestruct.thepath#/outgoing/#arguments.thestruct.thefile#/#myDir.name#" name="myFile" type="file">
-						<cfif !Ftpexistsfile(ftpdata=o, file="#arguments.thestruct.folderpath#/#myFile.name#", passive=session.ftp_passive, stoponerror=false)>
+						<cfif !Ftpexistsfile(ftpdata=o, file="#arguments.thestruct.folderpath#/#myFile.name#", passive=request.razuna.session.ftp_passive, stoponerror=false)>
 							<!--- Put the file on the FTP Site --->
-							<cfset Ftpputfile(ftpdata=o, remotefile="#arguments.thestruct.folderpath#/#myFile.name#", localfile="#arguments.thestruct.thepath#/outgoing/#arguments.thestruct.thefile#/#myDir.name#/#myFile.name#", passive=session.ftp_passive)>
+							<cfset Ftpputfile(ftpdata=o, remotefile="#arguments.thestruct.folderpath#/#myFile.name#", localfile="#arguments.thestruct.thepath#/outgoing/#arguments.thestruct.thefile#/#myDir.name#/#myFile.name#", passive=request.razuna.session.ftp_passive)>
 						<cfelse>
 							<cfset listftp = Ftplist(ftpdata=o, directory="#arguments.thestruct.folderpath#")>
 							<cfquery name="q" dbtype="query" >
@@ -126,7 +126,7 @@
 							<cfset new_name = #listFirst(myFile.name,'.')#&"("&#q.RecordCount#+1&")"&"."&#listLast(myFile.name,'.')#>
 							<cffile action="rename" destination="#arguments.thestruct.thepath#/outgoing/#arguments.thestruct.thefile#/#myDir.name#/#new_name#" source="#arguments.thestruct.thepath#/outgoing/#arguments.thestruct.thefile#/#myDir.name#/#myFile.name#">
 							<!--- Put the file on the FTP Site --->
-							<cfset Ftpputfile(ftpdata=o, remotefile="#arguments.thestruct.folderpath#/#new_name#", localfile="#arguments.thestruct.thepath#/outgoing/#arguments.thestruct.thefile#/#myDir.name#/#new_name#", passive=session.ftp_passive)>
+							<cfset Ftpputfile(ftpdata=o, remotefile="#arguments.thestruct.folderpath#/#new_name#", localfile="#arguments.thestruct.thepath#/outgoing/#arguments.thestruct.thefile#/#myDir.name#/#new_name#", passive=request.razuna.session.ftp_passive)>
 						</cfif>
 				</cfloop>
 				<!--- Delete the folder in the outgoing folder --->
@@ -134,8 +134,8 @@
 			<cfelse>
 				<!--- Get the files --->
 				<cfdirectory action="list" directory="#arguments.thestruct.thepath#/outgoing/#arguments.thestruct.thefile#" name="myFile" type="file">
-				<cfif !Ftpexistsfile(ftpdata=o ,file="#arguments.thestruct.folderpath#/#myFile.name#", passive=session.ftp_passive, stoponerror=false)>
-					<cfset Ftpputfile(ftpdata=o, remotefile="#arguments.thestruct.folderpath#/#myFile.name#", localfile="#arguments.thestruct.thepath#/outgoing/#arguments.thestruct.thefile#/#myFile.name#", passive=session.ftp_passive)>
+				<cfif !Ftpexistsfile(ftpdata=o ,file="#arguments.thestruct.folderpath#/#myFile.name#", passive=request.razuna.session.ftp_passive, stoponerror=false)>
+					<cfset Ftpputfile(ftpdata=o, remotefile="#arguments.thestruct.folderpath#/#myFile.name#", localfile="#arguments.thestruct.thepath#/outgoing/#arguments.thestruct.thefile#/#myFile.name#", passive=request.razuna.session.ftp_passive)>
 				<cfelse>
 					<cfset listftp = Ftplist(ftpdata=o, directory="#arguments.thestruct.folderpath#")>
 					<cfquery name="q" dbtype="query" >
@@ -146,15 +146,15 @@
 					<!--- set new name --->
 					<cfset new_name = #listFirst(myFile.name,'.')#&"("&#q.RecordCount#+1&")"&"."&#listLast(myFile.name,'.')#>
 					<cffile action="rename" destination="#arguments.thestruct.thepath#/outgoing/#arguments.thestruct.thefile#/#new_name#" source="#arguments.thestruct.thepath#/outgoing/#arguments.thestruct.thefile#/#myFile.name#" >
-					<cfset Ftpputfile(ftpdata=o, remotefile="#arguments.thestruct.folderpath#/#new_name#", localfile="#arguments.thestruct.thepath#/outgoing/#arguments.thestruct.thefile#/#new_name#", passive=session.ftp_passive)>
+					<cfset Ftpputfile(ftpdata=o, remotefile="#arguments.thestruct.folderpath#/#new_name#", localfile="#arguments.thestruct.thepath#/outgoing/#arguments.thestruct.thefile#/#new_name#", passive=request.razuna.session.ftp_passive)>
 				</cfif>	
 				<!--- Delete the folder in the outgoing folder --->
 				<cfdirectory action="delete" directory="#arguments.thestruct.thepath#/outgoing/#arguments.thestruct.thefile#" recurse="true">
 			</cfif>
 		<cfelse>
-			<cfif !Ftpexistsfile(ftpdata=o ,file="#arguments.thestruct.folderpath#/#arguments.thestruct.thefile#", passive=session.ftp_passive, stoponerror=true)>
+			<cfif !Ftpexistsfile(ftpdata=o ,file="#arguments.thestruct.folderpath#/#arguments.thestruct.thefile#", passive=request.razuna.session.ftp_passive, stoponerror=true)>
 				<!--- Put the file on the FTP Site --->
-				<cfset Ftpputfile(ftpdata=o, remotefile="#arguments.thestruct.folderpath#/#arguments.thestruct.thefile#", localfile="#arguments.thestruct.thepath#/outgoing/#arguments.thestruct.thefile#", passive=session.ftp_passive)>
+				<cfset Ftpputfile(ftpdata=o, remotefile="#arguments.thestruct.folderpath#/#arguments.thestruct.thefile#", localfile="#arguments.thestruct.thepath#/outgoing/#arguments.thestruct.thefile#", passive=request.razuna.session.ftp_passive)>
 				<!--- Delete the file in the outgoing folder --->
 				<cffile action="delete" file="#arguments.thestruct.thepath#/outgoing/#arguments.thestruct.thefile#">
 			<cfelse>
@@ -168,7 +168,7 @@
 				<cfset new_name = #listFirst(arguments.thestruct.thefile,'.')#&"("&#q.RecordCount#+1&")"&"."&#listLast(arguments.thestruct.thefile,'.')#>
 				<cffile action="rename" destination="#arguments.thestruct.thepath#/outgoing/#new_name#" source="#arguments.thestruct.thepath#/outgoing/#arguments.thestruct.thefile#" >
 				<!--- Put the file on the FTP Site --->
-				<cfset Ftpputfile(ftpdata=o, remotefile="#arguments.thestruct.folderpath#/#new_name#", localfile="#arguments.thestruct.thepath#/outgoing/#new_name#", passive=session.ftp_passive)>
+				<cfset Ftpputfile(ftpdata=o, remotefile="#arguments.thestruct.folderpath#/#new_name#", localfile="#arguments.thestruct.thepath#/outgoing/#new_name#", passive=request.razuna.session.ftp_passive)>
 				<!--- Delete the file in the outgoing folder --->
 				<cffile action="delete" file="#arguments.thestruct.thepath#/outgoing/#new_name#">
 			</cfif>	

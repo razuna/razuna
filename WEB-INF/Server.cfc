@@ -1,7 +1,7 @@
 <cfcomponent>
 
   <cffunction name="onServerStart">
-	<cfset consoleoutput(true)>
+	<cfset consoleoutput(true, true)>
 	<cfset console("------------SERVER STARTUP------------------")>
 
 	<cfset console("---START: Cache Setup---")>
@@ -41,7 +41,7 @@
 				}
 		)>
 		<cfcatch type="any">
-			<cfset consoleoutput(true)>
+			<cfset consoleoutput(true, true)>
 			<cfset console("------------ REDIS error !!!!!!!!!!!!!!!!!!!!!!!!!")>
 			<cfset console(cfcatch)>
 		</cfcatch>
@@ -67,7 +67,7 @@
 	  <cfset console("------------ENABLING CRON------------------")>
 	  <cfset cronEnable(true) />
 	  <cfcatch type="any">
-		<cfset consoleoutput(true)>
+		<cfset consoleoutput(true, true)>
 		<cfset console("------------ Cron error !!!!!!!!!!!!!!!!!!!!!!!!!")>
 		<cfset console(cfcatch)>
 	  </cfcatch>
@@ -76,7 +76,7 @@
 	  <cfset console("------------ENABLING CRON DIRECTORY------------------")>
 	   <cfset CronSetDirectory("/cron") />
 	  <cfcatch type="any">
-		<cfset consoleoutput(true)>
+		<cfset consoleoutput(true, true)>
 		<cfset console("------------ Cron error !!!!!!!!!!!!!!!!!!!!!!!!!")>
 		<cfset console(cfcatch)>
 	  </cfcatch>
@@ -98,7 +98,7 @@
 		</cfif>
 	  </cfloop>
 	  <cfcatch type="any">
-		<cfset consoleoutput(true)>
+		<cfset consoleoutput(true, true)>
 		<cfset console("------------ ERROR REMOVING TEMP FILES !!!!!!!!!!!!!!!!!!!!!!!!!")>
 		<cfset console(cfcatch)>
 	  </cfcatch>

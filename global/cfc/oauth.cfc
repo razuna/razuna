@@ -32,7 +32,7 @@
 		<cfset getRequestToken(arguments.account)>
 		<!--- Now redirect user to authenticate for Razuna --->
 		<cfif arguments.account EQ "dropbox">
-			<cflocation url="https://www.dropbox.com/1/oauth/authorize?oauth_token=#session.oauth_token#&oauth_callback=#urlencodedformat("#session.thehttp##cgi.http_host##cgi.script_name#?fa=c.oauth_authenticate_return&account=#arguments.account#")#">
+			<cflocation url="https://www.dropbox.com/1/oauth/authorize?oauth_token=#request.razuna.session.oauth_token#&oauth_callback=#urlencodedformat("#request.razuna.session.thehttp##cgi.http_host##cgi.script_name#?fa=c.oauth_authenticate_return&account=#arguments.account#")#">
 		</cfif>
 		<cfreturn />	
 	</cffunction>
@@ -47,21 +47,21 @@
 		<cfelse>
 			<cftry>
 				<!--- Call again to turn request_token into access_token --->
-				<cfhttp method="post" url="#application.razuna["#arguments.thestruct.account#"].url_api#/oauth/access_token">
+				<cfhttp method="post" url="#request.razuna.application["#arguments.thestruct.account#"].url_api#/oauth/access_token">
 					<cfhttpparam type="formfield" name="oauth_version" value="1.0"/>
 					<cfhttpparam type="formfield" name="oauth_signature_method" value="PLAINTEXT"/>
 					<cfhttpparam type="formfield" name="oauth_consumer_key" value="#session["#arguments.thestruct.account#"].appkey#"/>
-					<cfhttpparam type="formfield" name="oauth_token" value="#session.oauth_token#"/>
-					<cfhttpparam type="formfield" name="oauth_signature" value="#session["#arguments.thestruct.account#"].appsecret#&#session.oauth_token_secret#"/>
+					<cfhttpparam type="formfield" name="oauth_token" value="#request.razuna.session.oauth_token#"/>
+					<cfhttpparam type="formfield" name="oauth_signature" value="#session["#arguments.thestruct.account#"].appsecret#&#request.razuna.session.oauth_token_secret#"/>
 				</cfhttp>
 				<!--- We get back the access tokens like oauth_token_secret=56o72oyoehzw8iq&oauth_token=jeost6cz9chka8s&uid=20724584 --->
 				<!--- Put return into var --->
 				<cfset var tokens = trim(cfhttp.filecontent.toString())>
 				<!--- Delete any entry that might be in settings db already for this account --->
-				<cfquery datasource="#application.razuna.datasource#">
-				DELETE FROM #session.hostdbprefix#settings
+				<cfquery datasource="#request.razuna.application.datasource#">
+				DELETE FROM #request.razuna.session.hostdbprefix#settings
 				WHERE set_id LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.account#_%">
-				AND host_id = <cfqueryparam value="#session.hostid#" CFSQLType="CF_SQL_NUMERIC">
+				AND host_id = <cfqueryparam value="#request.razuna.session.hostid#" CFSQLType="CF_SQL_NUMERIC">
 				</cfquery>
 				<!--- Loop over tokens --->
 				<cfloop list="#tokens#" delimiters="&" index="i">
@@ -70,13 +70,13 @@
 					<!--- Add the account type to the var name --->
 					<cfset nid = "#arguments.thestruct.account#_#n#">
 					<!--- Append to DB --->
-					<cfquery datasource="#application.razuna.datasource#">
-					INSERT INTO #session.hostdbprefix#settings
+					<cfquery datasource="#request.razuna.application.datasource#">
+					INSERT INTO #request.razuna.session.hostdbprefix#settings
 					(set_id, set_pref, host_id, rec_uuid)
 					VALUES(
 						<cfqueryparam cfsqltype="cf_sql_varchar" value="#nid#">,
 						<cfqueryparam cfsqltype="cf_sql_varchar" value="#v#">,
-						<cfqueryparam value="#session.hostid#" CFSQLType="CF_SQL_NUMERIC">,
+						<cfqueryparam value="#request.razuna.session.hostid#" CFSQLType="CF_SQL_NUMERIC">,
 						<cfqueryparam cfsqltype="cf_sql_varchar" value="#createuuid()#">
 					)
 					</cfquery>
@@ -117,7 +117,7 @@
 	<cffunction name="getRequestToken" output="true" access="private" returntype="void">
 		<cfargument name="account" type="string" required="true">
 		<!--- Get request token --->
-		<cfhttp method="post" url="#application.razuna["#arguments.account#"].url_api#/oauth/request_token">
+		<cfhttp method="post" url="#request.razuna.application["#arguments.account#"].url_api#/oauth/request_token">
 			<cfhttpparam type="formfield" name="oauth_version" value="1.0"/>
 			<cfhttpparam type="formfield" name="oauth_signature_method" value="PLAINTEXT"/>
 			<cfhttpparam type="formfield" name="oauth_consumer_key" value="#session["#arguments.account#"].appkey#"/>
@@ -130,7 +130,7 @@
 			<cfset n = listFirst(i,"=")>
 			<cfset v = listLast(i,"=")>
 			<!--- Set variable --->
-			<cfset "session.#n#" = v>
+			<cfset "request.razuna.session.#n#" = v>
 		</cfloop>
 		<cfreturn />	
 	</cffunction>
@@ -138,10 +138,10 @@
 	<!--- Remove --->
 	<cffunction name="remove" output="false" access="Public" returntype="void">
 		<cfargument name="account" type="string" required="true">
-		<cfquery datasource="#application.razuna.datasource#">
-		DELETE FROM #session.hostdbprefix#settings
+		<cfquery datasource="#request.razuna.application.datasource#">
+		DELETE FROM #request.razuna.session.hostdbprefix#settings
 		WHERE set_id LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.account#_%">
-		AND host_id = <cfqueryparam value="#session.hostid#" CFSQLType="CF_SQL_NUMERIC">
+		AND host_id = <cfqueryparam value="#request.razuna.session.hostid#" CFSQLType="CF_SQL_NUMERIC">
 		</cfquery>
 		<cfreturn />
 	</cffunction>
@@ -152,11 +152,11 @@
 		<!--- Param --->
 		<cfset var qry = "">
 		<!--- Query --->
-		<cfquery datasource="#application.razuna.datasource#" name="qry">
+		<cfquery datasource="#request.razuna.application.datasource#" name="qry">
 		SELECT set_id, set_pref
-		FROM #session.hostdbprefix#settings
+		FROM #request.razuna.session.hostdbprefix#settings
 		WHERE set_id LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.account#_%">
-		AND host_id = <cfqueryparam value="#session.hostid#" CFSQLType="CF_SQL_NUMERIC">
+		AND host_id = <cfqueryparam value="#request.razuna.session.hostid#" CFSQLType="CF_SQL_NUMERIC">
 		</cfquery>
 		<!--- Return --->
 		<cfreturn qry />

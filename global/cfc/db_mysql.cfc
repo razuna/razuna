@@ -682,7 +682,7 @@
 			 <cfquery datasource="#arguments.thestruct.dsn#">
 			 INSERT INTO #arguments.thestruct.theschema#.options
 			 (opt_id, opt_value, rec_uuid)
-			 VALUES ('conf_db_type', '#session.firsttime.database_type#', '#createuuid()#')
+			 VALUES ('conf_db_type', '#request.razuna.session.firsttime.database_type#', '#createuuid()#')
 			 </cfquery>
 			<!--- USERS --->
 			<cfquery datasource="#arguments.thestruct.dsn#">
@@ -1364,7 +1364,7 @@
 	<!--- Create Host --->
 	<cffunction name="create_host" access="public" output="false">
 		<cfargument name="thestruct" type="Struct">
-		<cfset arguments.thestruct.theschema = application.razuna.theschema>
+		<cfset arguments.thestruct.theschema = request.razuna.application.theschema>
 		<!--- Create Tables --->
 		<cfinvoke method="create_tables" thestruct="#arguments.thestruct#">
 	</cffunction>
@@ -2824,18 +2824,18 @@
 	<!--- Clear database completely --->
 	<cffunction name="clearall" access="public" output="false">
 		<!--- Query Tables --->
-		<cfquery datasource="#session.firsttime.database#" name="qrytables">
+		<cfquery datasource="#request.razuna.session.firsttime.database#" name="qrytables">
 		SELECT table_name
 		FROM information_schema.tables
-		WHERE table_schema = '#session.firsttime.db_schema#'
+		WHERE table_schema = '#request.razuna.session.firsttime.db_schema#'
 		</cfquery>
 		<!--- Loop and drop tables --->
 		<cfloop query="qrytables">
-			<cfquery datasource="#session.firsttime.database#">
+			<cfquery datasource="#request.razuna.session.firsttime.database#">
 			SET foreign_key_checks = 0
 			</cfquery>
 			<cftry>
-				<cfquery datasource="#session.firsttime.database#">
+				<cfquery datasource="#request.razuna.session.firsttime.database#">
 				DROP TABLE #table_name#
 				</cfquery>
 				<cfcatch type="any"></cfcatch>

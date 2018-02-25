@@ -169,12 +169,12 @@
 						<div id="tabs_main_support">
 						<!-- the tabs -->
 						<ul class="tabs">
-							<li><a href="##raztools">Add-Ons</a></li>
+							<!--- <li><a href="##raztools">Add-Ons</a></li> --->
 							<li><a href="##support">Support</a></li>
-							<li><a href="##blog" onclick="loadcontent('blog','#myself#c.mainblog');">Blog</a></li>
+							<!--- <li><a href="##blog" onclick="loadcontent('blog','#myself#c.mainblog');">Blog</a></li> --->
 						</ul>
 						<!-- tab "panes" -->
-						<div class="pane" id="raztools">
+						<!--- <div class="pane" id="raztools">
 							<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
 								<tr>
 									<td>Hi there. Thank you for using Razuna. In order for you to enjoy Razuna even more we have some additional tools for you available.</td>
@@ -198,7 +198,7 @@
 									<td>Razuna features a extensive API for you to expand on and access your assets Head over to our <a href="http://razuna.org/getinvolved/developers" target="_blank">Developer section</a> or directly to the <a href="http://wiki.razuna.com/display/ecp/API+Developer+Guide" target="_blank">API guide</a>. </a></td>
 								</tr>
 							</table>
-						</div>
+						</div> --->
 						<div class="pane" id="support">
 							<table width="100%" border="0" cellspacing="0" cellpadding="0">
 								<cfif NOT application.razuna.isp>
@@ -226,7 +226,7 @@
 								</tr>
 							</table>
 						</div>
-						<div class="pane" id="blog"><img src="images/loading.gif" border="0" style="padding:10px;"></div>
+						<!--- <div class="pane" id="blog"><img src="images/loading.gif" border="0" style="padding:10px;"></div> --->
 					</div>
 					</td>
 				</tr>

@@ -27,7 +27,7 @@
 
 <cftry>
 
-	<cfset consoleoutput(true)>
+	<cfset consoleoutput(true, true)>
 	<cfset console("#now()# --- Executing cron job to clean up S3")>
 
 	<!--- Path --->
@@ -140,7 +140,7 @@
 		<cfargument name="config" type="query">
 		<!--- Call Amazon function to list all files --->
 		<cfinvoke component="global.cfc.amazon" method="listFiles" host_id="#arguments.host_id#" awsbucket="#host_settings.set2_aws_bucket#" from_cron="true" tenant_enable="#_config.conf_aws_tenant_in_one_bucket_enable#" tenant_bucket="#_config.conf_aws_tenant_in_one_bucket_name#" config="#arguments.config#" one="true" returnvariable="awsFiles" />
-		<cfset consoleoutput(true)>
+		<cfset consoleoutput(true, true)>
 		<!--- <cfset console(awsFiles)> --->
 		<!--- Loop over array --->
 		<cfloop from="1" to="#ArrayLen(awsFiles)#" index="key">
@@ -163,7 +163,7 @@
 		<cfargument name="prefix" type="string">
 		<cfargument name="host_id" type="numeric">
 		<cfargument name="host_settings" type="query">
-		<cfset consoleoutput(true)>
+		<cfset consoleoutput(true, true)>
 		<cfset console(arguments.file_qry)>
 		<cfabort>
 	</cffunction>

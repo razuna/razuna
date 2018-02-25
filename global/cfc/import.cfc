@@ -30,10 +30,10 @@
 		<cfargument name="theactive" type="boolean" required="false" default="false">
 		<cfset var qry = "">
 		<!--- Query --->
-		<cfquery dataSource="#application.razuna.datasource#" name="qry">
+		<cfquery dataSource="#request.razuna.application.datasource#" name="qry">
 		SELECT imp_temp_id, imp_active, imp_name, imp_description
-		FROM #session.hostdbprefix#import_templates
-		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		FROM #request.razuna.session.hostdbprefix#import_templates
+		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 		<cfif arguments.theactive>
 			AND imp_active = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="1">
 		</cfif>
@@ -48,26 +48,26 @@
 		<!--- New struct --->
 		<cfset var qry = structnew()>
 		<!--- Query --->
-		<cfquery datasource="#application.razuna.datasource#" name="qry.imp">
+		<cfquery datasource="#request.razuna.application.datasource#" name="qry.imp">
 		SELECT imp_who, imp_active, imp_name, imp_description
-		FROM #session.hostdbprefix#import_templates
+		FROM #request.razuna.session.hostdbprefix#import_templates
 		WHERE imp_temp_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.imp_temp_id#">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 		</cfquery>
 		<!--- Query values --->
-		<cfquery datasource="#application.razuna.datasource#" name="qry.impval">
+		<cfquery datasource="#request.razuna.application.datasource#" name="qry.impval">
 		SELECT imp_field, imp_map, imp_key
-		FROM #session.hostdbprefix#import_templates_val
+		FROM #request.razuna.session.hostdbprefix#import_templates_val
 		WHERE imp_temp_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.imp_temp_id#">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 		ORDER BY imp_key DESC, imp_field
 		</cfquery>
 		<!--- Query key record --->
-		<cfquery datasource="#application.razuna.datasource#" name="qry.impkey">
+		<cfquery datasource="#request.razuna.application.datasource#" name="qry.impkey">
 		SELECT imp_field, imp_map, imp_key
-		FROM #session.hostdbprefix#import_templates_val
+		FROM #request.razuna.session.hostdbprefix#import_templates_val
 		WHERE imp_temp_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.imp_temp_id#">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 		AND imp_key = <cfqueryparam cfsqltype="CF_SQL_DOUBLE" value="true">
 		</cfquery>
 		<cfreturn qry />
@@ -78,11 +78,11 @@
 		<cfargument name="imp_temp_id" type="string" required="true">
 		<cfargument name="map" type="string" required="true">
 		<!--- Query values --->
-		<cfquery datasource="#application.razuna.datasource#" name="q">
+		<cfquery datasource="#request.razuna.application.datasource#" name="q">
 		SELECT imp_field
-		FROM #session.hostdbprefix#import_templates_val
+		FROM #request.razuna.session.hostdbprefix#import_templates_val
 		WHERE imp_temp_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.imp_temp_id#">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 		AND imp_map = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.map#">
 		</cfquery>
 		<cfreturn q.imp_field />
@@ -95,28 +95,28 @@
 		<!--- Param --->
 		<cfparam name="arguments.thestruct.imp_active" default="0">
 		<!--- Delete all records with this ID in the MAIN DB --->
-		<cfquery datasource="#application.razuna.datasource#">
-		DELETE FROM #session.hostdbprefix#import_templates
+		<cfquery datasource="#request.razuna.application.datasource#">
+		DELETE FROM #request.razuna.session.hostdbprefix#import_templates
 		WHERE imp_temp_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.imp_temp_id#">
 		</cfquery>
 		<!--- Save to main DB --->
-		<cfquery datasource="#application.razuna.datasource#">
-		INSERT INTO #session.hostdbprefix#import_templates
+		<cfquery datasource="#request.razuna.application.datasource#">
+		INSERT INTO #request.razuna.session.hostdbprefix#import_templates
 		(imp_temp_id, imp_date_create, imp_date_update, imp_who, imp_active, host_id, imp_name, imp_description)
 		VALUES(
 		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.imp_temp_id#">,
 		<cfqueryparam cfsqltype="CF_SQL_TIMESTAMP" value="#now()#">,
 		<cfqueryparam cfsqltype="CF_SQL_TIMESTAMP" value="#now()#">,
-		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.theuserid#">,
+		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#request.razuna.session.theuserid#">,
 		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.imp_active#">,
-		<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+		<cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">,
 		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.imp_name#">,
 		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.imp_description#">
 		)
 		</cfquery>
 		<!--- Delete all records with this ID in the DB --->
-		<cfquery datasource="#application.razuna.datasource#">
-		DELETE FROM #session.hostdbprefix#import_templates_val
+		<cfquery datasource="#request.razuna.application.datasource#">
+		DELETE FROM #request.razuna.session.hostdbprefix#import_templates_val
 		WHERE imp_temp_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.imp_temp_id#">
 		</cfquery>
 		<!--- Get the name and select fields --->
@@ -144,12 +144,12 @@
 			<cfset se = listgetat(theselect, listfindnocase(theselect,"select_#i#"))>
 			<cfset fi_value = arguments.thestruct["#fi#"]>
 			<cfset se_value = arguments.thestruct["#se#"]>
-			<cfquery datasource="#application.razuna.datasource#">
-			INSERT INTO #session.hostdbprefix#import_templates_val
+			<cfquery datasource="#request.razuna.application.datasource#">
+			INSERT INTO #request.razuna.session.hostdbprefix#import_templates_val
 			(imp_temp_id_r, host_id, rec_uuid, imp_field, imp_map<cfif arguments.thestruct.radio_key EQ i>, imp_key</cfif>)
 			VALUES(
 			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.imp_temp_id#">,
-			<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+			<cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">,
 			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#createuuid()#">,
 			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#fi_value#">,
 			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#se_value#">
@@ -167,15 +167,15 @@
 	<cffunction name="removetemplate" output="false" returntype="void">
 		<cfargument name="thestruct" type="struct">
 		<!--- Query --->
-		<cfquery datasource="#application.razuna.datasource#">
-		DELETE FROM #session.hostdbprefix#import_templates
+		<cfquery datasource="#request.razuna.application.datasource#">
+		DELETE FROM #request.razuna.session.hostdbprefix#import_templates
 		WHERE imp_temp_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.id#">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 		</cfquery>
-		<cfquery datasource="#application.razuna.datasource#">
-		DELETE FROM #session.hostdbprefix#import_templates_val
+		<cfquery datasource="#request.razuna.application.datasource#">
+		DELETE FROM #request.razuna.session.hostdbprefix#import_templates_val
 		WHERE imp_temp_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.id#">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 		</cfquery>
 		<cfreturn  />
 	</cffunction>
@@ -191,7 +191,7 @@
 		<!--- Rename --->
 		<cffile action="rename" source="#GetTempdirectory()#/#thefile.serverFile#" destination="#GetTempdirectory()#/#thenamenew#" />
 		<!--- Set filename in session --->
-		<cfset session.importfilename = thenamenew>
+		<cfset request.razuna.session.importfilename = thenamenew>
 		<!--- Return --->
 		<cfreturn ext />
 	</cffunction>
@@ -200,7 +200,7 @@
 	<cffunction name="doimport" output="false" returntype="void">
 		<cfargument name="thestruct" type="struct">
 		<!--- Check if file exists if not show error message --->
-		<cfif NOT isdefined("session.importfilename") OR !FileExists("#GetTempdirectory()#/#session.importfilename#")>
+		<cfif NOT isdefined("request.razuna.session.importfilename") OR !FileExists("#GetTempdirectory()#/#request.razuna.session.importfilename#")>
 			<cfinvoke component="defaults" method="trans" transid="file_absent" returnvariable="file_absent" />
 			<!--- Feedback --->
 			<cfoutput><h2>#file_absent#</h2><br><br></cfoutput>
@@ -212,16 +212,16 @@
 		<cfoutput><strong>#start_import#</strong><br><br></cfoutput>
 		<cfflush>
 		<!--- CSV and XML --->
-		<cfif listlast(session.importfilename,".") EQ "csv">
+		<cfif listlast(request.razuna.session.importfilename,".") EQ "csv">
 			<!--- Read the file --->
-			<cffile action="read" file="#GetTempdirectory()#/#session.importfilename#" charset="utf-8" variable="thefile" />
+			<cffile action="read" file="#GetTempdirectory()#/#request.razuna.session.importfilename#" charset="utf-8" variable="thefile" />
 			<!--- Read CSV --->
 			<cfset arguments.thestruct.theimport = csvread(string=thefile,headerline=true)>
 		<!--- XLS and XLSX --->
 		<cfelse>
 			<!--- Read the file --->
 			<cftry>
-				<cfset var thexls = SpreadsheetRead("#GetTempdirectory()#/#session.importfilename#")>
+				<cfset var thexls = SpreadsheetRead("#GetTempdirectory()#/#request.razuna.session.importfilename#")>
 				<cfset arguments.thestruct.theimport = SpreadsheetQueryread(spreadsheet=thexls,sheet=0,headerrow=1)>
 			<cfcatch>
 				<cfinvoke component="defaults" method="trans" transid="excel_no_read" returnvariable="excel_no_read" />
@@ -242,13 +242,13 @@
 		<cfoutput>#clean_up#<br><br></cfoutput>
 		<cfflush>
 		<!--- Remove the file --->
-		<cffile action="delete" file="#GetTempdirectory()#/#session.importfilename#" />
+		<cffile action="delete" file="#GetTempdirectory()#/#request.razuna.session.importfilename#" />
 		<!--- Feedback --->
 		<cfinvoke component="defaults" method="trans" transid="import_success" returnvariable="import_success" />
 		<cfoutput><strong style="color:green;">#import_success#</strong><br><br></cfoutput>
 		<cfflush>
 		<!--- Flush Cache --->
-		<cfset resetcachetokenall()>
+		<cfset resetcachetokenall(request.razuna.session.hostid)>
 		<!--- Return --->
 		<cfreturn />
 	</cffunction>
@@ -359,11 +359,11 @@
 				<!--- Query for existence of the record --->
 				<cftry>
 					<cfset var found = "">
-					<cfquery dataSource="#application.razuna.datasource#" name="found">
+					<cfquery dataSource="#request.razuna.application.datasource#" name="found">
 					SELECT img_id, path_to_asset, img_filename AS filenameorg, lucene_key, link_path_url
-					FROM #session.hostdbprefix#images
+					FROM #request.razuna.session.hostdbprefix#images
 					WHERE #c_theid# = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thisid)#">
-					AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
+					AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#request.razuna.session.hostid#">
 					<cfif arguments.thestruct.expwhat NEQ "all">
 						AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
 					</cfif>
@@ -405,11 +405,11 @@
 					<!--- Images: main table --->
 					<cfif isdefined("#c_thefilename#") AND evaluate(c_thefilename) NEQ "">
 						<cftransaction>
-							<cfquery dataSource="#application.razuna.datasource#">
-							UPDATE #session.hostdbprefix#images
+							<cfquery dataSource="#request.razuna.application.datasource#">
+							UPDATE #request.razuna.session.hostdbprefix#images
 							SET img_filename = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thefilename)#">
 							WHERE #c_theid# = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thisid)#">
-							AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
+							AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#request.razuna.session.hostid#">
 							<cfif arguments.thestruct.expwhat NEQ "all">
 								AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
 							</cfif>
@@ -419,11 +419,11 @@
 					<!--- UPC --->
 					<cfif isdefined("#c_theupcnumber#") AND evaluate(c_theupcnumber) NEQ "">
 						<cftransaction>
-							<cfquery dataSource="#application.razuna.datasource#">
-							UPDATE #session.hostdbprefix#images
+							<cfquery dataSource="#request.razuna.application.datasource#">
+							UPDATE #request.razuna.session.hostdbprefix#images
 							SET img_upc_number= <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_theupcnumber)#">
 							WHERE #c_theid# = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thisid)#">
-							AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
+							AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#request.razuna.session.hostid#">
 							<cfif arguments.thestruct.expwhat NEQ "all">
 								AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
 							</cfif>
@@ -433,10 +433,10 @@
 					<!--- Keywords & Descriptions --->
 					<!--- Check if record is here --->
 					<cfset var khere = "">
-					<cfquery dataSource="#application.razuna.datasource#" name="khere">
+					<cfquery dataSource="#request.razuna.application.datasource#" name="khere">
 					SELECT it.img_id_r, i.img_id, it.img_keywords, it.img_description
-					FROM #session.hostdbprefix#images i JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND i.host_id = it.host_id
-					WHERE i.host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
+					FROM #request.razuna.session.hostdbprefix#images i JOIN #request.razuna.session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND i.host_id = it.host_id
+					WHERE i.host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#request.razuna.session.hostid#">
 					AND i.img_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#found.img_id#">
 					</cfquery>
 					<!--- If template --->
@@ -447,8 +447,8 @@
 					<!--- record not found, so do an insert --->
 					<cfif khere.img_id_r EQ "">
 						<cftransaction>
-							<cfquery dataSource="#application.razuna.datasource#">
-							INSERT INTO #session.hostdbprefix#images_text
+							<cfquery dataSource="#request.razuna.application.datasource#">
+							INSERT INTO #request.razuna.session.hostdbprefix#images_text
 							(id_inc,img_id_r,lang_id_r,img_keywords,img_description,host_id)
 							VALUES(
 								<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#createuuid()#">,
@@ -464,7 +464,7 @@
 								<cfelse>
 									<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="">,
 								</cfif>
-								<cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
+								<cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#request.razuna.session.hostid#">
 							)
 							</cfquery>
 						</cftransaction>
@@ -494,23 +494,23 @@
 							</cfif>
 						</cfif>
 						<cftransaction>
-							<cfquery dataSource="#application.razuna.datasource#">
-							UPDATE #session.hostdbprefix#images_text
+							<cfquery dataSource="#request.razuna.application.datasource#">
+							UPDATE #request.razuna.session.hostdbprefix#images_text
 							SET
 							img_keywords = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#ltrim(tkeywords)#">,
 							img_description = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#ltrim(tdescription)#">
 							WHERE img_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#found.img_id#">
-							AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
+							AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#request.razuna.session.hostid#">
 							</cfquery>
 						</cftransaction>
 					</cfif>
 					<!--- Images: XMP --->
 					<!--- Check if record is here --->
 					<cfset var xmphere = "">
-					<cfquery dataSource="#application.razuna.datasource#" name="xmphere">
+					<cfquery dataSource="#request.razuna.application.datasource#" name="xmphere">
 					SELECT id_r
-					FROM #session.hostdbprefix#xmp
-					WHERE host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
+					FROM #request.razuna.session.hostdbprefix#xmp
+					WHERE host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#request.razuna.session.hostid#">
 					AND id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#found.img_id#">
 					</cfquery>
 					<!--- If template --->
@@ -656,15 +656,15 @@
 					<!--- if no record found in xmp table do an insert --->
 					<cfif xmphere.recordcount EQ 0>
 						<cftransaction>
-							<cfquery dataSource="#application.razuna.datasource#">
-							INSERT INTO #session.hostdbprefix#xmp
+							<cfquery dataSource="#request.razuna.application.datasource#">
+							INSERT INTO #request.razuna.session.hostdbprefix#xmp
 							(id_r,
 							asset_type,
 							host_id)
 							VALUES(
 								<cfqueryparam cfsqltype="cf_sql_varchar" value="#found.img_id#">,
 								<cfqueryparam cfsqltype="cf_sql_varchar" value="img">,
-								<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+								<cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 							)
 							</cfquery>
 						</cftransaction>
@@ -679,11 +679,11 @@
 					<cfinvoke component="xmp" method="xmpwritethread" thestruct="#arguments.thestruct#" />
 					<!--- Set for indexing --->
 					<cftransaction>
-						<cfquery datasource="#application.razuna.datasource#">
-						UPDATE #session.hostdbprefix#images
+						<cfquery datasource="#request.razuna.application.datasource#">
+						UPDATE #request.razuna.session.hostdbprefix#images
 						SET is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
 						WHERE img_id = <cfqueryparam value="#found.img_id#" cfsqltype="CF_SQL_VARCHAR">
-						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 						</cfquery>
 					</cftransaction>
 				</cfif>
@@ -714,12 +714,12 @@
 			</cftry>
 		</cfloop>
 		<!--- Flush Cache --->
-		<!--- <cfset resetcachetoken("images")>
-		<cfset resetcachetoken("videos")>
-		<cfset resetcachetoken("audios")>
-		<cfset resetcachetoken("files")>
-		<cfset resetcachetoken("folders")>
-		<cfset resetcachetoken("search")> --->
+		<!--- <cfset resetcachetoken(type="images", hostid=request.razuna.session.hostid)>
+		<cfset resetcachetoken(type="videos", hostid=request.razuna.session.hostid)>
+		<cfset resetcachetoken(type="audios", hostid=request.razuna.session.hostid)>
+		<cfset resetcachetoken(type="files", hostid=request.razuna.session.hostid)>
+		<cfset resetcachetoken(type="folders", hostid=request.razuna.session.hostid)>
+		<cfset resetcachetoken(type="search", hostid=request.razuna.session.hostid)> --->
 		<!--- Return --->
 		<cfreturn  />
 	</cffunction>
@@ -756,11 +756,11 @@
 			<!--- Query for existence of the record --->
 			<cftry>
 				<cfset var found = "">
-				<cfquery dataSource="#application.razuna.datasource#" name="found">
+				<cfquery dataSource="#request.razuna.application.datasource#" name="found">
 				SELECT vid_id, path_to_asset, vid_filename AS filenameorg, lucene_key, link_path_url
-				FROM #session.hostdbprefix#videos
+				FROM #request.razuna.session.hostdbprefix#videos
 				WHERE #c_theid# = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thisid)#">
-				AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
+				AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#request.razuna.session.hostid#">
 				<cfif arguments.thestruct.expwhat NEQ "all">
 					AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
 				</cfif>
@@ -799,13 +799,13 @@
 					<!--- Images: main table --->
 					<cfif isdefined("#c_thefilename#") AND evaluate(c_thefilename) NEQ "">
 						<cftransaction>
-							<cfquery dataSource="#application.razuna.datasource#">
-							UPDATE #session.hostdbprefix#videos
+							<cfquery dataSource="#request.razuna.application.datasource#">
+							UPDATE #request.razuna.session.hostdbprefix#videos
 							SET
 							vid_filename = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thefilename)#">,
 							is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
 							WHERE #c_theid# = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thisid)#">
-							AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
+							AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#request.razuna.session.hostid#">
 							<cfif arguments.thestruct.expwhat NEQ "all">
 								AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
 							</cfif>
@@ -815,10 +815,10 @@
 					<!--- Keywords & Descriptions --->
 					<!--- Check if record is here --->
 					<cfset var khere = "">
-					<cfquery dataSource="#application.razuna.datasource#" name="khere">
+					<cfquery dataSource="#request.razuna.application.datasource#" name="khere">
 					SELECT it.vid_id_r, i.vid_id, it.vid_keywords, it.vid_description
-					FROM #session.hostdbprefix#videos i JOIN #session.hostdbprefix#videos_text it ON i.vid_id = it.vid_id_r AND v.host_id = it.host_id
-					WHERE i.host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
+					FROM #request.razuna.session.hostdbprefix#videos i JOIN #request.razuna.session.hostdbprefix#videos_text it ON i.vid_id = it.vid_id_r AND v.host_id = it.host_id
+					WHERE i.host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#request.razuna.session.hostid#">
 					AND i.vid_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#found.vid_id#">
 					</cfquery>
 					<!--- If template --->
@@ -829,8 +829,8 @@
 					<!--- record not found, so do an insert --->
 					<cfif khere.vid_id_r EQ "">
 						<cftransaction>
-							<cfquery dataSource="#application.razuna.datasource#">
-							INSERT INTO #session.hostdbprefix#videos_text
+							<cfquery dataSource="#request.razuna.application.datasource#">
+							INSERT INTO #request.razuna.session.hostdbprefix#videos_text
 							(id_inc,vid_id_r,lang_id_r,vid_keywords,vid_description,host_id)
 							VALUES(
 								<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#createuuid()#">,
@@ -846,7 +846,7 @@
 								<cfelse>
 									<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="">,
 								</cfif>
-								<cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
+								<cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#request.razuna.session.hostid#">
 							)
 							</cfquery>
 						</cftransaction>
@@ -876,13 +876,13 @@
 							</cfif>
 						</cfif>
 						<cftransaction>
-							<cfquery dataSource="#application.razuna.datasource#">
-							UPDATE #session.hostdbprefix#videos_text
+							<cfquery dataSource="#request.razuna.application.datasource#">
+							UPDATE #request.razuna.session.hostdbprefix#videos_text
 							SET
 							vid_keywords = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#tkeywords#">,
 							vid_description = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#tdescription#">
 							WHERE vid_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#found.vid_id#">
-							AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
+							AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#request.razuna.session.hostid#">
 							</cfquery>
 						</cftransaction>
 					</cfif>
@@ -910,12 +910,12 @@
 			</cfif>
 		</cfloop>
 		<!--- Flush Cache --->
-		<!--- <cfset resetcachetoken("images")>
-		<cfset resetcachetoken("videos")>
-		<cfset resetcachetoken("audios")>
-		<cfset resetcachetoken("files")>
-		<cfset resetcachetoken("folders")>
-		<cfset resetcachetoken("search")> --->
+		<!--- <cfset resetcachetoken(type="images", hostid=request.razuna.session.hostid)>
+		<cfset resetcachetoken(type="videos", hostid=request.razuna.session.hostid)>
+		<cfset resetcachetoken(type="audios", hostid=request.razuna.session.hostid)>
+		<cfset resetcachetoken(type="files", hostid=request.razuna.session.hostid)>
+		<cfset resetcachetoken(type="folders", hostid=request.razuna.session.hostid)>
+		<cfset resetcachetoken(type="search", hostid=request.razuna.session.hostid)> --->
 		<!--- Return --->
 		<cfreturn />
 	</cffunction>
@@ -952,19 +952,17 @@
 			<!--- Query for existence of the record --->
 			<cftry>
 				<cfset var found = "">
-				<cfquery dataSource="#application.razuna.datasource#" name="found">
+				<cfquery dataSource="#request.razuna.application.datasource#" name="found">
 				SELECT aud_id, path_to_asset, aud_name AS filenameorg, lucene_key, link_path_url
-				FROM #session.hostdbprefix#audios
+				FROM #request.razuna.session.hostdbprefix#audios
 				WHERE #c_theid# = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thisid)#">
-				AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
+				AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#request.razuna.session.hostid#">
 				<cfif arguments.thestruct.expwhat NEQ "all">
 					AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
 				</cfif>
 				</cfquery>
 				<cfcatch type="database">
 					<h2>Oops... #cfcatch.message#</h2>
-					<!--- <cfset cfcatch.custom_message = "Database error in function import.doimportaudios">
-					<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/> --->
 					<cfabort>
 				</cfcatch>
 			</cftry>
@@ -995,13 +993,13 @@
 					<!--- Images: main table --->
 					<cfif isdefined("#c_thefilename#") AND evaluate(c_thefilename) NEQ "">
 						<cftransaction>
-							<cfquery dataSource="#application.razuna.datasource#">
-							UPDATE #session.hostdbprefix#audios
+							<cfquery dataSource="#request.razuna.application.datasource#">
+							UPDATE #request.razuna.session.hostdbprefix#audios
 							SET
 							aud_name = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thefilename)#">,
 							is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
 							WHERE #c_theid# = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thisid)#">
-							AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
+							AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#request.razuna.session.hostid#">
 							<cfif arguments.thestruct.expwhat NEQ "all">
 								AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
 							</cfif>
@@ -1011,10 +1009,10 @@
 					<!--- Keywords & Descriptions --->
 					<!--- Check if record is here --->
 					<cfset var khere = "">
-					<cfquery dataSource="#application.razuna.datasource#" name="khere">
+					<cfquery dataSource="#request.razuna.application.datasource#" name="khere">
 					SELECT it.aud_id_r, i.aud_id, it.aud_keywords, it.aud_description
-					FROM #session.hostdbprefix#audios i JOIN #session.hostdbprefix#audios_text it ON i.aud_id = it.aud_id_r AND i.host_id = it.host_id
-					WHERE i.host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
+					FROM #request.razuna.session.hostdbprefix#audios i JOIN #request.razuna.session.hostdbprefix#audios_text it ON i.aud_id = it.aud_id_r AND i.host_id = it.host_id
+					WHERE i.host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#request.razuna.session.hostid#">
 					AND i.aud_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#found.aud_id#">
 					</cfquery>
 					<!--- If template --->
@@ -1025,8 +1023,8 @@
 					<!--- record not found, so do an insert --->
 					<cfif khere.aud_id_r EQ "">
 						<cftransaction>
-							<cfquery dataSource="#application.razuna.datasource#">
-							INSERT INTO #session.hostdbprefix#audios_text
+							<cfquery dataSource="#request.razuna.application.datasource#">
+							INSERT INTO #request.razuna.session.hostdbprefix#audios_text
 							(id_inc,aud_id_r,lang_id_r,aud_keywords,aud_description,host_id)
 							VALUES(
 								<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#createuuid()#">,
@@ -1042,7 +1040,7 @@
 								<cfelse>
 									<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="">,
 								</cfif>
-								<cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
+								<cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#request.razuna.session.hostid#">
 							)
 							</cfquery>
 						</cftransaction>
@@ -1072,13 +1070,13 @@
 							</cfif>
 						</cfif>
 						<cftransaction>
-							<cfquery dataSource="#application.razuna.datasource#">
-							UPDATE #session.hostdbprefix#audios_text
+							<cfquery dataSource="#request.razuna.application.datasource#">
+							UPDATE #request.razuna.session.hostdbprefix#audios_text
 							SET
 							aud_keywords = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#tkeywords#">,
 							aud_description = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#tdescription#">
 							WHERE aud_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#found.aud_id#">
-							AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
+							AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#request.razuna.session.hostid#">
 							</cfquery>
 						</cftransaction>
 					</cfif>
@@ -1106,12 +1104,12 @@
 			</cfif>
 		</cfloop>
 		<!--- Flush Cache --->
-		<!--- <cfset resetcachetoken("images")>
-		<cfset resetcachetoken("videos")>
-		<cfset resetcachetoken("audios")>
-		<cfset resetcachetoken("files")>
-		<cfset resetcachetoken("folders")>
-		<cfset resetcachetoken("search")> --->
+		<!--- <cfset resetcachetoken(type="images", hostid=request.razuna.session.hostid)>
+		<cfset resetcachetoken(type="videos", hostid=request.razuna.session.hostid)>
+		<cfset resetcachetoken(type="audios", hostid=request.razuna.session.hostid)>
+		<cfset resetcachetoken(type="files", hostid=request.razuna.session.hostid)>
+		<cfset resetcachetoken(type="folders", hostid=request.razuna.session.hostid)>
+		<cfset resetcachetoken(type="search", hostid=request.razuna.session.hostid)> --->
 		<!--- Return --->
 		<cfreturn />
 	</cffunction>
@@ -1155,19 +1153,17 @@
 			<!--- Query for existence of the record --->
 			<cftry>
 				<cfset var found = "">
-				<cfquery dataSource="#application.razuna.datasource#" name="found">
+				<cfquery dataSource="#request.razuna.application.datasource#" name="found">
 				SELECT file_id, path_to_asset, file_name AS filenameorg, lucene_key, link_path_url
-				FROM #session.hostdbprefix#files
+				FROM #request.razuna.session.hostdbprefix#files
 				WHERE #c_theid# = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thisid)#">
-				AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
+				AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#request.razuna.session.hostid#">
 				<cfif arguments.thestruct.expwhat NEQ "all">
 					AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
 				</cfif>
 				</cfquery>
 				<cfcatch type="database">
 					<h2>Oops... #cfcatch.message#</h2>
-					<!--- <cfset cfcatch.custom_message = "Database error in function import.doimportdocs">
-					<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/> --->
 					<cfabort>
 				</cfcatch>
 			</cftry>
@@ -1199,13 +1195,13 @@
 					<!--- Images: main table --->
 					<cfif isdefined("#c_thefilename#") AND evaluate(c_thefilename) NEQ "">
 						<cftransaction>
-							<cfquery dataSource="#application.razuna.datasource#">
-							UPDATE #session.hostdbprefix#files
+							<cfquery dataSource="#request.razuna.application.datasource#">
+							UPDATE #request.razuna.session.hostdbprefix#files
 							SET
 							file_name = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thefilename)#">,
 							is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
 							WHERE #c_theid# = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thisid)#">
-							AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
+							AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#request.razuna.session.hostid#">
 							<cfif arguments.thestruct.expwhat NEQ "all">
 								AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
 							</cfif>
@@ -1215,10 +1211,10 @@
 					<!--- Keywords & Descriptions --->
 					<!--- Check if record is here --->
 					<cfset var khere = "">
-					<cfquery dataSource="#application.razuna.datasource#" name="khere">
+					<cfquery dataSource="#request.razuna.application.datasource#" name="khere">
 					SELECT it.file_id_r, i.file_id, it.file_keywords, it.file_desc
-					FROM #session.hostdbprefix#files i JOIN #session.hostdbprefix#files_desc it ON i.file_id = it.file_id_r AND i.host_id = it.host_id
-					WHERE i.host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
+					FROM #request.razuna.session.hostdbprefix#files i JOIN #request.razuna.session.hostdbprefix#files_desc it ON i.file_id = it.file_id_r AND i.host_id = it.host_id
+					WHERE i.host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#request.razuna.session.hostid#">
 					AND i.file_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#found.file_id#">
 					</cfquery>
 					<!--- If template --->
@@ -1229,8 +1225,8 @@
 					<!--- record not found, so do an insert --->
 					<cfif khere.file_id_r EQ "">
 						<cftransaction>
-							<cfquery dataSource="#application.razuna.datasource#">
-							INSERT INTO #session.hostdbprefix#files_desc
+							<cfquery dataSource="#request.razuna.application.datasource#">
+							INSERT INTO #request.razuna.session.hostdbprefix#files_desc
 							(id_inc,file_id_r,lang_id_r,file_keywords,file_desc,host_id)
 							VALUES(
 								<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#createuuid()#">,
@@ -1246,7 +1242,7 @@
 								<cfelse>
 									<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="">,
 								</cfif>
-								<cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
+								<cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#request.razuna.session.hostid#">
 							)
 							</cfquery>
 						</cftransaction>
@@ -1276,23 +1272,23 @@
 							</cfif>
 						</cfif>
 						<cftransaction>
-							<cfquery dataSource="#application.razuna.datasource#">
-							UPDATE #session.hostdbprefix#files_desc
+							<cfquery dataSource="#request.razuna.application.datasource#">
+							UPDATE #request.razuna.session.hostdbprefix#files_desc
 							SET
 							file_keywords = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#tkeywords#">,
 							file_desc = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#tdescription#">
 							WHERE file_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#found.file_id#">
-							AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
+							AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#request.razuna.session.hostid#">
 							</cfquery>
 						</cftransaction>
 					</cfif>
 					<!--- Files: XMP --->
 					<!--- Check if record is here --->
 					<cfset var xmphere = "">
-					<cfquery dataSource="#application.razuna.datasource#" name="xmphere">
+					<cfquery dataSource="#request.razuna.application.datasource#" name="xmphere">
 					SELECT it.asset_id_r, i.file_id, it.author, it.rights, it.authorsposition, it.captionwriter, it.webstatement, it.rightsmarked
-					FROM #session.hostdbprefix#files i JOIN #session.hostdbprefix#files_xmp it ON i.file_id = it.asset_id_r
-					WHERE i.host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
+					FROM #request.razuna.session.hostdbprefix#files i JOIN #request.razuna.session.hostdbprefix#files_xmp it ON i.file_id = it.asset_id_r
+					WHERE i.host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#request.razuna.session.hostid#">
 					AND i.file_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#found.file_id#">
 					</cfquery>
 					<!--- If template --->
@@ -1307,8 +1303,8 @@
 					<!--- record not found, so do an insert --->
 					<cfif xmphere.asset_id_r EQ "">
 						<cftransaction>
-							<cfquery dataSource="#application.razuna.datasource#">
-							INSERT INTO #session.hostdbprefix#files_xmp
+							<cfquery dataSource="#request.razuna.application.datasource#">
+							INSERT INTO #request.razuna.session.hostdbprefix#files_xmp
 							(author, rights, authorsposition, captionwriter, webstatement, rightsmarked, asset_id_r, host_id)
 							VALUES(
 								<cfif c_thepdf_author NEQ "">
@@ -1342,7 +1338,7 @@
 									<cfqueryparam cfsqltype="cf_sql_varchar" value="">,
 								</cfif>
 						  	  	<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#found.file_id#">,
-						  	  	<cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
+						  	  	<cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#request.razuna.session.hostid#">
 						  	)
 							</cfquery>
 						</cftransaction>
@@ -1412,8 +1408,8 @@
 							</cfif>
 						</cfif>
 						<cftransaction>
-							<cfquery dataSource="#application.razuna.datasource#">
-							UPDATE #session.hostdbprefix#files_xmp
+							<cfquery dataSource="#request.razuna.application.datasource#">
+							UPDATE #request.razuna.session.hostdbprefix#files_xmp
 							SET
 							author = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#tpdf_author#">,
 		  				  	rights = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#tpdf_rights#">,
@@ -1422,7 +1418,7 @@
 						  	webstatement = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#tpdf_webstatement#">,
 						  	rightsmarked = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#tpdf_rightsmarked#">
 							WHERE asset_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#found.file_id#">
-							AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
+							AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#request.razuna.session.hostid#">
 							</cfquery>
 						</cftransaction>
 					</cfif>
@@ -1450,12 +1446,12 @@
 			</cfif>
 		</cfloop>
 		<!--- Flush Cache --->
-		<!--- <cfset resetcachetoken("images")>
-		<cfset resetcachetoken("videos")>
-		<cfset resetcachetoken("audios")>
-		<cfset resetcachetoken("files")>
-		<cfset resetcachetoken("folders")>
-		<cfset resetcachetoken("search")> --->
+		<!--- <cfset resetcachetoken(type="images", hostid=request.razuna.session.hostid)>
+		<cfset resetcachetoken(type="videos", hostid=request.razuna.session.hostid)>
+		<cfset resetcachetoken(type="audios", hostid=request.razuna.session.hostid)>
+		<cfset resetcachetoken(type="files", hostid=request.razuna.session.hostid)>
+		<cfset resetcachetoken(type="folders", hostid=request.razuna.session.hostid)>
+		<cfset resetcachetoken(type="search", hostid=request.razuna.session.hostid)> --->
 		<!--- Return --->
 		<cfreturn  />
 	</cffunction>
@@ -1469,7 +1465,7 @@
 		<!--- Remove all labels for this record --->
 		<cfif arguments.thestruct.imp_write NEQ "add">
 			<cftransaction>
-				<cfquery dataSource="#application.razuna.datasource#">
+				<cfquery dataSource="#request.razuna.application.datasource#">
 				DELETE FROM ct_labels
 				WHERE ct_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.assetid#">
 				AND ct_type = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.kind#">
@@ -1480,17 +1476,17 @@
 		<cfloop list="#arguments.labels#" delimiters="," index="i">
 			<!--- Check if label is in the label db --->
 			<cfset var labhere = "">
-			<cfquery dataSource="#application.razuna.datasource#" name="labhere">
+			<cfquery dataSource="#request.razuna.application.datasource#" name="labhere">
 			SELECT label_id
-			FROM #session.hostdbprefix#labels
+			FROM #request.razuna.session.hostdbprefix#labels
 			WHERE label_path = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#i#">
-			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 			<!--- Make sure that records exists --->
 			AND (
-				EXISTS (select 1 from #session.hostdbprefix#audios where aud_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.assetid#">)
-				OR EXISTS (select 1 from #session.hostdbprefix#images where img_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.assetid#">)
-				OR EXISTS (select 1 from #session.hostdbprefix#videos where vid_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.assetid#">)
-				OR EXISTS (select 1 from #session.hostdbprefix#files where file_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.assetid#">)
+				EXISTS (select 1 from #request.razuna.session.hostdbprefix#audios where aud_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.assetid#">)
+				OR EXISTS (select 1 from #request.razuna.session.hostdbprefix#images where img_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.assetid#">)
+				OR EXISTS (select 1 from #request.razuna.session.hostdbprefix#videos where vid_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.assetid#">)
+				OR EXISTS (select 1 from #request.razuna.session.hostdbprefix#files where file_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.assetid#">)
 			)
 			</cfquery>
 			<!--- If not we add it or else we simply update the ct db --->
@@ -1505,25 +1501,25 @@
 					<cfset label_path_list = listappend(label_path_list,'#idx#','/')>
 					<!--- Check if Label path already exists --->
 					<cfset var checklabelpath = "">
-					<cfquery dataSource="#application.razuna.datasource#" name="checklabelpath">
+					<cfquery dataSource="#request.razuna.application.datasource#" name="checklabelpath">
 					SELECT label_id, label_text, label_path
-					FROM #session.hostdbprefix#labels
+					FROM #request.razuna.session.hostdbprefix#labels
 					WHERE label_path = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#label_path_list#">
-					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 					</cfquery>
 					<!--- Insert only new labels --->
 					<cfif checklabelpath.RecordCount EQ 0>
 						<!--- Insert --->
 						<cftransaction>
-							<cfquery dataSource="#application.razuna.datasource#">
-							INSERT INTO #session.hostdbprefix#labels
+							<cfquery dataSource="#request.razuna.application.datasource#">
+							INSERT INTO #request.razuna.session.hostdbprefix#labels
 							(label_id, label_text, label_date, user_id, host_id, label_path, label_id_r)
 							VALUES(
 								<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#theid#">,
 									<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#idx#">,
 								<cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#">,
-								<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#session.theuserid#">,
-								<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+								<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#request.razuna.session.theuserid#">,
+								<cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">,
 									<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#label_path_list#">,
 									<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#label_root_id#">
 							)
@@ -1533,7 +1529,7 @@
 					<!--- Insert into CT --->
 					<cfif idx EQ listLast(i,"/")>
 						<cftransaction>
-							<cfquery dataSource="#application.razuna.datasource#">
+							<cfquery dataSource="#request.razuna.application.datasource#">
 							INSERT INTO ct_labels
 							(ct_label_id, ct_id_r, ct_type, rec_uuid)
 							VALUES(
@@ -1555,7 +1551,7 @@
 			<!--- Label is here --->
 			<cfelse>
 				<cftransaction>
-					<cfquery dataSource="#application.razuna.datasource#">
+					<cfquery dataSource="#request.razuna.application.datasource#">
 					INSERT INTO ct_labels
 					(ct_label_id, ct_id_r, ct_type, rec_uuid)
 					VALUES(
@@ -1569,7 +1565,7 @@
 			</cfif>
 		</cfloop>
 		<!--- Flush Cache --->
-		<!--- <cfset resetcachetoken("labels")> --->
+		<!--- <cfset resetcachetoken(type="labels", hostid=request.razuna.session.hostid)> --->
 		<!--- Return --->
 		<cfreturn  />
 	</cffunction>
@@ -1604,18 +1600,18 @@
 				<cfset var cfvalue = ltrim(arguments.thestruct.theimport[i][arguments.thecurrentRow])>
 				<!--- Insert or update --->
 				<cfset var qry = "">
-				<cfquery datasource="#application.razuna.datasource#" name="qry">
+				<cfquery datasource="#request.razuna.application.datasource#" name="qry">
 				SELECT v.cf_id_r, v.cf_value, f.cf_type
-				FROM #session.hostdbprefix#custom_fields_values v, #session.hostdbprefix#custom_fields f
+				FROM #request.razuna.session.hostdbprefix#custom_fields_values v, #request.razuna.session.hostdbprefix#custom_fields f
 				WHERE v.cf_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#theid#">
 				AND v.asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
 				AND v.cf_id_r = f.cf_id
 				</cfquery>
 				<!--- Make sure custom field id exists --->
 				<cfset var iscf = "">
-				<cfquery datasource="#application.razuna.datasource#" name="iscf">
+				<cfquery datasource="#request.razuna.application.datasource#" name="iscf">
 				SELECT 1
-				FROM #session.hostdbprefix#custom_fields
+				FROM #request.razuna.session.hostdbprefix#custom_fields
 				WHERE cf_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#theid#">
 				</cfquery>
 
@@ -1624,14 +1620,14 @@
 					<!--- Insert --->
 					<cfif qry.recordcount EQ 0>
 						<cftransaction>
-							<cfquery datasource="#application.razuna.datasource#">
-							INSERT INTO #session.hostdbprefix#custom_fields_values
+							<cfquery datasource="#request.razuna.application.datasource#">
+							INSERT INTO #request.razuna.session.hostdbprefix#custom_fields_values
 							(cf_id_r, asset_id_r, cf_value, host_id, rec_uuid)
 							VALUES(
 							<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#theid#">,
 							<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">,
 							<cfqueryparam cfsqltype="cf_sql_varchar" value="#cfvalue#">,
-							<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+							<cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">,
 							<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 							)
 							</cfquery>
@@ -1647,8 +1643,8 @@
 							</cfif>
 						</cfif>
 						<cftransaction>
-							<cfquery datasource="#application.razuna.datasource#">
-							UPDATE #session.hostdbprefix#custom_fields_values
+							<cfquery datasource="#request.razuna.application.datasource#">
+							UPDATE #request.razuna.session.hostdbprefix#custom_fields_values
 							SET cf_value = <cfqueryparam cfsqltype="cf_sql_varchar" value="#cfvalue#">
 							WHERE cf_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#theid#">
 							AND asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">

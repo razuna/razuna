@@ -26,7 +26,7 @@
 <cfabort>
 <cftry>
 
-	<cfset consoleoutput(true)>
+	<cfset consoleoutput(true, true)>
 	<cfset console("#now()# --- Executing cron job expiring assets")>
 
 	<!--- Path --->
@@ -69,7 +69,7 @@
 
 <cftry>
 
-	<cfset consoleoutput(true)>
+	<cfset consoleoutput(true, true)>
 	<cfset console("#now()# ---------------- Starting to clean up incoming, outgoing, and tmp directories")>
 
 	<!--- Path --->
@@ -216,7 +216,7 @@
 			</cfif>
 		</cfloop>
 		<cfcatch type="any">
-			<cfset consoleoutput(true)>
+			<cfset consoleoutput(true, true)>
 			<cfset console("------------ ERROR REMOVING TEMP FILES !!!!!!!!!!!!!!!!!!!!!!!!!")>
 			<cfset console(cfcatch)>
 		</cfcatch>

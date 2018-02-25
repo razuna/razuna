@@ -23,4 +23,8 @@
 * along with Razuna. If not, see <http://www.razuna.com/licenses/>.
 *
 --->
-<!--- <cfinclude template="/global/host/dam/Application.cfc" /> --->
+
+<!--- <cfcomponent output="false"> --->
+<cfcomponent extends="global.host.dam.Application" output="false">
+
+</cfcomponent>

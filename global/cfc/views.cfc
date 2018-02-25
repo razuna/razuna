@@ -31,19 +31,19 @@
 <cffunction name="rss" output="true" access="public">
 <cfargument name="thestruct" type="struct">
 <!--- If collection we have qry structs --->
-<cfif session.iscol EQ "t">
+<cfif request.razuna.session.iscol EQ "t">
 	<cfset arguments.thestruct.qry_files = arguments.thestruct.qry_files.qry_files>
 </cfif>
 <!--- Storage Decision --->
-<cfset thestorage = "#session.thehttp##cgi.http_host#/#cgi.context_path#/assets/#session.hostid#/">
+<cfset thestorage = "#request.razuna.session.thehttp##cgi.http_host#/#cgi.context_path#/assets/#request.razuna.session.hostid#/">
 <!--- The local host --->
-<cfset theurl = "#session.thehttp#" & cgi.HTTP_HOST>
+<cfset theurl = "#request.razuna.session.thehttp#" & cgi.HTTP_HOST>
 <!--- Create the RSS --->
 <cfsavecontent variable="view"><cfoutput><?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <rss version="2.0" xmlns:media="http://search.yahoo.com/mrss/" xmlns:atom="http://www.w3.org/2005/Atom">
 <channel>
-<title>Razuna Feed (<cfif session.iscol EQ "F">Folder<cfelse>Collection</cfif>: #url.folder_id#)</title>
-<description>Razuna MultiMedia Feed of <cfif session.iscol EQ "F">Folder<cfelse>Collection</cfif>: #url.folder_id#</description>
+<title>Razuna Feed (<cfif request.razuna.session.iscol EQ "F">Folder<cfelse>Collection</cfif>: #url.folder_id#)</title>
+<description>Razuna MultiMedia Feed of <cfif request.razuna.session.iscol EQ "F">Folder<cfelse>Collection</cfif>: #url.folder_id#</description>
 <link>#xmlformat("#theurl#/#cgi.script_name#?#cgi.query_string#")#</link>
 <atom:icon>#theurl#/global/host/dam/images/razuna_logo-200.png</atom:icon>
 <atom:link href="#xmlformat("#theurl#/#cgi.script_name#?#cgi.query_string#")#" rel="self" type="application/rss+xml" />
@@ -56,7 +56,7 @@
 <media:keywords>#xmlformat(keywords)#</media:keywords>
 <!--- Show assets --->
 <cfif link_kind NEQ "url">
-<!--- Cloud ---><cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
+<!--- Cloud ---><cfif request.razuna.application.storage EQ "amazon" OR request.razuna.application.storage EQ "nirvanix">
 <guid>#xmlformat(cloud_url)#</guid>
 <media:thumbnail url="#xmlformat(cloud_url)#"/>
 <media:content url="#xmlformat(cloud_url_org)#" medium="<cfif kind EQ "img">image<cfelseif kind EQ "vid">video<cfelseif kind EQ "aud">audio<cfelse>document</cfif>"/>
@@ -70,7 +70,7 @@
 <guid>#xmlformat("#thestorage##path_to_asset#/thumb_#id#.#ext#")#</guid>
 <media:thumbnail url="#xmlformat("#thestorage##path_to_asset#/thumb_#id#.#ext#")#"/>
 <cfelse>
-<cfif kind EQ "PDF"><cfset thethumb = replacenocase(filename_org, ".pdf", ".jpg", "all")><cfif FileExists("#ExpandPath("../../")#/assets/#session.hostid#/#path_to_asset#/#thethumb#") IS "no"><media:thumbnail url="#xmlformat("#theurl#/global/host/dam/images/icons/icon_#ext#.png")#"/><cfelse><media:thumbnail url="#xmlformat("#theurl#/assets/#session.hostid#/#path_to_asset#/#thethumb#")#"/></cfif><cfelse><cfif FileExists("#ExpandPath("../../")#global/host/dam/images/icons/icon_#ext#.png") IS "no"><media:thumbnail url="#xmlformat("#theurl#/global/host/dam/images/icons/icon_txt.png")#"/><cfelse><media:thumbnail url="#xmlformat("#theurl#/global/host/dam/images/icons/icon_#ext#.png")#"/></cfif>
+<cfif kind EQ "PDF"><cfset thethumb = replacenocase(filename_org, ".pdf", ".jpg", "all")><cfif FileExists("#ExpandPath("../../")#/assets/#request.razuna.session.hostid#/#path_to_asset#/#thethumb#") IS "no"><media:thumbnail url="#xmlformat("#theurl#/global/host/dam/images/icons/icon_#ext#.png")#"/><cfelse><media:thumbnail url="#xmlformat("#theurl#/assets/#request.razuna.session.hostid#/#path_to_asset#/#thethumb#")#"/></cfif><cfelse><cfif FileExists("#ExpandPath("../../")#global/host/dam/images/icons/icon_#ext#.png") IS "no"><media:thumbnail url="#xmlformat("#theurl#/global/host/dam/images/icons/icon_txt.png")#"/><cfelse><media:thumbnail url="#xmlformat("#theurl#/global/host/dam/images/icons/icon_#ext#.png")#"/></cfif>
 </cfif>
 </cfif>
 <cfif kind EQ "vid"><cfif arguments.thestruct.kind EQ "all"><cfset vidorg = replacenocase(filename_org,"jpg",ext,"all")>
@@ -99,7 +99,7 @@
 <cffunction name="xls" output="true" access="public">
 <cfargument name="thestruct" type="struct">
 	<!--- If collection we have qry structs --->
-	<cfif session.iscol EQ "t">
+	<cfif request.razuna.session.iscol EQ "t">
 		<cfset arguments.thestruct.qry_files = arguments.thestruct.qry_files.qry_files>
 	</cfif>
 	<!--- Only select the columns we need to show --->
@@ -119,13 +119,13 @@
 <cffunction name="doc" output="true" access="public">
 <cfargument name="thestruct" type="struct">
 	<!--- If collection we have qry structs --->
-	<cfif session.iscol EQ "t">
+	<cfif request.razuna.session.iscol EQ "t">
 		<cfset arguments.thestruct.qry_files = arguments.thestruct.qry_files.qry_files>
 	</cfif>
 	<!--- Storage Decision --->
-	<cfset thestorage = "#session.thehttp##cgi.http_host#/#cgi.context_path#/assets/#session.hostid#/">
+	<cfset thestorage = "#request.razuna.session.thehttp##cgi.http_host#/#cgi.context_path#/assets/#request.razuna.session.hostid#/">
 	<!--- The local host --->
-	<cfset theurl = "#session.thehttp#" & cgi.HTTP_HOST>
+	<cfset theurl = "#request.razuna.session.thehttp#" & cgi.HTTP_HOST>
 	<!--- Write temp filename --->
 	<!--- <cfset var view = createuuid() & ".doc"> --->
 	<!--- Write doc --->
@@ -159,7 +159,7 @@ print view. --->
 			<td rowspan="2">
 				<cfif link_kind NEQ "url">
 					<!--- Cloud --->
-					<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
+					<cfif request.razuna.application.storage EQ "amazon" OR request.razuna.application.storage EQ "nirvanix">
 						<img src="#cloud_url#" border="0" />
 					<!--- Local --->
 					<cfelse>
@@ -175,10 +175,10 @@ print view. --->
 						<cfelse>
 							<cfif kind EQ "PDF">
 								<cfset thethumb = replacenocase(filename_org, ".pdf", ".jpg", "all")>
-								<cfif FileExists("#ExpandPath("../../")#/assets/#session.hostid#/#path_to_asset#/#thethumb#") IS "no">
+								<cfif FileExists("#ExpandPath("../../")#/assets/#request.razuna.session.hostid#/#path_to_asset#/#thethumb#") IS "no">
 									<img src="#theurl#/global/host/dam/images/icons/icon_#ext#.png" border="0" />
 								<cfelse>
-									<img src="#theurl#/assets/#session.hostid#/#path_to_asset#/#thethumb#" border="0" />
+									<img src="#theurl#/assets/#request.razuna.session.hostid#/#path_to_asset#/#thethumb#" border="0" />
 								</cfif>
 							<cfelse>
 								<cfif FileExists("#ExpandPath("../../")#global/host/dam/images/icons/icon_#ext#.png") IS "no">

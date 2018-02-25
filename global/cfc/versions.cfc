@@ -30,10 +30,10 @@
 	<cfargument name="thestruct" type="struct">
 	<cfset var qry = "">
 	<!--- Query --->
-	<cfquery datasource="#Variables.dsn#" name="qry">
+	<cfquery datasource="#request.razuna.application.datasource#" name="qry">
 	SELECT v.ver_version,v.ver_extension, v.ver_date_add, v.ver_filename_org,v.ver_thumbnail,v.cloud_url_thumb,v.ver_type,v.asset_id_r, v.cloud_url_org,
 	u.user_login_name, u.user_first_name, u.user_last_name
-	FROM #session.hostdbprefix#versions v LEFT JOIN users u ON u.user_id = v.ver_who
+	FROM #request.razuna.session.hostdbprefix#versions v LEFT JOIN users u ON u.user_id = v.ver_who
 	WHERE v.asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 	AND v.ver_type = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.type#">
 	ORDER BY v.ver_version DESC
@@ -48,49 +48,49 @@
 	<cfset var qry = "">
 	<cfset var getinfo = "">
 	<!--- Query --->
-	<cfquery datasource="#Variables.dsn#" name="getinfo">
+	<cfquery datasource="#request.razuna.application.datasource#" name="getinfo">
 	SELECT ver_filename_org, asset_id_r
-	FROM #session.hostdbprefix#versions
+	FROM #request.razuna.session.hostdbprefix#versions
 	WHERE ver_version = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.version#">
 	AND asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 	AND ver_type = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.type#">
 	</cfquery>
 
 	<!--- Query --->
-	<cfquery datasource="#Variables.dsn#">
-	DELETE FROM #session.hostdbprefix#versions
+	<cfquery datasource="#request.razuna.application.datasource#">
+	DELETE FROM #request.razuna.session.hostdbprefix#versions
 	WHERE ver_version = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.version#">
 	AND asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 	AND ver_type = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.type#">
 	</cfquery>
 
-	<cfquery datasource="#Variables.dsn#" name="qry">
+	<cfquery datasource="#request.razuna.application.datasource#" name="qry">
 	SELECT file_extension orgext, path_to_asset
-	FROM #session.hostdbprefix#files
+	FROM #request.razuna.session.hostdbprefix#files
 	WHERE file_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
-	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 	</cfquery>
 
 	<!--- Delete asset on system --->
-	<cfif application.razuna.storage EQ "local">
-		<cfif directoryExists("#arguments.thestruct.assetpath#/#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.version#")>
-			<cfdirectory action="delete" directory="#arguments.thestruct.assetpath#/#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.version#" recurse="true">
+	<cfif request.razuna.application.storage EQ "local">
+		<cfif directoryExists("#arguments.thestruct.assetpath#/#request.razuna.session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.version#")>
+			<cfdirectory action="delete" directory="#arguments.thestruct.assetpath#/#request.razuna.session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.version#" recurse="true">
 		</cfif>
 		<!--- If document is PDF then delete the folder named after the version number where pdf imgaes are stored  --->
 		<cfif qry.orgext eq "pdf">
-			<cfif directoryExists("#arguments.thestruct.assetpath#/#session.hostid#/#qry.path_to_asset#/razuna_pdf_images/#arguments.thestruct.version#")>
-				<cfdirectory action="delete" directory="#arguments.thestruct.assetpath#/#session.hostid#/#qry.path_to_asset#/razuna_pdf_images/#arguments.thestruct.version#" recurse="true">
+			<cfif directoryExists("#arguments.thestruct.assetpath#/#request.razuna.session.hostid#/#qry.path_to_asset#/razuna_pdf_images/#arguments.thestruct.version#")>
+				<cfdirectory action="delete" directory="#arguments.thestruct.assetpath#/#request.razuna.session.hostid#/#qry.path_to_asset#/razuna_pdf_images/#arguments.thestruct.version#" recurse="true">
 			</cfif>
 		</cfif>
-	<cfelseif application.razuna.storage EQ "nirvanix">
+	<cfelseif request.razuna.application.storage EQ "nirvanix">
 		<cfinvoke component="nirvanix" method="DeleteFolders" nvxsession="#arguments.thestruct.nvxsession#" folderpath="/versions/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.version#">
-	<cfelseif application.razuna.storage EQ "amazon">
-		<cfinvoke component="amazon" method="deletefolder" folderpath="#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.version#" awsbucket="#arguments.thestruct.awsbucket#" />
+	<cfelseif request.razuna.application.storage EQ "amazon">
+		<cfinvoke component="amazon" method="deletefolder" folderpath="#request.razuna.session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.version#" awsbucket="#arguments.thestruct.awsbucket#" />
 	</cfif>
 	<cfinvoke component="defaults" method="trans" transid="deleted" returnvariable="deleted" />
 	<cfinvoke component="defaults" method="trans" transid="plugin_version" returnvariable="version" />
 	<!--- Add entry into log --->
-	<cfset log_assets(theuserid=session.theuserid,logaction='Delete',logdesc='#deleted# #version#: #getinfo.ver_filename_org#',logfiletype='#arguments.thestruct.type#',assetid='#getinfo.asset_id_r#',folderid='#arguments.thestruct.folder_id#')>
+	<cfset log_assets(theuserid=request.razuna.session.theuserid,logaction='Delete',logdesc='#deleted# #version#: #getinfo.ver_filename_org#',logfiletype='#arguments.thestruct.type#',assetid='#getinfo.asset_id_r#',folderid='#arguments.thestruct.folder_id#', hostid=request.razuna.session.hostid)>
 	<!--- Return --->
 	<cfreturn />
 </cffunction>
@@ -128,108 +128,108 @@
 		<!--- First get details from current record --->
 		<!--- Images --->
 		<cfif arguments.thestruct.type EQ "img">
-			<cfquery datasource="#Variables.dsn#" name="qry">
+			<cfquery datasource="#request.razuna.application.datasource#" name="qry">
 			SELECT
 			folder_id_r, img_filename_org filenameorg, thumb_width, thumb_height, thumb_extension,
 			img_width, img_height, img_size, thumb_size, img_extension orgext, path_to_asset, hashtag, img_meta as metadata
-			FROM #session.hostdbprefix#images
+			FROM #request.razuna.session.hostdbprefix#images
 			WHERE img_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
-			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 			</cfquery>
 			<cfset var thethumbname = "thumb_#arguments.thestruct.file_id#.#qry.thumb_extension#">
 		<!--- Videos --->
 		<cfelseif arguments.thestruct.type EQ "vid">
-			<cfquery datasource="#Variables.dsn#" name="qry">
+			<cfquery datasource="#request.razuna.application.datasource#" name="qry">
 			SELECT
 			folder_id_r, vid_name_org filenameorg, vid_size, vid_width, vid_height,
 			vid_name_image, vid_extension orgext, path_to_asset, hashtag, vid_meta as metadata
-			FROM #session.hostdbprefix#videos
+			FROM #request.razuna.session.hostdbprefix#videos
 			WHERE vid_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
-			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 			</cfquery>
 			<cfset var thethumbname = replacenocase(qry.filenameorg,".#qry.orgext#",".jpg","all")>
 		<!--- Audios --->
 		<cfelseif arguments.thestruct.type EQ "aud">
-			<cfquery datasource="#Variables.dsn#" name="qry">
+			<cfquery datasource="#request.razuna.application.datasource#" name="qry">
 			SELECT
 			folder_id_r, aud_name_org filenameorg, aud_size, aud_extension orgext, path_to_asset, hashtag, aud_meta as metadata
-			FROM #session.hostdbprefix#audios
+			FROM #request.razuna.session.hostdbprefix#audios
 			WHERE aud_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
-			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 			</cfquery>
 			<cfset var thethumbname = replacenocase(qry.filenameorg,".#qry.orgext#",".wav","all")>
 		<!--- Documents --->
 		<cfelse>
-			<cfquery datasource="#Variables.dsn#" name="qry">
+			<cfquery datasource="#request.razuna.application.datasource#" name="qry">
 			SELECT folder_id_r, file_name_org filenameorg, file_extension orgext, path_to_asset, hashtag, file_meta as metadata, file_size
-			FROM #session.hostdbprefix#files
+			FROM #request.razuna.session.hostdbprefix#files
 			WHERE file_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
-			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 			</cfquery>
 			<cfset var thethumbname = replacenocase(qry.filenameorg,".pdf",".jpg","all")>
 		</cfif>
 		<!--- Create a new version number --->
-		<cfquery datasource="#Variables.dsn#" name="qryversion">
-		SELECT <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2">NVL<cfelseif application.razuna.thedatabase EQ "mysql">ifnull<cfelseif application.razuna.thedatabase EQ "mssql">isnull</cfif>(max(ver_version),0) + 1 AS newversion
-		FROM #session.hostdbprefix#versions
+		<cfquery datasource="#request.razuna.application.datasource#" name="qryversion">
+		SELECT <cfif request.razuna.application.thedatabase EQ "oracle" OR request.razuna.application.thedatabase EQ "h2">NVL<cfelseif request.razuna.application.thedatabase EQ "mysql">ifnull<cfelseif request.razuna.application.thedatabase EQ "mssql">isnull</cfif>(max(ver_version),0) + 1 AS newversion
+		FROM #request.razuna.session.hostdbprefix#versions
 		WHERE asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 		AND ver_type = <cfqueryparam value="#arguments.thestruct.type#" cfsqltype="cf_sql_varchar">
 		</cfquery>
 		<!--- Query original file name of this version we need to replay --->
-		<cfquery datasource="#Variables.dsn#" name="qrycurrentversion">
+		<cfquery datasource="#request.razuna.application.datasource#" name="qrycurrentversion">
 		SELECT ver_filename_org, ver_thumbnail, ver_type
-		FROM #session.hostdbprefix#versions
+		FROM #request.razuna.session.hostdbprefix#versions
 		WHERE asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 		AND ver_type = <cfqueryparam value="#arguments.thestruct.type#" cfsqltype="cf_sql_varchar">
 		AND ver_version = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.version#">
 		</cfquery>
 		<!--- Query to get the settings --->
-		<cfquery datasource="#application.razuna.datasource#" name="arguments.thestruct.qrysettings">
+		<cfquery datasource="#request.razuna.application.datasource#" name="arguments.thestruct.qrysettings">
 		SELECT set2_img_format, set2_img_thumb_width, set2_img_thumb_heigth, set2_img_comp_width,
 		set2_img_comp_heigth, set2_vid_preview_author, set2_vid_preview_copyright, set2_path_to_assets, set2_colorspace_rgb
-		FROM #session.hostdbprefix#settings_2
-		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		FROM #request.razuna.session.hostdbprefix#settings_2
+		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 		</cfquery>
 		<!--- Create directory --->
-		<cfif application.razuna.storage EQ "local">
+		<cfif request.razuna.application.storage EQ "local">
 			<!--- Create folder with the version --->
-			<cfif !directoryExists("#arguments.thestruct.assetpath#/#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#qryversion.newversion#")>
-				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#qryversion.newversion#" mode="775">
+			<cfif !directoryExists("#arguments.thestruct.assetpath#/#request.razuna.session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#qryversion.newversion#")>
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#request.razuna.session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#qryversion.newversion#" mode="775">
 			</cfif>
 			<!--- Move the file to the versions directory --->
-			<cfinvoke component="global" method="directoryCopy" source="#arguments.thestruct.assetpath#/#session.hostid#/#qry.path_to_asset#" destination="#arguments.thestruct.assetpath#/#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#qryversion.newversion#" move="T">
+			<cfinvoke component="global" method="directoryCopy" source="#arguments.thestruct.assetpath#/#request.razuna.session.hostid#/#qry.path_to_asset#" destination="#arguments.thestruct.assetpath#/#request.razuna.session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#qryversion.newversion#" move="T">
 			<!--- Delete existing files in directory before copying --->
-			<cfdirectory action="list" directory="#arguments.thestruct.assetpath#/#session.hostid#/#qry.path_to_asset#" recurse="false" listinfo="name" name="qFile" />
+			<cfdirectory action="list" directory="#arguments.thestruct.assetpath#/#request.razuna.session.hostid#/#qry.path_to_asset#" recurse="false" listinfo="name" name="qFile" />
 			<!--- Loop through file query and delete files --->
 			<cfloop query="qFile">
-			    <cffile action="delete" file="#arguments.thestruct.assetpath#/#session.hostid#/#qry.path_to_asset#/#qFile.name#">
+			    <cffile action="delete" file="#arguments.thestruct.assetpath#/#request.razuna.session.hostid#/#qry.path_to_asset#/#qFile.name#">
 			</cfloop>
 			<!--- Now copy the version to the original directory --->
-			<cfinvoke component="global" method="directoryCopy" source="#arguments.thestruct.assetpath#/#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.version#" destination="#arguments.thestruct.assetpath#/#session.hostid#/#qry.path_to_asset#">
+			<cfinvoke component="global" method="directoryCopy" source="#arguments.thestruct.assetpath#/#request.razuna.session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.version#" destination="#arguments.thestruct.assetpath#/#request.razuna.session.hostid#/#qry.path_to_asset#">
 			<!--- If document is a PDF then back up PDF images into the new version folder on playback and copy over images from the playback version folder into razuna_pdf_images  folder --->
 			<cfif qry.orgext eq "pdf">
 				<!--- Create folder with the new version inside razuna_pdf_images folder --->
-				<cfif !directoryExists("#arguments.thestruct.assetpath#/#session.hostid#/#qry.path_to_asset#/razuna_pdf_images/#qryversion.newversion#")>
-				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#qry.path_to_asset#/razuna_pdf_images/#qryversion.newversion#" mode="775">
+				<cfif !directoryExists("#arguments.thestruct.assetpath#/#request.razuna.session.hostid#/#qry.path_to_asset#/razuna_pdf_images/#qryversion.newversion#")>
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#request.razuna.session.hostid#/#qry.path_to_asset#/razuna_pdf_images/#qryversion.newversion#" mode="775">
 				</cfif>
 				<!--- Move razuna_pdf_images folder content into new version folder  --->
-				<cfinvoke component="global" method="directoryCopy" source="#arguments.thestruct.assetpath#/#session.hostid#/#qry.path_to_asset#/razuna_pdf_images/" destination="#arguments.thestruct.assetpath#/#session.hostid#/#qry.path_to_asset#/razuna_pdf_images/#qryversion.newversion#" fileaction="move" move="T">
-				<cfif directoryExists("#arguments.thestruct.assetpath#/#session.hostid#/#qry.path_to_asset#/razuna_pdf_images/#arguments.thestruct.version#")>
+				<cfinvoke component="global" method="directoryCopy" source="#arguments.thestruct.assetpath#/#request.razuna.session.hostid#/#qry.path_to_asset#/razuna_pdf_images/" destination="#arguments.thestruct.assetpath#/#request.razuna.session.hostid#/#qry.path_to_asset#/razuna_pdf_images/#qryversion.newversion#" fileaction="move" move="T">
+				<cfif directoryExists("#arguments.thestruct.assetpath#/#request.razuna.session.hostid#/#qry.path_to_asset#/razuna_pdf_images/#arguments.thestruct.version#")>
 					<!--- Copy over pdf images for playback version folder into razuna_pdf_images folder  --->
-					 <cfdirectory action="list" directory="#arguments.thestruct.assetpath#/#session.hostid#/#qry.path_to_asset#/razuna_pdf_images/#arguments.thestruct.version#" name="pdfimgscpy" filter="*.jpg"/>
+					 <cfdirectory action="list" directory="#arguments.thestruct.assetpath#/#request.razuna.session.hostid#/#qry.path_to_asset#/razuna_pdf_images/#arguments.thestruct.version#" name="pdfimgscpy" filter="*.jpg"/>
 					<cfloop query="pdfimgscpy">
 						<cftry>
-							<cffile action="copy" source="#arguments.thestruct.assetpath#/#session.hostid#/#qry.path_to_asset#/razuna_pdf_images/#arguments.thestruct.version#/#name#" destination="#arguments.thestruct.assetpath#/#session.hostid#/#qry.path_to_asset#/razuna_pdf_images" mode="777">
+							<cffile action="copy" source="#arguments.thestruct.assetpath#/#request.razuna.session.hostid#/#qry.path_to_asset#/razuna_pdf_images/#arguments.thestruct.version#/#name#" destination="#arguments.thestruct.assetpath#/#request.razuna.session.hostid#/#qry.path_to_asset#/razuna_pdf_images" mode="777">
 							<cfcatch type="any"></cfcatch>
 						</cftry>
 					</cfloop>
 				<cfelse> <!--- If directory does not exist for version then re-generate pdf images --->
 				 	<cfobject component="global.cfc.files" name="fobj">
-				 	<cfset var genjpgs = fobj.genpdfjpgs ("#arguments.thestruct.assetpath#/#session.hostid#/#qry.path_to_asset#/#qrycurrentversion.ver_filename_org#","#arguments.thestruct.assetpath#/#session.hostid#/#qry.path_to_asset#/razuna_pdf_images")>
+				 	<cfset var genjpgs = fobj.genpdfjpgs ("#arguments.thestruct.assetpath#/#request.razuna.session.hostid#/#qry.path_to_asset#/#qrycurrentversion.ver_filename_org#","#arguments.thestruct.assetpath#/#request.razuna.session.hostid#/#qry.path_to_asset#/razuna_pdf_images")>
 				</cfif>
 			</cfif>
 		<!--- Amazon --->
-		<cfelseif application.razuna.storage EQ "amazon">
+		<cfelseif request.razuna.application.storage EQ "amazon">
 			<cfset arguments.thestruct.newversion = qryversion.newversion>
 			<cfset arguments.thestruct.qrycurrentversion.ver_filename_org = qrycurrentversion.ver_filename_org>
 			<cfset arguments.thestruct.qry = qry>
@@ -263,8 +263,8 @@
 			</cfif>
 		</cfif>
 		<!--- Update the record in versions DB --->
-		<cfquery datasource="#variables.dsn#">
-		INSERT INTO #session.hostdbprefix#versions
+		<cfquery datasource="#request.razuna.application.datasource#">
+		INSERT INTO #request.razuna.session.hostdbprefix#versions
 		(asset_id_r, ver_version, ver_type,	ver_date_add, ver_who, ver_filename_org, ver_extension, host_id, cloud_url_org,cloud_url_thumb, ver_thumbnail, hashtag, rec_uuid, meta_data
 		<!--- For images --->
 		<cfif arguments.thestruct.type EQ "img">
@@ -288,10 +288,10 @@
 		<cfqueryparam cfsqltype="cf_sql_numeric" value="#qryversion.newversion#">,
 		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.type#">,
 		<cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
-		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.theuserid#">,
+		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#request.razuna.session.theuserid#">,
 		<cfqueryparam cfsqltype="cf_sql_varchar" value="#qry.filenameorg#">,
 		<cfqueryparam cfsqltype="cf_sql_varchar" value="#qry.orgext#">,
-		<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+		<cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">,
 		<cfqueryparam cfsqltype="cf_sql_varchar" value="#cloud_url_version.theurl#">,
 		<cfqueryparam cfsqltype="cf_sql_varchar" value="#cloud_url_version_thumb.theurl#">,
 		<cfqueryparam cfsqltype="cf_sql_varchar" value="#thethumbname#">,
@@ -325,27 +325,27 @@
 		)
 		</cfquery>
 		<!--- Query version db for filename --->
-		<cfquery datasource="#Variables.dsn#" name="qryv">
+		<cfquery datasource="#request.razuna.application.datasource#" name="qryv">
 		SELECT
 		ver_filename_org, ver_extension, thumb_width, thumb_height, img_width, img_height, img_size, thumb_size,
 		vid_size, vid_width, vid_height, vid_name_image, hashtag, cloud_url_org, meta_data, file_size
-		FROM #session.hostdbprefix#versions
+		FROM #request.razuna.session.hostdbprefix#versions
 		WHERE asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 		AND ver_type = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.type#">
 		AND ver_version = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.version#">
 		</cfquery>
 		<cfif qryv.RecordCount NEQ 0>
-			<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
-				<cfset arguments.thestruct.thesource = "#arguments.thestruct.assetpath#/#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.version#/#qryv.ver_filename_org#">
+			<cfif request.razuna.application.storage EQ "amazon" OR request.razuna.application.storage EQ "nirvanix">
+				<cfset arguments.thestruct.thesource = "#arguments.thestruct.assetpath#/#request.razuna.session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.version#/#qryv.ver_filename_org#">
 			<cfelse>
-				<cfset arguments.thestruct.thesource = "#arguments.thestruct.assetpath#/#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.version#/#qryv.ver_filename_org#">
+				<cfset arguments.thestruct.thesource = "#arguments.thestruct.assetpath#/#request.razuna.session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.version#/#qryv.ver_filename_org#">
 			</cfif>
 		</cfif>
 		<!--- Update asset db with playbacked version --->
 		<!--- Images --->
 		<cfif arguments.thestruct.type EQ "img">
-			<cfquery datasource="#Variables.dsn#">
-			UPDATE #session.hostdbprefix#images
+			<cfquery datasource="#request.razuna.application.datasource#">
+			UPDATE #request.razuna.session.hostdbprefix#images
 			SET
 			img_filename_org = <cfqueryparam cfsqltype="cf_sql_varchar" value="#qryv.ver_filename_org#">,
 			img_extension = <cfqueryparam cfsqltype="cf_sql_varchar" value="#qryv.ver_extension#">,
@@ -362,13 +362,13 @@
 			img_meta = <cfqueryparam value="#qryv.meta_data#" cfsqltype="cf_sql_varchar">,
 			is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
 			WHERE img_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
-			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 			</cfquery>
 			<!--- Flush Cache --->
-			<cfset variables.cachetoken = resetcachetoken("images")>
+			<cfset variables.cachetoken = resetcachetoken(type="images", hostid=request.razuna.session.hostid)>
 
 			<!--- Do not parse XMP for Amazon as the file will have to be re-downloaded  from Amazon in order to do this which would cause too much overhead --->
-			<cfif application.razuna.storage NEQ 'Amazon'>
+			<cfif request.razuna.application.storage NEQ 'Amazon'>
 				<!--- Parse keywords and description from XMP --->
 				<cfinvoke component="xmp" method="xmpwritekeydesc" thestruct="#arguments.thestruct#" />
 				<!--- Parse the Metadata from the image --->
@@ -384,8 +384,8 @@
 					<!--- Set Variable --->
 					<cfset arguments.thestruct.assetpath = arguments.thestruct.qrysettings.set2_path_to_assets>
 					<!--- Store XMP values in DB --->
-					<cfquery datasource="#Variables.dsn#">
-					UPDATE #session.hostdbprefix#xmp
+					<cfquery datasource="#request.razuna.application.datasource#">
+					UPDATE #request.razuna.session.hostdbprefix#xmp
 					SET
 					asset_type = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.type#">,
 					subjectcode = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.iptcsubjectcode#">,
@@ -426,19 +426,17 @@
 					xres = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.xres#">,
 					yres = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.yres#">,
 					resunit = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.resunit#">,
-					host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 					WHERE id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 					</cfquery>
 					<cfcatch type="any">
-						<!--- <cfset cfcatch.custom_message = "Error in images text table for jpg in function versions.playback">
-						<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/> --->
 					</cfcatch>
 				</cftry>
 			</cfif>
 		<!--- Videos --->
 		<cfelseif arguments.thestruct.type EQ "vid">
-			<cfquery datasource="#Variables.dsn#">
-			UPDATE #session.hostdbprefix#videos
+			<cfquery datasource="#request.razuna.application.datasource#">
+			UPDATE #request.razuna.session.hostdbprefix#videos
 			SET
 			vid_name_org = <cfqueryparam cfsqltype="cf_sql_varchar" value="#qryv.ver_filename_org#">,
 			vid_extension = <cfqueryparam cfsqltype="cf_sql_varchar" value="#qryv.ver_extension#">,
@@ -453,14 +451,14 @@
 			vid_meta = <cfqueryparam value="#qryv.meta_data#" cfsqltype="cf_sql_varchar">,
 			is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
 			WHERE vid_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
-			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 			</cfquery>
 			<!--- Flush Cache --->
-			<cfset variables.cachetoken = resetcachetoken("videos")>
+			<cfset variables.cachetoken = resetcachetoken(type="videos", hostid=request.razuna.session.hostid)>
 		<!--- Audios --->
 		<cfelseif arguments.thestruct.type EQ "aud">
-			<cfquery datasource="#Variables.dsn#">
-			UPDATE #session.hostdbprefix#audios
+			<cfquery datasource="#request.razuna.application.datasource#">
+			UPDATE #request.razuna.session.hostdbprefix#audios
 			SET
 			aud_name_org = <cfqueryparam cfsqltype="cf_sql_varchar" value="#qryv.ver_filename_org#">,
 			aud_extension = <cfqueryparam cfsqltype="cf_sql_varchar" value="#qryv.ver_extension#">,
@@ -472,14 +470,14 @@
 			aud_meta = <cfqueryparam value="#qryv.meta_data#" cfsqltype="cf_sql_varchar">,
 			is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
 			WHERE aud_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
-			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 			</cfquery>
 			<!--- Flush Cache --->
-			<cfset variables.cachetoken = resetcachetoken("audios")>
+			<cfset variables.cachetoken = resetcachetoken(type="audios", hostid=request.razuna.session.hostid)>
 		<!--- Documents --->
 		<cfelse>
-			<cfquery datasource="#Variables.dsn#">
-			UPDATE #session.hostdbprefix#files
+			<cfquery datasource="#request.razuna.application.datasource#">
+			UPDATE #request.razuna.session.hostdbprefix#files
 			SET
 			file_name_org = <cfqueryparam cfsqltype="cf_sql_varchar" value="#qryv.ver_filename_org#">,
 			file_extension = <cfqueryparam cfsqltype="cf_sql_varchar" value="#qryv.ver_extension#">,
@@ -493,10 +491,10 @@
 			file_meta = <cfqueryparam value="#qryv.meta_data#" cfsqltype="cf_sql_varchar">,
 			is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
 			WHERE file_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
-			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 			</cfquery>
 			<!--- Flush Cache --->
-			<cfset variables.cachetoken = resetcachetoken("files")>
+			<cfset variables.cachetoken = resetcachetoken(type="files", hostid=request.razuna.session.hostid)>
 		</cfif>
 
 		<cfset arguments.thestruct.qrydetail.path_to_asset = qry.path_to_asset>
@@ -504,13 +502,13 @@
 		<cfset arguments.thestruct.qrydetail.folder_id_r = qry.folder_id_r>
 		<cfset arguments.thestruct.filenameorg = qry.filenameorg>
 		<!--- Add entry into log --->
-		<cfset log_assets(theuserid=session.theuserid,logaction='Update',logdesc='Playback of Version: #qrycurrentversion.ver_filename_org#',logfiletype='#qrycurrentversion.ver_type#',assetid='#arguments.thestruct.file_id#',folderid='#arguments.thestruct.folder_id#')>
+		<cfset log_assets(theuserid=request.razuna.session.theuserid,logaction='Update',logdesc='Playback of Version: #qrycurrentversion.ver_filename_org#',logfiletype='#qrycurrentversion.ver_type#',assetid='#arguments.thestruct.file_id#',folderid='#arguments.thestruct.folder_id#', hostid=request.razuna.session.hostid)>
 		<cfcatch type="any">
 			<cfdump var="#cfcatch#">
 		</cfcatch>
 	</cftry>
 	<!--- Reset folders cachetoken so preview images update --->
-	<cfset resetcachetoken("folders")>
+	<cfset resetcachetoken(type="folders", hostid=request.razuna.session.hostid)>
 	<!--- Return --->
 	<cfreturn />
 </cffunction>
@@ -557,9 +555,9 @@
 			SELECT
 			img_id, folder_id_r, img_filename_org file_name_org, thumb_width, thumb_height, hashtag,
 			img_width, img_height, img_size, thumb_size, img_extension orgext, path_to_asset, cloud_url, cloud_url_org, img_meta as metadata, thumb_extension thumbext
-			FROM #session.hostdbprefix#images
+			FROM #request.razuna.session.hostdbprefix#images
 			WHERE img_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.qryfile.file_id#">
-			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 			</cfquery>
 			<!--- Params for resizeimage --->
 			<cfset arguments.thestruct.thesource = "#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#">
@@ -640,9 +638,9 @@
 			<cfquery datasource="#arguments.thestruct.dsn#" name="arguments.thestruct.qryfilelocal">
 			SELECT vid_id, folder_id_r, vid_name_org file_name_org, vid_size, vid_width, vid_height,
 			vid_name_image, vid_extension orgext, path_to_asset, cloud_url, cloud_url_org, hashtag, vid_meta as metadata
-			FROM #session.hostdbprefix#videos
+			FROM #request.razuna.session.hostdbprefix#videos
 			WHERE vid_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.qryfile.file_id#">
-			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 			</cfquery>
 			<!--- Params for resizeimage --->
 			<cfset arguments.thestruct.thesource = "#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#">
@@ -709,9 +707,9 @@
 		<cfelseif arguments.thestruct.type EQ "aud">
 			<cfquery datasource="#arguments.thestruct.dsn#" name="arguments.thestruct.qryfilelocal">
 			SELECT aud_id, folder_id_r, aud_name_org file_name_org, aud_size, aud_extension orgext, path_to_asset, cloud_url, cloud_url_org, hashtag, aud_meta as metadata
-			FROM #session.hostdbprefix#audios
+			FROM #request.razuna.session.hostdbprefix#audios
 			WHERE aud_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.qryfile.file_id#">
-			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 			</cfquery>
 			<!--- Params for resizeimage --->
 			<cfset arguments.thestruct.thesource = "#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#">
@@ -746,9 +744,9 @@
 		<cfelse>
 			<cfquery datasource="#arguments.thestruct.dsn#" name="arguments.thestruct.qryfilelocal">
 			SELECT file_id, folder_id_r, file_name_org, file_extension orgext, path_to_asset, cloud_url, cloud_url_org, hashtag, file_meta as metadata, file_size
-			FROM #session.hostdbprefix#files
+			FROM #request.razuna.session.hostdbprefix#files
 			WHERE file_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.qryfile.file_id#">
-			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 			</cfquery>
 			<!--- Params for resizeimage --->
 			<cfset arguments.thestruct.thesource = "#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#">
@@ -779,48 +777,48 @@
 		</cfif>
 		<!--- Create a new version number --->
 		<cfquery datasource="#arguments.thestruct.dsn#" name="qryversion">
-		SELECT <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2">NVL<cfelseif application.razuna.thedatabase EQ "mysql">ifnull<cfelseif application.razuna.thedatabase EQ "mssql">isnull</cfif>(max(ver_version),0) + 1 AS newversion
-		FROM #session.hostdbprefix#versions
+		SELECT <cfif request.razuna.application.thedatabase EQ "oracle" OR request.razuna.application.thedatabase EQ "h2">NVL<cfelseif request.razuna.application.thedatabase EQ "mysql">ifnull<cfelseif request.razuna.application.thedatabase EQ "mssql">isnull</cfif>(max(ver_version),0) + 1 AS newversion
+		FROM #request.razuna.session.hostdbprefix#versions
 		WHERE asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.qryfile.file_id#">
 		AND ver_type = <cfqueryparam value="#arguments.thestruct.type#" cfsqltype="cf_sql_varchar">
 		</cfquery>
 		<!--- Create directory --->
-		<cfif application.razuna.storage EQ "local">
+		<cfif request.razuna.application.storage EQ "local">
 			<!--- Create folder with the version --->
-			<cfif !directoryExists("#arguments.thestruct.qrysettings.set2_path_to_assets#/#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.qryfile.file_id#/#qryversion.newversion#")>
-				<cfdirectory action="create" directory="#arguments.thestruct.qrysettings.set2_path_to_assets#/#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.qryfile.file_id#/#qryversion.newversion#" mode="775">
+			<cfif !directoryExists("#arguments.thestruct.qrysettings.set2_path_to_assets#/#request.razuna.session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.qryfile.file_id#/#qryversion.newversion#")>
+				<cfdirectory action="create" directory="#arguments.thestruct.qrysettings.set2_path_to_assets#/#request.razuna.session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.qryfile.file_id#/#qryversion.newversion#" mode="775">
 			</cfif>
 			<!--- Move the file to the versions directory --->
-			<cfif directoryExists("#arguments.thestruct.qrysettings.set2_path_to_assets#/#session.hostid#/#arguments.thestruct.qryfilelocal.path_to_asset#")>
-				<cfinvoke component="global" method="directoryCopy" source="#arguments.thestruct.qrysettings.set2_path_to_assets#/#session.hostid#/#arguments.thestruct.qryfilelocal.path_to_asset#" destination="#arguments.thestruct.qrysettings.set2_path_to_assets#/#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.qryfile.file_id#/#qryversion.newversion#" move="T">
+			<cfif directoryExists("#arguments.thestruct.qrysettings.set2_path_to_assets#/#request.razuna.session.hostid#/#arguments.thestruct.qryfilelocal.path_to_asset#")>
+				<cfinvoke component="global" method="directoryCopy" source="#arguments.thestruct.qrysettings.set2_path_to_assets#/#request.razuna.session.hostid#/#arguments.thestruct.qryfilelocal.path_to_asset#" destination="#arguments.thestruct.qrysettings.set2_path_to_assets#/#request.razuna.session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.qryfile.file_id#/#qryversion.newversion#" move="T">
 			</cfif>
 			<!--- Grab the new version and move it to the old directory --->
 			<cfif directoryExists(arguments.thestruct.qryfile.path)>
 				<!--- Delete existing files in directory --->
-				<cfdirectory action="list" directory="#arguments.thestruct.qrysettings.set2_path_to_assets#/#session.hostid#/#arguments.thestruct.qryfilelocal.path_to_asset#" recurse="false" listinfo="name" name="qFile" />
+				<cfdirectory action="list" directory="#arguments.thestruct.qrysettings.set2_path_to_assets#/#request.razuna.session.hostid#/#arguments.thestruct.qryfilelocal.path_to_asset#" recurse="false" listinfo="name" name="qFile" />
 				<!--- Loop through file query and delete files --->
 				<cfloop query="qFile">
-				    <cffile action="delete" file="#arguments.thestruct.qrysettings.set2_path_to_assets#/#session.hostid#/#arguments.thestruct.qryfilelocal.path_to_asset#/#qFile.name#">
+				    <cffile action="delete" file="#arguments.thestruct.qrysettings.set2_path_to_assets#/#request.razuna.session.hostid#/#arguments.thestruct.qryfilelocal.path_to_asset#/#qFile.name#">
 				</cfloop>
-				<cfinvoke component="global" method="directoryCopy" source="#arguments.thestruct.qryfile.path#" destination="#arguments.thestruct.qrysettings.set2_path_to_assets#/#session.hostid#/#arguments.thestruct.qryfilelocal.path_to_asset#" move="T">
+				<cfinvoke component="global" method="directoryCopy" source="#arguments.thestruct.qryfile.path#" destination="#arguments.thestruct.qrysettings.set2_path_to_assets#/#request.razuna.session.hostid#/#arguments.thestruct.qryfilelocal.path_to_asset#" move="T">
 			</cfif>
 
 			<cfif arguments.thestruct.qryfilelocal.orgext EQ 'PDF'>
 				<!--- Create folder with the version inside razuna_pdf_images folder --->
-				<cfif !directoryExists("#arguments.thestruct.qrysettings.set2_path_to_assets#/#session.hostid#/#arguments.thestruct.qryfilelocal.path_to_asset#/razuna_pdf_images/#qryversion.newversion#")>
-					<cfdirectory action="create" directory="#arguments.thestruct.qrysettings.set2_path_to_assets#/#session.hostid#/#arguments.thestruct.qryfilelocal.path_to_asset#/razuna_pdf_images/#qryversion.newversion#" mode="775">
+				<cfif !directoryExists("#arguments.thestruct.qrysettings.set2_path_to_assets#/#request.razuna.session.hostid#/#arguments.thestruct.qryfilelocal.path_to_asset#/razuna_pdf_images/#qryversion.newversion#")>
+					<cfdirectory action="create" directory="#arguments.thestruct.qrysettings.set2_path_to_assets#/#request.razuna.session.hostid#/#arguments.thestruct.qryfilelocal.path_to_asset#/razuna_pdf_images/#qryversion.newversion#" mode="775">
 				</cfif>
 
 				<!--- move {razuna_pdf_images folder} content {version #}  --->
-				<cfinvoke component="global" method="directoryCopy" source="#arguments.thestruct.qrysettings.set2_path_to_assets#/#session.hostid#/#arguments.thestruct.qryfilelocal.path_to_asset#/razuna_pdf_images/" destination="#arguments.thestruct.qrysettings.set2_path_to_assets#/#session.hostid#/#arguments.thestruct.qryfilelocal.path_to_asset#/razuna_pdf_images/#qryversion.newversion#" fileaction="move" move="T">
+				<cfinvoke component="global" method="directoryCopy" source="#arguments.thestruct.qrysettings.set2_path_to_assets#/#request.razuna.session.hostid#/#arguments.thestruct.qryfilelocal.path_to_asset#/razuna_pdf_images/" destination="#arguments.thestruct.qrysettings.set2_path_to_assets#/#request.razuna.session.hostid#/#arguments.thestruct.qryfilelocal.path_to_asset#/razuna_pdf_images/#qryversion.newversion#" fileaction="move" move="T">
 
 				<!--- move from incoming folder JPGs to {razuna_pdf_images folder} --->
-				<cfinvoke component="global" method="directoryCopy" source="#arguments.thestruct.thepdfdirectory#" destination="#arguments.thestruct.qrysettings.set2_path_to_assets#/#session.hostid#/#arguments.thestruct.qryfilelocal.path_to_asset#/razuna_pdf_images/" fileaction="move"  move="T">
+				<cfinvoke component="global" method="directoryCopy" source="#arguments.thestruct.thepdfdirectory#" destination="#arguments.thestruct.qrysettings.set2_path_to_assets#/#request.razuna.session.hostid#/#arguments.thestruct.qryfilelocal.path_to_asset#/razuna_pdf_images/" fileaction="move"  move="T">
 			</cfif>
 		<!--- Amazon --->
-		<cfelseif application.razuna.storage EQ "amazon">
+		<cfelseif request.razuna.application.storage EQ "amazon">
 			<cfset arguments.thestruct.newversion = qryversion.newversion>
-			<cfset arguments.thestruct.hostid = session.hostid>
+			<cfset arguments.thestruct.hostid = request.razuna.session.hostid>
 			<cfset var mtt = createuuid("")>
 			<!--- Move the file to the versions directory --->
 			<cfthread name="#mtt#" intstruct="#arguments.thestruct#">
@@ -874,7 +872,7 @@
 		</cfif>
 		<!--- Update the record in versions DB --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		INSERT INTO #session.hostdbprefix#versions
+		INSERT INTO #request.razuna.session.hostdbprefix#versions
 		(asset_id_r, ver_version, ver_type,	ver_date_add, ver_who, ver_filename_org, ver_extension, host_id, cloud_url_org,cloud_url_thumb, ver_thumbnail, hashtag, rec_uuid, meta_data
 		<!--- For images --->
 		<cfif arguments.thestruct.type EQ "img">
@@ -898,10 +896,10 @@
 		<cfqueryparam cfsqltype="cf_sql_numeric" value="#qryversion.newversion#">,
 		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.type#">,
 		<cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
-		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.theuserid#">,
+		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#request.razuna.session.theuserid#">,
 		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.qryfilelocal.file_name_org#">,
 		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.qryfilelocal.orgext#">,
-		<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+		<cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">,
 		<cfqueryparam cfsqltype="cf_sql_varchar" value="#cloud_url_version.theurl#">,
 		<cfqueryparam cfsqltype="cf_sql_varchar" value="#cloud_url_version_thumb.theurl#">,
 		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thumbnailname_existing#">,
@@ -938,7 +936,7 @@
 		<!--- Images --->
 		<cfif arguments.thestruct.type EQ "img">
 			<cfquery datasource="#arguments.thestruct.dsn#">
-			UPDATE #session.hostdbprefix#images
+			UPDATE #request.razuna.session.hostdbprefix#images
 			SET
 			img_filename_org = <cfqueryparam value="#arguments.thestruct.qryfile.filename#" cfsqltype="cf_sql_varchar">,
 			img_change_date = <cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
@@ -968,15 +966,15 @@
 			hashtag = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#md5hash#">,
 			img_meta = <cfqueryparam value="#ver_img_meta#" cfsqltype="cf_sql_varchar">,
 			is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
-			<cfif application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon">
+			<cfif request.razuna.application.storage EQ "nirvanix" OR request.razuna.application.storage EQ "amazon">
 				,
 				lucene_key = <cfqueryparam value="#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#" cfsqltype="cf_sql_varchar">
 			</cfif>
 			WHERE img_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.qryfile.file_id#">
-			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 			</cfquery>
 			<!--- Flush Cache --->
-			<cfset variables.cachetoken = resetcachetoken("images")>
+			<cfset variables.cachetoken = resetcachetoken(type="images", hostid=request.razuna.session.hostid)>
 			<!--- Parse keywords and description from XMP --->
 			<cfinvoke component="xmp" method="xmpwritekeydesc" thestruct="#arguments.thestruct#" />
 			<!--- Parse the Metadata from the image --->
@@ -993,7 +991,7 @@
 				<cfset arguments.thestruct.assetpath = arguments.thestruct.qrysettings.set2_path_to_assets>
 				<!--- Store XMP values in DB --->
 				<cfquery datasource="#arguments.thestruct.dsn#">
-				UPDATE #session.hostdbprefix#xmp
+				UPDATE #request.razuna.session.hostdbprefix#xmp
 				SET
 				asset_type = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.type#">,
 				subjectcode = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.iptcsubjectcode#">,
@@ -1034,7 +1032,7 @@
 				xres = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.xres#">,
 				yres = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.yres#">,
 				resunit = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.resunit#">,
-				host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 				WHERE id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.qryfile.file_id#">
 				</cfquery>
 				<cfcatch type="any">
@@ -1044,7 +1042,7 @@
 		<!--- Videos --->
 		<cfelseif arguments.thestruct.type EQ "vid">
 			<cfquery datasource="#arguments.thestruct.dsn#">
-			UPDATE #session.hostdbprefix#videos
+			UPDATE #request.razuna.session.hostdbprefix#videos
 			SET
 			vid_name_org = <cfqueryparam value="#arguments.thestruct.qryfile.filename#" cfsqltype="cf_sql_varchar">,
 			vid_change_date = <cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
@@ -1061,19 +1059,19 @@
 			hashtag = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#md5hash#">,
 			vid_meta = <cfqueryparam value="#ver_vid_meta#" cfsqltype="cf_sql_varchar">,
 			is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
-			<cfif application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon">
+			<cfif request.razuna.application.storage EQ "nirvanix" OR request.razuna.application.storage EQ "amazon">
 				,
 				lucene_key = <cfqueryparam value="#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#" cfsqltype="cf_sql_varchar">
 			</cfif>
 			WHERE vid_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.qryfile.file_id#">
-			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 			</cfquery>
 			<!--- Flush Cache --->
-			<cfset variables.cachetoken = resetcachetoken("videos")>
+			<cfset variables.cachetoken = resetcachetoken(type="videos", hostid=request.razuna.session.hostid)>
 		<!--- Audios --->
 		<cfelseif arguments.thestruct.type EQ "aud">
 			<cfquery datasource="#arguments.thestruct.dsn#">
-			UPDATE #session.hostdbprefix#audios
+			UPDATE #request.razuna.session.hostdbprefix#audios
 			SET
 			aud_name_org = <cfqueryparam value="#arguments.thestruct.qryfile.filename#" cfsqltype="cf_sql_varchar">,
 			aud_change_date = <cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
@@ -1087,19 +1085,19 @@
 			hashtag = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#md5hash#">,
 			aud_meta = <cfqueryparam value="#ver_aud_meta#" cfsqltype="cf_sql_varchar">,
 			is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
-			<cfif application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon">
+			<cfif request.razuna.application.storage EQ "nirvanix" OR request.razuna.application.storage EQ "amazon">
 				,
 				lucene_key = <cfqueryparam value="#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#" cfsqltype="cf_sql_varchar">
 			</cfif>
 			WHERE aud_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.qryfile.file_id#">
-			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 			</cfquery>
 			<!--- Flush Cache --->
-			<cfset variables.cachetoken = resetcachetoken("audios")>
+			<cfset variables.cachetoken = resetcachetoken(type="audios", hostid=request.razuna.session.hostid)>
 		<!--- Documents --->
 		<cfelse>
 			<cfquery datasource="#arguments.thestruct.dsn#">
-			UPDATE #session.hostdbprefix#files
+			UPDATE #request.razuna.session.hostdbprefix#files
 			SET
 			file_name_org = <cfqueryparam value="#arguments.thestruct.qryfile.filename#" cfsqltype="cf_sql_varchar">,
 			file_extension = <cfqueryparam value="#arguments.thestruct.qryfile.extension#" cfsqltype="cf_sql_varchar">,
@@ -1113,17 +1111,17 @@
 			hashtag = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#md5hash#">,
 			file_meta = <cfqueryparam value="#ver_file_meta#" cfsqltype="cf_sql_varchar">,
 			is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
-			<cfif application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon">
+			<cfif request.razuna.application.storage EQ "nirvanix" OR request.razuna.application.storage EQ "amazon">
 				,
 				lucene_key = <cfqueryparam value="#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#" cfsqltype="cf_sql_varchar">
 			</cfif>
 			WHERE file_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.qryfile.file_id#">
-			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 			</cfquery>
 			<!--- Flush Cache --->
-			<cfset variables.cachetoken = resetcachetoken("files")>
+			<cfset variables.cachetoken = resetcachetoken(type="files", hostid=request.razuna.session.hostid)>
 			<!--- RAZ-2475 : Flush folders cache to get the latest thumbnail of PDF --->
-			<cfset variables.cachetoken = resetcachetoken("folders")> <!--- This will update folder view--->
+			<cfset variables.cachetoken = resetcachetoken(type="folders", hostid=request.razuna.session.hostid)> <!--- This will update folder view--->
 			<!--- We need to update the information tab of the popup too. --->
 		</cfif>
 
@@ -1133,17 +1131,17 @@
 		<!--- Add entry into log --->
 		<cfinvoke component="defaults" method="trans" transid="added" returnvariable="added_txt" />
 		<cfinvoke component="defaults" method="trans" transid="new_version" returnvariable="new_version" />
-		<cfset log_assets(theuserid=session.theuserid,logaction='Add',logdesc='#added_txt# #new_version#: #arguments.thestruct.qryfilelocal.file_name_org#',logfiletype='#arguments.thestruct.type#',assetid='#arguments.thestruct.qryfile.file_id#',folderid='#arguments.thestruct.folder_id#')>
+		<cfset log_assets(theuserid=request.razuna.session.theuserid,logaction='Add',logdesc='#added_txt# #new_version#: #arguments.thestruct.qryfilelocal.file_name_org#',logfiletype='#arguments.thestruct.type#',assetid='#arguments.thestruct.qryfile.file_id#',folderid='#arguments.thestruct.folder_id#', hostid=request.razuna.session.hostid)>
 		<cfcatch type="any">
 			<cfdump var="#cfcatch#">
 		</cfcatch>
 	</cftry>
-	<cfset consoleoutput(true)>
+	<cfset consoleoutput(true, true)>
 	<cfset console('VERSIOING DONE')>
 
 
 	<!--- Reset folders cachetoken so preview images update --->
-	<cfset resetcachetoken("folders")>
+	<cfset resetcachetoken(type="folders", hostid=request.razuna.session.hostid)>
 	<!--- Return --->
 	<cfreturn />
 </cffunction>
@@ -1421,31 +1419,31 @@
 		</cfif>
 		<!--- Create a new version number --->
 		<cfquery datasource="#arguments.thestruct.dsn#" name="qryversion">
-		SELECT <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2">NVL<cfelseif application.razuna.thedatabase EQ "mysql">ifnull<cfelseif application.razuna.thedatabase EQ "mssql">isnull</cfif>(max(ver_version),0) + 1 AS newversion
-		FROM #session.hostdbprefix#versions
+		SELECT <cfif request.razuna.application.thedatabase EQ "oracle" OR request.razuna.application.thedatabase EQ "h2">NVL<cfelseif request.razuna.application.thedatabase EQ "mysql">ifnull<cfelseif request.razuna.application.thedatabase EQ "mssql">isnull</cfif>(max(ver_version),0) + 1 AS newversion
+		FROM #request.razuna.session.hostdbprefix#versions
 		WHERE asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 		AND ver_type = <cfqueryparam value="#arguments.thestruct.type#" cfsqltype="cf_sql_varchar">
 		</cfquery>
 
-		<cfif application.razuna.storage EQ "local">
+		<cfif request.razuna.application.storage EQ "local">
 		<!--- Create folder with the version --->
-			<cfif !directoryExists("#arguments.thestruct.qrysettings.set2_path_to_assets#/#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.qryfile.file_id#/#qryversion.newversion#")>
-				<cfdirectory action="create" directory="#arguments.thestruct.qrysettings.set2_path_to_assets#/#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.qryfile.file_id#/#qryversion.newversion#" mode="775">
+			<cfif !directoryExists("#arguments.thestruct.qrysettings.set2_path_to_assets#/#request.razuna.session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.qryfile.file_id#/#qryversion.newversion#")>
+				<cfdirectory action="create" directory="#arguments.thestruct.qrysettings.set2_path_to_assets#/#request.razuna.session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.qryfile.file_id#/#qryversion.newversion#" mode="775">
 			</cfif>
 			<!--- Move the file to the versions directory --->
 			<cfif directoryExists("#arguments.thestruct.qryfile.path#")>
-				<cfinvoke component="global" method="directoryCopy" source="#arguments.thestruct.qryfile.path#" destination="#arguments.thestruct.qrysettings.set2_path_to_assets#/#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.qryfile.file_id#/#qryversion.newversion#" move="T">
+				<cfinvoke component="global" method="directoryCopy" source="#arguments.thestruct.qryfile.path#" destination="#arguments.thestruct.qrysettings.set2_path_to_assets#/#request.razuna.session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.qryfile.file_id#/#qryversion.newversion#" move="T">
 			</cfif>
 			<cfif arguments.thestruct.org_ext EQ 'PDF'>
 				<!--- Create folder with the version inside razuna_pdf_images folder --->
-				<cfif !directoryExists("#arguments.thestruct.qrysettings.set2_path_to_assets#/#session.hostid#/#arguments.thestruct.path_to_asset#/razuna_pdf_images/#qryversion.newversion#")>
-					<cfdirectory action="create" directory="#arguments.thestruct.qrysettings.set2_path_to_assets#/#session.hostid#/#arguments.thestruct.path_to_asset#/razuna_pdf_images/#qryversion.newversion#" mode="775">
+				<cfif !directoryExists("#arguments.thestruct.qrysettings.set2_path_to_assets#/#request.razuna.session.hostid#/#arguments.thestruct.path_to_asset#/razuna_pdf_images/#qryversion.newversion#")>
+					<cfdirectory action="create" directory="#arguments.thestruct.qrysettings.set2_path_to_assets#/#request.razuna.session.hostid#/#arguments.thestruct.path_to_asset#/razuna_pdf_images/#qryversion.newversion#" mode="775">
 				</cfif>
 				<!--- move {razuna_pdf_images folder} content {version #}  --->
-				<cfinvoke component="global" method="directoryCopy" source="#arguments.thestruct.thepdfdirectory#" destination="#arguments.thestruct.qrysettings.set2_path_to_assets#/#session.hostid#/#arguments.thestruct.path_to_asset#/razuna_pdf_images/#qryversion.newversion#" fileaction="move" move="T">
+				<cfinvoke component="global" method="directoryCopy" source="#arguments.thestruct.thepdfdirectory#" destination="#arguments.thestruct.qrysettings.set2_path_to_assets#/#request.razuna.session.hostid#/#arguments.thestruct.path_to_asset#/razuna_pdf_images/#qryversion.newversion#" fileaction="move" move="T">
 			</cfif>
 		<!--- Amazon --->
-		<cfelseif application.razuna.storage EQ "amazon">
+		<cfelseif request.razuna.application.storage EQ "amazon">
 			<cfset arguments.thestruct.newversion = qryversion.newversion>
 			<cfset var mtt = createuuid("")>
 			<!--- Move the file to the versions directory --->
@@ -1490,8 +1488,8 @@
 			<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_version" key="/versions/#arguments.thestruct.type#/#arguments.thestruct.qryfile.file_id#/#arguments.thestruct.newversion#/#arguments.thestruct.qryfile.filename#" awsbucket="#arguments.thestruct.awsbucket#">
 		</cfif>
 		<!--- Update the record in versions DB --->
-		<cfquery datasource="#application.razuna.datasource#">
-		INSERT INTO #session.hostdbprefix#versions
+		<cfquery datasource="#request.razuna.application.datasource#">
+		INSERT INTO #request.razuna.session.hostdbprefix#versions
 		(asset_id_r, ver_version, ver_type,	ver_date_add, ver_who, ver_filename_org, ver_extension, host_id, cloud_url_org,cloud_url_thumb, ver_thumbnail, hashtag, rec_uuid
 		<!--- For images --->
 		<cfif arguments.thestruct.type EQ "img">
@@ -1517,10 +1515,10 @@
 		<cfqueryparam cfsqltype="cf_sql_numeric" value="#qryversion.newversion#">,
 		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.type#">,
 		<cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
-		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.theuserid#">,
+		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#request.razuna.session.theuserid#">,
 		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.filename_org#">,
 		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.org_ext#">,
-		<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+		<cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">,
 		<cfqueryparam cfsqltype="cf_sql_varchar" value="#cloud_url_version.theurl#">,
 		<cfqueryparam cfsqltype="cf_sql_varchar" value="#cloud_url.theurl#">,
 		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thumbnailname_existing#">,
@@ -1562,10 +1560,8 @@
 		</cfif>
 		)
 		</cfquery>
-		<cfset log_assets(theuserid=session.theuserid,logaction='Add',logdesc='Added Old Version: #arguments.thestruct.filename_org#',logfiletype='#arguments.thestruct.type#',assetid='#arguments.thestruct.qryfile.file_id#',folderid='#arguments.thestruct.folder_id#')>
+		<cfset log_assets(theuserid=request.razuna.session.theuserid,logaction='Add',logdesc='Added Old Version: #arguments.thestruct.filename_org#',logfiletype='#arguments.thestruct.type#',assetid='#arguments.thestruct.qryfile.file_id#',folderid='#arguments.thestruct.folder_id#', hostid=request.razuna.session.hostid)>
 		<cfcatch type="any">
-			<!--- <cfset cfcatch.custom_message = "Error in function versions.create">
-			<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/> --->
 		</cfcatch>
 	</cftry>
 </cffunction>

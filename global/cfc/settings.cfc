@@ -23,21 +23,18 @@
 * along with Razuna. If not, see <http://www.razuna.com/licenses/>.
 *
 --->
-<cfcomponent hint="CFC for Settings" extends="extQueryCaching">
+<cfcomponent  extends="extQueryCaching">
 
-<!--- Get the cachetoken for here --->
-<cfif structKeyExists(session, "hostid")>
-	<cfset variables.cachetoken = getcachetoken("settings")>
-<cfelse>
-	<cfset variables.cachetoken = createuuid()>
-</cfif>
+<cffunction name="init" returntype="settings" access="public" output="false">
+	<cfreturn this />
+</cffunction>
 
 <!--- Get all languages for this host for the Settings --->
 <cffunction name="allsettings">
-	<cfquery datasource="#application.razuna.datasource#" name="set">
+	<cfquery datasource="#request.razuna.application.datasource#" name="set">
 	SELECT set_id, set_pref
-	FROM #session.hostdbprefix#settings
-	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	FROM #request.razuna.session.hostdbprefix#settings
+	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 	</cfquery>
 	<cfreturn set>
 </cffunction>
@@ -45,18 +42,20 @@
 <!--- Get md5check value --->
 <cffunction name="getmd5check">
 	<cfset var qry = "">
-	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetoken#getmd5check */ set2_md5check
-	FROM #session.hostdbprefix#settings_2
-	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	<cfset var cachetoken = getcachetoken(type="settings", hostid=request.razuna.session.hostid)>
+	<cfquery datasource="#request.razuna.application.datasource#" name="qry" cachedwithin="1" region="razcache">
+	SELECT /* #cachetoken#getmd5check */ set2_md5check
+	FROM #request.razuna.session.hostdbprefix#settings_2
+	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 	</cfquery>
 	<cfreturn qry.set2_md5check>
 </cffunction>
 
 <!--- Get all settings for this host --->
 <cffunction name="allsettings_2">
-	<cfquery datasource="#application.razuna.datasource#" name="set2" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetoken#allsettings_2 */ set2_id, set2_date_format, set2_date_format_del, set2_meta_author, set2_meta_publisher, set2_meta_copyright,
+	<cfset var cachetoken = getcachetoken(type="settings", hostid=request.razuna.session.hostid)>
+	<cfquery datasource="#request.razuna.application.datasource#" name="set2" cachedwithin="1" region="razcache">
+	SELECT /* #cachetoken#allsettings_2 */ set2_id, set2_date_format, set2_date_format_del, set2_meta_author, set2_meta_publisher, set2_meta_copyright,
 	set2_meta_robots, set2_meta_revisit, set2_url_sp_original, set2_url_sp_thumb, set2_url_sp_comp, set2_url_sp_comp_uw,
 	set2_url_app_server, set2_create_imgfolders_where, set2_img_format, set2_img_thumb_width, set2_img_thumb_heigth,
 	set2_img_comp_width, set2_img_comp_heigth, set2_img_download_org, set2_doc_download, set2_intranet_reg_emails,
@@ -68,9 +67,9 @@
 	set2_url_sp_video_preview, set2_vid_preview_author, set2_vid_preview_copyright, set2_cat_vid_web, set2_cat_vid_intra,
 	set2_create_vidfolders_where, set2_path_to_assets, set2_aws_bucket, set2_aka_url, set2_aka_img, set2_aka_vid, set2_aka_aud, set2_aka_doc,
 	 set2_upc_enabled, set2_rendition_metadata, set2_new_user_email_sub, set2_new_user_email_body
-	FROM #session.hostdbprefix#settings_2
-	WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
-	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	FROM #request.razuna.session.hostdbprefix#settings_2
+	WHERE set2_id = <cfqueryparam value="#request.razuna.application.setid#" cfsqltype="cf_sql_numeric">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 	</cfquery>
 	<cfreturn set2>
 </cffunction>
@@ -78,13 +77,13 @@
 <!--- Get settings from within DAM --->
 <cffunction name="getsettingsfromdam" returntype="query">
 	<!--- Cache --->
-	<cfset var cachetoken = getcachetoken("settings")>
+	<cfset var cachetoken = getcachetoken(type="settings", hostid=request.razuna.session.hostid)>
 	<cfset var qry = "">
-	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
+	<cfquery datasource="#request.razuna.application.datasource#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #cachetoken#getsettingsfromdam */ set2_img_format, set2_img_thumb_width, set2_img_thumb_heigth, set2_date_format, set2_date_format_del, set2_intranet_reg_emails, set2_intranet_reg_emails_sub, set2_md5check,set2_custom_file_ext, set2_email_from, set2_colorspace_rgb, set2_upc_enabled, set2_rendition_metadata, set2_new_user_email_sub, set2_new_user_email_body, set2_meta_export, set2_saml_xmlpath_email,set2_saml_xmlpath_password, set2_saml_httpredirect, set2_rendition_search
-	FROM #session.hostdbprefix#settings_2
-	WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
-	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	FROM #request.razuna.session.hostdbprefix#settings_2
+	WHERE set2_id = <cfqueryparam value="#request.razuna.application.setid#" cfsqltype="cf_sql_numeric">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 	</cfquery>
 	<cfreturn qry>
 </cffunction>
@@ -93,8 +92,8 @@
 <cffunction name="setsettingsfromdam" returntype="void">
 	<cfargument name="thestruct" type="Struct">
 	<!--- Update --->
-	<cfquery datasource="#application.razuna.datasource#">
-	UPDATE #session.hostdbprefix#settings_2
+	<cfquery datasource="#request.razuna.application.datasource#">
+	UPDATE #request.razuna.session.hostdbprefix#settings_2
 	SET
 	set2_img_format = <cfqueryparam value="#arguments.thestruct.set2_img_format#" cfsqltype="cf_sql_varchar">,
 	set2_img_thumb_width = <cfif isnumeric(arguments.thestruct.set2_img_thumb_width)><cfqueryparam value="#arguments.thestruct.set2_img_thumb_width#" cfsqltype="cf_sql_numeric"><cfelse>null</cfif>,
@@ -110,86 +109,91 @@
 	set2_saml_xmlpath_password = <cfqueryparam value="#arguments.thestruct.set2_saml_password#" cfsqltype="cf_sql_varchar">,
 	set2_saml_httpredirect = <cfqueryparam value="#arguments.thestruct.set2_saml_redirect#" cfsqltype="cf_sql_varchar">,
 	set2_rendition_search = <cfqueryparam value="#arguments.thestruct.set2_rendition_search#" cfsqltype="cf_sql_varchar">
-	WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
-	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	WHERE set2_id = <cfqueryparam value="#request.razuna.application.setid#" cfsqltype="cf_sql_numeric">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 	</cfquery>
 	<!--- Flush --->
-	<cfset variables.cachetoken = resetcachetoken("settings")>
+	<cfset resetcachetoken(type="settings", hostid=request.razuna.session.hostid)>
 </cffunction>
 
 <!--- Settings for Globals Preferences --->
 <cffunction name="prefs_global">
+	<cfset var cachetoken = getcachetoken(type="settings", hostid=request.razuna.session.hostid)>
 	<!--- Get host --->
-	<cfset x.host_id = session.hostid>
+	<cfset x.host_id = request.razuna.session.hostid>
 	<cfinvoke component="hosts" method="getdetail" thestruct="#x#" returnvariable="qry_host" />
 	<cfset var qry = "">
-	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetoken#prefs_global */ SET2_DATE_FORMAT, SET2_DATE_FORMAT_DEL, SET2_EMAIL_SERVER, SET2_EMAIL_FROM, SET2_EMAIL_SMTP_USER,
+	<cfquery datasource="#request.razuna.application.datasource#" name="qry" cachedwithin="1" region="razcache">
+	SELECT /* #cachetoken#prefs_global */ SET2_DATE_FORMAT, SET2_DATE_FORMAT_DEL, SET2_EMAIL_SERVER, SET2_EMAIL_FROM, SET2_EMAIL_SMTP_USER,
 	SET2_EMAIL_SMTP_PASSWORD, SET2_EMAIL_SERVER_PORT, SET2_EMAIL_USE_SSL, SET2_EMAIL_USE_TLS
 	FROM #qry_host.host_shard_group#settings_2
-	WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
-	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	WHERE set2_id = <cfqueryparam value="#request.razuna.application.setid#" cfsqltype="cf_sql_numeric">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 	</cfquery>
 	<cfreturn qry>
 </cffunction>
 
 <!--- Settings for Meta --->
 <cffunction name="prefs_meta">
+	<cfset var cachetoken = getcachetoken(type="settings", hostid=request.razuna.session.hostid)>
 	<!--- Get host --->
-	<cfset x.host_id = session.hostid>
+	<cfset x.host_id = request.razuna.session.hostid>
 	<cfinvoke component="hosts" method="getdetail" thestruct="#x#" returnvariable="qry_host" />
 	<cfset var qry = "">
-	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetoken#prefs_meta */ set2_meta_author, set2_meta_publisher, set2_meta_copyright, set2_meta_robots, set2_meta_revisit
+	<cfquery datasource="#request.razuna.application.datasource#" name="qry" cachedwithin="1" region="razcache">
+	SELECT /* #cachetoken#prefs_meta */ set2_meta_author, set2_meta_publisher, set2_meta_copyright, set2_meta_robots, set2_meta_revisit
 	FROM #qry_host.host_shard_group#settings_2
-	WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
-	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	WHERE set2_id = <cfqueryparam value="#request.razuna.application.setid#" cfsqltype="cf_sql_numeric">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 	</cfquery>
 	<cfreturn qry>
 </cffunction>
 
 <!--- Settings for DAM --->
 <cffunction name="prefs_dam">
+	<cfset var cachetoken = getcachetoken(type="settings", hostid=request.razuna.session.hostid)>
 	<!--- Get host --->
-	<cfset x.host_id = session.hostid>
+	<cfset x.host_id = request.razuna.session.hostid>
 	<cfinvoke component="hosts" method="getdetail" thestruct="#x#" returnvariable="qry_host" />
 	<cfset var qry = "">
-	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetoken#prefs_dam */ set2_intranet_gen_download, set2_doc_download, set2_img_download_org, set2_intranet_reg_emails,
+	<cfquery datasource="#request.razuna.application.datasource#" name="qry" cachedwithin="1" region="razcache">
+	SELECT /* #cachetoken#prefs_dam */ set2_intranet_gen_download, set2_doc_download, set2_img_download_org, set2_intranet_reg_emails,
 	set2_intranet_reg_emails_sub, set2_ora_path_incoming, set2_ora_path_incoming_batch, set2_ora_path_outgoing,
 	set2_path_to_assets
 	FROM #qry_host.host_shard_group#settings_2
-	WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
-	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	WHERE set2_id = <cfqueryparam value="#request.razuna.application.setid#" cfsqltype="cf_sql_numeric">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 	</cfquery>
 	<cfreturn qry>
 </cffunction>
 
 <!--- Settings for Website --->
 <cffunction name="prefs_web">
+	<cfset var cachetoken = getcachetoken(type="settings", hostid=request.razuna.session.hostid)>
 	<cfset var qry = "">
-	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetoken#prefs_web */ set2_url_website, set2_payment_cc, set2_payment_cc_cards, set2_payment_bill, set2_payment_pod, set2_payment_pre, set2_payment_paypal
-	FROM #session.hostdbprefix#settings_2
-	WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
-	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	<cfquery datasource="#request.razuna.application.datasource#" name="qry" cachedwithin="1" region="razcache">
+	SELECT /* #cachetoken#prefs_web */ set2_url_website, set2_payment_cc, set2_payment_cc_cards, set2_payment_bill, set2_payment_pod, set2_payment_pre, set2_payment_paypal
+	FROM #request.razuna.session.hostdbprefix#settings_2
+	WHERE set2_id = <cfqueryparam value="#request.razuna.application.setid#" cfsqltype="cf_sql_numeric">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 	</cfquery>
 	<cfreturn qry>
 </cffunction>
 
 <!--- Settings for Image --->
 <cffunction name="prefs_image">
+	<cfset var cachetoken = getcachetoken(type="settings", hostid=request.razuna.session.hostid)>
 	<cfset var qry = "">
-	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetoken#prefs_image */ set2_create_imgfolders_where, set2_cat_intra, set2_cat_web,
+	<cfquery datasource="#request.razuna.application.datasource#" name="qry" cachedwithin="1" region="razcache">
+	SELECT /* #cachetoken#prefs_image */ set2_create_imgfolders_where, set2_cat_intra, set2_cat_web,
 	set2_img_format, set2_img_thumb_width, set2_img_thumb_heigth, set2_img_comp_width, set2_img_comp_heigth,
 	set2_colorspace_rgb, set2_rendition_metadata
-	FROM #session.hostdbprefix#settings_2
-	WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
-	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	FROM #request.razuna.session.hostdbprefix#settings_2
+	WHERE set2_id = <cfqueryparam value="#request.razuna.application.setid#" cfsqltype="cf_sql_numeric">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 	</cfquery>
 	<!--- The tool paths --->
-	<cfquery datasource="#application.razuna.datasource#" name="qrypaths">
+	<cfquery datasource="#request.razuna.application.datasource#" name="qrypaths">
 	SELECT thetool, thepath
 	FROM tools
 	</cfquery>
@@ -208,15 +212,16 @@
 
 <!--- Settings for Video --->
 <cffunction name="prefs_video">
+	<cfset var cachetoken = getcachetoken(type="settings", hostid=request.razuna.session.hostid)>
 	<cfset var qry = "">
-	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetoken#prefs_video */ set2_create_vidfolders_where, set2_cat_vid_intra, set2_cat_vid_web, <!--- set2_vid_preview_width, set2_vid_preview_heigth, set2_vid_preview_time, set2_vid_preview_start, ---> set2_vid_preview_author, set2_vid_preview_copyright, set2_rendition_metadata
-	FROM #session.hostdbprefix#settings_2
-	WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
-	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	<cfquery datasource="#request.razuna.application.datasource#" name="qry" cachedwithin="1" region="razcache">
+	SELECT /* #cachetoken#prefs_video */ set2_create_vidfolders_where, set2_cat_vid_intra, set2_cat_vid_web, <!--- set2_vid_preview_width, set2_vid_preview_heigth, set2_vid_preview_time, set2_vid_preview_start, ---> set2_vid_preview_author, set2_vid_preview_copyright, set2_rendition_metadata
+	FROM #request.razuna.session.hostdbprefix#settings_2
+	WHERE set2_id = <cfqueryparam value="#request.razuna.application.setid#" cfsqltype="cf_sql_numeric">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 	</cfquery>
 	<!--- The tool paths --->
-	<cfquery datasource="#application.razuna.datasource#" name="qrypaths">
+	<cfquery datasource="#request.razuna.application.datasource#" name="qrypaths">
 	SELECT thetool, thepath
 	FROM tools
 	WHERE thetool = <cfqueryparam value="ffmpeg" cfsqltype="CF_SQL_VARCHAR">
@@ -227,26 +232,27 @@
 
 <!--- Settings for Oracle --->
 <cffunction name="prefs_oracle">
+	<cfset var cachetoken = getcachetoken(type="settings", hostid=request.razuna.session.hostid)>
 	<cfset var qry = "">
-	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetoken#prefs_oracle */ set2_url_app_server, set2_ora_path_internal, set2_url_sp_original, set2_url_sp_thumb, set2_url_sp_comp, set2_url_sp_comp_uw, set2_url_sp_video, set2_url_sp_video_preview, set2_ora_path_incoming, set2_ora_path_incoming_batch, set2_ora_path_outgoing
-	FROM #session.hostdbprefix#settings_2
-	WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
-	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	<cfquery datasource="#request.razuna.application.datasource#" name="qry" cachedwithin="1" region="razcache">
+	SELECT /* #cachetoken#prefs_oracle */ set2_url_app_server, set2_ora_path_internal, set2_url_sp_original, set2_url_sp_thumb, set2_url_sp_comp, set2_url_sp_comp_uw, set2_url_sp_video, set2_url_sp_video_preview, set2_ora_path_incoming, set2_ora_path_incoming_batch, set2_ora_path_outgoing
+	FROM #request.razuna.session.hostdbprefix#settings_2
+	WHERE set2_id = <cfqueryparam value="#request.razuna.application.setid#" cfsqltype="cf_sql_numeric">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 	</cfquery>
 	<cfreturn qry>
 </cffunction>
 
 <!--- Settings for Storage --->
 <cffunction name="prefs_storage">
-	<cfset variables.cachetoken = getcachetoken("settings")>
+	<cfset var cachetoken = getcachetoken(type="settings", hostid=request.razuna.session.hostid)>
 	<cfset var qry = "">
-	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetoken#prefs_storage */
+	<cfquery datasource="#request.razuna.application.datasource#" name="qry" cachedwithin="1" region="razcache">
+	SELECT /* #cachetoken#prefs_storage */
 	set2_nirvanix_name, set2_nirvanix_pass, set2_aws_bucket, set2_img_format,
 	set2_aka_url, set2_aka_img, set2_aka_vid, set2_aka_aud, set2_aka_doc
-	FROM #session.hostdbprefix#settings_2
-	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	FROM #request.razuna.session.hostdbprefix#settings_2
+	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 	</cfquery>
 	<cfreturn qry>
 </cffunction>
@@ -254,7 +260,7 @@
 <!--- Settings for File Types --->
 <cffunction name="prefs_types">
 	<cfset var qry = "">
-	<cfquery datasource="#application.razuna.datasource#" name="qry">
+	<cfquery datasource="#request.razuna.application.datasource#" name="qry">
 	SELECT type_id, type_type, type_mimecontent, type_mimesubcontent
 	FROM file_types
 	ORDER BY type_id
@@ -265,7 +271,7 @@
 <!--- Add File Type --->
 <cffunction name="prefs_types_add">
 	<cfargument name="thestruct" type="Struct">
-	<cfquery datasource="#application.razuna.datasource#">
+	<cfquery datasource="#request.razuna.application.datasource#">
 	INSERT INTO file_types
 	(type_id, type_type, type_mimecontent, type_mimesubcontent)
 	VALUES(
@@ -281,7 +287,7 @@
 <!--- Remove File Type --->
 <cffunction name="prefs_types_del">
 	<cfargument name="thestruct" type="Struct">
-	<cfquery datasource="#application.razuna.datasource#">
+	<cfquery datasource="#request.razuna.application.datasource#">
 	DELETE FROM file_types
 	WHERE type_id = <cfqueryparam value="#arguments.thestruct.type_id#" cfsqltype="cf_sql_varchar">
 	</cfquery>
@@ -291,7 +297,7 @@
 <!--- Update File Type --->
 <cffunction name="prefs_types_update">
 	<cfargument name="thestruct" type="Struct">
-	<cfquery datasource="#application.razuna.datasource#">
+	<cfquery datasource="#request.razuna.application.datasource#">
 	UPDATE file_types
 	SET
 	type_id = <cfqueryparam value="#arguments.thestruct.type_id#" cfsqltype="cf_sql_varchar">,
@@ -306,10 +312,11 @@
 <!--- Languages: Get Languages --->
 <cffunction name="lang_get">
 	<cfset var qry = "">
-	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetoken#lang_get */ lang_id, lang_name, lang_active
-	FROM #session.hostdbprefix#languages
-	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	<cfset var cachetoken = getcachetoken(type="settings", hostid=request.razuna.session.hostid)>
+	<cfquery datasource="#request.razuna.application.datasource#" name="qry" cachedwithin="1" region="razcache">
+	SELECT /* #cachetoken#lang_get */ lang_id, lang_name, lang_active
+	FROM #request.razuna.session.hostdbprefix#languages
+	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 	ORDER BY lang_id
 	</cfquery>
 	<!--- Return --->
@@ -319,6 +326,7 @@
 <!--- Languages: Update Languages --->
 <cffunction name="lang_get_langs">
 	<cfargument name="thestruct" type="Struct">
+	<cfset var cachetoken = getcachetoken(type="settings", hostid=request.razuna.session.hostid)>
 	<cfset var qry = "">
 	<!--- Get the xml files in the translation dir --->
 	<cfdirectory action="list" directory="#arguments.thestruct.thepath#/global/translations" name="thelangs" />
@@ -338,36 +346,36 @@
 			<cfinvoke component="defaults" method="trans" transid="thisid" thetransfile="#name#" returnvariable="langid">
 		</cfif>
 		<!--- Check for existing record --->
-		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
-		SELECT /* #variables.cachetoken#lang_get_langs */ lang_id, lang_name
-		FROM #session.hostdbprefix#languages
-		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		<cfquery datasource="#request.razuna.application.datasource#" name="qry" cachedwithin="1" region="razcache">
+		SELECT /* #cachetoken#lang_get_langs */ lang_id, lang_name
+		FROM #request.razuna.session.hostdbprefix#languages
+		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 		AND lang_id = <cfqueryparam value="#langid#" cfsqltype="cf_sql_numeric">
 		</cfquery>
 		<!--- RAZ-544: If the lang name is numeric we change this to the name value --->
 		<cfif isnumeric(qry.lang_name) AND qry.recordcount NEQ 0>
-			<cfquery datasource="#application.razuna.datasource#">
-			UPDATE #session.hostdbprefix#languages
+			<cfquery datasource="#request.razuna.application.datasource#">
+			UPDATE #request.razuna.session.hostdbprefix#languages
 			SET lang_name = <cfqueryparam value="#ucase(left(thislang,1))##mid(thislang,2,20)#" cfsqltype="cf_sql_varchar">
-			WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 			AND lang_id = <cfqueryparam value="#langid#" cfsqltype="cf_sql_numeric">
 			</cfquery>
-			<cfset variables.cachetoken = resetcachetoken("settings")>
+			<cfset resetcachetoken(type="settings", hostid=request.razuna.session.hostid)>
 		</cfif>
 		<!--- If no record found do an insert --->
 		<cfif qry.recordcount EQ 0>
-			<cfquery datasource="#application.razuna.datasource#">
-			INSERT INTO #session.hostdbprefix#languages
+			<cfquery datasource="#request.razuna.application.datasource#">
+			INSERT INTO #request.razuna.session.hostdbprefix#languages
 			(lang_id, lang_name, lang_active, host_id, rec_uuid)
 			VALUES(
 			<cfqueryparam value="#langid#" cfsqltype="cf_sql_numeric">,
 			<cfqueryparam value="#ucase(left(thislang,1))##mid(thislang,2,20)#" cfsqltype="cf_sql_varchar">,
 			<cfqueryparam value="f" cfsqltype="cf_sql_varchar">,
-			<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+			<cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">,
 			<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 			)
 			</cfquery>
-			<cfset variables.cachetoken = resetcachetoken("settings")>
+			<cfset resetcachetoken(type="settings", hostid=request.razuna.session.hostid)>
 		</cfif>
 	</cfloop>
 	<!--- Return --->
@@ -378,10 +386,10 @@
 <cffunction name="lang_save">
 	<cfargument name="thestruct" type="Struct">
 	<!--- Set the active field to f on all languages --->
-	<cfquery datasource="#application.razuna.datasource#">
-	UPDATE #session.hostdbprefix#languages
+	<cfquery datasource="#request.razuna.application.datasource#">
+	UPDATE #request.razuna.session.hostdbprefix#languages
 	SET lang_active = <cfqueryparam value="f" cfsqltype="cf_sql_varchar">
-	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 	</cfquery>
 	<!--- Loop over the fields --->
 	<cfloop delimiters="," index="myform" list="#arguments.thestruct.fieldnames#">
@@ -389,27 +397,28 @@
 			<!--- Get the ID --->
 			<cfset thefield=ReplaceNoCase(myform, "lang_active_", "", "ALL")>
 			<!--- Update DB --->
-			<cfquery datasource="#application.razuna.datasource#">
-			UPDATE #session.hostdbprefix#languages
+			<cfquery datasource="#request.razuna.application.datasource#">
+			UPDATE #request.razuna.session.hostdbprefix#languages
 			SET lang_active = <cfqueryparam value="t" cfsqltype="cf_sql_varchar">
 			WHERE lang_id = <cfqueryparam value="#thefield#" cfsqltype="cf_sql_numeric">
-			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 			</cfquery>
 		</cfif>
 	</cfloop>
-	<cfset variables.cachetoken = resetcachetoken("settings")>
+	<cfset resetcachetoken(type="settings", hostid=request.razuna.session.hostid)>
 	<!--- Return --->
 	<cfreturn />
 </cffunction>
 
 <!--- Labels: get --->
 <cffunction name="get_label_set">
+	<cfset var cachetoken = getcachetoken(type="settings", hostid=request.razuna.session.hostid)>
 	<cfset var qry = "">
 	<!--- Set the active field to f on all languages --->
-	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetoken#get_label_set */ set2_labels_users
-	FROM #session.hostdbprefix#settings_2
-	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	<cfquery datasource="#request.razuna.application.datasource#" name="qry" cachedwithin="1" region="razcache">
+	SELECT /* #cachetoken#get_label_set */ set2_labels_users
+	FROM #request.razuna.session.hostdbprefix#settings_2
+	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 	</cfquery>
 	<!--- Return --->
 	<cfreturn qry />
@@ -419,28 +428,29 @@
 <cffunction name="set_label_set">
 	<cfargument name="label_users" type="string">
 	<!--- Set the active field to f on all languages --->
-	<cfquery datasource="#application.razuna.datasource#">
-	UPDATE #session.hostdbprefix#settings_2
+	<cfquery datasource="#request.razuna.application.datasource#">
+	UPDATE #request.razuna.session.hostdbprefix#settings_2
 	SET
 	<cfif arguments.label_users NEQ 'null'>
 		set2_labels_users = <cfqueryparam value="#arguments.label_users#" cfsqltype="cf_sql_varchar"  >
 	<cfelse>
 		set2_labels_users = <cfqueryparam value="" cfsqltype="cf_sql_varchar"  null="true" >
 	</cfif>
-	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 	</cfquery>
 	<!--- Flush --->
-	<cfset variables.cachetoken = resetcachetoken("settings")>
+	<cfset resetcachetoken(type="settings", hostid=request.razuna.session.hostid)>
 	<!--- Return --->
 	<cfreturn />
 </cffunction>
 
 <!--- GET GLOBAL Settings --->
 <cffunction name="get_global" access="remote" returnType="query">
+	<cfset var cachetoken = getcachetoken(type="settings", hostid=request.razuna.session.hostid)>
 	<cfset var qry = "">
 	<!--- Select --->
 	<cfquery datasource="razuna_default" name="qry" region="razcache" cachedwithin="1">
-	SELECT /* #variables.cachetoken#get_global */
+	SELECT /* #cachetoken#get_global */
 	conf_database, conf_schema, conf_datasource, conf_storage, conf_aka_token, conf_aws_access_key, conf_aws_secret_access_key, conf_aws_location, conf_rendering_farm, conf_aws_tenant_in_one_bucket_name, conf_aws_tenant_in_one_bucket_enable, conf_url_assets
 	FROM razuna_config
 	</cfquery>
@@ -449,7 +459,7 @@
 </cffunction>
 
 <!--- GET Tools --->
-<cffunction name="get_tools">
+<cffunction name="get_tools" access="public" returntype="struct">
 	<!--- Param --->
 	<cfset qry = structnew()>
 	<cfparam default="" name="qry.imagemagick">
@@ -459,7 +469,7 @@
 	<cfparam default="" name="qry.mp4box">
 	<cfparam default="" name="qry.ghostscript">
 	<!--- Query --->
-	<cfquery datasource="#application.razuna.datasource#" name="qrypaths">
+	<cfquery datasource="#request.razuna.application.datasource#" name="qrypaths">
 	SELECT thetool, thepath
 	FROM tools
 	</cfquery>
@@ -550,36 +560,36 @@
 	</cfif>
 	<!--- Save in global setting the rendering farm location --->
 	<cfif StructKeyExists(arguments.thestruct, "rendering_farm_location")>
-		<cfquery datasource="#application.razuna.datasource#">
-		DELETE FROM #session.hostdbprefix#settings
+		<cfquery datasource="#request.razuna.application.datasource#">
+		DELETE FROM #request.razuna.session.hostdbprefix#settings
 		WHERE set_id = <cfqueryparam value="rendering_farm_location" cfsqltype="cf_sql_varchar">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 		</cfquery>
-		<cfquery datasource="#application.razuna.datasource#">
-		INSERT INTO #session.hostdbprefix#settings
+		<cfquery datasource="#request.razuna.application.datasource#">
+		INSERT INTO #request.razuna.session.hostdbprefix#settings
 		(set_pref, set_id, host_id, rec_uuid)
 		VALUES(
 		<cfqueryparam value="#arguments.thestruct.rendering_farm_location#" cfsqltype="cf_sql_varchar">,
 		<cfqueryparam value="rendering_farm_location" cfsqltype="cf_sql_varchar">,
-		<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+		<cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">,
 		<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 		)
 		</cfquery>
 	</cfif>
 	<!--- Save in global setting the rendering farm server --->
 	<cfif StructKeyExists(arguments.thestruct, "rendering_farm_server")>
-		<cfquery datasource="#application.razuna.datasource#">
-		DELETE FROM #session.hostdbprefix#settings
+		<cfquery datasource="#request.razuna.application.datasource#">
+		DELETE FROM #request.razuna.session.hostdbprefix#settings
 		WHERE set_id = <cfqueryparam value="rendering_farm_server" cfsqltype="cf_sql_varchar">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 		</cfquery>
-		<cfquery datasource="#application.razuna.datasource#">
-		INSERT INTO #session.hostdbprefix#settings
+		<cfquery datasource="#request.razuna.application.datasource#">
+		INSERT INTO #request.razuna.session.hostdbprefix#settings
 		(set_pref, set_id, host_id, rec_uuid)
 		VALUES(
 		<cfqueryparam value="#arguments.thestruct.rendering_farm_server#" cfsqltype="cf_sql_varchar">,
 		<cfqueryparam value="rendering_farm_server" cfsqltype="cf_sql_varchar">,
-		<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+		<cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">,
 		<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 		)
 		</cfquery>
@@ -590,12 +600,12 @@
 		<!--- Filter only taskserver --->
 		<cfif ts CONTAINS "taskserver">
 			<!--- First remove all values in DB --->
-			<cfquery datasource="#application.razuna.datasource#">
+			<cfquery datasource="#request.razuna.application.datasource#">
 			DELETE FROM options
 			WHERE opt_id = <cfqueryparam value="#ts#" cfsqltype="cf_sql_varchar">
 			</cfquery>
 			<!--- Insert --->
-			<cfquery datasource="#application.razuna.datasource#">
+			<cfquery datasource="#request.razuna.application.datasource#">
 			INSERT INTO options
 			(opt_id, opt_value, rec_uuid)
 			VALUES (
@@ -609,7 +619,7 @@
 	<!--- Update options --->
 	<cfset set_options_global(opt_id="conf_storage", opt_value=arguments.thestruct.conf_storage)>
 	<!--- Reset cache --->
-	<cfset variables.cachetoken = resetcachetoken("settings")>
+	<cfset resetcachetoken(type="settings", hostid=request.razuna.session.hostid)>
 </cffunction>
 
 <!--- Update TOOLS --->
@@ -619,7 +629,7 @@
 	<cfloop collection="#arguments.thestruct#" item="myform">
 		<cfif myform CONTAINS "imagemagick" OR myform CONTAINS "exiftool" OR myform CONTAINS "ffmpeg" OR myform CONTAINS "dcraw" OR myform CONTAINS "mp4box" OR myform CONTAINS "ghostscript">
 			<!--- Select --->
-			<cfquery datasource="#application.razuna.datasource#" name="x">
+			<cfquery datasource="#request.razuna.application.datasource#" name="x">
 			SELECT thetool
 			FROM tools
 			WHERE thetool = <cfqueryparam value="#myform#" cfsqltype="cf_sql_varchar">
@@ -627,14 +637,14 @@
 			<!--- Check if here or not --->
 			<cfif x.recordcount EQ 1>
 				<!--- Update --->
-				<cfquery datasource="#application.razuna.datasource#">
+				<cfquery datasource="#request.razuna.application.datasource#">
 				UPDATE tools
 				SET thepath = <cfqueryparam value="#arguments.thestruct[myform]#" cfsqltype="cf_sql_varchar">
 				WHERE thetool = <cfqueryparam value="#myform#" cfsqltype="cf_sql_varchar">
 				</cfquery>
 			<cfelse>
 				<!--- Insert --->
-				<cfquery datasource="#application.razuna.datasource#">
+				<cfquery datasource="#request.razuna.application.datasource#">
 				INSERT INTO tools
 				(thetool, thepath)
 				VALUES(
@@ -648,53 +658,53 @@
 </cffunction>
 
 <!--- Save Settings --->
-<cffunction hint="Save Settings" name="update">
+<cffunction name="update" access="public">
 	<cfargument name="thestruct" type="Struct">
 		<!--- Get host --->
-		<cfset x.host_id = session.hostid>
+		<cfset x.host_id = request.razuna.session.hostid>
 		<cfinvoke component="hosts" method="getdetail" thestruct="#x#" returnvariable="qry_host" />
 		<!--- save all settings which are language relevant. loop trough the form fields which begin with set_ --->
 		<cfloop collection="#arguments.thestruct#" item="myform">
 			<cfif #myform# CONTAINS "set_">
-				<cfquery datasource="#application.razuna.datasource#">
+				<cfquery datasource="#request.razuna.application.datasource#">
 				DELETE FROM #qry_host.host_shard_group#settings
 				WHERE set_id = <cfqueryparam value="#myform#" cfsqltype="cf_sql_varchar">
-				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 				</cfquery>
-				<cfquery datasource="#application.razuna.datasource#">
+				<cfquery datasource="#request.razuna.application.datasource#">
 				INSERT INTO #qry_host.host_shard_group#settings
 				(set_pref, set_id, host_id, rec_uuid)
 				VALUES(
 				<cfqueryparam value="#form["#myform#"]#" cfsqltype="cf_sql_varchar">,
 				<cfqueryparam value="#myform#" cfsqltype="cf_sql_varchar">,
-				<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+				<cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">,
 				<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 				)
 				</cfquery>
 			</cfif>
 		</cfloop>
 		<!--- Check that there is a record with ID 1 if not then do an insert --->
-		<cfquery datasource="#application.razuna.datasource#" name="ishere">
+		<cfquery datasource="#request.razuna.application.datasource#" name="ishere">
 		SELECT set2_id
 		FROM #qry_host.host_shard_group#settings_2
 		WHERE set2_id = <cfqueryparam value="1" cfsqltype="cf_sql_numeric">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 		</cfquery>
 		<cfif ishere.recordcount EQ 0>
-			<cfquery datasource="#application.razuna.datasource#" name="ishere">
+			<cfquery datasource="#request.razuna.application.datasource#" name="ishere">
 			INSERT INTO #qry_host.host_shard_group#settings_2
 			(set2_id, host_id, rec_uuid)
 			VALUES
 			(
 			<cfqueryparam value="1" cfsqltype="cf_sql_numeric">,
-			<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+			<cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">,
 			<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 			)
 			</cfquery>
 		</cfif>
 		<!--- Update Settings_2 --->
 		<cfset commad = "F">
-		<cfquery datasource="#application.razuna.datasource#">
+		<cfquery datasource="#request.razuna.application.datasource#">
 		UPDATE #qry_host.host_shard_group#settings_2
 		SET
 		<cfif StructKeyExists(#arguments.thestruct#, "set2_date_format")>
@@ -965,15 +975,15 @@
 			<cfif commad EQ "T">,</cfif>set2_aka_doc = <cfqueryparam value="#arguments.thestruct.set2_aka_doc#" cfsqltype="cf_sql_varchar">
 			<cfset commad = "T">
 		</cfif>
-		WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		WHERE set2_id = <cfqueryparam value="#request.razuna.application.setid#" cfsqltype="cf_sql_numeric">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 		</cfquery>
 	<!--- Flush --->
-	<cfset variables.cachetoken = resetcachetoken("settings")>
+	<cfset resetcachetoken(type="settings", hostid=request.razuna.session.hostid)>
 </cffunction>
 
 <!--- FUNCTION: UPLOAD --->
-<cffunction hint="Upload" name="upload" access="public" output="false">
+<cffunction  name="upload" access="public" output="false">
 	<cfargument name="thestruct" type="Struct">
 	<!--- Param --->
 	<cfparam name="arguments.thestruct.loginimg" default="false" />
@@ -988,17 +998,17 @@
 	</cfif>
 
 	<!--- Just remove any previous directory (like this we prevent having more the one image) --->
-	<cfif directoryExists("#arguments.thestruct.thepathup#/global/host/#theimgpath#/#session.hostid#")>
-		<cfdirectory action="delete" directory="#arguments.thestruct.thepathup#global/host/#theimgpath#/#session.hostid#" recurse="true" />
+	<cfif directoryExists("#arguments.thestruct.thepathup#/global/host/#theimgpath#/#request.razuna.session.hostid#")>
+		<cfdirectory action="delete" directory="#arguments.thestruct.thepathup#global/host/#theimgpath#/#request.razuna.session.hostid#" recurse="true" />
 	</cfif>
 
-	<cfif !directoryexists("#arguments.thestruct.thepathup#global/host/#theimgpath#/#session.hostid#")>
+	<cfif !directoryexists("#arguments.thestruct.thepathup#global/host/#theimgpath#/#request.razuna.session.hostid#")>
 		 <!--- Create directory if not there already to hold this logo --->
-		<cfdirectory action="create" directory="#arguments.thestruct.thepathup#global/host/#theimgpath#/#session.hostid#" mode="775">
+		<cfdirectory action="create" directory="#arguments.thestruct.thepathup#global/host/#theimgpath#/#request.razuna.session.hostid#" mode="775">
 	</cfif>
 
 	<!---  Upload file --->
-	<cffile action="UPLOAD" filefield="#arguments.thestruct.thefield#" destination="#arguments.thestruct.thepathup#global/host/#theimgpath#/#session.hostid#" result="result" nameconflict="overwrite" mode="775">
+	<cffile action="UPLOAD" filefield="#arguments.thestruct.thefield#" destination="#arguments.thestruct.thepathup#global/host/#theimgpath#/#request.razuna.session.hostid#" result="result" nameconflict="overwrite" mode="775">
 	<!--- Set variables that show the file in the GUI --->
 	<cfset this.thefilename = result.serverFileName>
 	<!--- Get Size --->
@@ -1015,49 +1025,49 @@
 	<cfset var s = structNew()>
 	<!--- just remove any previous directory (like this we prevent having more the one image) --->
 	<cftry>
-		<cfdirectory action="delete" directory="#arguments.thestruct.thepathup#global/host/watermark/#session.hostid#/#arguments.thestruct.wm_temp_id#" recurse="true" />
+		<cfdirectory action="delete" directory="#arguments.thestruct.thepathup#global/host/watermark/#request.razuna.session.hostid#/#arguments.thestruct.wm_temp_id#" recurse="true" />
 		<cfcatch type="any"></cfcatch>
 	</cftry>
 	<!--- Create directory if not there already to hold this logo --->
 	<cftry>
-		<cfdirectory action="create" directory="#arguments.thestruct.thepathup#global/host/watermark/#session.hostid#/#arguments.thestruct.wm_temp_id#" mode="775">
+		<cfdirectory action="create" directory="#arguments.thestruct.thepathup#global/host/watermark/#request.razuna.session.hostid#/#arguments.thestruct.wm_temp_id#" mode="775">
 		<cfcatch type="any"></cfcatch>
 	</cftry>
 	<!---  Upload file --->
-	<cffile action="UPLOAD" filefield="#arguments.thestruct.thefield#" destination="#arguments.thestruct.thepathup#global/host/watermark/#session.hostid#/#arguments.thestruct.wm_temp_id#" result="result" nameconflict="overwrite" mode="775">
+	<cffile action="UPLOAD" filefield="#arguments.thestruct.thefield#" destination="#arguments.thestruct.thepathup#global/host/watermark/#request.razuna.session.hostid#/#arguments.thestruct.wm_temp_id#" result="result" nameconflict="overwrite" mode="775">
 	<!--- Update wm_image_path with uploaded filename --->
-	<cfquery datasource="#application.razuna.datasource#">
-		UPDATE #session.hostdbprefix#wm_templates_val
+	<cfquery datasource="#request.razuna.application.datasource#">
+		UPDATE #request.razuna.session.hostdbprefix#wm_templates_val
 		SET wm_image_path = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.wm_temp_id#/#result.serverFile#">
 		WHERE wm_temp_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.wm_temp_id#">
 	</cfquery>
 
 	<!--- Create var --->
 	<cfset s.fordbpath = "#arguments.thestruct.wm_temp_id#/#result.serverFile#">
-	<cfset s.imgpath = "global/host/watermark/#session.hostid#/#arguments.thestruct.wm_temp_id#/#result.serverFile#">
+	<cfset s.imgpath = "global/host/watermark/#request.razuna.session.hostid#/#arguments.thestruct.wm_temp_id#/#result.serverFile#">
 	<!--- Return --->
 	<cfreturn s />
 </cffunction>
 
 <!--- Folder Thumbnail --->
-<cffunction hint="Upload folder Thumbnail" name="Upload_folderThumbnail" access="public" output="false">
+<cffunction  name="Upload_folderThumbnail" access="public" output="false">
 	<cfargument name="thestruct" type="Struct">
 	<!--- Check that vars are not empty --->
 	<cfif arguments.thestruct.thumb_folder_file NEQ "" OR arguments.thestruct.thumb_folder NEQ "">
 		<!--- Create directory if not there already to hold this folderthumbnail --->
-		<cfif !directoryexists("#arguments.thestruct.thepathup#global/host/folderthumbnail/#session.hostid#/#arguments.thestruct.folderId#")>
-			<cfdirectory action="create" directory="#arguments.thestruct.thepathup#global/host/folderthumbnail/#session.hostid#/#arguments.thestruct.folderId#/">
+		<cfif !directoryexists("#arguments.thestruct.thepathup#global/host/folderthumbnail/#request.razuna.session.hostid#/#arguments.thestruct.folderId#")>
+			<cfdirectory action="create" directory="#arguments.thestruct.thepathup#global/host/folderthumbnail/#request.razuna.session.hostid#/#arguments.thestruct.folderId#/">
 		</cfif>
-		<cfdirectory name="myDir" action="list" directory="#ExpandPath("../../")#global/host/folderthumbnail/#session.hostid#/#arguments.thestruct.folderId#/" type="file">
+		<cfdirectory name="myDir" action="list" directory="#ExpandPath("../../")#global/host/folderthumbnail/#request.razuna.session.hostid#/#arguments.thestruct.folderId#/" type="file">
 		<cfif myDir.recordcount>
-			<cffile action="delete" file="#arguments.thestruct.thepathup#global/host/folderthumbnail/#session.hostid#/#arguments.thestruct.folderId#/#myDir.name#">
+			<cffile action="delete" file="#arguments.thestruct.thepathup#global/host/folderthumbnail/#request.razuna.session.hostid#/#arguments.thestruct.folderId#/#myDir.name#">
 		</cfif>
 		<!--- If we choose a thumbnail from the list --->
 		<cfif arguments.thestruct.thumb_folder_file eq "">
 			<!--- Set vars --->
-			<cfif application.razuna.storage EQ "local" OR application.razuna.storage EQ "akamai">
+			<cfif request.razuna.application.storage EQ "local" OR request.razuna.application.storage EQ "akamai">
 				<!--- Set http --->
-				<cfset var thehttp = "#session.thehttp##cgi.http_host##arguments.thestruct.thumb_folder#">
+				<cfset var thehttp = "#request.razuna.session.thehttp##cgi.http_host##arguments.thestruct.thumb_folder#">
 				<!--- Set image extension --->
 				<cfset var img_ext = listLast(arguments.thestruct.thumb_folder,'.')>
 			<cfelse>
@@ -1067,16 +1077,16 @@
 				<cfset var img_ext = listLast(listFirst(arguments.thestruct.thumb_folder,'?'),'.')>
 			</cfif>
 			<!--- Get the thumbnail --->
-			<cfhttp url="#thehttp#" method="get" path="#arguments.thestruct.thepathup#global/host/folderthumbnail/#session.hostid#/#arguments.thestruct.folderId#" file="#arguments.thestruct.folderId#.#img_ext#" />
+			<cfhttp url="#thehttp#" method="get" path="#arguments.thestruct.thepathup#global/host/folderthumbnail/#request.razuna.session.hostid#/#arguments.thestruct.folderId#" file="#arguments.thestruct.folderId#.#img_ext#" />
 			<!--- Set filename --->
 			<cfset this.thefilename = "#arguments.thestruct.folderId#.#img_ext#">
 		</cfif>
 		<!--- If the user uploads an image --->
 		<cfif arguments.thestruct.thumb_folder_file neq "">
 			<!--- Upload --->
-			<cffile action="upload" destination="#arguments.thestruct.thepathup#global/host/folderthumbnail/#session.hostid#/#arguments.thestruct.folderId#/" filefield="thumb_folder_file" result="result">
+			<cffile action="upload" destination="#arguments.thestruct.thepathup#global/host/folderthumbnail/#request.razuna.session.hostid#/#arguments.thestruct.folderId#/" filefield="thumb_folder_file" result="result">
 			<!--- Rename --->
-			<cffile action="rename" destination="#arguments.thestruct.thepathup#global/host/folderthumbnail/#session.hostid#/#arguments.thestruct.folderId#/#arguments.thestruct.folderId#.#result.serverfileext#" source="#arguments.thestruct.thepathup#global/host/folderthumbnail/#session.hostid#/#arguments.thestruct.folderId#/#result.serverFile#" >
+			<cffile action="rename" destination="#arguments.thestruct.thepathup#global/host/folderthumbnail/#request.razuna.session.hostid#/#arguments.thestruct.folderId#/#arguments.thestruct.folderId#.#result.serverfileext#" source="#arguments.thestruct.thepathup#global/host/folderthumbnail/#request.razuna.session.hostid#/#arguments.thestruct.folderId#/#result.serverFile#" >
 			<!--- Set filename --->
 			<cfset this.thefilename = "#arguments.thestruct.folderId#.#result.serverfileext#">
 		</cfif>
@@ -1088,7 +1098,7 @@
 <!--- Delete folder thumbnail --->
 <cffunction name="folderthumbnail_reset" access="public" output="false" returntype="void">
 	<cfargument name="folder_id" type="string">
-	<cfdirectory action="delete" directory="#expandPath("../../")#global/host/folderthumbnail/#session.hostid#/#arguments.folder_id#" recurse="true" />
+	<cfdirectory action="delete" directory="#expandPath("../../")#global/host/folderthumbnail/#request.razuna.session.hostid#/#arguments.folder_id#" recurse="true" />
 </cffunction>
 
 <!--- Get API key --->
@@ -1112,17 +1122,17 @@
 
 <!--- ------------------------------------------------------------------------------------- --->
 <!--- Get specific setting --->
-<cffunction hint="Get specific setting" name="thissetting" output="false" returntype="string">
+<cffunction  name="thissetting" output="false" returntype="string">
 	<cfargument name="thefield" type="string" default="" required="yes">
 	<cfset var sett = "">
-	<cfquery datasource="#application.razuna.datasource#" name="sett">
+	<cfquery datasource="#request.razuna.application.datasource#" name="sett">
 	SELECT set_pref
-	FROM #session.hostdbprefix#settings
+	FROM #request.razuna.session.hostdbprefix#settings
 	WHERE set_id = <cfqueryparam value="#arguments.thefield#" cfsqltype="cf_sql_varchar">
 	<cfif arguments.thefield EQ "rendering_farm_server">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="1">
 	<cfelse>
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 	</cfif>
 	</cfquery>
 	<cfset var _return = "">
@@ -1138,18 +1148,18 @@
 <cffunction name="savesetting" output="false" returntype="void">
 	<cfargument name="thefield" type="string" default="" required="yes">
 	<cfargument name="thevalue" type="string" default="" required="yes">
-	<cfquery datasource="#application.razuna.datasource#">
-	DELETE FROM #session.hostdbprefix#settings
+	<cfquery datasource="#request.razuna.application.datasource#">
+	DELETE FROM #request.razuna.session.hostdbprefix#settings
 	WHERE set_id = <cfqueryparam value="#arguments.thefield#" cfsqltype="cf_sql_varchar">
-	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 	</cfquery>
-	<cfquery datasource="#application.razuna.datasource#">
-	INSERT INTO #session.hostdbprefix#settings
+	<cfquery datasource="#request.razuna.application.datasource#">
+	INSERT INTO #request.razuna.session.hostdbprefix#settings
 	(set_pref, set_id, host_id, rec_uuid)
 	VALUES(
 	<cfqueryparam value="#arguments.thevalue#" cfsqltype="cf_sql_varchar">,
 	<cfqueryparam value="#arguments.thefield#" cfsqltype="cf_sql_varchar">,
-	<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+	<cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">,
 	<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 	)
 	</cfquery>
@@ -1157,8 +1167,8 @@
 
 <!--- ------------------------------------------------------------------------------------- --->
 <!--- PARSE THE CONFIG FILE OF THE ADMIN SECTION --->
-<!--- <cffunction name="getconfig" output="false" returntype="string" hint="PARSE THE CONFIG FILE OF THE ADMIN SECTION">
-<cfargument name="thenode" default="" required="yes" type="string" hint="the nodename which you want to parse">
+<!--- <cffunction name="getconfig" output="false" returntype="string" >
+<cfargument name="thenode" default="" required="yes" type="string" >
 <cfinvoke component="defaults" method="getAbsolutePath" returnvariable="xmlFile">
 	<cfinvokeargument name="pathSourceAbsolute" value="#GetCurrentTemplatePath()#">
 	<cfinvokeargument name="pathTargetRelative" value="../config/config.xml">
@@ -1168,8 +1178,8 @@
 <cfset theconfig=xmlSearch(xmlVar, "configuration/configid[@name='#arguments.thenode#']")>
 <cfreturn trim(#theconfig[1].thetext.xmlText#)>
 </cffunction> --->
-<cffunction name="getconfig" output="false" returntype="string" hint="PARSE THE CONFIG FILE OF THE ADMIN SECTION">
-<cfargument name="thenode" default="" required="yes" type="string" hint="the nodename which you want to parse">
+<cffunction name="getconfig" output="false" returntype="string" >
+<cfargument name="thenode" default="" required="yes" type="string" >
 <cfinvoke component="defaults" method="getAbsolutePath" returnvariable="xmlFile">
 	<cfinvokeargument name="pathSourceAbsolute" value="#GetCurrentTemplatePath()#">
 	<cfinvokeargument name="pathTargetRelative" value="../config/config.cfm">
@@ -1443,10 +1453,10 @@
 		<cfset application.razuna.api.thehttp = "http://">
 	</cfif>
 	<!--- Set razuna scopes also --->
-	<cfset application.razuna.storage = application.razuna.api.storage>
-	<cfset application.razuna.datasource = application.razuna.api.dsn>
-	<cfset application.razuna.thedatabase = application.razuna.api.thedatabase>
-	<cfset application.razuna.setid = application.razuna.api.setid>
+	<cfset application.razuna.storage = request.razuna.application.api.storage>
+	<cfset application.razuna.datasource = request.razuna.application.api.dsn>
+	<cfset application.razuna.thedatabase = request.razuna.application.api.thedatabase>
+	<cfset application.razuna.setid = request.razuna.application.api.setid>
 </cffunction>
 
 <!--- ------------------------------------------------------------------------------------- --->
@@ -1483,7 +1493,7 @@
 		<cfset application.razuna.api.thehttp = "http://">
 	</cfif>
 	<!--- RAZ-2812 Most recently updated assets  --->
-	<!--- <cfquery datasource="#application.razuna.datasource#" name="qry_options">
+	<!--- <cfquery datasource="#request.razuna.application.datasource#" name="qry_options">
 		SELECT opt_value FROM options
 		WHERE opt_id='SHOW_UPDATES'
 	</cfquery>
@@ -1498,9 +1508,9 @@
 <cffunction name="translationsearch" output="false" returntype="query">
 	<cfargument name="thestruct" type="Struct">
 	<cfset var qry = "">
-	<cfquery datasource="#application.razuna.datasource#" name="qry">
+	<cfquery datasource="#request.razuna.application.datasource#" name="qry">
 	SELECT trans_id, trans_text, lang_id_r
-	FROM #session.hostdbprefix#translations
+	FROM #request.razuna.session.hostdbprefix#translations
 	WHERE
 	<cfif arguments.thestruct.trans_id IS NOT "">
 		trans_id LIKE <cfqueryparam value="%#arguments.thestruct.trans_id#%" cfsqltype="cf_sql_varchar">
@@ -1519,9 +1529,9 @@
 <cffunction name="translationdetail" output="false" returntype="query">
 	<cfargument name="thestruct" type="Struct">
 	<cfset var qry = "">
-	<cfquery datasource="#application.razuna.datasource#" name="qry">
+	<cfquery datasource="#request.razuna.application.datasource#" name="qry">
 	SELECT trans_id, trans_text, lang_id_r
-	FROM #session.hostdbprefix#translations
+	FROM #request.razuna.session.hostdbprefix#translations
 	WHERE
 	trans_id LIKE <cfqueryparam value="#arguments.thestruct.trans_id#" cfsqltype="cf_sql_varchar">
 	</cfquery>
@@ -1541,8 +1551,8 @@
 				<cfset thefield=ReplaceNoCase(#myform#, "_#thenr#", "")>
 					<cfif #myform# EQ "#thefield#_#thenr#">
 				<!--- <cfoutput>#myform# - #thenr# - #thefield# = #form["#myform#"]#<br></cfoutput> --->
-						<cfquery datasource="#application.razuna.datasource#">
-						UPDATE #session.hostdbprefix#translations
+						<cfquery datasource="#request.razuna.application.datasource#">
+						UPDATE #request.razuna.session.hostdbprefix#translations
 						SET trans_text = <cfqueryparam value="#form["#myform#"]#" cfsqltype="CF_SQL_CHAR">,
 						trans_changed = <cfqueryparam value="T" cfsqltype="CF_SQL_CHAR">
 						WHERE lang_id_r = <cfqueryparam value="#thenr#" cfsqltype="cf_sql_numeric">
@@ -1560,9 +1570,9 @@
 <cffunction name="translationadd" output="false">
 	<cfargument name="thestruct" type="Struct">
 	<!--- Check for the same trans_id --->
-	<cfquery datasource="#application.razuna.datasource#" name="thesame">
+	<cfquery datasource="#request.razuna.application.datasource#" name="thesame">
 	SELECT trans_id
-	FROM #session.hostdbprefix#translations
+	FROM #request.razuna.session.hostdbprefix#translations
 	WHERE
 	trans_id = <cfqueryparam value="#arguments.thestruct.trans_id#" cfsqltype="cf_sql_varchar">
 	</cfquery>
@@ -1576,8 +1586,8 @@
 					<cfloop delimiters="," index="thenr" list="#arguments.thestruct.transid#">
 					<cfset thefield=ReplaceNoCase(#myform#, "_#thenr#", "")>
 						<cfif #myform# EQ "#thefield#_#thenr#">
-							<cfquery datasource="#application.razuna.datasource#">
-							INSERT INTO #session.hostdbprefix#translations
+							<cfquery datasource="#request.razuna.application.datasource#">
+							INSERT INTO #request.razuna.session.hostdbprefix#translations
 							(trans_id, trans_text, lang_id_r)
 							VALUES(
 							<cfqueryparam value="#arguments.thestruct.trans_id#" cfsqltype="cf_sql_varchar">,
@@ -1597,8 +1607,8 @@
 <!--- REMOVE TRANSLATION --->
 <cffunction name="translationremove" output="false">
 	<cfargument name="thestruct" type="Struct">
-	<cfquery datasource="#application.razuna.datasource#">
-	DELETE FROM #session.hostdbprefix#translations
+	<cfquery datasource="#request.razuna.application.datasource#">
+	DELETE FROM #request.razuna.session.hostdbprefix#translations
 	WHERE
 	trans_id LIKE <cfqueryparam value="#arguments.thestruct.trans_id#" cfsqltype="cf_sql_varchar">
 	</cfquery>
@@ -1608,136 +1618,137 @@
 <!--- PATH TO ASSETS --->
 <cffunction name="assetpath" output="false" returntype="string">
 	<!--- Cache --->
-	<cfset variables.cachetoken = getcachetoken("settings")>
+	<cfset cachetoken = getcachetoken(type="settings", hostid=request.razuna.session.hostid)>
 	<!--- init internal vars --->
 	<cfset var qLocal = 0>
 	<!--- Query --->
-	<cfquery datasource="#application.razuna.datasource#" name="qLocal" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetoken#assetpath */ set2_path_to_assets
-	FROM #session.hostdbprefix#settings_2
-	WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
-	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	<cfquery datasource="#request.razuna.application.datasource#" name="qLocal" cachedwithin="1" region="razcache">
+	SELECT /* #cachetoken#assetpath */ set2_path_to_assets
+	FROM #request.razuna.session.hostdbprefix#settings_2
+	WHERE set2_id = <cfqueryparam value="#request.razuna.application.setid#" cfsqltype="cf_sql_numeric">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 	</cfquery>
 	<cfreturn trim(qLocal.set2_path_to_assets)>
 </cffunction>
 
 <!--- IMAGE: URL FOR THUMBNAIL --->
-<cffunction hint="IMAGE: URL FOR THUMBNAIL" name="url_thumb" output="false" returntype="string">
+<cffunction  name="url_thumb" output="false" returntype="string">
 	<!--- init internal vars --->
 	<cfset var qLocal = 0>
-	<cfquery datasource="#application.razuna.datasource#" name="qLocal">
+	<cfquery datasource="#request.razuna.application.datasource#" name="qLocal">
 	SELECT set2_url_sp_thumb
-	FROM #session.hostdbprefix#settings_2
-	WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
-	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	FROM #request.razuna.session.hostdbprefix#settings_2
+	WHERE set2_id = <cfqueryparam value="#request.razuna.application.setid#" cfsqltype="cf_sql_numeric">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 	</cfquery>
 	<cfreturn trim(qLocal.set2_url_sp_thumb)>
 </cffunction>
 
 <!--- IMAGE: URL FOR COMPING --->
-<cffunction hint="IMAGE: URL FOR COMPING" name="url_comp" output="false" returntype="string">
+<cffunction  name="url_comp" output="false" returntype="string">
 	<cfargument name="weblogin" default="F" required="no" type="string">
 	<!--- init internal vars --->
 	<cfset var qLocal = 0>
-	<cfquery datasource="#application.razuna.datasource#" name="qLocal">
+	<cfquery datasource="#request.razuna.application.datasource#" name="qLocal">
 	SELECT set2_url_sp_comp<cfif #arguments.weblogin# EQ "T">_uw</cfif> thecomp
-	FROM #session.hostdbprefix#settings_2
-	WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
-	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	FROM #request.razuna.session.hostdbprefix#settings_2
+	WHERE set2_id = <cfqueryparam value="#request.razuna.application.setid#" cfsqltype="cf_sql_numeric">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 	</cfquery>
 	<cfreturn trim(qLocal.thecomp)>
 </cffunction>
 
 <!--- IMAGE: URL FOR UNWATERMARKED COMPING --->
-<cffunction hint="IMAGE: URL FOR UNWATERMARKED COMPING" name="url_compuw" output="false" returntype="string">
+<cffunction  name="url_compuw" output="false" returntype="string">
 	<!--- init internal vars --->
 	<cfset var qLocal = 0>
-	<cfquery datasource="#application.razuna.datasource#" name="qLocal">
+	<cfquery datasource="#request.razuna.application.datasource#" name="qLocal">
 	SELECT set2_url_sp_comp_uw
-	FROM #session.hostdbprefix#settings_2
-	WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
-	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	FROM #request.razuna.session.hostdbprefix#settings_2
+	WHERE set2_id = <cfqueryparam value="#request.razuna.application.setid#" cfsqltype="cf_sql_numeric">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 	</cfquery>
 	<cfreturn trim(qLocal.set2_url_sp_comp_uw)>
 </cffunction>
 
 <!--- IMAGE: URL FOR ORIGINAL --->
-<cffunction hint="IMAGE: URL FOR ORIGINAL" name="url_org" output="false" returntype="string">
+<cffunction  name="url_org" output="false" returntype="string">
 	<!--- init internal vars --->
 	<cfset var qLocal = 0>
-	<cfquery datasource="#application.razuna.datasource#" name="qLocal">
+	<cfquery datasource="#request.razuna.application.datasource#" name="qLocal">
 	SELECT set2_url_sp_original
-	FROM #session.hostdbprefix#settings_2
-	WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
-	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	FROM #request.razuna.session.hostdbprefix#settings_2
+	WHERE set2_id = <cfqueryparam value="#request.razuna.application.setid#" cfsqltype="cf_sql_numeric">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 	</cfquery>
 	<cfreturn trim(qLocal.set2_url_sp_original)>
 </cffunction>
 
 <!--- ------------------------------------------------------------------------------------- --->
 <!--- INTRANET: SELECT IF CATEGORIES ARE SHOWN OR NOT, IF SO THEN SHOW THE TREE --->
-<cffunction hint="INTRANET:SELECT IF CATEGORIES ARE SHOWN OR NOT, IF SO THEN SHOW THE TREE" name="cat_show" output="false" access="public" returntype="query">
+<cffunction  name="cat_show" output="false" access="public" returntype="query">
 	<!--- init internal vars --->
 	<cfset var qLocal = 0>
-	<cfquery datasource="#application.razuna.datasource#" name="qLocal">
+	<cfquery datasource="#request.razuna.application.datasource#" name="qLocal">
 		SELECT set2_cat_intra show, SET2_CAT_VID_INTRA showvid
-		FROM #session.hostdbprefix#settings_2
-		WHERE set2_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.setid#">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		FROM #request.razuna.session.hostdbprefix#settings_2
+		WHERE set2_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.application.setid#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 	</cfquery>
 	<cfreturn qLocal />
 </cffunction>
 
 <!--- VIDEO: URL FOR PREVIEW IMAGE --->
-<cffunction hint="VIDEO: URL FOR PREVIEW IMAGE" name="video_image" output="false" returntype="string">
+<cffunction  name="video_image" output="false" returntype="string">
 	<!--- init internal vars --->
 	<cfset var qLocal = 0>
-	<cfquery datasource="#application.razuna.datasource#" name="qLocal">
+	<cfquery datasource="#request.razuna.application.datasource#" name="qLocal">
 	SELECT set2_url_sp_video_preview
-	FROM #session.hostdbprefix#settings_2
-	WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
-	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	FROM #request.razuna.session.hostdbprefix#settings_2
+	WHERE set2_id = <cfqueryparam value="#request.razuna.application.setid#" cfsqltype="cf_sql_numeric">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 	</cfquery>
 	<cfreturn trim(qLocal.set2_url_sp_video_preview)>
 </cffunction>
 
 <!--- VIDEO: URL FOR VIDEO --->
-<cffunction hint="VIDEO: URL FOR PREVIEW IDEO" name="video_stream" output="false" returntype="string">
+<cffunction  name="video_stream" output="false" returntype="string">
 	<!--- init internal vars --->
 	<cfset var qLocal = 0>
-	<cfquery datasource="#application.razuna.datasource#" name="qLocal">
+	<cfquery datasource="#request.razuna.application.datasource#" name="qLocal">
 	SELECT set2_url_sp_video
-	FROM #session.hostdbprefix#settings_2
-	WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
-	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	FROM #request.razuna.session.hostdbprefix#settings_2
+	WHERE set2_id = <cfqueryparam value="#request.razuna.application.setid#" cfsqltype="cf_sql_numeric">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 	</cfquery>
 	<cfreturn trim(qLocal.set2_url_sp_video)>
 </cffunction>
 
 <!--- ------------------------------------------------------------------------------------- --->
 <!--- Get HOST specific stuff --->
-<cffunction hint="Get host specific stuff" name="hostinfo">
-<cfquery datasource="#application.razuna.datasource#" name="host">
+<cffunction  name="hostinfo">
+<cfquery datasource="#request.razuna.application.datasource#" name="host">
 SELECT host_path
 FROM hosts
-WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 </cfquery>
 <cfreturn host>
 </cffunction>
 
 <!--- APPLICATION CHECK --->
 <cffunction name="applicationcheck" output="false">
+	<cfset var cachetoken = getcachetoken(type="settings", hostid=request.razuna.session.hostid)>
 	<!--- Params --->
 	<cfset apps = structnew()>
 	<cfset apps.im = "T"><!--- ImageMagick --->
 	<cfset apps.ex = "T"><!--- Exiftool --->
 	<cfset apps.ff = "T"><!--- FFmpeg --->
 	<cfset apps.af = "T"><!--- Assets folder --->
-	<cfquery datasource="#application.razuna.datasource#" name="qrypathassets" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetoken#applicationcheck */ set2_path_to_assets
-	FROM #session.hostdbprefix#settings_2
-	WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
-	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	<cfquery datasource="#request.razuna.application.datasource#" name="qrypathassets" cachedwithin="1" region="razcache">
+	SELECT /* #cachetoken#applicationcheck */ set2_path_to_assets
+	FROM #request.razuna.session.hostdbprefix#settings_2
+	WHERE set2_id = <cfqueryparam value="#request.razuna.application.setid#" cfsqltype="cf_sql_numeric">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 	</cfquery>
 	<!--- Get platform --->
 	<cfinvoke component="global" method="iswindows" returnvariable="iswindows">
@@ -1775,7 +1786,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 		</cfcatch>
 	</cftry>
 	<!--- Test for existance of asset folder --->
-	<cfif application.razuna.storage EQ "local">
+	<cfif request.razuna.application.storage EQ "local">
 		<cfif !directoryexists("#qrypathassets.set2_path_to_assets#")>
 			<cfset apps.af = "F">
 		</cfif>
@@ -1852,7 +1863,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	SET conf_firsttime = #arguments.theboolean#
 	</cfquery>
 	<!--- Reset cache --->
-	<cfset variables.cachetoken = resetcachetoken("settings")>
+	<cfset resetcachetoken(type="settings", hostid=request.razuna.session.hostid)>
 	<cfreturn />
 </cffunction>
 
@@ -1938,14 +1949,15 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 </cffunction>
 
 <!--- get tenant customization --->
-<cffunction name="get_customization" output="false" returnType="struct">
+<cffunction name="get_customization" access="public" output="false" returnType="struct">
+	<cfset var cachetoken = getcachetoken(type="settings", hostid=request.razuna.session.hostid)>
 	<!--- Params --->
 	<cfset var qry = "">
 	<!--- Query db --->
-	<cfquery dataSource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetoken#get_customization */ custom_id, custom_value
-	FROM #session.hostdbprefix#custom
-	WHERE host_id = <cfqueryparam value="#session.hostid#" CFSQLType="CF_SQL_NUMERIC">
+	<cfquery dataSource="#request.razuna.application.datasource#" name="qry" cachedwithin="1" region="razcache">
+	SELECT /* #cachetoken#get_customization */ custom_id, custom_value
+	FROM #request.razuna.session.hostdbprefix#custom
+	WHERE host_id = <cfqueryparam value="#request.razuna.session.hostid#" CFSQLType="CF_SQL_NUMERIC">
 	</cfquery>
 	<!--- Set value here --->
 	<cfset var v = structnew()>
@@ -2478,7 +2490,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 		<cfinvoke component="hosts" method="getall" returnvariable="t" />
 		<!--- Loop --->
 		<cfloop query="t">
-			<cfif session.hostid NEQ host_id>
+			<cfif request.razuna.session.hostid NEQ host_id>
 				<!--- Check & delete if directory is already exists --->
 				<cfif directoryExists("#arguments.thestruct.thepathup#global/host/favicon/#host_id#")>
 					<cfdirectory action="delete" directory="#arguments.thestruct.thepathup#global/host/favicon/#host_id#" recurse="true">
@@ -2486,19 +2498,19 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 				<!--- Create directory --->
 				<cfdirectory action="create" directory="#arguments.thestruct.thepathup#global/host/favicon/#host_id#" mode="777">
 				<!--- copy the favicon.ico file --->
-				<cfif fileExists("#arguments.thestruct.thepathup#global/host/favicon/#session.hostid#/favicon.ico")>
-				<cffile action="copy" destination="#arguments.thestruct.thepathup#global/host/favicon/#host_id#" source="#arguments.thestruct.thepathup#global/host/favicon/#session.hostid#/favicon.ico"/>
+				<cfif fileExists("#arguments.thestruct.thepathup#global/host/favicon/#request.razuna.session.hostid#/favicon.ico")>
+				<cffile action="copy" destination="#arguments.thestruct.thepathup#global/host/favicon/#host_id#" source="#arguments.thestruct.thepathup#global/host/favicon/#request.razuna.session.hostid#/favicon.ico"/>
 				</cfif>
 			</cfif>
 			<cfset set_customization_internal(thestruct=arguments.thestruct,hostid=#host_id#)>
 		</cfloop>
 		<!--- Flush Cache for all tenants--->
-		<cfset variables.cachetoken = resetcachetoken("settings",'true')>
+		<cfset resetcachetoken(type="settings", nohost='true')>
 	<!--- For a single tenant --->
 	<cfelse>
-		<cfset set_customization_internal(thestruct=arguments.thestruct,hostid=session.hostid)>
+		<cfset set_customization_internal(thestruct=arguments.thestruct,hostid=request.razuna.session.hostid)>
 		<!--- Flush Cache --->
-		<cfset variables.cachetoken = resetcachetoken("settings")>
+		<cfset resetcachetoken(type="settings", hostid=request.razuna.session.hostid)>
 	</cfif>
 	<!--- Return --->
 	<cfreturn />
@@ -2513,8 +2525,8 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 		<cfset arguments.thestruct.tab_explorer_default = 1>
 	</cfif>
 	<!--- First remove all records for this host --->
-	<cfquery dataSource="#application.razuna.datasource#">
-	DELETE FROM #session.hostdbprefix#custom
+	<cfquery dataSource="#request.razuna.application.datasource#">
+	DELETE FROM #request.razuna.session.hostdbprefix#custom
 	WHERE host_id = <cfqueryparam value="#arguments.hostid#" CFSQLType="CF_SQL_NUMERIC">
 	</cfquery>
 	<!--- Now loop over the fieldnames and do an insert for each record found --->
@@ -2522,8 +2534,8 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfloop list="#arguments.thestruct.fieldnames#" index="i">
 		<cfif i NEQ "apply_global">
 			<cfif evaluate(trim(i)) NEQ "">
-				<cfquery dataSource="#application.razuna.datasource#">
-				INSERT INTO #session.hostdbprefix#custom
+				<cfquery dataSource="#request.razuna.application.datasource#">
+				INSERT INTO #request.razuna.session.hostdbprefix#custom
 				(custom_id, custom_value, host_id)
 				VALUES(
 					<cfqueryparam value="#i#" CFSQLType="CF_SQL_VARCHAR">,
@@ -2536,8 +2548,8 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	</cfloop>
 	<!--- Turn off redirection --->
 	<cfif structKeyExists(arguments.thestruct,"folder_redirect_off")>
-		<cfquery dataSource="#application.razuna.datasource#">
-		UPDATE #session.hostdbprefix#custom
+		<cfquery dataSource="#request.razuna.application.datasource#">
+		UPDATE #request.razuna.session.hostdbprefix#custom
 		SET custom_value = <cfqueryparam value="0" CFSQLType="CF_SQL_VARCHAR">
 		WHERE host_id = <cfqueryparam value="#arguments.hostid#" CFSQLType="CF_SQL_NUMERIC">
 		AND custom_id = <cfqueryparam value="folder_redirect" CFSQLType="CF_SQL_VARCHAR">
@@ -2595,12 +2607,12 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<!--- Loop over fieldnames --->
 	<cfloop list="#arguments.thestruct.fieldnames#" index="i">
 		<!--- First remove all entries --->
-		<cfquery datasource="#application.razuna.datasource#">
+		<cfquery datasource="#request.razuna.application.datasource#">
 		DELETE FROM options
 		WHERE opt_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
 		</cfquery>
 		<!--- Save to DB --->
-		<cfquery datasource="#application.razuna.datasource#">
+		<cfquery datasource="#request.razuna.application.datasource#">
 		INSERT INTO options
 		(opt_id, opt_value, rec_uuid)
 		VALUES(
@@ -2623,7 +2635,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	</cftry>
 
 	<!--- Flush --->
-	<cfset variables.cachetoken = resetcachetoken("settings","true")>
+	<cfset resetcachetoken(type="settings", nohost="true")>
 	<!--- Return --->
 	<cfreturn />
 </cffunction>
@@ -2631,7 +2643,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 <!--- Get options --->
 <cffunction name="get_options" output="false" returntype="struct">
 	<!--- Cache --->
-	<cfset variables.cachetoken = getcachetoken("settings")>
+	<cfset var cachetoken = getcachetoken(type="settings", hostid=request.razuna.session.hostid)>
 	<!--- Param --->
 	<cfset var q = "">
 	<cfset var s = structNew()>
@@ -2655,8 +2667,8 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfset s.ss_db_pass = "">
 	<cfset s.ss_db_type = "">
 	<!--- Query --->
-	<cfquery datasource="#application.razuna.datasource#" name="q" cacheRegion="razcache" cachedwithin="1">
-	SELECT /* #variables.cachetoken#get_options */ opt_id, opt_value
+	<cfquery datasource="#request.razuna.application.datasource#" name="q" cacheRegion="razcache" cachedwithin="1">
+	SELECT /* #cachetoken#get_options */ opt_id, opt_value
 	FROM options
 	</cfquery>
 	<!--- Put query into struct --->
@@ -2675,6 +2687,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 
 <!--- Get options --->
 <cffunction name="get_options_hosts" output="false" returntype="struct">
+	<cfset var cachetoken = getcachetoken(type="settings", hostid=request.razuna.session.hostid)>
 	<!--- Get normal options --->
 	<cfset var wl_sys = get_options()>
 	<!--- Var --->
@@ -2694,47 +2707,47 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfset s.wl_thecss = wl_sys.wl_thecss>
 	<cfset s.wl_show_updates = wl_sys.wl_show_updates>
 	<!--- Get host options --->
-	<cfquery datasource="#application.razuna.datasource#" name="qry" cacheRegion="razcache" cachedwithin="1">
-	SELECT /* #variables.cachetoken#get_options_hosts */ opt_id, opt_value
+	<cfquery datasource="#request.razuna.application.datasource#" name="qry" cacheRegion="razcache" cachedwithin="1">
+	SELECT /* #cachetoken#get_options_hosts */ opt_id, opt_value
 	FROM options
-	WHERE opt_id LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="wl_%_#session.hostid#">
+	WHERE opt_id LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="wl_%_#request.razuna.session.hostid#">
 	</cfquery>
 	<!--- Loop over query --->
 	<cfloop query="qry">
-		<cfif opt_id EQ "wl_login_links_#session.hostid#" AND opt_value NEQ "">
+		<cfif opt_id EQ "wl_login_links_#request.razuna.session.hostid#" AND opt_value NEQ "">
 			<cfset s.wl_login_links = opt_value>
 		</cfif>
-		<cfif opt_id EQ "wl_razuna_tab_text_#session.hostid#" AND opt_value NEQ "">
+		<cfif opt_id EQ "wl_razuna_tab_text_#request.razuna.session.hostid#" AND opt_value NEQ "">
 			<cfset s.wl_razuna_tab_text = opt_value>
 		</cfif>
-		<cfif opt_id EQ "wl_razuna_tab_content_#session.hostid#" AND opt_value NEQ "">
+		<cfif opt_id EQ "wl_razuna_tab_content_#request.razuna.session.hostid#" AND opt_value NEQ "">
 			<cfset s.wl_razuna_tab_content = opt_value>
 		</cfif>
-		<cfif opt_id EQ "wl_html_title_#session.hostid#" AND opt_value NEQ "">
+		<cfif opt_id EQ "wl_html_title_#request.razuna.session.hostid#" AND opt_value NEQ "">
 			<cfset s.wl_html_title = opt_value>
 		</cfif>
-		<cfif opt_id EQ "wl_feedback_#session.hostid#" AND opt_value NEQ "">
+		<cfif opt_id EQ "wl_feedback_#request.razuna.session.hostid#" AND opt_value NEQ "">
 			<cfset s.wl_feedback = opt_value>
 		</cfif>
-		<cfif opt_id EQ "wl_link_search_#session.hostid#" AND opt_value NEQ "">
+		<cfif opt_id EQ "wl_link_search_#request.razuna.session.hostid#" AND opt_value NEQ "">
 			<cfset s.wl_link_search = opt_value>
 		</cfif>
-		<cfif opt_id EQ "wl_link_support_#session.hostid#" AND opt_value NEQ "">
+		<cfif opt_id EQ "wl_link_support_#request.razuna.session.hostid#" AND opt_value NEQ "">
 			<cfset s.wl_link_support = opt_value>
 		</cfif>
-		<cfif opt_id EQ "wl_link_doc_#session.hostid#" AND opt_value NEQ "">
+		<cfif opt_id EQ "wl_link_doc_#request.razuna.session.hostid#" AND opt_value NEQ "">
 			<cfset s.wl_link_doc = opt_value>
 		</cfif>
-		<cfif opt_id EQ "wl_news_rss_#session.hostid#" AND opt_value NEQ "">
+		<cfif opt_id EQ "wl_news_rss_#request.razuna.session.hostid#" AND opt_value NEQ "">
 			<cfset s.wl_news_rss = opt_value>
 		</cfif>
-		<cfif opt_id EQ "wl_main_static_#session.hostid#" AND opt_value NEQ "">
+		<cfif opt_id EQ "wl_main_static_#request.razuna.session.hostid#" AND opt_value NEQ "">
 			<cfset s.wl_main_static = opt_value>
 		</cfif>
-		<cfif opt_id EQ "wl_thecss_#session.hostid#" AND opt_value NEQ "">
+		<cfif opt_id EQ "wl_thecss_#request.razuna.session.hostid#" AND opt_value NEQ "">
 			<cfset s.wl_thecss = opt_value>
 		</cfif>
-		<cfif opt_id EQ "wl_show_updates_#session.hostid#">
+		<cfif opt_id EQ "wl_show_updates_#request.razuna.session.hostid#">
 			<cfset s.wl_show_updates = opt_value>
 		</cfif>
 	</cfloop>
@@ -2748,12 +2761,12 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<!--- Loop over fieldnames --->
 	<cfloop list="#arguments.thestruct.fieldnames#" index="i">
 		<!--- First remove all entries --->
-		<cfquery datasource="#application.razuna.datasource#">
+		<cfquery datasource="#request.razuna.application.datasource#">
 		DELETE FROM options
 		WHERE opt_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
 		</cfquery>
 		<!--- Save to DB --->
-		<cfquery datasource="#application.razuna.datasource#">
+		<cfquery datasource="#request.razuna.application.datasource#">
 		INSERT INTO options
 		(opt_id, opt_value, rec_uuid)
 		VALUES(
@@ -2764,7 +2777,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 		</cfquery>
 	</cfloop>
 	<!--- Flush --->
-	<cfset variables.cachetoken = resetcachetoken("settings","true")>
+	<cfset resetcachetoken(type="settings", nohost="true")>
 	<!--- Return --->
 	<cfreturn />
 </cffunction>
@@ -2773,12 +2786,12 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 <cffunction name="get_options_one" output="false" returntype="string">
 	<cfargument name="id" type="string" required="true">
 	<!--- Cache --->
-	<cfset variables.cachetoken = getcachetoken("settings")>
+	<cfset var cachetoken = getcachetoken(type="settings", hostid=request.razuna.session.hostid)>
 	<!--- Param --->
 	<cfset var q = "">
 	<!--- Query --->
-	<cfquery datasource="#application.razuna.datasource#" name="q" cacheRegion="razcache" cachedwithin="1">
-	SELECT /* #variables.cachetoken#get_options_one */ opt_id, opt_value
+	<cfquery datasource="#request.razuna.application.datasource#" name="q" cacheRegion="razcache" cachedwithin="1">
+	SELECT /* #cachetoken#get_options_one */ opt_id, opt_value
 	FROM options
 	WHERE opt_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.id#">
 	</cfquery>
@@ -2789,11 +2802,11 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 <!--- Get taskserver --->
 <cffunction name="prefs_taskserver" output="false" returntype="struct">
 	<!--- Cache --->
-	<cfset var cachetoken = getcachetoken("settings")>
+	<cfset var cachetoken = getcachetoken(type="settings", hostid=request.razuna.session.hostid)>
 	<!--- Param --->
 	<cfset var q = "">
 	<!--- Query --->
-	<cfquery datasource="#application.razuna.datasource#" name="q" cacheRegion="razcache" cachedwithin="1">
+	<cfquery datasource="#request.razuna.application.datasource#" name="q" cacheRegion="razcache" cachedwithin="1">
 	SELECT /* #cachetoken#prefs_taskserver */ opt_id, opt_value
 	FROM options
 	WHERE opt_id LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="taskserver%">
@@ -2812,12 +2825,12 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfargument name="opt_id" type="string">
 	<cfargument name="opt_value" type="string">
 	<!--- First remove entry --->
-	<cfquery datasource="#application.razuna.datasource#">
+	<cfquery datasource="#request.razuna.application.datasource#">
 	DELETE FROM options
 	WHERE opt_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.opt_id#">
 	</cfquery>
 	<!--- Save to DB --->
-	<cfquery datasource="#application.razuna.datasource#">
+	<cfquery datasource="#request.razuna.application.datasource#">
 	INSERT INTO options
 	(opt_id, opt_value, rec_uuid)
 	VALUES(
@@ -2827,7 +2840,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	)
 	</cfquery>
 	<!--- Flush --->
-	<cfset variables.cachetoken = resetcachetoken("settings","true")>
+	<cfset resetcachetoken(type="settings", hostid=request.razuna.session.hostid, nohost="true")>
 	<!--- Return --->
 	<cfreturn />
 </cffunction>
@@ -2837,13 +2850,13 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfargument name="db_path" type="string" required="true">
 	<!--- Put struct together --->
 	<cfset var s = structNew()>
-	<cfset s.db_type = session.firsttime.database>
-	<cfset s.db_name = session.firsttime.db_name>
-	<cfset s.db_server = session.firsttime.db_server>
-	<cfset s.db_port = session.firsttime.db_port>
-	<cfset s.db_schema = session.firsttime.db_schema>
-	<cfset s.db_user = session.firsttime.db_user>
-	<cfset s.db_pass = session.firsttime.db_pass>
+	<cfset s.db_type = request.razuna.session.firsttime.database>
+	<cfset s.db_name = request.razuna.session.firsttime.db_name>
+	<cfset s.db_server = request.razuna.session.firsttime.db_server>
+	<cfset s.db_port = request.razuna.session.firsttime.db_port>
+	<cfset s.db_schema = request.razuna.session.firsttime.db_schema>
+	<cfset s.db_user = request.razuna.session.firsttime.db_user>
+	<cfset s.db_pass = request.razuna.session.firsttime.db_pass>
 	<cfset s.db_path = arguments.db_path>
 	<!--- Pass to function --->
 	<cfset indexingDbInfo(thestruct=s)>
@@ -2892,7 +2905,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	</cfhttp>
 	<!--- Deal with the return --->
 	<cfif cfhttp.statuscode DOES NOT CONTAIN "200">
-		<cfset consoleoutput(true)>
+		<cfset consoleoutput(true, true)>
 		<cfset console("#now()# ---------------------- Error adding a search server connection")>
 		<cfset console(cfhttp)>
 		<cfoutput>false</cfoutput>
@@ -2900,12 +2913,12 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 		<cfloop collection="#arguments.thestruct#" item="f">
 			<cfif f CONTAINS "db_">
 				<!--- First remove all values in DB --->
-				<cfquery datasource="#application.razuna.datasource#">
+				<cfquery datasource="#request.razuna.application.datasource#">
 				DELETE FROM options
 				WHERE opt_id = <cfqueryparam value="ss_#f#" cfsqltype="cf_sql_varchar">
 				</cfquery>
 				<!--- Insert --->
-				<cfquery datasource="#application.razuna.datasource#">
+				<cfquery datasource="#request.razuna.application.datasource#">
 				INSERT INTO options
 				(opt_id, opt_value, rec_uuid)
 				VALUES (
@@ -2917,29 +2930,30 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 			</cfif>
 		</cfloop>
 		<!--- Flush --->
-		<cfset resetcachetoken("settings","true")>
+		<cfset resetcachetoken(type="settings", nohost="true")>
 		<cfoutput>true</cfoutput>
 	</cfif>
 	<cfreturn />
 </cffunction>
 
 <!--- Get options --->
-<cffunction name="get_options_one_host" output="false" returntype="string">
+ <cffunction name="get_options_one_host" output="false" returntype="string">
 	<cfargument name="id" type="string" required="true">
+	<cfset var cachetoken = getcachetoken(type="settings", hostid=request.razuna.session.hostid)>
 	<!--- Param --->
 	<cfset var q = "">
 	<!--- Query --->
-	<cfquery datasource="#application.razuna.datasource#" name="q" cacheRegion="razcache" cachedwithin="1">
-	SELECT /* #variables.cachetoken#get_options_one_host */ opt_id, opt_value
+	<cfquery datasource="#request.razuna.application.datasource#" name="q" cacheRegion="razcache" cachedwithin="1">
+	SELECT /* #cachetoken#get_options_one_host */ opt_id, opt_value
 	FROM options
 	WHERE opt_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.id#">
 	</cfquery>
 	<!--- If query is empty or no value returned query the default value --->
 	<cfif q.recordcount EQ 0 OR q.opt_value EQ "">
 		<!--- Get the value with hostid --->
-		<cfset var theid = replacenocase(arguments.id,"_#session.hostid#","","one")>
+		<cfset var theid = replacenocase(arguments.id,"_#request.razuna.session.hostid#","","one")>
 		<!--- Get value --->
-		<cfset var thevalue = get_options_one(theid)>
+		<cfset var thevalue = get_options_one(theid, request.razuna.session.hostid)>
 		<!--- Add to query --->
 		<cfset queryAddRow(query=q, data=[{ opt_id='#theid#', opt_value='#thevalue#' }])>
 	</cfif>
@@ -2977,7 +2991,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfset var q = "">
 	<!--- If we are from add then we need to insert record --->
 	<cfif arguments.thestruct.add>
-		<cfquery datasource="#application.razuna.datasource#">
+		<cfquery datasource="#request.razuna.application.datasource#">
 		INSERT INTO news
 		(news_id, news_active, host_id, news_frontpage)
 		VALUES (
@@ -2989,7 +3003,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 		</cfquery>
 	</cfif>
 	<!--- Query --->
-	<cfquery datasource="#application.razuna.datasource#" name="q">
+	<cfquery datasource="#request.razuna.application.datasource#" name="q">
 	SELECT news_id, news_active, news_text, news_excerpt, news_date, news_title, news_frontpage
 	FROM news
 	WHERE news_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.news_id#">
@@ -2999,10 +3013,10 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 </cffunction>
 
 <!--- Save news --->
-<cffunction name="set_news_edit" output="false" returntype="void">
+<cffunction name="set_news_edit" output="false" returntype="void" access="public" >
 	<cfargument name="thestruct" type="struct">
 	<!--- Save --->
-	<cfquery datasource="#application.razuna.datasource#">
+	<cfquery datasource="#request.razuna.application.datasource#">
 	UPDATE news
 	SET
 	news_active = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.news_active#">,
@@ -3018,65 +3032,65 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 </cffunction>
 
 <!--- Get news --->
-<cffunction name="get_news_frontpage" output="false" returntype="query">
+<cffunction name="get_news_frontpage" output="false" returntype="query" access="public" >
 	<cfargument name="hostid" type="numeric" required="false" default="0">
 	<!--- Param --->
 	<cfset var q = "">
 	<!--- Query --->
-	<cfquery datasource="#application.razuna.datasource#" name="q">
-	SELECT <cfif application.razuna.thedatabase EQ "mssql">TOP 1 </cfif>news_title, news_text, news_excerpt
+	<cfquery datasource="#request.razuna.application.datasource#" name="q">
+	SELECT <cfif request.razuna.application.thedatabase EQ "mssql">TOP 1 </cfif>news_title, news_text, news_excerpt
 	FROM news
 	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
 	AND news_active = <cfqueryparam cfsqltype="cf_sql_varchar" value="true">
 	ORDER BY news_date DESC
-	<cfif application.razuna.thedatabase NEQ "mssql">LIMIT 1</cfif>
+	<cfif request.razuna.application.thedatabase NEQ "mssql">LIMIT 1</cfif>
 	</cfquery>
 	<!--- Return --->
 	<cfreturn q />
 </cffunction>
 
 <!--- Get news --->
-<cffunction name="get_news" output="false" returntype="query">
+<cffunction name="get_news" output="false" returntype="query" access="public" >
 	<cfargument name="news_main" type="string" required="false" default="false">
 	<cfargument name="hostid" type="numeric" required="false" default="0">
 	<!--- Param --->
 	<cfset var q = "">
 	<!--- Query --->
-	<cfquery datasource="#application.razuna.datasource#" name="q">
-	SELECT <cfif arguments.news_main AND application.razuna.thedatabase EQ "mssql">TOP 7 </cfif>news_id, news_frontpage, news_active, news_date, news_title<cfif arguments.news_main>, news_text, news_excerpt</cfif>
+	<cfquery datasource="#request.razuna.application.datasource#" name="q">
+	SELECT <cfif arguments.news_main AND request.razuna.application.thedatabase EQ "mssql">TOP 7 </cfif>news_id, news_frontpage, news_active, news_date, news_title<cfif arguments.news_main>, news_text, news_excerpt</cfif>
 	FROM news
 	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
 	<cfif arguments.news_main>
 		AND news_active = <cfqueryparam cfsqltype="cf_sql_varchar" value="true">
 	</cfif>
 	ORDER BY news_date DESC
-	<cfif arguments.news_main AND application.razuna.thedatabase NEQ "mssql">LIMIT 7</cfif>
+	<cfif arguments.news_main AND request.razuna.application.thedatabase NEQ "mssql">LIMIT 7</cfif>
 	</cfquery>
 	<!--- Return --->
 	<cfreturn q />
 </cffunction>
 
 <!--- Get news --->
-<cffunction name="get_news_host" output="false" returntype="struct">
+<cffunction name="get_news_host" output="false" returntype="struct" access="public" >
 	<!--- Param --->
 	<cfset var qry = structnew()>
 	<!--- Query --->
-	<cfquery datasource="#application.razuna.datasource#" name="qry.news_host">
-	SELECT <cfif application.razuna.thedatabase EQ "mssql">TOP 3 </cfif>news_id, news_active, news_date, news_title, news_text, news_excerpt
+	<cfquery datasource="#request.razuna.application.datasource#" name="qry.news_host">
+	SELECT <cfif request.razuna.application.thedatabase EQ "mssql">TOP 3 </cfif>news_id, news_active, news_date, news_title, news_text, news_excerpt
 	FROM news
-	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 	AND news_active = <cfqueryparam cfsqltype="cf_sql_varchar" value="true">
 	ORDER BY news_date DESC
-	<cfif application.razuna.thedatabase NEQ "mssql">LIMIT 3</cfif>
+	<cfif request.razuna.application.thedatabase NEQ "mssql">LIMIT 3</cfif>
 	</cfquery>
 	<!--- Query system news --->
-	<cfquery datasource="#application.razuna.datasource#" name="qry.news">
-	SELECT <cfif application.razuna.thedatabase EQ "mssql">TOP 3 </cfif>news_id, news_active, news_date, news_title, news_text, news_excerpt
+	<cfquery datasource="#request.razuna.application.datasource#" name="qry.news">
+	SELECT <cfif request.razuna.application.thedatabase EQ "mssql">TOP 3 </cfif>news_id, news_active, news_date, news_title, news_text, news_excerpt
 	FROM news
 	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="0">
 	AND news_active = <cfqueryparam cfsqltype="cf_sql_varchar" value="true">
 	ORDER BY news_date DESC
-	<cfif application.razuna.thedatabase NEQ "mssql">LIMIT 3</cfif>
+	<cfif request.razuna.application.thedatabase NEQ "mssql">LIMIT 3</cfif>
 	</cfquery>
 	<!--- Return --->
 	<cfreturn qry />
@@ -3084,10 +3098,10 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 
 
 <!--- Delete news --->
-<cffunction name="del_news" output="false" returntype="void">
+<cffunction name="del_news" output="false" returntype="void" access="public" >
 	<cfargument name="news_id" type="string" required="true">
 	<!--- Query --->
-	<cfquery datasource="#application.razuna.datasource#">
+	<cfquery datasource="#request.razuna.application.datasource#">
 	DELETE FROM news
 	WHERE news_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.news_id#">
 	</cfquery>
@@ -3111,9 +3125,9 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 			<!--- Put keys into session scope --->
 			<cfloop query="qry_keys">
 				<cfif app_key_name EQ "#arguments.account#_appkey">
-					<cfset "session.#arguments.account#.appkey" = app_key_value>
+					<cfset "request.razuna.session.#arguments.account#.appkey" = app_key_value>
 				<cfelseif app_key_name EQ "#arguments.account#_appsecret">
-					<cfset "session.#arguments.account#.appsecret" = app_key_value>
+					<cfset "request.razuna.session.#arguments.account#.appsecret" = app_key_value>
 				</cfif>
 			</cfloop>
 			<!--- Output --->
@@ -3130,15 +3144,15 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	</cffunction>
 
 	<!--- Get_s3 --->
-	<cffunction name="get_s3" returntype="Query">
+	<cffunction name="get_s3" returntype="Query" access="public" >
 		<!--- Param --->
 		<cfset var qry = "">
 		<!--- Query --->
-		<cfquery datasource="#application.razuna.datasource#" name="qry">
+		<cfquery datasource="#request.razuna.application.datasource#" name="qry">
 		SELECT set_id, set_pref
-		FROM #session.hostdbprefix#settings
+		FROM #request.razuna.session.hostdbprefix#settings
 		WHERE set_id LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="aws_%_">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.hostid#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#request.razuna.session.hostid#">
 		ORDER BY set_id
 		</cfquery>
 		<!--- Return --->
@@ -3146,17 +3160,17 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	</cffunction>
 
 	<!--- Get_s3 --->
-	<cffunction name="set_s3" returntype="void">
+	<cffunction name="set_s3" returntype="void" access="public" >
 		<cfargument name="thestruct" type="struct" required="true" />
 		<!--- Remove all aws fields in DB first --->
-		<cfquery datasource="#application.razuna.datasource#">
-		DELETE FROM #session.hostdbprefix#settings
+		<cfquery datasource="#request.razuna.application.datasource#">
+		DELETE FROM #request.razuna.session.hostdbprefix#settings
 		WHERE set_id LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="aws_%_">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.hostid#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#request.razuna.session.hostid#">
 		</cfquery>
 		<!--- Remove all sessions with AWS --->
-		<cfif structKeyExists(session,"aws")>
-			<cfset structClear(session.aws)>
+		<cfif structKeyExists(request.razuna.session,"aws")>
+			<cfset structClear(request.razuna.session.aws)>
 		</cfif>
 		<!--- Loop over fields and call savesettings --->
 		<cfloop collection="#arguments.thestruct#" item="i">
@@ -3172,15 +3186,15 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	</cffunction>
 
 	<!--- Get AD Server --->
-	<cffunction name="get_ad_server" returntype="Query">
+	<cffunction name="get_ad_server" returntype="Query" access="public" >
 		<!--- Param --->
 		<cfset var qry = "">
 		<!--- Query --->
-		<cfquery datasource="#application.razuna.datasource#" name="qry">
+		<cfquery datasource="#request.razuna.application.datasource#" name="qry">
 		SELECT set_id, set_pref
-		FROM #session.hostdbprefix#settings
+		FROM #request.razuna.session.hostdbprefix#settings
 		WHERE set_id LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="ad_server_%">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 		ORDER BY set_id
 		</cfquery>
 		<!--- Return --->
@@ -3188,7 +3202,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	</cffunction>
 
 	<!--- Get AD users --->
-	<cffunction name="get_ad_server_userlist" returntype="Query">
+	<cffunction name="get_ad_server_userlist" returntype="Query" access="public" >
 		<cfargument name="thestruct" type="struct" required="true" />
 		<cfset var results = querynew('')>
 		<cfif structKeyExists(arguments.thestruct,'searchtext')  AND trim(arguments.thestruct.searchtext) NEQ "" AND structKeyExists(arguments.thestruct,'ad_ldap') AND arguments.thestruct.ad_ldap EQ 'ad'>
@@ -3259,7 +3273,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 		<cfreturn results/>
 	</cffunction>
 
-	<cffunction name="authenticate_AD_User" returntype="boolean" hint="Authenticates an AD user. Username must contain the domain name in format domain\username" >
+	<cffunction name="authenticate_AD_User" returntype="boolean" access="public" >
 		<cfargument name="username" required="true">
 		<cfargument name="password" required="true">
 		<cfargument name="dcstart" required="true">
@@ -3267,7 +3281,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 		<cfargument name="port" required="true">
 		<cfargument name="secure" required="false" default="">
 		<cfset var isAuthenticated = false>
-		<cfset session.ldapauthfail = "">
+		<cfset request.razuna.session.ldapauthfail = "">
 		   <cftry>
 		         <cfif secure NEQ ''>
 		         		  <cfldap action="QUERY"
@@ -3302,7 +3316,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 		         <cfset isAuthenticated=true>
 		      <cfcatch type="ANY">
 		         <cfset isAuthenticated=false>
-		         <cfset session.ldapauthfail = cfcatch.detail>
+		         <cfset request.razuna.session.ldapauthfail = cfcatch.detail>
 		      </cfcatch>
 		   </cftry>
 		<cfreturn isAuthenticated>
@@ -3311,13 +3325,14 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<!--- RAZ-2831 : Get Metadata export template --->
 	<cffunction name="get_export_template" output="false" returnType="Any" >
 		<cfargument name="thestruct" type="struct" required="true" />
+		<cfset var cachetoken = getcachetoken(type="settings", hostid=request.razuna.session.hostid)>
 		<!--- Params --->
 		<cfset var qry = "">
 		<!--- Query db --->
-		<cfquery dataSource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
-		SELECT /* #variables.cachetoken#get_export_template */ exp_id, exp_field, exp_value
-		FROM #session.hostdbprefix#export_template
-		WHERE host_id = <cfqueryparam value="#session.hostid#" CFSQLType="CF_SQL_NUMERIC">
+		<cfquery dataSource="#request.razuna.application.datasource#" name="qry" cachedwithin="1" region="razcache">
+		SELECT /* #cachetoken#get_export_template */ exp_id, exp_field, exp_value
+		FROM #request.razuna.session.hostdbprefix#export_template
+		WHERE host_id = <cfqueryparam value="#request.razuna.session.hostid#" CFSQLType="CF_SQL_NUMERIC">
 		</cfquery>
 		<!--- Set value here --->
 		<cfset var v = structnew()>
@@ -3350,9 +3365,9 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cffunction name="set_export_template" output="false" access="public" >
 		<cfargument name="thestruct" type="struct">
 		<!--- First remove all records for this host --->
-		<cfquery dataSource="#application.razuna.datasource#">
-		DELETE FROM #session.hostdbprefix#export_template
-		WHERE host_id = <cfqueryparam value="#session.hostid#" CFSQLType="CF_SQL_NUMERIC">
+		<cfquery dataSource="#request.razuna.application.datasource#">
+		DELETE FROM #request.razuna.session.hostdbprefix#export_template
+		WHERE host_id = <cfqueryparam value="#request.razuna.session.hostid#" CFSQLType="CF_SQL_NUMERIC">
 		</cfquery>
 		<!--- Loop fieldnames when it exists --->
 		<cfif structKeyExists(arguments.thestruct,"fieldnames")>
@@ -3360,16 +3375,16 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 			<cfloop list="#arguments.thestruct.fieldnames#" index="i">
 				<cfif i NEQ "apply_global">
 					<cfif evaluate(trim(i)) NEQ "">
-					<cfquery dataSource="#application.razuna.datasource#">
-					INSERT INTO #session.hostdbprefix#export_template
+					<cfquery dataSource="#request.razuna.application.datasource#">
+					INSERT INTO #request.razuna.session.hostdbprefix#export_template
 					(exp_id, exp_field, exp_value, exp_timestamp, host_id, user_id)
 					VALUES(
 						<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">,
 						<cfqueryparam value="#i#" CFSQLType="CF_SQL_VARCHAR">,
 						<cfqueryparam value="#evaluate(trim(i))#" CFSQLType="CF_SQL_VARCHAR">,
 						<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp" >,
-						<cfqueryparam value="#session.hostid#" CFSQLType="CF_SQL_NUMERIC">,
-						<cfqueryparam value="#session.theuserid#" CFSQLType="CF_SQL_VARCHAR">
+						<cfqueryparam value="#request.razuna.session.hostid#" CFSQLType="CF_SQL_NUMERIC">,
+						<cfqueryparam value="#request.razuna.session.theuserid#" CFSQLType="CF_SQL_VARCHAR">
 					)
 					</cfquery>
 					</cfif>
@@ -3377,7 +3392,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 			</cfloop>
 		</cfif>
 		<!--- Flush Cache --->
-		<cfset variables.cachetoken = resetcachetoken("settings")>
+		<cfset resetcachetoken(type="settings", hostid=request.razuna.session.hostid)>
 	</cffunction>
 
 	<!--- Get Metadata export template details --->
@@ -3385,10 +3400,10 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 		<!--- Params --->
 		<cfset var qry = "">
 		<!--- Query db --->
-		<cfquery dataSource="#application.razuna.datasource#" name="qry_details" >
+		<cfquery dataSource="#request.razuna.application.datasource#" name="qry_details" >
 		SELECT exp_id, exp_field, exp_value
-		FROM #session.hostdbprefix#export_template
-		WHERE host_id = <cfqueryparam value="#session.hostid#" CFSQLType="CF_SQL_NUMERIC">
+		FROM #request.razuna.session.hostdbprefix#export_template
+		WHERE host_id = <cfqueryparam value="#request.razuna.session.hostid#" CFSQLType="CF_SQL_NUMERIC">
 		ORDER BY exp_field DESC
 		</cfquery>
 		<!--- Return --->
@@ -3396,14 +3411,14 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	</cffunction>
 
 <!--- Save notification settings --->
-<cffunction name="set_notifications" returntype="void" hint="Save notificaiton settings">
+<cffunction name="set_notifications" returntype="void" >
 	<cfargument name="thestruct" type="struct">
 	<cfparam name="thestruct.folder_subscribe_meta" default="">
 	<cfparam name="thestruct.asset_expiry_meta" default="">
 	<cfparam name="thestruct.duplicates_meta" default="">
 	<!--- Update db --->
-	<cfquery dataSource="#application.razuna.datasource#">
-	UPDATE #session.hostdbprefix#settings_2
+	<cfquery dataSource="#request.razuna.application.datasource#">
+	UPDATE #request.razuna.session.hostdbprefix#settings_2
 	SET
 	set2_folder_subscribe_email_sub = <cfqueryparam value="#thestruct.folder_subscribe_subject#" cfsqltype="cf_sql_varchar">,
 	set2_folder_subscribe_email_body = <cfqueryparam value="#thestruct.folder_subscribe_body#" cfsqltype="cf_sql_varchar">,
@@ -3419,24 +3434,24 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	set2_email_from = <cfqueryparam value="#arguments.thestruct.set2_email_from#" cfsqltype="cf_sql_varchar">,
 	set2_intranet_reg_emails = <cfqueryparam value="#arguments.thestruct.set2_intranet_reg_emails#" cfsqltype="cf_sql_varchar">,
 	set2_intranet_reg_emails_sub = <cfqueryparam value="#arguments.thestruct.set2_intranet_reg_emails_sub#" cfsqltype="cf_sql_varchar">
-	WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
-	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	WHERE set2_id = <cfqueryparam value="#request.razuna.application.setid#" cfsqltype="cf_sql_numeric">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 	</cfquery>
-	<cfset variables.cachetoken = resetcachetoken("settings")>
+	<cfset resetcachetoken(type="settings", hostid=request.razuna.session.hostid)>
 </cffunction>
 
-<cffunction name="get_notifications" returntype="query" hint="Get notificaiton settings">
+<cffunction name="get_notifications" returntype="query" >
 	<cfargument name="datasource" type="string" required="false" default="">
 	<cfargument name="dbprefix" type="string" required="false" default="">
 	<cfargument name="host_id" type="numeric" required="false" default="0">
 	<!--- Decide what to take --->
 	<cfif ! arguments.host_id>
-		<cfset arguments.datasource = application.razuna.datasource>
-		<cfset arguments.host_id = session.hostid>
-		<cfset arguments.dbprefix = session.hostdbprefix>
+		<cfset arguments.datasource = request.razuna.application.datasource>
+		<cfset arguments.host_id = request.razuna.session.hostid>
+		<cfset arguments.dbprefix = request.razuna.session.hostdbprefix>
 	</cfif>
 	<!--- Cache --->
-	<cfset var cachetoken = getcachetoken("settings")>
+	<cfset var cachetoken = getcachetoken(type="settings", hostid=request.razuna.session.hostid)>
 	<cfset var notification_qry = "">
 	<!--- Update db --->
 	<cfquery dataSource="#arguments.datasource#" name="notification_qry" cachedwithin="1" region="razcache">
@@ -3463,18 +3478,18 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 </cffunction>
 
 
-<cffunction name="getmeta_asset"  hint="Retrieves relevant meta information from a given asset from the specified meta fields in raz1_settings_2" returntype="query">
+<cffunction name="getmeta_asset"   returntype="query">
 	<cfargument name="assetid" type="string" required="true">
-	<cfargument name="metafields" type="string" required="true" hint="fields to extract">
+	<cfargument name="metafields" type="string" required="true" >
 	<cfargument name="datasource" type="string" required="false" default="">
 	<cfargument name="dbprefix" type="string" required="false" default="">
 	<cfargument name="host_id" type="numeric" required="false" default="0">
 	<cfargument name="thelangid" type="numeric" required="false" default="1">
 	<!--- Decide what to take --->
 	<cfif ! arguments.host_id>
-		<cfset arguments.datasource = application.razuna.datasource>
-		<cfset arguments.host_id = session.hostid>
-		<cfset arguments.dbprefix = session.hostdbprefix>
+		<cfset arguments.datasource = request.razuna.application.datasource>
+		<cfset arguments.host_id = request.razuna.session.hostid>
+		<cfset arguments.dbprefix = request.razuna.session.hostdbprefix>
 	</cfif>
 	<cfset var data = queryNew(1)>
 	<!--- Extract fields --->
@@ -3541,7 +3556,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfreturn data>
 </cffunction>
 
-<cffunction name="getimgmeta_map" returntype="struct" hint="Retrieves xmp mapping for image metadata fields">
+<cffunction name="getimgmeta_map" returntype="struct" >
 	<cfset img_meta_map = structnew()>
 	<cfset img_meta_map['authorsposition']='authorstitle'>
 	<cfset img_meta_map['captionwriter']='descwriter'>
@@ -3584,16 +3599,16 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfreturn img_meta_map>
 </cffunction>
 
-<cffunction name="setaccesscontrol" returntype="void" hint="Sets access control for the different tabs in administrator">
+<cffunction name="setaccesscontrol" returntype="void" >
 	<cfargument name="thestruct" type="Struct">
-	<cfquery dataSource="#application.razuna.datasource#">
+	<cfquery dataSource="#request.razuna.application.datasource#">
 		DELETE FROM options WHERE opt_id LIKE '%access'
 	</cfquery>
 	<cfloop delimiters="," index="field" list="#arguments.thestruct.fieldnames#">
 		<cfif field NEQ 'FA'>
 			<cfif evaluate(field) NEQ ''>
 				<!--- Insert fields into database --->
-				<cfquery dataSource="#application.razuna.datasource#">
+				<cfquery dataSource="#request.razuna.application.datasource#">
 					INSERT INTO options (opt_id,opt_value,rec_uuid)
 					VALUES (<cfqueryparam cfsqltype="cf_sql_varchar" value="#field#">,
 						<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(field)#">,
@@ -3604,8 +3619,8 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	</cfloop>
 </cffunction>
 
-<cffunction name="getaccesscontrol" returntype="struct" hint="Get access control settings for the different tabs in administrator">
-	<cfquery dataSource="#application.razuna.datasource#" name="accessdata">
+<cffunction name="getaccesscontrol" returntype="struct" >
+	<cfquery dataSource="#request.razuna.application.datasource#" name="accessdata">
 		SELECT opt_id, opt_value
 		FROM options
 		WHERE opt_id LIKE '%access'
@@ -3617,16 +3632,16 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfreturn access_struct>
 </cffunction>
 
-<cffunction name="getuseraccesscontrols" returntype="struct" hint="Get access control settings for the given user. Only returns tabs that user has access to.">
+<cffunction name="getuseraccesscontrols" returntype="struct" >
 	<cfargument name="thestruct" type="Struct">
 	<cfset var grpperm = "">
 	<!--- If user has access to the admin tab or if he is in a group that has access then he can see the admin tab so set its access value to true else set to false --->
 	<cfloop collection="#arguments.thestruct#" item="field">
-		<cfif listfind (structfind(arguments.thestruct,field),session.theuserid)>
+		<cfif listfind (structfind(arguments.thestruct,field),request.razuna.session.theuserid)>
 			<cfset structupdate(arguments.thestruct,field,true)>
 			<cfcontinue>
 		</cfif>
-		<cfinvoke component="global.cfc.global" method="comparelists" list1 = "#structfind(arguments.thestruct,field)#" list2 = "#session.thegroupofuser#" returnvariable="grpperm">
+		<cfinvoke component="global.cfc.global" method="comparelists" list1 = "#structfind(arguments.thestruct,field)#" list2 = "#request.razuna.session.thegroupofuser#" returnvariable="grpperm">
 		<cfif grpperm NEQ "">
 			<cfset structupdate(arguments.thestruct,field,true)>
 		<cfelse>
@@ -3641,8 +3656,8 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 </cffunction>
 
 
-<cffunction name="get_customization_placement" returntype="Struct" hint="Returns top or bottom placement of fields in regards to asset thumbnail" >
-	<cfargument name="thestruct" required="true" hint="Fields to get placement for">
+<cffunction name="get_customization_placement" returntype="Struct"  >
+	<cfargument name="thestruct" required="true" >
 	<cfset var cs_place_struct = structnew()>
 
 	<cfset cs_place_struct.top.image="">
@@ -3692,12 +3707,12 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
   	 <cfreturn cs_place_struct>
 </cffunction>
 
-<cffunction name="isuser" returntype="boolean" output="false" hint="query to see if user_id exists in user table">
+<cffunction name="isuser" returntype="boolean" output="false" >
 	<cfargument name="user_id" type="string" required="yes">
 	<!--- function internal vars --->
 	<cfset var localquery = 0>
 	<!--- function body --->
-	<cfquery datasource="#application.razuna.datasource#" name="localquery">
+	<cfquery datasource="#request.razuna.application.datasource#" name="localquery">
 		SELECT 1
 		FROM users
 		WHERE user_id = <cfqueryparam value="#arguments.user_id#" cfsqltype="cf_sql_varchar">
@@ -3711,13 +3726,13 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfreturn userexists>
 </cffunction>
 
-<cffunction name="encrypt" returntype="String" hint="Encrypts a given string with the given key using the default openbd algorithm">
+<cffunction name="encrypt" returntype="String" >
 		<cfargument name="str2encrypt" required="true">
 		<cfargument name="key" required="true">
 		<cfreturn encrypt(arguments.str2encrypt,arguments.key)>
 	</cffunction>
 
-<cffunction name="decrypt" returntype="String" hint="Decrypts an encrypted string using the key provided using the default openbd algorithm">
+<cffunction name="decrypt" returntype="String" >
 	<cfargument name="str2decrypt" required="true">
 	<cfargument name="key" required="true">
 	<cftry>
@@ -3728,7 +3743,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 </cffunction>
 
 <cffunction name="readPackageJson" output="false" returntype="string">
-<cfargument name="thenode" default="" required="yes" type="string" hint="the nodename which you want to parse">
+<cfargument name="thenode" default="" required="yes" type="string" >
 <cfinvoke component="defaults" method="getAbsolutePath" returnvariable="xmlFile">
 	<cfinvokeargument name="pathSourceAbsolute" value="#GetCurrentTemplatePath()#">
 	<cfinvokeargument name="pathTargetRelative" value="../../package.json">
@@ -3741,20 +3756,20 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 <!--- Get UPC settings --->
 <cffunction name="getUpcSettings" returntype="struct">
 	<!--- Cache --->
-	<cfset var cachetoken = getcachetoken("settings")>
+	<cfset var cachetoken = getcachetoken(type="settings", hostid=request.razuna.session.hostid)>
 	<cfset var qry = structnew()>
 	<!--- Settings --->
-	<cfquery datasource="#application.razuna.datasource#" name="qry.settings" cachedwithin="1" region="razcache">
+	<cfquery datasource="#request.razuna.application.datasource#" name="qry.settings" cachedwithin="1" region="razcache">
 	SELECT /* #cachetoken#getUpcSettings */ set2_upc_enabled
-	FROM #session.hostdbprefix#settings_2
-	WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
-	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	FROM #request.razuna.session.hostdbprefix#settings_2
+	WHERE set2_id = <cfqueryparam value="#request.razuna.application.setid#" cfsqltype="cf_sql_numeric">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 	</cfquery>
 	<!--- Templates --->
-	<cfquery datasource="#application.razuna.datasource#" name="qry.templates" cachedwithin="1" region="razcache">
+	<cfquery datasource="#request.razuna.application.datasource#" name="qry.templates" cachedwithin="1" region="razcache">
 	SELECT /* #cachetoken#getUpcSettingsTemplates */ upc_temp_id, upc_active, upc_name, upc_description
-	FROM #session.hostdbprefix#upc_template
-	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	FROM #request.razuna.session.hostdbprefix#upc_template
+	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 	</cfquery>
 	<cfreturn qry>
 </cffunction>
@@ -3763,14 +3778,14 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 <cffunction name="setUpcSettings">
 	<cfargument name="thestruct" type="struct" required="yes">
 	<!--- Update core settings --->
-	<cfquery datasource="#application.razuna.datasource#">
-	UPDATE #session.hostdbprefix#settings_2
+	<cfquery datasource="#request.razuna.application.datasource#">
+	UPDATE #request.razuna.session.hostdbprefix#settings_2
 	SET set2_upc_enabled = <cfqueryparam value="#arguments.thestruct.set2_upc_enabled#" cfsqltype="cf_sql_varchar">
-	WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
-	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	WHERE set2_id = <cfqueryparam value="#request.razuna.application.setid#" cfsqltype="cf_sql_numeric">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 	</cfquery>
 	<!--- Flush --->
-	<cfset resetcachetoken("settings")>
+	<cfset resetcachetoken(type="settings", hostid=request.razuna.session.hostid)>
 	<cfreturn >
 </cffunction>
 
@@ -3778,21 +3793,21 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 <cffunction name="getUpcTemplate" returntype="struct">
 	<cfargument name="upc_temp_id" type="string" required="yes">
 	<!--- Cache --->
-	<cfset var cachetoken = getcachetoken("settings")>
+	<cfset var cachetoken = getcachetoken(type="settings", hostid=request.razuna.session.hostid)>
 	<cfset var qry = structnew()>
 	<!--- Get template --->
-	<cfquery datasource="#application.razuna.datasource#" name="qry.template" cachedwithin="1" region="razcache">
+	<cfquery datasource="#request.razuna.application.datasource#" name="qry.template" cachedwithin="1" region="razcache">
 	SELECT /* #cachetoken#getUpcTemplate */ upc_temp_id, upc_active, upc_name, upc_description
-	FROM #session.hostdbprefix#upc_template
-	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	FROM #request.razuna.session.hostdbprefix#upc_template
+	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 	AND upc_temp_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.upc_temp_id#">
 	ORDER BY upc_name
 	</cfquery>
 	<!--- Get template values --->
-	<cfquery datasource="#application.razuna.datasource#" name="qry.template_values" cachedwithin="1" region="razcache">
+	<cfquery datasource="#request.razuna.application.datasource#" name="qry.template_values" cachedwithin="1" region="razcache">
 	SELECT /* #cachetoken#getUpcTemplateValues */ upc_temp_id_r, upc_field, upc_is_original
-	FROM #session.hostdbprefix#upc_template_val
-	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	FROM #request.razuna.session.hostdbprefix#upc_template_val
+	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 	AND upc_temp_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.upc_temp_id#">
 	ORDER BY upc_field
 	</cfquery>
@@ -3802,34 +3817,34 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 <!--- Set UPC Template --->
 <cffunction name="setUpcTemplate">
 	<cfargument name="thestruct" type="struct" required="yes">
-	<!--- <cfset consoleoutput(true)>
+	<!--- <cfset consoleoutput(true, true)>
 	<cfset console(arguments.thestruct)> --->
 
 	<!--- Param --->
 	<cfparam name="arguments.thestruct.upc_active" default="0">
 	<!--- Delete all records with this ID in the MAIN DB --->
-	<cfquery datasource="#application.razuna.datasource#">
-	DELETE FROM #session.hostdbprefix#upc_template
+	<cfquery datasource="#request.razuna.application.datasource#">
+	DELETE FROM #request.razuna.session.hostdbprefix#upc_template
 	WHERE upc_temp_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.upc_temp_id#">
 	</cfquery>
 	<!--- Save to main DB --->
-	<cfquery datasource="#application.razuna.datasource#">
-	INSERT INTO #session.hostdbprefix#upc_template
+	<cfquery datasource="#request.razuna.application.datasource#">
+	INSERT INTO #request.razuna.session.hostdbprefix#upc_template
 	(upc_temp_id, upc_date_create, upc_date_update, upc_who, upc_active, host_id, upc_name, upc_description)
 	VALUES(
 	<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.upc_temp_id#">,
 	<cfqueryparam cfsqltype="CF_SQL_TIMESTAMP" value="#now()#">,
 	<cfqueryparam cfsqltype="CF_SQL_TIMESTAMP" value="#now()#">,
-	<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.theuserid#">,
+	<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#request.razuna.session.theuserid#">,
 	<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.upc_active#">,
-	<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+	<cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">,
 	<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.upc_name#">,
 	<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.upc_description#">
 	)
 	</cfquery>
 	<!--- Delete all records with this ID in the DB --->
-	<cfquery datasource="#application.razuna.datasource#">
-	DELETE FROM #session.hostdbprefix#upc_template_val
+	<cfquery datasource="#request.razuna.application.datasource#">
+	DELETE FROM #request.razuna.session.hostdbprefix#upc_template_val
 	WHERE upc_temp_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.upc_temp_id#">
 	</cfquery>
 	<!--- Get the name and select fields --->
@@ -3865,12 +3880,12 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 			<cfset se = listgetat(theoriginal, listfindnocase(theoriginal,"original_#i#"))>
 			<cfset fi_value = lcase(arguments.thestruct["#fi#"])>
 			<cfset se_value = lcase(arguments.thestruct["#se#"])>
-			<cfquery datasource="#application.razuna.datasource#">
-			INSERT INTO #session.hostdbprefix#upc_template_val
+			<cfquery datasource="#request.razuna.application.datasource#">
+			INSERT INTO #request.razuna.session.hostdbprefix#upc_template_val
 			(upc_temp_id_r, host_id, rec_uuid, upc_field, upc_is_original)
 			VALUES(
 			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.upc_temp_id#">,
-			<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+			<cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">,
 			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#createuuid()#">,
 			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#trim(fi_value)#">,
 			<cfqueryparam cfsqltype="CF_SQL_DOUBLE" value="#se_value#">
@@ -3879,7 +3894,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 		</cfif>
 	</cfloop>
 	<!--- Flush --->
-	<cfset resetcachetoken("settings")>
+	<cfset resetcachetoken(type="settings", hostid=request.razuna.session.hostid)>
 	<!--- Return --->
 	<cfreturn />
 </cffunction>
@@ -3888,18 +3903,18 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 <cffunction name="delUpcTemplate">
 	<cfargument name="thestruct" type="struct" required="yes">
 	<!--- Query --->
-	<cfquery datasource="#application.razuna.datasource#">
-	DELETE FROM #session.hostdbprefix#upc_template
+	<cfquery datasource="#request.razuna.application.datasource#">
+	DELETE FROM #request.razuna.session.hostdbprefix#upc_template
 	WHERE upc_temp_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.id#">
-	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 	</cfquery>
-	<cfquery datasource="#application.razuna.datasource#">
-	DELETE FROM #session.hostdbprefix#upc_template_val
+	<cfquery datasource="#request.razuna.application.datasource#">
+	DELETE FROM #request.razuna.session.hostdbprefix#upc_template_val
 	WHERE upc_temp_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.id#">
-	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 	</cfquery>
 	<!--- Flush --->
-	<cfset resetcachetoken("settings")>
+	<cfset resetcachetoken(type="settings", hostid=request.razuna.session.hostid)>
 	<cfreturn >
 </cffunction>
 
@@ -3907,17 +3922,17 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 <cffunction name="getUpcExtension" returntype="query">
 	<cfargument name="upc_extension" type="string" required="yes">
 	<!--- Cache --->
-	<cfset var cachetoken = getcachetoken("settings")>
+	<cfset var cachetoken = getcachetoken(type="settings", hostid=request.razuna.session.hostid)>
 	<!--- Param --->
 	<cfset var qry = "">
 	<!--- Query --->
-	<cfquery datasource="#application.razuna.datasource#" name="qry">
+	<cfquery datasource="#request.razuna.application.datasource#" name="qry">
 	SELECT /* #cachetoken#getUpcExtension */ v.upc_is_original, v.upc_field
-	FROM #session.hostdbprefix#upc_template_val v, #session.hostdbprefix#upc_template t
+	FROM #request.razuna.session.hostdbprefix#upc_template_val v, #request.razuna.session.hostdbprefix#upc_template t
 	WHERE v.upc_temp_id_r = t.upc_temp_id
 	AND t.upc_active = <cfqueryparam cfsqltype="CF_SQL_DOUBLE" value="true">
-	AND t.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-	AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	AND t.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
+	AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 	AND v.upc_field = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.upc_extension#">
 	</cfquery>
 	<!--- Return --->

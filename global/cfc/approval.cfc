@@ -25,7 +25,7 @@
 --->
 <cfcomponent output="false" extends="extQueryCaching">
 
-	<cfset consoleoutput(true)>
+	<cfset consoleoutput(true, true)>
 
 	<!--- INIT --->
 	<cffunction name="init" returntype="approval" access="public" output="false">
@@ -52,13 +52,13 @@
 		<cfparam name="arguments.thestruct.approval_folders" default="" />
 
 		<!--- Delete record in DB --->
-		<cfquery datasource="#application.razuna.datasource#">
-		DELETE FROM #session.hostdbprefix#approval
-		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		<cfquery datasource="#request.razuna.application.datasource#">
+		DELETE FROM #request.razuna.session.hostdbprefix#approval
+		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 		</cfquery>
 		<!--- Save to DB --->
-		<cfquery datasource="#application.razuna.datasource#">
-		INSERT INTO #session.hostdbprefix#approval
+		<cfquery datasource="#request.razuna.application.datasource#">
+		INSERT INTO #request.razuna.session.hostdbprefix#approval
 		(approval_enabled, approval_folders, approval_folders_all, approval_group_1, approval_group_2, approval_group_1_all, approval_group_2_all, host_id)
 		VALUES(
 			<cfqueryparam cfsqltype="cf_sql_double" value="#arguments.thestruct.approval_enabled#">,
@@ -68,7 +68,7 @@
 			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.approval_group_2#">,
 			<cfqueryparam cfsqltype="cf_sql_double" value="#arguments.thestruct.approval_group_1_all#">,
 			<cfqueryparam cfsqltype="cf_sql_double" value="#arguments.thestruct.approval_group_2_all#">,
-			<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			<cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 		)
 		</cfquery>
 
@@ -78,10 +78,10 @@
 	<!--- Admin: Get --->
 	<cffunction name="admin_get" access="public" output="true">
 		<cfset var qry = "">
-		<cfquery datasource="#application.razuna.datasource#" name="qry">
+		<cfquery datasource="#request.razuna.application.datasource#" name="qry">
 		SELECT approval_enabled, approval_folders, approval_folders_all, approval_group_1, approval_group_2, approval_group_1_all, approval_group_2_all
-		FROM #session.hostdbprefix#approval
-		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		FROM #request.razuna.session.hostdbprefix#approval
+		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 		</cfquery>
 		<cfif qry.recordcount EQ 0>
 			<cfset _qry.approval_enabled = false>
@@ -90,7 +90,7 @@
 			<cfset _qry.approval_group_2_all = false>
 			<cfset QueryAddrow( query=qry, data=_qry )>
 		</cfif>
-		<!--- <cfset consoleoutput(true)>
+		<!--- <cfset consoleoutput(true, true)>
 		<cfset console(qry)> --->
 		<cfreturn qry>
 	</cffunction>
@@ -98,15 +98,13 @@
 	<!--- Check if approval is enabled --->
 	<cffunction name="check_enabled" access="public" output="true">
 		<cfargument name="folder_id" type="string" required="true" />
-		<!--- <cfset consoleoutput(true)>
-		<cfset console(arguments)> --->
 		<!--- Param --->
 		<cfset var qry = "">
 		<!--- Query --->
-		<cfquery datasource="#application.razuna.datasource#" name="qry">
+		<cfquery datasource="#request.razuna.application.datasource#" name="qry">
 		SELECT approval_enabled
-		FROM #session.hostdbprefix#approval
-		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		FROM #request.razuna.session.hostdbprefix#approval
+		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 		<cfif arguments.folder_id NEQ 0>
 			AND (
 				approval_folders LIKE (<cfqueryparam cfsqltype="cf_sql_varchar" value="%#arguments.folder_id#%">)
@@ -173,37 +171,37 @@
 		<!--- Param --->
 		<cfset var qry = structNew()>
 		<!--- Query --->
-		<cfquery datasource="#application.razuna.datasource#" name="qry.files">
+		<cfquery datasource="#request.razuna.application.datasource#" name="qry.files">
 		SELECT r.img_id as id, r.img_filename as name, r.img_create_time as date_create, r.cloud_url, r.cloud_url_org, r.path_to_asset, r.hashtag, r.folder_id_r, r.thumb_extension, 'img' as kind, u.user_first_name, u.user_last_name, f.folder_name, r.img_owner as file_owner, r.img_filename_org as filename_org, r.img_extension as extension
-		FROM #session.hostdbprefix#folders f, #session.hostdbprefix#images r LEFT JOIN users u ON u.user_id = r.img_owner
+		FROM #request.razuna.session.hostdbprefix#folders f, #request.razuna.session.hostdbprefix#images r LEFT JOIN users u ON u.user_id = r.img_owner
 		WHERE r.is_available = <cfqueryparam cfsqltype="cf_sql_varchar" value="2">
 		AND f.folder_id = r.folder_id_r
-		AND r.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND r.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 		UNION ALL
 		SELECT r.vid_id as id, r.vid_filename as name, r.vid_create_time as date_create, r.cloud_url, r.cloud_url_org, r.path_to_asset, r.hashtag, r.folder_id_r, '' as thumb_extension, 'vid' as kind, u.user_first_name, u.user_last_name, f.folder_name, r.vid_owner as file_owner, r.vid_name_org as filename_org, r.vid_extension as extension
-		FROM #session.hostdbprefix#folders f, #session.hostdbprefix#videos r LEFT JOIN users u ON u.user_id = r.vid_owner
+		FROM #request.razuna.session.hostdbprefix#folders f, #request.razuna.session.hostdbprefix#videos r LEFT JOIN users u ON u.user_id = r.vid_owner
 		WHERE r.is_available = <cfqueryparam cfsqltype="cf_sql_varchar" value="2">
 		AND f.folder_id = r.folder_id_r
-		AND r.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND r.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 		UNION ALL
 		SELECT r.aud_id as id, r.aud_name as name, r.aud_create_time as date_create, r.cloud_url, r.cloud_url_org, r.path_to_asset, r.hashtag, r.folder_id_r, '' as thumb_extension, 'aud' as kind, u.user_first_name, u.user_last_name, f.folder_name, r.aud_owner as file_owner, r.aud_name_org as filename_org, r.aud_extension as extension
-		FROM #session.hostdbprefix#folders f, #session.hostdbprefix#audios r LEFT JOIN users u ON u.user_id = r.aud_owner
+		FROM #request.razuna.session.hostdbprefix#folders f, #request.razuna.session.hostdbprefix#audios r LEFT JOIN users u ON u.user_id = r.aud_owner
 		WHERE r.is_available = <cfqueryparam cfsqltype="cf_sql_varchar" value="2">
 		AND f.folder_id = r.folder_id_r
-		AND r.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND r.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 		UNION ALL
 		SELECT r.file_id as id, r.file_name as name, r.file_create_time as date_create, r.cloud_url, r.cloud_url_org, r.path_to_asset, r.hashtag, r.folder_id_r, '' as thumb_extension, 'doc' as kind, u.user_first_name, u.user_last_name, f.folder_name, r.file_owner as file_owner, r.file_name_org as filename_org, r.file_extension as extension
-		FROM #session.hostdbprefix#folders f, #session.hostdbprefix#files r LEFT JOIN users u ON u.user_id = r.file_owner
+		FROM #request.razuna.session.hostdbprefix#folders f, #request.razuna.session.hostdbprefix#files r LEFT JOIN users u ON u.user_id = r.file_owner
 		WHERE r.is_available = <cfqueryparam cfsqltype="cf_sql_varchar" value="2">
 		AND f.folder_id = r.folder_id_r
-		AND r.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND r.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 		ORDER BY date_create DESC
 		</cfquery>
 		<!--- Get the approval done records --->
 		<cfif qry.files.recordcount NEQ 0>
-			<cfquery datasource="#application.razuna.datasource#" name="qry.done">
+			<cfquery datasource="#request.razuna.application.datasource#" name="qry.done">
 			SELECT user_id, approval_date, file_id
-			FROM #session.hostdbprefix#approval_done
+			FROM #request.razuna.session.hostdbprefix#approval_done
 			WHERE file_id IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#valueList(qry.files.id)#" list="true">)
 			</cfquery>
 		</cfif>
@@ -320,16 +318,16 @@
 		<!--- Remove the file in the system --->
 		<!--- Set vars --->
 		<cfif arguments.thestruct.file_type EQ "img">
-			<cfset var _db = "#session.hostdbprefix#images">
+			<cfset var _db = "#request.razuna.session.hostdbprefix#images">
 			<cfset var _id = "img_id">
 		<cfelseif arguments.thestruct.file_type EQ "vid">
-			<cfset var _db = "#session.hostdbprefix#videos">
+			<cfset var _db = "#request.razuna.session.hostdbprefix#videos">
 			<cfset var _id = "vid_id">
 		<cfelseif arguments.thestruct.file_type EQ "aud">
-			<cfset var _db = "#session.hostdbprefix#audios">
+			<cfset var _db = "#request.razuna.session.hostdbprefix#audios">
 			<cfset var _id = "aud_id">
 		<cfelse>
-			<cfset var _db = "#session.hostdbprefix#files">
+			<cfset var _db = "#request.razuna.session.hostdbprefix#files">
 			<cfset var _id = "file_id">
 		</cfif>
 		<!--- Get all users of this approval process --->
@@ -337,10 +335,10 @@
 		<!--- Send out the email with the rejection --->
 		<cfset send_message(group_users=_qry_users, kind='reject', reject_message=arguments.thestruct.reject_message, file_owner=arguments.thestruct.file_owner, file_id=arguments.thestruct.file_id, file_type=arguments.thestruct.file_type, dynpath=arguments.thestruct.dynpath, urlasset=arguments.thestruct.urlasset, urlglobal=arguments.thestruct.urlglobal)>
 		<!--- Remove in DB --->
-		<cfquery datasource="#application.razuna.datasource#">
+		<cfquery datasource="#request.razuna.application.datasource#">
 		DELETE FROM #_db#
 		WHERE #_id# = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 		</cfquery>
 		<!--- Return --->
 		<cfreturn />
@@ -363,7 +361,7 @@
 		<cfset var s = structNew()>
 		<!--- Set vars --->
 		<cfif arguments.file_type EQ "img">
-			<cfset var _db = "#session.hostdbprefix#images">
+			<cfset var _db = "#request.razuna.session.hostdbprefix#images">
 			<cfset var _id = "img_id">
 			<cfset var _owner = "img_owner">
 			<cfset var _name = "img_filename">
@@ -371,7 +369,7 @@
 			<cfset var _org = "img_filename_org">
 			<cfset var _thumb = "thumb_extension">
 		<cfelseif arguments.file_type EQ "vid">
-			<cfset var _db = "#session.hostdbprefix#videos">
+			<cfset var _db = "#request.razuna.session.hostdbprefix#videos">
 			<cfset var _id = "vid_id">
 			<cfset var _owner = "vid_owner">
 			<cfset var _name = "vid_filename">
@@ -379,7 +377,7 @@
 			<cfset var _org = "vid_filename_org">
 			<cfset var _thumb = "0">
 		<cfelseif arguments.file_type EQ "aud">
-			<cfset var _db = "#session.hostdbprefix#audios">
+			<cfset var _db = "#request.razuna.session.hostdbprefix#audios">
 			<cfset var _id = "aud_id">
 			<cfset var _owner = "aud_owner">
 			<cfset var _name = "aud_name">
@@ -387,7 +385,7 @@
 			<cfset var _org = "aud_name_org">
 			<cfset var _thumb = "0">
 		<cfelse>
-			<cfset var _db = "#session.hostdbprefix#files">
+			<cfset var _db = "#request.razuna.session.hostdbprefix#files">
 			<cfset var _id = "file_id">
 			<cfset var _owner = "file_owner">
 			<cfset var _name = "file_name">
@@ -396,17 +394,17 @@
 			<cfset var _thumb = "0">
 		</cfif>
 		<!--- Query --->
-		<cfquery datasource="#application.razuna.datasource#" name="s.qry">
+		<cfquery datasource="#request.razuna.application.datasource#" name="s.qry">
 		SELECT #_id# as id, folder_id_r, #_owner# as file_owner, #_name# as file_name, path_to_asset, cloud_url, #_extension# as extension, #_org# as filename_org, #_thumb# as thumb_extension
 		FROM #_db#
 		WHERE #_id# = <cfqueryparam value="#arguments.file_id#" cfsqltype="CF_SQL_VARCHAR">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 		</cfquery>
 		<!--- Get assetpath --->
 		<cfinvoke component="global.cfc.settings" method="assetpath" returnvariable="assetpath" />
 		<!--- Now get thumbnail --->
 		<cfsavecontent variable="s.thumbnail"><cfoutput>
-			<cfif application.razuna.storage EQ "amazon">
+			<cfif request.razuna.application.storage EQ "amazon">
 				<cfif s.qry.cloud_url NEQ "">
 					<img src="#s.qry.cloud_url#" border="0" style="max-width:400px">
 				<cfelse>
@@ -422,7 +420,7 @@
 					<img src="#arguments.urlglobal#global/host/dam/images/icons/icon_<cfif s.qry.extension EQ "mp3" OR s.qry.extension EQ "wav">#s.qry.extension#<cfelse>aud</cfif>.png" border="0">
 				<cfelse>
 					<cfset thethumb = replacenocase(s.qry.filename_org, ".#s.qry.extension#", ".jpg", "all")>
-					<cfif FileExists("#assetpath#/#session.hostid#/#s.qry.path_to_asset#/#thethumb#") >
+					<cfif FileExists("#assetpath#/#request.razuna.session.hostid#/#s.qry.path_to_asset#/#thethumb#") >
 						<img src="#arguments.urlasset##s.qry.path_to_asset#/#thethumb#" border="0" style="max-width:400px">
 					<cfelse>
 						<img src="#arguments.urlglobal#global/host/dam/images/icons/icon_#s.qry.extension#.png" border="0" width="128" height="128" onerror = "this.src='#arguments.urlglobal#global/host/dam/images/icons/icon_txt.png'">
@@ -442,33 +440,33 @@
 		<cfargument name="is_indexed" type="string" required="true" />
 		<!--- Set vars --->
 		<cfif arguments.file_type EQ "img">
-			<cfset var _db = "#session.hostdbprefix#images">
+			<cfset var _db = "#request.razuna.session.hostdbprefix#images">
 			<cfset var _id = "img_id">
 			<cfset var _cache = "images">
 		<cfelseif arguments.file_type EQ "vid">
-			<cfset var _db = "#session.hostdbprefix#videos">
+			<cfset var _db = "#request.razuna.session.hostdbprefix#videos">
 			<cfset var _id = "vid_id">
 			<cfset var _cache = "videos">
 		<cfelseif arguments.file_type EQ "aud">
-			<cfset var _db = "#session.hostdbprefix#audios">
+			<cfset var _db = "#request.razuna.session.hostdbprefix#audios">
 			<cfset var _id = "aud_id">
 			<cfset var _cache = "audios">
 		<cfelse>
-			<cfset var _db = "#session.hostdbprefix#files">
+			<cfset var _db = "#request.razuna.session.hostdbprefix#files">
 			<cfset var _id = "file_id">
 			<cfset var _cache = "files">
 		</cfif>
 		<!--- Set the is_available to 2 and index so indexing doesn't occur --->
-		<cfquery datasource="#application.razuna.datasource#">
+		<cfquery datasource="#request.razuna.application.datasource#">
 		UPDATE #_db#
 		SET
 		is_available = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.is_available#">,
 		is_indexed = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.is_indexed#">
 		WHERE #_id# = <cfqueryparam value="#arguments.file_id#" cfsqltype="CF_SQL_VARCHAR">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 		</cfquery>
 		<!--- Flush cache --->
-		<cfset resetcachetoken(type=_cache)>
+		<cfset resetcachetoken(type=_cache, hostid=request.razuna.session.hostid)>
 		<!--- Return --->
 		<cfreturn />
 	</cffunction>
@@ -477,11 +475,11 @@
 	<cffunction name="set_approval_done" access="private" output="true">
 		<cfargument name="file_id" type="string" required="true" />
 		<!--- Insert --->
-		<cfquery datasource="#application.razuna.datasource#">
-		INSERT INTO #session.hostdbprefix#approval_done
+		<cfquery datasource="#request.razuna.application.datasource#">
+		INSERT INTO #request.razuna.session.hostdbprefix#approval_done
 		(user_id, approval_date, file_id)
 		VALUES(
-			<cfqueryparam cfsqltype="cf_sql_varchar" value="#session.theuserid#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#request.razuna.session.theuserid#">,
 			<cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
 			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.file_id#">
 		)
@@ -508,9 +506,9 @@
 		<cfset var _group = "_qry_approval.approval_group_#arguments.group#">
 		<cfset var _group_users = evaluate(_group)>
 		<!--- Query all users who have approved so far but not the sysadmin --->
-		<cfquery datasource="#application.razuna.datasource#" name="qry_approved_users">
+		<cfquery datasource="#request.razuna.application.datasource#" name="qry_approved_users">
 		SELECT user_id
-		FROM #session.hostdbprefix#approval_done
+		FROM #request.razuna.session.hostdbprefix#approval_done
 		WHERE file_id =	<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.file_id#">
 		AND user_id IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#_group_users#" list="true">)
 		</cfquery>
@@ -560,7 +558,7 @@
 		<cfset var _subject_prefix = "[Approval]:">
 
 		<!--- Get current user --->
-		<cfset thestruct.user_id = session.theuserid>
+		<cfset thestruct.user_id = request.razuna.session.theuserid>
 		<cfinvoke component="global.cfc.users" method="details" thestruct="#thestruct#" returnvariable="qry_current_user" />
 
 		<!--- Get file owner if not empty --->
@@ -575,10 +573,10 @@
 
 		<!--- Set the proper URL to get back to Razuna --->
 		<cfset var _raz_url = replaceNoCase(arguments.urlglobal, "global/", "", "ONE")>
-		<cfif application.razuna.isp>
+		<cfif request.razuna.application.isp>
 			<cfset _raz_url = _raz_url & "index.cfm?fa=c.req_approval">
 		<cfelse>
-			<cfset _raz_url = _raz_url & "raz#session.hostid#/dam/index.cfm?fa=c.req_approval">
+			<cfset _raz_url = _raz_url & "raz#request.razuna.session.hostid#/dam/index.cfm?fa=c.req_approval">
 		</cfif>
 		<!--- Send emails to approval users/groups --->
 		<cfloop list="#arguments.group_users#" index="id" delimiters=",">

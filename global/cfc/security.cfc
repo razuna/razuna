@@ -23,12 +23,10 @@
 * along with Razuna. If not, see <http://www.razuna.com/licenses/>.
 *
 --->
-<cfcomponent hint="CFC for User-Groups-Permissions" output="false">
+<cfcomponent  output="false">
 
 <!--- FUNCTION: INIT --->
 <cffunction name="init" returntype="security" access="public" output="false">
-	<cfargument name="dsn" type="string" required="yes" />
-	<cfset variables.dsn = arguments.dsn />
 	<cfreturn this />
 </cffunction>
 
@@ -38,10 +36,10 @@ INIT-CONSTRUCTOR:
 Make this cfc persisntent to request/session-scope for better performance.
 The permissions and the users access to them must not be requested again every time.
 --->
-<cffunction name="initUser" returntype="security" access="public" output="false" hint="Init data and keep it.">
+<cffunction name="initUser" returntype="security" access="public" output="false" >
 	<cfargument name="host_id" type="numeric" required="yes">
 	<cfargument name="user_id" type="string" required="yes">
-	<cfargument name="mod_short" type="string" required="false" hint="modules.mod_short : if this param is set, only permissions of this module are requested and it can be omitted in calls to CheckPermission()">
+	<cfargument name="mod_short" type="string" required="false" >
 	<!--- component-variables --->
 	<cfinvoke method="getPermissionsStruct" host_id="#Arguments.host_id#" user_id="#Arguments.user_id#" returnvariable="Variables.permissions">
 		<cfif StructKeyExists(Arguments, "mod_short")>
@@ -66,10 +64,10 @@ The permissions and the users access to them must not be requested again every t
 <!--- Check if an permission-key is permitted to the current user. --->
 <cffunction name="CheckPermission" returntype="boolean"
 						access="public" output="false"
-						hint="Check if an permission-key is permitted to the current user.">
-	<cfargument name="key" type="string" required="true" hint="permissions.per_key">
+						>
+	<cfargument name="key" type="string" required="true" >
 	<cfargument name="mod_short" type="string" required="false" default="#Variables.mod_short#"
-							hint="modules.mod_short : This param can be omitted if set persistently through init()">
+							>
 	<!--- function internal vars --->
 	<!--- function body --->
 	<!--- is the action(/subaction) un-protected? or does the use have permission? --->
@@ -83,7 +81,7 @@ The permissions and the users access to them must not be requested again every t
 
 <!--- ------------------------------------------------------------------------------------- --->
 <!--- Check if user is member of SystemAdmin-group --->
-<cffunction name="CheckSystemAdminUser" returntype="boolean" access="public" output="false" hint="Check if user is member of SystemAdmin-group">
+<cffunction name="CheckSystemAdminUser" returntype="boolean" access="public" output="false" >
 	<!--- function internal vars --->
 	<!--- function body --->
 	<cfreturn Variables.isSystemAdmin>
@@ -93,7 +91,7 @@ The permissions and the users access to them must not be requested again every t
 <!--- Check if user is member of Administrator-group --->
 <cffunction name="CheckAdministratorUser" returntype="boolean"
 						access="public" output="false"
-						hint="Check if user is member of Administrator-group">
+						>
 	<!--- function internal vars --->
 	<!--- function body --->
 	<cfreturn Variables.isAdministrator>
@@ -101,8 +99,8 @@ The permissions and the users access to them must not be requested again every t
 
 <!--- ------------------------------------------------------------------------------------- --->
 <!--- Check if user is member of SystemAdmin-group --->
-<cffunction name="CheckSystemAdminGroup" returntype="boolean" access="public" output="false" hint="Check if user is member of SystemAdmin-group">
-	<cfargument name="grp_id" type="string" required="true" hint="groups.grp_id">
+<cffunction name="CheckSystemAdminGroup" returntype="boolean" access="public" output="false" >
+	<cfargument name="grp_id" type="string" required="true" >
 	<!--- function internal vars --->
 	<!--- function body --->
 	<cfreturn YesNoFormat(ListFind(Variables.listSystemAdmin, Arguments.grp_id))>
@@ -112,8 +110,8 @@ The permissions and the users access to them must not be requested again every t
 <!--- Check if user is member of Administrator-group --->
 <cffunction name="CheckAdministratorGroup" returntype="boolean"
 						access="public" output="false"
-						hint="Check if user is member of Administrator-group">
-	<cfargument name="grp_id" type="string" required="true" hint="groups.grp_id">
+						>
+	<cfargument name="grp_id" type="string" required="true" >
 	<!--- function internal vars --->
 	<!--- function body --->
 	<cfreturn YesNoFormat(ListFind(Variables.listAdministrator, Arguments.grp_id))>
@@ -121,15 +119,15 @@ The permissions and the users access to them must not be requested again every t
 
 <!--- ------------------------------------------------------------------------------------- --->
 <!--- Get protected keys in a struct --->
-<cffunction name="getPermissionsStruct" returntype="struct" access="private" output="false" hint="Get protected keys in a struct, value being 1 if user is permitted, else 0.">
+<cffunction name="getPermissionsStruct" returntype="struct" access="private" output="false" >
 	<cfargument name="host_id" type="numeric" required="yes">
-	<cfargument  name="user_id" type="string" required="true" hint="DB : users.user_id">
+	<cfargument  name="user_id" type="string" required="true" >
 	<cfargument name="mod_short" type="string" required="false">
 	<!--- function internal vars --->
 	<cfset var localquery = 0>
 	<cfset var returnstruct = StructNew()>
 	<!--- function body --->
-	<cfquery datasource="#application.razuna.datasource#" name="localquery">
+	<cfquery datasource="#request.razuna.application.datasource#" name="localquery">
 	SELECT m.mod_short, p.per_key,
 		CASE
 			WHEN EXISTS(
@@ -174,15 +172,15 @@ The permissions and the users access to them must not be requested again every t
 
 <!--- ------------------------------------------------------------------------------------- --->
 <!--- query if user is member of SystemAdmin-group --->
-<cffunction name="getIsAdminGroupMember" returntype="boolean" access="private" output="false" hint="query if user is member of SystemAdmin-group">
+<cffunction name="getIsAdminGroupMember" returntype="boolean" access="private" output="false" >
 	<cfargument name="host_id" type="numeric" required="yes">
-	<cfargument name="user_id" type="string" required="true" hint="DB : users.user_id">
+	<cfargument name="user_id" type="string" required="true" >
 	<cfargument name="grp_name" type="string" required="yes">
 	<!--- <cfdump var="#arguments#">
 	<cfabort> --->
 	<cfset var localquery = 0>
 	<!--- function body --->
-	<cfquery datasource="#application.razuna.datasource#" name="localquery">
+	<cfquery datasource="#request.razuna.application.datasource#" name="localquery">
 		SELECT CASE
 					WHEN EXISTS(
 						SELECT groups.grp_id
@@ -199,9 +197,9 @@ The permissions and the users access to them must not be requested again every t
 					) THEN 1
 					ELSE 0
 				END AS isSystemAdmin
-		<cfif application.razuna.thedatabase EQ "db2">
+		<cfif request.razuna.application.thedatabase EQ "db2">
 			FROM sysibm.sysdummy1
-		<cfelseif application.razuna.thedatabase NEQ "mssql">
+		<cfelseif request.razuna.application.thedatabase NEQ "mssql">
 			FROM dual
 		</cfif>
 	</cfquery>
@@ -214,12 +212,12 @@ The permissions and the users access to them must not be requested again every t
 <!--- query all SystemAdmin/Administrator-groups --->
 <cffunction name="getSystemGroups" returntype="string"
 						access="private" output="false"
-						hint="query all SystemAdmin/Administrator-groups">
+						>
 	<cfargument name="grp_name" type="string" required="yes">
 	<!--- function internal vars --->
 	<cfset var localquery = 0>
 	<!--- function body --->
-	<cfquery datasource="#application.razuna.datasource#" name="localquery">
+	<cfquery datasource="#request.razuna.application.datasource#" name="localquery">
 		SELECT grp_id
 		FROM groups
 		WHERE grp_host_id IS NULL
@@ -228,12 +226,12 @@ The permissions and the users access to them must not be requested again every t
 	<cfreturn ValueList(localquery.grp_id)>
 </cffunction>
 
-<cffunction name="isuser" returntype="boolean" output="false" hint="query to see if user_id exists in user table">
+<cffunction name="isuser" returntype="boolean" output="false" >
 	<cfargument name="user_id" type="string" required="yes">
 	<!--- function internal vars --->
 	<cfset var localquery = 0>
 	<!--- function body --->
-	<cfquery datasource="#application.razuna.datasource#" name="localquery">
+	<cfquery datasource="#request.razuna.application.datasource#" name="localquery">
 		SELECT 1
 		FROM users
 		WHERE user_id = <cfqueryparam value="#arguments.user_id#" cfsqltype="cf_sql_varchar">
@@ -247,13 +245,13 @@ The permissions and the users access to them must not be requested again every t
 	<cfreturn userexists>
 </cffunction>
 
-<cffunction name="encrypt" returntype="String" hint="Encrypts a given string with the given key using the default openbd algorithm">
+<cffunction name="encrypt" returntype="String" >
 		<cfargument name="str2encrypt" required="true">
 		<cfargument name="key" required="true">
 		<cfreturn encrypt(arguments.str2encrypt,arguments.key)>
 	</cffunction>
 
-<cffunction name="decrypt" returntype="String" hint="Decrypts an encrypted string using the key provided using the default openbd algorithm">
+<cffunction name="decrypt" returntype="String" >
 	<cfargument name="str2decrypt" required="true">
 	<cfargument name="key" required="true">
 	<cftry>

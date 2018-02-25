@@ -23,20 +23,16 @@
 * along with Razuna. If not, see <http://www.razuna.com/licenses/>.
 *
 --->
-<cfcomponent hint="CFC for Modules" output="false">
+<cfcomponent  output="false">
 
 <!--- FUNCTION: INIT --->
 <cffunction name="init" returntype="modules" access="public" output="false">
-	<cfargument name="dsn" type="string" required="yes" />
-	<cfargument name="database" type="string" required="yes" />
-	<cfset variables.dsn = arguments.dsn />
-	<cfset variables.database = arguments.database />
 	<cfreturn this />
 </cffunction>
 
 <!--- ------------------------------------------------------------------------------------- --->
 <!--- Get ids in struct --->
-<cffunction hint="Get ids in struct" name="getIdStruct" returntype="struct">
+<cffunction  name="getIdStruct" returntype="struct">
 	<!--- function internal vars --->
 	<cfset var localquery = getall()>
 	<cfset var returnStruct = StructNew()>
@@ -48,15 +44,15 @@
 
 <!--- ------------------------------------------------------------------------------------- --->
 <!--- Get all the records --->
-<cffunction hint="Get all records" name="getall" returntype="query">
-	<cfargument name="orderBy" type="string" required="false" default="mod_short, mod_name" hint="""ORDER BY #yourtext#""">
+<cffunction  name="getall" returntype="query">
+	<cfargument name="orderBy" type="string" required="false" default="mod_short, mod_name" "ORDER BY #yourtext#""">
 	<!--- function internal vars --->
 	<cfset var localquery = 0>
-	<cfquery datasource="#variables.dsn#" name="localquery">
+	<cfquery datasource="#request.razuna.application.datasource#" name="localquery">
 		SELECT mod_id, mod_name, mod_short, mod_host_id
 		FROM modules
 		WHERE (
-			mod_host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric">
+			mod_host_id = <cfqueryparam value="#request.razuna.session.hostid#" cfsqltype="cf_sql_numeric">
 			OR mod_host_id IS NULL
 			OR mod_host_id = ''
 			)
@@ -67,16 +63,16 @@
 
 <!--- ------------------------------------------------------------------------------------- --->
 <!--- Get id from short --->
-<cffunction hint="Get id from short" name="getid" returntype="numeric">
+<cffunction  name="getid" returntype="numeric">
 	<cfargument name="mod_short" type="string" required="yes">
 	<!--- function internal vars --->
 	<cfset var localquery = 0>
-	<cfquery datasource="#variables.dsn#" name="localquery">
+	<cfquery datasource="#request.razuna.application.datasource#" name="localquery">
 		SELECT mod_id
 		FROM modules
 		WHERE mod_short = <cfqueryparam value="#arguments.mod_short#" cfsqltype="cf_sql_varchar">
 		AND (
-			mod_host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric">
+			mod_host_id = <cfqueryparam value="#request.razuna.session.hostid#" cfsqltype="cf_sql_numeric">
 			OR mod_host_id IS NULL
 			OR mod_host_id = ''
 			)
@@ -97,7 +93,7 @@
 
 <!--- ------------------------------------------------------------------------------------- --->
 <!--- Get one detailled record --->
-<cffunction hint="Get one record" name="getdetail" returntype="query">
+<cffunction  name="getdetail" returntype="query">
 	<cfargument name="func_dsn" type="string" required="yes">
 	<cfargument name="func_id" type="numeric" required="yes">
 	<!--- function internal vars --->
@@ -108,7 +104,7 @@
 		WHERE			mod_id = <cfqueryparam value="#arguments.func_id#" cfsqltype="cf_sql_numeric">
 							AND
 							(
-								mod_host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric">
+								mod_host_id = <cfqueryparam value="#request.razuna.session.hostid#" cfsqltype="cf_sql_numeric">
 								OR
 								mod_host_id IS NULL
 								OR 

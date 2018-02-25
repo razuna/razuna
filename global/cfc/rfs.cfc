@@ -25,11 +25,15 @@
 --->
 <cfcomponent output="false" extends="extQueryCaching">
 
+	<cffunction name="init" returntype="rfs" access="public" output="false">
+		<cfreturn this />
+	</cffunction>
+
 	<!--- Rendering Farm: Get all --->
-	<cffunction name="rfs_get_all" output="true">
+	<cffunction name="rfs_get_all" output="true" access="public" >
 		<cfargument name="thestruct" type="struct">
 		<!--- Query --->
-		<cfquery dataSource="#application.razuna.datasource#" name="qry">
+		<cfquery dataSource="#request.razuna.application.datasource#" name="qry">
 		SELECT rfs_id, rfs_server_name, rfs_active
 		FROM rfs
 		ORDER BY rfs_date_change
@@ -37,13 +41,13 @@
 		<!--- Return --->
 		<cfreturn qry>
 	</cffunction>
-	
+
 	<!--- Rendering Farm: get detail --->
-	<cffunction name="rfs_get_detail" output="true">
+	<cffunction name="rfs_get_detail" output="true" access="public" >
 		<cfargument name="rfs_id" type="string" required="true">
 		<!--- Query --->
-		<cfquery dataSource="#application.razuna.datasource#" name="qry">
-		SELECT rfs_id, rfs_active, rfs_server_name, rfs_imagemagick, rfs_ffmpeg, rfs_dcraw, rfs_exiftool, rfs_mp4box, rfs_date_add, rfs_date_change, 
+		<cfquery dataSource="#request.razuna.application.datasource#" name="qry">
+		SELECT rfs_id, rfs_active, rfs_server_name, rfs_imagemagick, rfs_ffmpeg, rfs_dcraw, rfs_exiftool, rfs_mp4box, rfs_date_add, rfs_date_change,
 		rfs_location
 		FROM rfs
 		WHERE rfs_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.rfs_id#">
@@ -51,26 +55,26 @@
 		<!--- Return --->
 		<cfreturn qry>
 	</cffunction>
-	
+
 	<!--- Rendering Farm: remove --->
-	<cffunction name="rfs_remove" output="true">
+	<cffunction name="rfs_remove" output="true" access="public" >
 		<cfargument name="thestruct" type="struct" required="true">
 		<!--- Query --->
-		<cfquery dataSource="#application.razuna.datasource#">
+		<cfquery dataSource="#request.razuna.application.datasource#">
 		DELETE FROM rfs
 		WHERE rfs_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.id#">
 		</cfquery>
 		<!--- Return --->
 		<cfreturn />
 	</cffunction>
-	
+
 	<!--- Rendering Farm: update --->
-	<cffunction name="rfs_update" output="true">
+	<cffunction name="rfs_update" output="true" access="public" >
 		<cfargument name="thestruct" type="struct" required="true">
 		<!--- If we add a record then do an insert --->
 		<cfif arguments.thestruct.rfs_add>
 			<!--- Insert --->
-			<cfquery dataSource="#application.razuna.datasource#" name="qry">
+			<cfquery dataSource="#request.razuna.application.datasource#" name="qry">
 			INSERT INTO rfs
 			(
 			rfs_id,
@@ -102,7 +106,7 @@
 			</cfquery>
 		<cfelse>
 			<!--- Update --->
-			<cfquery dataSource="#application.razuna.datasource#" name="qry">
+			<cfquery dataSource="#request.razuna.application.datasource#" name="qry">
 			UPDATE rfs
 			SET
 			rfs_active = <cfqueryparam CFSQLType="CF_SQL_DOUBLE" value="#arguments.thestruct.rfs_active#">,
@@ -120,9 +124,9 @@
 		<!--- Return --->
 		<cfreturn />
 	</cffunction>
-	
+
 	<!--- Notify remote server --->
-	<cffunction name="notify" returntype="void">
+	<cffunction name="notify" returntype="void" access="public" >
 		<cfargument name="thestruct" type="struct">
 		<!--- Thread --->
 		<cfthread action="run" intstruct="#arguments.thestruct#">
@@ -131,23 +135,23 @@
 	</cffunction>
 
 	<!--- Notify remote server thread --->
-	<cffunction name="notify_thread" returntype="void">
+	<cffunction name="notify_thread" returntype="void" access="public" >
 		<cfargument name="thestruct" type="struct">
 		<!--- Param --->
 		<cfparam name="arguments.thestruct.upl_template" default="0" />
 		<!--- Get remote server records --->
-		<cfquery dataSource="#application.razuna.datasource#" name="qry">
+		<cfquery dataSource="#request.razuna.application.datasource#" name="qry">
 		SELECT rfs_id, rfs_server_name, rfs_location
 		FROM rfs
 		WHERE rfs_active = <cfqueryparam CFSQLType="CF_SQL_DOUBLE" value="true">
 		</cfquery>
 		<!--- Get settings --->
 		<cfinvoke component="settings" method="thissetting" thefield="rendering_farm_server" returnVariable="thehost" />
-		
+
 		<!--- Check here is the server is busy or not. If so, check for an alternate server in the pool --->
-		
+
 		<!--- Check according to location --->
-		
+
 		<!--- If this is from convert we write data into json --->
 		<cfif structkeyexists(arguments.thestruct,"convert")>
 			<!--- Variable --->
@@ -167,12 +171,12 @@
 		<!--- Send the server ID with the request. The remote server checks the ID to this record --->
 		<cfhttp url="#qry.rfs_server_name#" timeout="30">
 			<cfhttpparam name="rfsid" value="#qry.rfs_id#" type="URL">
-			<cfhttpparam name="hostid" value="#session.hostid#" type="URL">
-			<cfhttpparam name="userid" value="#session.theuserid#" type="URL">
+			<cfhttpparam name="hostid" value="#request.razuna.session.hostid#" type="URL">
+			<cfhttpparam name="userid" value="#request.razuna.session.theuserid#" type="URL">
 			<cfhttpparam name="dynpath" value="#arguments.thestruct.dynpath#" type="URL">
 			<cfhttpparam name="httphost" value="#thehost#" type="URL">
-			<cfhttpparam name="storage" value="#application.razuna.storage#" type="URL">
-			<cfhttpparam name="dsnhost" value="#application.razuna.datasource#" type="URL">
+			<cfhttpparam name="storage" value="#request.razuna.application.storage#" type="URL">
+			<cfhttpparam name="dsnhost" value="#request.razuna.application.datasource#" type="URL">
 			<cfhttpparam name="assettype" value="#arguments.thestruct.assettype#" type="URL">
 			<cfif structkeyexists(arguments.thestruct,"convert")>
 				<cfhttpparam name="upl_template" value="#arguments.thestruct.upl_template#" type="URL">
@@ -181,11 +185,11 @@
 			<cfelse>
 				<cfhttpparam name="assetid" value="#arguments.thestruct.newid#" type="URL">
 			</cfif>
-		</cfhttp>		
+		</cfhttp>
 		<!--- Return --->
 		<cfreturn />
 	</cffunction>
-	
+
 	<cffunction name="SafeSerializeJSON" output="false" access="private" returntype="string">
 		<cfargument name="obj" type="any" required="true" />
 		<cfargument name="serializeQueryByColumns" type="boolean" required="false" default="false" />
@@ -194,13 +198,13 @@
 		<cfset jsonOutput = Replace(jsonOutput, chr(8233), "\u2029", "all") />
 		<cfreturn jsonOutput />
 	</cffunction>
-	
+
 	<!--- Pickup asset from rfs --->
-	<cffunction name="pickup" output="true">
+	<cffunction name="pickup" output="true" access="public" >
 		<cfargument name="thestruct" type="struct">
 		<cftry>
 			<!--- Get remote server records --->
-			<cfquery dataSource="#application.razuna.datasource#" name="qry">
+			<cfquery dataSource="#request.razuna.application.datasource#" name="qry">
 			SELECT rfs_server_name, rfs_location
 			FROM rfs
 			WHERE rfs_active = <cfqueryparam CFSQLType="CF_SQL_DOUBLE" value="true">
@@ -211,22 +215,22 @@
 			<!--- IMAGES --->
 			<cfif arguments.thestruct.rfs_assettype EQ "img">
 				<cfset var forpath = "img">
-				<cfset var fordb = "#session.hostdbprefix#images">
+				<cfset var fordb = "#request.razuna.session.hostdbprefix#images">
 				<cfset var fordbid = "img_id">
 			<!--- VIDEOS --->
 			<cfelseif arguments.thestruct.rfs_assettype EQ "vid">
 				<cfset var forpath = "vid">
-				<cfset var fordb = "#session.hostdbprefix#videos">
+				<cfset var fordb = "#request.razuna.session.hostdbprefix#videos">
 				<cfset var fordbid = "vid_id">
 			<!--- AUDIOS --->
 			<cfelseif arguments.thestruct.rfs_assettype EQ "aud">
 				<cfset var forpath = "aud">
-				<cfset var fordb = "#session.hostdbprefix#audios">
+				<cfset var fordb = "#request.razuna.session.hostdbprefix#audios">
 				<cfset var fordbid = "aud_id">
 			<!--- Docs and all other files --->
 			<cfelse>
 				<cfset var forpath = "doc">
-				<cfset var fordb = "#session.hostdbprefix#files">
+				<cfset var fordb = "#request.razuna.session.hostdbprefix#files">
 				<cfset var fordbid = "file_id">
 			</cfif>
 			<!--- If we come from convert we have jsondata in the arguments --->
@@ -235,7 +239,7 @@
 				<cfset arguments.thestruct.json = deserializejson(arguments.thestruct.rfs_jsondata)>
 				<cfset structappend(arguments.thestruct, arguments.thestruct.json)>
 				<!--- Put asset path together --->
-				<cfset var storein = arguments.thestruct.assetpath & "/" & session.hostid & "/" & arguments.thestruct.rfs_folderid & "/" & forpath & "/" & arguments.thestruct.newid>
+				<cfset var storein = arguments.thestruct.assetpath & "/" & request.razuna.session.hostid & "/" & arguments.thestruct.rfs_folderid & "/" & forpath & "/" & arguments.thestruct.newid>
 				<!--- Create folder --->
 				<cfif NOT directoryexists(storein)>
 					<cfdirectory action="create" directory="#storein#" mode="775">
@@ -249,14 +253,14 @@
 				</cfif>
 			<cfelse>
 				<!--- Put asset path together --->
-				<cfset var storein = arguments.thestruct.assetpath & "/" & session.hostid & "/" & arguments.thestruct.rfs_folderid & "/" & forpath & "/" & arguments.thestruct.rfs_assetid>
+				<cfset var storein = arguments.thestruct.assetpath & "/" & request.razuna.session.hostid & "/" & arguments.thestruct.rfs_folderid & "/" & forpath & "/" & arguments.thestruct.rfs_assetid>
 				<!--- Create folder --->
 				<cfif NOT directoryexists(storein)>
 					<cfdirectory action="create" directory="#storein#" mode="775">
 				</cfif>
 				<!--- Download --->
 				<cfhttp url="#qry.rfs_server_name#/incoming/#arguments.thestruct.rfs_path#/#arguments.thestruct.rfs_asset#" file="#arguments.thestruct.rfs_asset#" path="#storein#"></cfhttp>
-			</cfif>				
+			</cfif>
 			<!--- If we are DOC/PDF we need to download the PDF images folder (zip) and extract it --->
 			<cfif forpath EQ "doc">
 				<!--- Get file --->
@@ -268,19 +272,17 @@
 			</cfif>
 			<!--- If we are the preview file then set the available flag --->
 			<cfif !structkeyexists(arguments.thestruct,"rfs_jsondata")>
-				<cfquery datasource="#application.razuna.datasource#">
+				<cfquery datasource="#request.razuna.application.datasource#">
 				UPDATE #fordb#
 				SET is_available = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">
 				WHERE #fordbid# = <cfqueryparam value="#arguments.thestruct.rfs_assetid#" cfsqltype="cf_sql_varchar">
 				</cfquery>
 			</cfif>
 			<cfcatch type="any">
-				<!--- <cfset cfcatch.custom_message = "Error in function rfs.pickup">
-				<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/> --->
 			</cfcatch>
 		</cftry>
 		<!--- Return --->
 		<cfreturn />
 	</cffunction>
-	
+
 </cfcomponent>

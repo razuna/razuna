@@ -41,7 +41,7 @@
 	<tr>
 	<th colspan="2" class="textbold">#defaultsObj.trans("header_title_web")#</th>
 	</tr>
-	<cfloop from="1" to="#defaultsObj.howmanylang("#application.razuna.datasource#")#" index="langindex">
+	<cfloop from="1" to="#defaultsObj.howmanylang("#request.razuna.application.datasource#")#" index="langindex">
 	<tr>
 	<td nowrap>#defaultsObj.trans("title_in")# #defaultsObj.thislang("SET_LANG_#langindex#")#</td>
 	<td><input type="text" name="set_title_website_#langindex#" size="60" value="#settingsObj.thissetting("set_title_website_#langindex#")#"></td>

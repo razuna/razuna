@@ -168,7 +168,7 @@
 		<!--- Set session --->
 		<cfset session.hostid = application.razuna.api.hostid["#arguments.api_key#"]>
 		<!--- Call reset function --->
-		<cfinvoke component="global.cfc.extQueryCaching" method="getcachetoken" type="#arguments.type#" returnvariable="c" />
+		<cfinvoke component="global.cfc.extQueryCaching" method="getcachetoken" type="#arguments.type#" hostid="#session.hostid#" returnvariable="c" />
 		<!--- Return --->
 		<cfreturn c />
 	</cffunction>
@@ -181,7 +181,7 @@
 		<cfset session.hostid = application.razuna.api.hostid["#arguments.api_key#"]>
 		<!--- Call reset function --->
 		<!--- <cfinvoke component="global.cfc.extQueryCaching" method="resetcachetoken" type="#arguments.type#" /> --->
-		<cfinvoke component="global.cfc.extQueryCaching" method="resetcachetokenall" />
+		<cfinvoke component="global.cfc.extQueryCaching" method="resetcachetokenall(session.hostid)" />
 		<!--- Return --->
 		<cfreturn />
 	</cffunction>

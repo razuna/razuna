@@ -263,7 +263,7 @@
 	<cffunction name="setfieldvaluebulk" access="remote" output="false" returntype="struct" returnformat="json">
 		<cfargument name="api_key" required="true">
 		<cfargument name="field_values" required="true">
-		<!--- <cfset consoleoutput(true)>
+		<!--- <cfset consoleoutput(true, true)>
 		<cfset console(arguments)> --->
 		<!--- Check key --->
 		<cfset var thesession = checkdb(arguments.api_key)>

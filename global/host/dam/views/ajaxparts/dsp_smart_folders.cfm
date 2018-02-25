@@ -64,7 +64,7 @@
 					<cfif !sf_cloud_found>
 						<h1>#myFusebox.getApplicationData().defaults.trans("cloud_accounts")#</h1>
 					</cfif>
-					<cfif listfindnocase('r,w,x',myFusebox.getApplicationData().folders.setaccess(sf_id,true))>
+					<cfif listfindnocase('r,w,x',myFusebox.getApplicationData().folders.setaccess(attributes,sf_id,true))>
 						<a href="##" onclick="$('##rightside').load('#myself#c.smart_folders_content&sf_id=#sf_id#&root=true');">
 							<div style="float:left;padding-right:5px;padding-bottom:5px;">
 								<cfif sf_type EQ "dropbox">
@@ -80,7 +80,7 @@
 					</cfif>
 					<cfset sf_cloud_found = true>
 				</cfif>
-				
+
 				<div style="clear:both;"></div>
 			</cfoutput>
 			<div style="padding-top:20px;font-size:11px;">
@@ -96,4 +96,4 @@
 	</cfif>
 
 </cfoutput>
-	
+

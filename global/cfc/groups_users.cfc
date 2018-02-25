@@ -23,21 +23,25 @@
 * along with Razuna. If not, see <http://www.razuna.com/licenses/>.
 *
 --->
-<cfcomponent hint="CFC for Groups-Users" extends="extQueryCaching">
+<cfcomponent  extends="extQueryCaching">
+
+<cffunction name="init" returntype="groups_users" access="public" output="false">
+	<cfreturn this />
+</cffunction>
 
 <!--- ------------------------------------------------------------------------------------- --->
 <!--- get groups of a user --->
-<cffunction name="getGroupsOfUser" returntype="query" hint="get all the groups of a user">
+<cffunction name="getGroupsOfUser" returntype="query" >
 	<cfargument name="user_id" type="string" required="true">
-	<cfargument name="mod_id" type="numeric" required="False" hint="modules.mod_id">
-	<cfargument name="mod_short" type="string" required="False" hint="modules.mod_short">
+	<cfargument name="mod_id" type="numeric" required="False" >
+	<cfargument name="mod_short" type="string" required="False" >
 	<cfargument name="host_id" type="numeric" required="false" default="0">
 	<cfargument name="check_upc_size" type="string" required="false" default="false">
-	<cfargument name="orderBy" type="string" required="false" default="groups.grp_mod_id, groups.grp_name, groups.grp_id" hint="""ORDER BY #yourtext#""">
-	<cfargument name="nosessionoverwrite" type="string" required="false" default="false" hint="Do not overwrite session.thegroupofuser var">
+	<cfargument name="orderBy" type="string" required="false" default="groups.grp_mod_id, groups.grp_name, groups.grp_id" "ORDER BY #yourtext#""">
+	<cfargument name="nosessionoverwrite" type="string" required="false" default="false" >
 	<!--- function internal vars --->
 	<cfset var localquery = 0>
-	<cfquery datasource="#application.razuna.datasource#" name="localquery">
+	<cfquery datasource="#request.razuna.application.datasource#" name="localquery">
 	SELECT groups.grp_id, groups.grp_name, groups.grp_host_id, groups.grp_mod_id, groups.grp_translation_key, groups.upc_size, groups.upc_folder_format
 	FROM groups
 	WHERE (
@@ -62,18 +66,18 @@
 	</cfif>
 	<cfif StructKeyExists(arguments, "check_upc_size") AND arguments.check_upc_size EQ 'true'>
 		AND ( 
-			upc_size <cfif application.razuna.thedatabase EQ "mysql"><><cfelse>!=</cfif> '' 
+			upc_size <cfif request.razuna.application.thedatabase EQ "mysql"><><cfelse>!=</cfif> '' 
 			OR upc_size is not null
 		)
 	</cfif>
-	ORDER BY <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2">NVL<cfelseif application.razuna.thedatabase EQ "mysql">ifnull<cfelseif application.razuna.thedatabase EQ "mssql">isnull</cfif>(groups.grp_host_id, 0), #Arguments.orderBy#
+	ORDER BY <cfif request.razuna.application.thedatabase EQ "oracle" OR request.razuna.application.thedatabase EQ "h2" OR request.razuna.application.thedatabase EQ "db2">NVL<cfelseif request.razuna.application.thedatabase EQ "mysql">ifnull<cfelseif request.razuna.application.thedatabase EQ "mssql">isnull</cfif>(groups.grp_host_id, 0), #Arguments.orderBy#
 	</cfquery>
 	<cfif arguments.check_upc_size NEQ 'true' AND arguments.nosessionoverwrite EQ 'false'>
 		<!--- Put result into session --->
-		<cfset session.thegroupofuser = valuelist(localquery.grp_id)>
+		<cfset request.razuna.session.thegroupofuser = valuelist(localquery.grp_id)>
 		<!--- If session is empty then fill it with 0 --->
-		<cfif session.thegroupofuser EQ "">
-			<cfset session.thegroupofuser = 0>
+		<cfif request.razuna.session.thegroupofuser EQ "">
+			<cfset request.razuna.session.thegroupofuser = 0>
 		</cfif>	
 	</cfif>
 	<!--- Return --->
@@ -118,15 +122,15 @@
 		<cfinvoke method="resetUser" thestruct="#arguments.thestruct#">
 	</cfif>
 	<!--- Flush Cache --->
-	<cfset resetcachetoken("search","true")>
-	<cfset resetcachetoken("folders","true")>
-	<cfset resetcachetoken("users","true")>
+	<cfset resetcachetoken(type="search","true")>
+	<cfset resetcachetoken(type="folders","true")>
+	<cfset resetcachetoken(type="users","true")>
 </cffunction>
 
 
 !--- ------------------------------------------------------------------------------------- --->
 <!--- Reset records of a user --->
-<cffunction hint="Reset records of a user" name="resetUser" returntype="void">
+<cffunction  name="resetUser" returntype="void">
 	<cfargument name="thestruct" type="Struct">
 	<!--- function internal vars --->
 	<cfset var grp_id = 0>
@@ -139,10 +143,10 @@
 
 <!--- ------------------------------------------------------------------------------------- --->
 <!--- Delete records of a user --->
-<cffunction hint="Delete records of a user" name="deleteUser" returntype="void">
+<cffunction  name="deleteUser" returntype="void">
 	<cfargument name="thestruct" type="Struct">
 	<!--- Delete --->
-	<cfquery datasource="#application.razuna.datasource#">
+	<cfquery datasource="#request.razuna.application.datasource#">
 	DELETE FROM	ct_groups_users
 	WHERE ct_g_u_user_id = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">
 	<!--- correct host --->
@@ -152,7 +156,7 @@
 		FROM groups g
 		WHERE g.grp_id = ct_groups_users.ct_g_u_grp_id
 		AND(
-			g.grp_host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric">
+			g.grp_host_id = <cfqueryparam value="#request.razuna.session.hostid#" cfsqltype="cf_sql_numeric">
 			OR g.grp_host_id IS NULL
 			)
 		<cfif StructKeyExists(arguments.thestruct, "module_id_struct")>
@@ -166,17 +170,17 @@
 	)
 	</cfquery>
 	<!--- Flush Cache --->
-	<cfset resetcachetoken("users","true")>
+	<cfset resetcachetoken(type="users","true")>
 	<cfreturn />
 </cffunction>
 
 <!--- ------------------------------------------------------------------------------------- --->
 <!--- Insert bulk records --->
-<cffunction hint="Insert bulk records" name="insertBulk" returntype="void">
+<cffunction  name="insertBulk" returntype="void">
 	<cfargument name="thestruct" type="Struct">
 	<!--- insert --->
 	<cfloop list="#arguments.thestruct.grp_id_assigneds#" delimiters="," index="i">
-		<cfquery datasource="#application.razuna.datasource#">
+		<cfquery datasource="#request.razuna.application.datasource#">
 		INSERT INTO	ct_groups_users
 		(ct_g_u_grp_id, ct_g_u_user_id, rec_uuid)
 		VALUES(
@@ -189,34 +193,34 @@
 		<cfinvoke component="global.cfc.groups" method="add_grp_users2notify" group_id='#i#' user_id='#arguments.thestruct.newid#'>
 	</cfloop>
 	<!--- Flush Cache --->
-	<cfset resetcachetoken("users")>
+	<cfset resetcachetoken(type="users", hostid=request.razuna.session.hostid)>
 	<cfreturn />
 </cffunction>
 
 <!--- ------------------------------------------------------------------------------------- --->
 <!--- get users of one or more groups by group-name --->
 <!--- This is called while creating a new host --->
-<cffunction name="searchUsersOfGroups" returntype="query" access="remote" hint="get users of one or more groups by group-name">
+<cffunction name="searchUsersOfGroups" returntype="query" access="remote" >
 	<cfargument name="func_dsn" type="string" required="false">
 	<cfargument name="list_grp_id" type="string" required="false">
 	<cfargument name="list_grp_name" type="string" required="false">
 	<cfargument name="list_delim" type="string" required="false" default=",">
 	<cfargument name="host_id" type="numeric" required="false" default="">
-	<cfargument name="mod_id" type="numeric" required="false" hint="modules.mod_id">
-	<cfargument name="orderBy" type="string" required="false" default="u.user_first_name, u.user_last_name, u.user_email, u.user_active, u.user_id" hint="""ORDER BY #yourtext#""">
+	<cfargument name="mod_id" type="numeric" required="false" >
+	<cfargument name="orderBy" type="string" required="false" default="u.user_first_name, u.user_last_name, u.user_email, u.user_active, u.user_id" "ORDER BY #yourtext#""">
 	<!--- Since this is also called from external we need to set some vars here --->
-	<cfif structkeyexists(session,"hostid") AND arguments.host_id EQ "">
-		<cfset arguments.host_id = session.hostid>
+	<cfif structkeyexists(request.razuna.session,"hostid") AND arguments.host_id EQ "">
+		<cfset arguments.host_id = request.razuna.session.hostid>
 	</cfif>
 	<cfif arguments.host_id EQ "">
 		<cfset arguments.host_id = 0>
 	</cfif>
 	<cfif arguments.func_dsn NEQ "">
-		<cfset application.razuna.datasource = arguments.func_dsn>
+		<cfset request.razuna.application.datasource = arguments.func_dsn>
 	</cfif>
 	<!--- function internal vars --->
 	<cfset var localquery = 0>
-	<cfquery datasource="#application.razuna.datasource#" name="localquery">
+	<cfquery datasource="#request.razuna.application.datasource#" name="localquery">
 	SELECT u.*
 	FROM users u
 	WHERE EXISTS (
@@ -245,20 +249,20 @@
 	<cfargument name="grp_id" type="string" required="true">
 	<!--- function internal vars --->
 	<cfset var localquery = 0>
-	<cfquery datasource="#application.razuna.datasource#" name="localquery">
+	<cfquery datasource="#request.razuna.application.datasource#" name="localquery">
 	SELECT u.user_id, u.user_first_name, u.user_last_name, u.user_email
 	FROM users u, ct_users_hosts ct
 	WHERE EXISTS(
 		SELECT ct_groups_users.ct_g_u_user_id
 		FROM ct_groups_users INNER JOIN groups ON ct_groups_users.ct_g_u_grp_id = groups.grp_id
 		WHERE(
-			groups.grp_host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric">
+			groups.grp_host_id = <cfqueryparam value="#request.razuna.session.hostid#" cfsqltype="cf_sql_numeric">
 			OR groups.grp_host_id IS NULL
 		)
 		AND groups.grp_id = <cfqueryparam value="#Arguments.grp_id#" cfsqltype="CF_SQL_VARCHAR">
 		AND ct_groups_users.ct_g_u_user_id = u.user_id
 	)
-	AND ct.ct_u_h_host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric">
+	AND ct.ct_u_h_host_id = <cfqueryparam value="#request.razuna.session.hostid#" cfsqltype="cf_sql_numeric">
 	AND u.user_id = ct.ct_u_h_user_id
 	</cfquery>
 	<cfreturn localquery />
@@ -270,20 +274,20 @@
 	<cfargument name="grp_id" type="string" required="true">
 	<!--- function internal vars --->
 	<cfset var localquery = 0>
-	<cfquery datasource="#application.razuna.datasource#" name="localquery">
+	<cfquery datasource="#request.razuna.application.datasource#" name="localquery">
 	SELECT u.user_id, u.user_first_name, u.user_last_name, u.user_email
 	FROM users u, ct_users_hosts ct
 	WHERE EXISTS(
 		SELECT ct_groups_users.ct_g_u_user_id
 		FROM ct_groups_users INNER JOIN groups ON ct_groups_users.ct_g_u_grp_id = groups.grp_id
 		WHERE(
-			groups.grp_host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric">
+			groups.grp_host_id = <cfqueryparam value="#request.razuna.session.hostid#" cfsqltype="cf_sql_numeric">
 			OR groups.grp_host_id IS NULL
 		)
 		AND groups.grp_id IN (<cfqueryparam value="#Arguments.grp_id#" cfsqltype="CF_SQL_VARCHAR" list="true">)
 		AND ct_groups_users.ct_g_u_user_id = u.user_id
 	)
-	AND ct.ct_u_h_host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric">
+	AND ct.ct_u_h_host_id = <cfqueryparam value="#request.razuna.session.hostid#" cfsqltype="cf_sql_numeric">
 	AND u.user_id = ct.ct_u_h_user_id
 	</cfquery>
 	<cfreturn localquery />
@@ -293,13 +297,13 @@
 <!--- get all admins or sysadmin of this host --->
 <cffunction name="getadmins">
 	<cfset var qry = "">
-	<cfquery datasource="#application.razuna.datasource#" name="qry">
+	<cfquery datasource="#request.razuna.application.datasource#" name="qry">
 	SELECT u.user_email
 	FROM users u, ct_groups_users ctg, ct_users_hosts cth
 	WHERE ctg.CT_G_U_GRP_ID IN (<cfqueryparam value="1,2" cfsqltype="CF_SQL_VARCHAR" list="true" separator=",">)
 	AND u.user_id = ctg.CT_G_U_USER_ID
 	AND ctg.CT_G_U_USER_ID = cth.CT_U_H_USER_ID
-	AND cth.CT_U_H_HOST_ID = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric">
+	AND cth.CT_U_H_HOST_ID = <cfqueryparam value="#request.razuna.session.hostid#" cfsqltype="cf_sql_numeric">
 	GROUP BY u.user_email
 	</cfquery>
 	<cfreturn qry />
@@ -309,13 +313,13 @@
 <cffunction name="removeuserfromgroup" returntype="void">
 	<cfargument name="grp_id" type="string" required="true">
 	<cfargument name="user_id" type="string" required="true">
-	<cfquery datasource="#application.razuna.datasource#">
+	<cfquery datasource="#request.razuna.application.datasource#">
 	DELETE FROM ct_groups_users
 	WHERE ct_g_u_grp_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.grp_id#">
 	AND ct_g_u_user_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.user_id#">
 	</cfquery>
 	<!--- Flush Cache --->
-	<cfset resetcachetoken("users","true")>
+	<cfset resetcachetoken(type="users","true")>
 	<cfreturn />
 </cffunction>
 
@@ -329,7 +333,7 @@
 		<cfinvoke method="deleteUser" thestruct="#arguments#" />
 	</cfif>
 	<!--- Insert users --->
-	<cfquery datasource="#application.razuna.datasource#">
+	<cfquery datasource="#request.razuna.application.datasource#">
 	INSERT INTO ct_groups_users
 	(ct_g_u_grp_id, ct_g_u_user_id, rec_uuid)
 	VALUES(
@@ -339,7 +343,7 @@
 	)
 	</cfquery>
 	<!--- Flush Cache --->
-	<cfset resetcachetoken("users","true")>
+	<cfset resetcachetoken(type="users","true")>
 	<cfreturn />
 </cffunction>
 
@@ -348,8 +352,8 @@
 	<cfset var redirectfolders = "">
 	<cfset var getfolders = "">
 	<!--- Insert users --->
-	<cfquery datasource="#application.razuna.datasource#" name="getfolders">
-		SELECT folder_redirect FROM groups WHERE grp_id in (<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
+	<cfquery datasource="#request.razuna.application.datasource#" name="getfolders">
+		SELECT folder_redirect FROM groups WHERE grp_id in (<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#request.razuna.session.thegroupofuser#" list="true">)
 	</cfquery>
 	<cfset redirectfolders = valuelist(getfolders.folder_redirect)>
 	<cfreturn redirectfolders/>

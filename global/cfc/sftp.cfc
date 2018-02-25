@@ -52,16 +52,16 @@
 		<cfset jschConfig.put("StrictHostKeyChecking","no")>
 		<cfset jschConfig.put("compression.s2c", "zlib,none")>
 		<cfset jschConfig.put("compression.c2s", "zlib,none")>
-		<cfset jschSession.setConfig(jschConfig)>
-		<cfset jschSession.setPort(FTPPORT)>
-		<cfset jschSession.setPassword(FTPPW)>
+		<cfset jschrequest.razuna.session.setConfig(jschConfig)>
+		<cfset jschrequest.razuna.session.setPort(FTPPORT)>
+		<cfset jschrequest.razuna.session.setPassword(FTPPW)>
 
 		<!--- Connect --->
-		<cfset jschSession.connect()>
-		<cfset var jschChannel = jschSession.openChannel("sftp")>
+		<cfset jschrequest.razuna.session.connect()>
+		<cfset var jschChannel = jschrequest.razuna.session.openChannel("sftp")>
 		<cfset jschChannel.connect()>
 
-		<cfset var connected = jschSession.isConnected()>
+		<cfset var connected = jschrequest.razuna.session.isConnected()>
 
 		<!--- The result --->
 		<cfset var _connection = structNew()>
@@ -88,7 +88,7 @@
 	<cffunction name="disconnect" access="public" output="false">
 		<!--- <cfset console("DISCONNECT", this.connection)> --->
 		<cfset this.connection.sftpChannel.disconnect()>
-		<cfset this.connection.sftpSession.disconnect()>
+		<cfset this.connection.sftprequest.razuna.session.disconnect()>
 		<cfset this.connection.connected = false>
 		<cfset this.connection.sftpChannel = "">
 		<cfset this.connection.sftpSession = "">
@@ -122,10 +122,8 @@
 
 		<cfset var _file = "">
 		<cfset var _result = structNew()>
-		<cfset _result.file_local = arguments.file_local>
-		<cfset _result.file_remote = arguments.file_remote>
 
-		<cfset var FileInputStream = createobject("java", "java.io.FileInputStream").init( expandPath( arguments.file_local ) )>
+		<cfset var FileInputStream = createobject("java", "java.io.FileInputStream").init( arguments.file_local )>
 		<cfset this.connection.sftpChannel.put(FileInputStream, arguments.file_remote, this.connection.sftpChannel.OVERWRITE)>
 
 		<!--- Check if file is there --->
@@ -138,6 +136,8 @@
 
 		<!--- Set status --->
 		<cfset _result.status = ArrayLen(_file) ? true : false>
+		<cfset _result.file_local = arguments.file_local>
+		<cfset _result.file_remote = arguments.file_remote>
 
 		<!--- Return --->
 		<cfreturn _result />

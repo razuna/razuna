@@ -31,8 +31,8 @@
 
 	
 <cffunction name="rssParse" returnType="array" output="true" region="razcache" cachedwithin="#CreateTimeSpan(0,6,0,0)#">
-	<cfargument name="thefeed" type="string" required="true" hint="the feed url">
-	<cfargument name="themany" type="numeric" default="0" required="no" hint="how many records do we want to show">
+	<cfargument name="thefeed" type="string" required="true" >
+	<cfargument name="themany" type="numeric" default="0" required="no" >
 	<cfset var xmlData = "">
 	<cfset var result = arrayNew(1)>
 	<cfset var x = "">

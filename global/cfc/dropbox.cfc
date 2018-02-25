@@ -78,7 +78,7 @@
 				<cfdirectory action="create" directory="#dbstorage#" mode="775" />
 			</cfif>
 			<!--- Set path to store thumbnails --->
-			<cfset dbstoragefinal = "#expandpath("../../")#/global/host/dropbox/#session.hostid#">
+			<cfset dbstoragefinal = "#expandpath("../../")#/global/host/dropbox/#request.razuna.session.hostid#">
 			<cfif !directoryExists(dbstoragefinal)>
 				<cfdirectory action="create" directory="#dbstoragefinal#" mode="775" />
 			</cfif>
@@ -92,13 +92,11 @@
 						<cfhttpparam type="url" name="path" value="#arrcontent.path#"/>
 						<cfhttpparam type="url" name="oauth_version" value="1.0"/>
 						<cfhttpparam type="url" name="oauth_signature_method" value="PLAINTEXT"/>
-						<cfhttpparam type="url" name="oauth_consumer_key" value="#session.dropbox.appkey#"/>
-						<cfhttpparam type="url" name="oauth_token" value="#session.dropbox.oauth_token#"/>
-						<cfhttpparam type="url" name="oauth_signature" value="#session.dropbox.appsecret#&#session.dropbox.oauth_token_secret#"/>
+						<cfhttpparam type="url" name="oauth_consumer_key" value="#request.razuna.session.dropbox.appkey#"/>
+						<cfhttpparam type="url" name="oauth_token" value="#request.razuna.session.dropbox.oauth_token#"/>
+						<cfhttpparam type="url" name="oauth_signature" value="#request.razuna.session.dropbox.appsecret#&#request.razuna.session.dropbox.oauth_token_secret#"/>
 					</cfhttp>
 					<cfcatch type="any">
-						<!--- <cfset cfcatch.custom_message = "Error in function dropbox.metadata_and_thumbnails">
-						<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/> --->
 					</cfcatch>
 				</cftry>
 				</cfif>
@@ -162,8 +160,6 @@
 				<!--- Call internal function to add the file --->
 				<cfinvoke component="assets" method="addassetserver" thestruct="#arguments.thestruct#" />
 				<cfcatch type="any">
-					<!--- <cfset cfcatch.custom_message = "Error while downloading dropbox file in function dropbox.downloadfilesthread">
-					<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/> --->
 				</cfcatch>
 			</cftry>
 		</cfloop>
@@ -177,7 +173,7 @@
 		<!--- Get stored tokens --->
 		<cfinvoke component="oauth" method="getstoredtokens" account="#this.account#" />
 		<!--- API Call --->
-		<cfhttp url="#application.razuna.dropbox.url_api#/#arguments.apistruct.apiurl#">
+		<cfhttp url="#request.razuna.application.dropbox.url_api#/#arguments.apistruct.apiurl#">
 			<cfloop collection="#arguments.apistruct#" item="i">
 				<cfif i NEQ "apiurl">
 					<cfhttpparam type="url" name="#i#" value="#arguments.apistruct[i]#" />
@@ -185,9 +181,9 @@
 			</cfloop>
 			<cfhttpparam type="url" name="oauth_version" value="1.0"/>
 			<cfhttpparam type="url" name="oauth_signature_method" value="PLAINTEXT"/>
-			<cfhttpparam type="url" name="oauth_consumer_key" value="#session.dropbox.appkey#"/>
-			<cfhttpparam type="url" name="oauth_token" value="#session.dropbox.oauth_token#"/>
-			<cfhttpparam type="url" name="oauth_signature" value="#session.dropbox.appsecret#&#session.dropbox.oauth_token_secret#"/>
+			<cfhttpparam type="url" name="oauth_consumer_key" value="#request.razuna.session.dropbox.appkey#"/>
+			<cfhttpparam type="url" name="oauth_token" value="#request.razuna.session.dropbox.oauth_token#"/>
+			<cfhttpparam type="url" name="oauth_signature" value="#request.razuna.session.dropbox.appsecret#&#request.razuna.session.dropbox.oauth_token_secret#"/>
 		</cfhttp>
 		<!--- Return --->
 		<cfreturn cfhttp>

@@ -53,22 +53,22 @@
 </cffunction>
 
 <!--- GET THE MESSAGE FOR THE DETAIL VIEW --->
-<cffunction hint="get the message for the detail view" name="emailmessage" output="false">
+<cffunction  name="emailmessage" output="false">
 	<cfargument name="themessageid" default="" required="yes" type="numeric">
 	<cfargument name="thepathhere" default="" required="yes" type="string">
-	<cfpop action="getall" server="#session.email_server#" username="#session.email_address#" password="#session.email_pass#" name="qrymessage" messagenumber="#arguments.themessageid#" attachmentpath="#arguments.thepathhere#/incoming/emails" generateuniquefilenames="no" timeout="3600">
+	<cfpop action="getall" server="#request.razuna.session.email_server#" username="#request.razuna.session.email_address#" password="#request.razuna.session.email_pass#" name="qrymessage" messagenumber="#arguments.themessageid#" attachmentpath="#arguments.thepathhere#/incoming/emails" generateuniquefilenames="no" timeout="3600">
 	<cfreturn qrymessage>
 </cffunction>
 
 <!--- REMOVE THE MESSAGE --->
-<cffunction hint="remove the message" name="removemessage" output="false">
+<cffunction  name="removemessage" output="false">
 	<cfargument name="themessageid" default="" required="yes" type="numeric">
-	<cfpop action="delete" server="#session.email_server#" username="#session.email_address#" password="#session.email_pass#" messagenumber="#arguments.themessageid#">
+	<cfpop action="delete" server="#request.razuna.session.email_server#" username="#request.razuna.session.email_address#" password="#request.razuna.session.email_pass#" messagenumber="#arguments.themessageid#">
 	<cfreturn />
 </cffunction>
 
 <!--- GLOBAL SENDEMAIL --->
-<cffunction hint="global sendemail" name="send_email" output="false" access="remote" returnType="void">
+<cffunction  name="send_email" output="false" access="remote" returnType="void">
 	<cfargument name="to" default="" required="no" type="string">
 	<cfargument name="cc" default="" required="no" type="string">
 	<cfargument name="bcc" default="" required="no" type="string">
@@ -86,25 +86,25 @@
 	<cftry>
 		<!--- Set data source since this call could also come from RFS --->
 		<cfif arguments.dsn EQ "">
-			<cfset var thedsn = application.razuna.datasource>
+			<cfset var thedsn = request.razuna.application.datasource>
 		<cfelse>
 			<cfset var thedsn = arguments.dsn>
 		</cfif>
 		<!--- Set data source since this call could also come from RFS --->
 		<cfif arguments.hostdbprefix EQ "">
-			<cfset var thehostdbprefix = session.hostdbprefix>
+			<cfset var thehostdbprefix = request.razuna.session.hostdbprefix>
 		<cfelse>
 			<cfset var thehostdbprefix = arguments.hostdbprefix>
 		</cfif>
 		<!--- Set data source since this call could also come from RFS --->
 		<cfif arguments.hostid EQ "">
-			<cfset var thehostid = session.hostid>
+			<cfset var thehostid = request.razuna.session.hostid>
 		<cfelse>
 			<cfset var thehostid = arguments.hostid>
 		</cfif>
 		<!--- Set data source since this call could also come from RFS --->
 		<cfif arguments.userid EQ "">
-			<cfset var theuserid = session.theuserid>
+			<cfset var theuserid = request.razuna.session.theuserid>
 		<cfelse>
 			<cfset var theuserid = arguments.userid>
 		</cfif>
@@ -207,7 +207,7 @@
 						<cfinvoke component="defaults" method="trans" transid="basket_download_available_message" returnvariable="basket_download_available_msg" />
 						#basket_download_available_msg# <br/>
 						<cfset var sn = replacenocase(cgi.script_name,"/index.cfm","","one")>
-						 <a href='#session.thehttp##cgi.HTTP_HOST##sn#/outgoing/#arguments.attach#'>#session.thehttp##cgi.HTTP_HOST##sn#/outgoing/#arguments.attach#</a>
+						 <a href='#request.razuna.session.thehttp##cgi.HTTP_HOST##sn#/outgoing/#arguments.attach#'>#request.razuna.session.thehttp##cgi.HTTP_HOST##sn#/outgoing/#arguments.attach#</a>
 					 </cfif>
 				</cfmail>
 			<cfelse>
@@ -238,7 +238,7 @@
 						<cfinvoke component="defaults" method="trans" transid="basket_download_available_message" returnvariable="basket_download_available_msg" />
 						#basket_download_available_msg# <br/>
 						<cfset var sn = replacenocase(cgi.script_name,"/index.cfm","","one")>
-						 <a href='#session.thehttp##cgi.HTTP_HOST##sn#/outgoing/#arguments.attach#'>#session.thehttp##cgi.HTTP_HOST##sn#/outgoing/#arguments.attach#</a>
+						 <a href='#request.razuna.session.thehttp##cgi.HTTP_HOST##sn#/outgoing/#arguments.attach#'>#request.razuna.session.thehttp##cgi.HTTP_HOST##sn#/outgoing/#arguments.attach#</a>
 					 </cfif>
 				</cfmail>
 			</cfif>

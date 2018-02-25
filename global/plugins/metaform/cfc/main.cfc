@@ -54,7 +54,7 @@
 			<cfif application.razuna.thedatabase EQ "mysql">#tableoptions#</cfif>
 			</cfquery>
 			<cfcatch type="database">
-				<cfset consoleoutput(true)>
+				<cfset consoleoutput(true, true)>
 				<cfset console(cfcatch)>
 				Maybe add an alter or update execution in here
 			</cfcatch>

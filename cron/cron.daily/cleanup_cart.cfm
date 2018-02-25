@@ -23,7 +23,7 @@
 * along with Razuna. If not, see <http://www.razuna.com/licenses/>.
 *
 --->
-<cfset consoleoutput(true)>
+<cfset consoleoutput(true, true)>
 
 <!--- Get database --->
 <cfquery datasource="razuna_default" name="_config">

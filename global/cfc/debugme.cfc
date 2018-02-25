@@ -61,15 +61,15 @@
 		<!--- Savecontent --->
 		<cfsavecontent variable="therr"><cfdump var="#arguments.thestruct.cfcatch#" label="the error"><cfdump var="#arguments.thestruct#" label="the struct"></cfsavecontent>
 		<!--- For local --->
-		<cfif application.razuna.storage EQ "local">
+		<cfif request.razuna.application.storage EQ "local">
 			<!--- Check if errors folder exists, else create it --->
-			<cfif not DirectoryExists("#arguments.thestruct.assetpath#/#session.hostid#/errors")>
-				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/errors" mode="775">
+			<cfif not DirectoryExists("#arguments.thestruct.assetpath#/#request.razuna.session.hostid#/errors")>
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#request.razuna.session.hostid#/errors" mode="775">
 			</cfif>
 			<!--- Write the error file --->
-			<cffile action="write" file="#arguments.thestruct.assetpath#/#session.hostid#/errors/#err_file#" output="#therr#" mode="775">
+			<cffile action="write" file="#arguments.thestruct.assetpath#/#request.razuna.session.hostid#/errors/#err_file#" output="#therr#" mode="775">
 		<!--- For Nirvanix --->
-		<cfelseif application.razuna.storage EQ "nirvanix">
+		<cfelseif request.razuna.application.storage EQ "nirvanix">
 			<!--- Write the file to temp dir --->
 			
 			<!--- Upload file --->

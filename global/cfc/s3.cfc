@@ -15,17 +15,17 @@ Version 1.8 - Released: July 27, 2010
 
 Modified from original by Razuna to add suport for multipart uploads and getting aws URL based on regional endpoints
 --->
-	<cffunction name="init" access="public" returnType="s3" output="false" hint="Returns an instance of the CFC initialized.">
-		<cfargument name="accessKeyId" type="string" required="true" hint="Amazon S3 Access Key ID.">
-		<cfargument name="secretAccessKey" type="string" required="true" hint="Amazon S3 Secret Access Key.">
-		<cfargument name="storagelocation" type="string" required="true" hint="Amazon S3 bucket location">
+	<cffunction name="init" access="public" returnType="s3" output="false" >
+		<cfargument name="accessKeyId" type="string" required="true" >
+		<cfargument name="secretAccessKey" type="string" required="true" >
+		<cfargument name="storagelocation" type="string" required="true" >
 		<cfset variables.accessKeyId = arguments.accessKeyId>
 		<cfset variables.secretAccessKey = arguments.secretAccessKey>
 		<cfset variables.awsURL = getS3Host('#arguments.storagelocation#')>
 		<cfreturn this>
 	</cffunction>
 	
-	<cffunction name="getS3Host" returntype="String" hint="Gets regional endpoint based on where bucket is located to reduce latency. See http://docs.aws.amazon.com/general/latest/gr/rande.html">
+	<cffunction name="getS3Host" returntype="String" >
 		<cfargument name="amzregion" type="string" required="true">
 		<cfset var awsURL = 'https://s3.amazonaws.com'>
 		 <cfif arguments.amzRegion EQ "us-east">
@@ -52,7 +52,7 @@ Modified from original by Razuna to add suport for multipart uploads and getting
   		<cfreturn awsURL>
 	</cffunction>
 
-	<cffunction name="HMAC_SHA1" returntype="binary" access="private" output="false" hint="NSA SHA-1 Algorithm">
+	<cffunction name="HMAC_SHA1" returntype="binary" access="private" output="false" >
 	   <cfargument name="signKey" type="string" required="true" />
 	   <cfargument name="signMessage" type="string" required="true" />
 	
@@ -337,7 +337,7 @@ Modified from original by Razuna to add suport for multipart uploads and getting
 		<cfargument name="bucketName" type="string" required="yes">
 		<cfargument name="fileKey" type="string" required="yes">
 		<cfargument name="theasset" type="string" required="yes">
-		<cfargument name="theassetsize" type="string" required="yes" hint="in kb">
+		<cfargument name="theassetsize" type="string" required="yes" >
 		<cfargument name="contentType" type="string" required="no" default="">
 		<cfargument name="HTTPtimeout" type="numeric" required="no" default="86400">
 		<cfargument name="cacheControl" type="boolean" required="false" default="86400">
@@ -406,7 +406,7 @@ Modified from original by Razuna to add suport for multipart uploads and getting
 			<cfset chunksize =  int(arguments.theassetsize /10000)>
 		</cfif>
 		<!--- Write script file --->
-		<cffile action="write" file="#thescriptfile#" output="cd #session.libpath#" mode="777" addnewline="true">
+		<cffile action="write" file="#thescriptfile#" output="cd #request.razuna.session.libpath#" mode="777" addnewline="true">
 		<cffile action="append" file="#thescriptfile#" output='java HJSplit -s#chunksize# "#arguments.theasset#" "#assetdir#" ' mode="777" addnewline="true">
 		<cfexecute name="#thescriptfile#" timeout="30" variable="result" errorVariable="errorvar"/>
 		<cfif len(errorvar)>

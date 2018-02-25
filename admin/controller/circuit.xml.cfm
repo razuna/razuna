@@ -21,7 +21,7 @@
 	 	<set name="attributes.pathhere" value="#thispath#" />
 		<!-- CFC: Check db connection and setup the db for first time
 		<invoke object="myFusebox.getApplicationData().hosts" methodcall="checkdb(attributes)" returnvariable="status" /> -->
-		<if condition="application.razuna.firsttime">
+		<if condition="attributes.firsttime EQ 't'">
 			<true>
 				<set name="attributes.firsttime" value="T" />
 				<set name="attributes.host_lang" value="1" />
@@ -163,8 +163,6 @@
 		INDEXPAGE: Blog
 	 -->
 	 <fuseaction name="mainblog">
-		<!-- CFC: Parse RSS Feed -->
-		<invoke object="myFusebox.getApplicationData().rssparser" methodcall="rssparse('http://blog.razuna.com/feed',10)" returnvariable="blogss" />
 		<!-- Show main page -->
 	 	<do action="ajax.mainblog" />
 	 </fuseaction>
@@ -1198,9 +1196,6 @@
 	<!-- Remove -->
 	<fuseaction name="hosts_remove">
 		<set name="attributes.theschema" value="#application.razuna.theschema#" />
-		<set name="attributes.dsn" value="#application.razuna.datasource#" />
-		<set name="attributes.database" value="#application.razuna.thedatabase#" />
-		<set name="attributes.storage" value="#application.razuna.storage#" />
 		<!-- CFC: Remove host -->
 		<invoke object="myFusebox.getApplicationData().hosts" methodcall="remove(attributes)" />
 		<!-- Show -->

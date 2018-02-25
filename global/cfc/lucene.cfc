@@ -24,7 +24,11 @@
 *
 --->
 <cfcomponent output="false" extends="extQueryCaching">
-	
+
+	<cffunction name="init" returntype="lucene" access="public" output="false">
+		<cfreturn this />
+	</cffunction>
+
 	<!--- INDEX: Delete --->
 	<cffunction name="index_delete" access="public" output="false">
 		<cfargument name="thestruct" type="struct">
@@ -33,18 +37,18 @@
 		<cfargument name="notfile" type="string" default="F" required="false">
 		<cftry>
 			<!--- Add to lucene delete table --->
-			<cfquery datasource="#application.razuna.datasource#">
+			<cfquery datasource="#request.razuna.application.datasource#">
 			INSERT INTO lucene
 			(id, type, host_id, time_stamp)
 			VALUES (
 				<cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">,
 				<cfqueryparam value="#arguments.category#" cfsqltype="CF_SQL_VARCHAR">,
-				<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+				<cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">,
 				<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">
 			)
 			</cfquery>
 			<cfcatch type="any">
-				<cfset consoleoutput(true)>
+				<cfset consoleoutput(true, true)>
 				<cfset console(cfcatch)>
 			</cfcatch>
 		</cftry>
@@ -122,7 +126,7 @@
 					<cfabort>
 				</cfcatch>
 			</cftry>
-			
+
 		<cfelse>
 			<cfoutput>
 				<h2>A connection error to the search server occured</h2>
@@ -131,10 +135,10 @@
 			<cfdump var="#cfhttp#" label="ERROR" />
 			<cfabort>
 		</cfif>
-		
+
 	</cffunction>
 
-	
+
 	<!--- INDEX: Update from API --->
 	<cffunction name="index_update_api" access="remote" output="false">
 		<cfargument name="assetid" type="string" required="true">
@@ -152,40 +156,40 @@
 		<cfargument name="reset" required="true">
 		<!--- If the user wants to reset index --->
 		<cfif arguments.reset>
-			<cfset rebuildIndex(assetid='all', dsn=application.razuna.datasource, prefix=session.hostdbprefix, hostid=session.hostid ) />
+			<cfset rebuildIndex(assetid='all', dsn=request.razuna.application.datasource, prefix=request.razuna.session.hostdbprefix, hostid=request.razuna.session.hostid ) />
 		</cfif>
 		<!--- Var --->
 		<cfset var qry = "" />
 		<!--- Query how many files are not indexed --->
-		<cfquery datasource="#application.razuna.datasource#" name="qry">
+		<cfquery datasource="#request.razuna.application.datasource#" name="qry">
 		SELECT count(img_id) as count, 'Images' as type
-		FROM #session.hostdbprefix#images
+		FROM #request.razuna.session.hostdbprefix#images
 		WHERE is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 		AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 		UNION ALL
 		SELECT count(vid_id) as count, 'Videos' as type
-		FROM #session.hostdbprefix#videos
+		FROM #request.razuna.session.hostdbprefix#videos
 		WHERE is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 		AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 		UNION ALL
 		SELECT count(file_id) as count, 'Documents' as type
-		FROM #session.hostdbprefix#files
+		FROM #request.razuna.session.hostdbprefix#files
 		WHERE is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 		AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 		UNION ALL
 		SELECT count(aud_id) as count, 'Audios' as type
-		FROM #session.hostdbprefix#audios a
+		FROM #request.razuna.session.hostdbprefix#audios a
 		WHERE is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 		AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 		</cfquery>
 		<!--- Return --->
 		<cfreturn qry />
 	</cffunction>
-	
+
 	<!--- Rebuild Index --->
 	<cffunction name="rebuildIndex" access="public" output="false">
 		<cfargument name="assetid" type="string" required="true">
@@ -245,14 +249,12 @@
 			AND file_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#" list="true">)
 		</cfif>
 		</cfquery>
-		<!--- Set hostid session (needed in resetcachetoken) --->
-		<cfset session.hostid = arguments.hostid>
 		<!--- Flush Caches --->
-		<cfset resetcachetoken("images")>
-		<cfset resetcachetoken("videos")>
-		<cfset resetcachetoken("files")>
-		<cfset resetcachetoken("audios")>
-		<cfset resetcachetoken("search")>
+		<cfset resetcachetoken(type="images", hostid=request.razuna.session.hostid)>
+		<cfset resetcachetoken(type="videos", hostid=request.razuna.session.hostid)>
+		<cfset resetcachetoken(type="files", hostid=request.razuna.session.hostid)>
+		<cfset resetcachetoken(type="audios", hostid=request.razuna.session.hostid)>
+		<cfset resetcachetoken(type="search", hostid=request.razuna.session.hostid)>
 		<!--- Return --->
 		<cfreturn  />
 	</cffunction>
