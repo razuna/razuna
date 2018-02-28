@@ -258,47 +258,47 @@
 	<cfargument name="ColumnList" required="false" type="string"  default="v.vid_id, v.vid_filename, v.vid_custom_id, v.vid_extension, v.vid_mimetype, v.vid_preview_width, v.vid_preview_heigth, v.folder_id_r, v.vid_name_org, v.vid_name_image, v.vid_name_pre, v.vid_name_pre_img, v.vid_width vwidth, v.vid_height vheight, v.path_to_asset, v.cloud_url, v.cloud_url_org, v.vid_group">
 	<!--- Local Param --->
 	<cfset var qry = 0>
-	<cfparam default="0" name="arguments.thestruct.request.razuna.session.thegroupofuser">
+	<cfparam default="0" name="request.razuna.session.thegroupofuser">
 	<!--- Get the cachetoken for here --->
 	<cfset var cachetoken = getcachetoken(type="videos", hostid=request.razuna.session.hostid)>
 	<!--- Query --->
 	<cfquery datasource="#request.razuna.application.datasource#" name="qry" cachedwithin="1" region="razcache">
-	SELECT /* #cachetoken#getdetailsvid */ #arguments.columnlist#, CASE WHEN NOT(v.vid_group ='' OR v.vid_group is null) THEN (SELECT expiry_date FROM #arguments.thestruct.request.razuna.session.hostdbprefix#videos WHERE vid_id = v.vid_group) ELSE expiry_date END expiry_date_actual,
-	<cfif listfind(arguments.thestruct.request.razuna.session.thegroupofuser,"1",",") NEQ 0 OR listfind(arguments.thestruct.request.razuna.session.thegroupofuser,"2",",") NEQ 0>
+	SELECT /* #cachetoken#getdetailsvid */ #arguments.columnlist#, CASE WHEN NOT(v.vid_group ='' OR v.vid_group is null) THEN (SELECT expiry_date FROM #request.razuna.session.hostdbprefix#videos WHERE vid_id = v.vid_group) ELSE expiry_date END expiry_date_actual,
+	<cfif listfind(request.razuna.session.thegroupofuser,"1",",") NEQ 0 OR listfind(request.razuna.session.thegroupofuser,"2",",") NEQ 0>
 		'unlocked' as perm
 	<cfelse>
 		CASE
 			<!--- Check permission on this folder --->
 			WHEN EXISTS(
 				SELECT fg.folder_id_r
-				FROM #arguments.thestruct.request.razuna.session.hostdbprefix#folders_groups fg
-				WHERE fg.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.request.razuna.session.hostid#">
+				FROM #request.razuna.session.hostdbprefix#folders_groups fg
+				WHERE fg.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 				AND fg.folder_id_r = v.folder_id_r
 				AND fg.grp_permission IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="w,x" list="true">)
-				AND fg.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.request.razuna.session.thegroupofuser#" list="true">)
+				AND fg.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#request.razuna.session.thegroupofuser#" list="true">)
 				) THEN 'unlocked'
 			<!--- When folder is shared for everyone --->
 			WHEN EXISTS(
 				SELECT fg2.folder_id_r
-				FROM #arguments.thestruct.request.razuna.session.hostdbprefix#folders_groups fg2
+				FROM #request.razuna.session.hostdbprefix#folders_groups fg2
 				WHERE fg2.grp_id_r = '0'
 				AND fg2.folder_id_r = v.folder_id_r
-				AND fg2.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.request.razuna.session.hostid#">
+				AND fg2.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 				AND fg2.grp_permission IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
 				) THEN 'unlocked'
 			WHEN v.vid_owner = (
 				SELECT fo.folder_of_user
-				FROM #arguments.thestruct.request.razuna.session.hostdbprefix#folders fo
+				FROM #request.razuna.session.hostdbprefix#folders fo
 				WHERE fo.folder_of_user = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">
-				AND fo.folder_owner = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.request.razuna.session.theuserid#">
+				AND fo.folder_owner = <cfqueryparam cfsqltype="cf_sql_varchar" value="#request.razuna.session.theuserid#">
 				AND fo.folder_id = v.folder_id_r
 				) THEN 'unlocked'
 			ELSE 'locked'
 		END as perm
 	</cfif>
-	FROM #arguments.thestruct.request.razuna.session.hostdbprefix#videos v
+	FROM #request.razuna.session.hostdbprefix#videos v
 	WHERE v.vid_id = <cfqueryparam value="#arguments.vid_id#" cfsqltype="CF_SQL_VARCHAR">
-	AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.request.razuna.session.hostid#">
+	AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 	</cfquery>
 	<!--- Return --->
 	<cfreturn qry>

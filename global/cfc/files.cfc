@@ -861,9 +861,9 @@
 		<cfset var cachetoken = getcachetoken(type="files", hostid=request.razuna.session.hostid)>
 		<cfquery datasource="#request.razuna.application.datasource#" name="qry" cachedwithin="1" region="razcache">
 		SELECT /* #cachetoken#filedetailfiles */ #arguments.thecolumn#
-		FROM #arguments.thestruct.request.razuna.session.hostdbprefix#files
+		FROM #request.razuna.session.hostdbprefix#files
 		WHERE file_id = <cfqueryparam value="#arguments.theid#" cfsqltype="CF_SQL_VARCHAR">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.request.razuna.session.hostid#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 		</cfquery>
 		<cfreturn qry>
 	</cffunction>

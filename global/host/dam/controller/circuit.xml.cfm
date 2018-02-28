@@ -6903,7 +6903,7 @@
 	<!-- Scheduler scriot detail -->
 	<fuseaction name="scheduler_script_detail">
 		<!-- Detail -->
-		<invoke object="myFusebox.getApplicationData().scheduler" methodcall="getScript(id=attributes.sched_id, hostdbprefix=session.hostdbprefix, hostid=session.hostid, datasource=application.razuna.datasource)" returnvariable="qry_script" />
+		<invoke object="myFusebox.getApplicationData().scheduler" methodcall="getScript(id=attributes.sched_id)" returnvariable="qry_script" />
 		<!-- CFC: Get folders -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="getFlatFolderList()" returnvariable="qry_folders" />
 		<!-- Get labels -->
@@ -6915,13 +6915,13 @@
 	<!-- Scheduler Script save -->
 	<fuseaction name="scheduler_script_save">
 		<!-- Save -->
-		<invoke object="myFusebox.getApplicationData().scheduler" methodcall="saveScript(thestruct=attributes, hostdbprefix=session.hostdbprefix, hostid=session.hostid)" />
+		<invoke object="myFusebox.getApplicationData().scheduler" methodcall="saveScript(thestruct=attributes)" />
 	</fuseaction>
 
 	<!-- Scheduler Script file search preview -->
 	<fuseaction name="scheduler_script_preview_search">
 		<!-- Search -->
-		<invoke object="myFusebox.getApplicationData().scheduler" methodcall="scriptFileSearch(thestruct=attributes, hostdbprefix=session.hostdbprefix, hostid=session.hostid, datasource=application.razuna.datasource)" returnvariable="qry_search" />
+		<invoke object="myFusebox.getApplicationData().scheduler" methodcall="scriptFileSearch(thestruct=attributes)" returnvariable="qry_search" />
 		<!-- Show -->
 		<do action="ajax.scheduler_script_preview_search" />
 	</fuseaction>
@@ -6929,7 +6929,7 @@
 	<!-- Scheduler Script FTP connection -->
 	<fuseaction name="scheduler_script_ftp_connection">
 		<!-- Search -->
-		<invoke object="myFusebox.getApplicationData().scheduler" methodcall="scriptFtpConnection(thestruct=attributes, hostdbprefix=session.hostdbprefix, hostid=session.hostid)" returnvariable="ftp_connection" />
+		<invoke object="myFusebox.getApplicationData().scheduler" methodcall="scriptFtpConnection(thestruct=attributes)" returnvariable="ftp_connection" />
 	</fuseaction>
 
 	<!--  -->

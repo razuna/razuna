@@ -29,10 +29,10 @@
 <cffunction name="readxmpdb" output="false">
 	<cfargument name="thestruct" type="struct">
 		<!--- Get the cachetoken for here --->
-		<cfset variables.cachetoken = getcachetoken(type="images", hostid=request.razuna.session.hostid)>
+		<cfset var cachetoken = getcachetoken(type="images", hostid=request.razuna.session.hostid)>
 		<!--- Query --->
 		<cfquery datasource="#request.razuna.application.datasource#" name="xmp" cachedwithin="1" region="razcache">
-		SELECT /* #variables.cachetoken#readxmpdb */
+		SELECT /* #cachetoken#readxmpdb */
 		id_r,
 		subjectcode iptcsubjectcode,
 		creator,
@@ -1666,6 +1666,10 @@
 <!--- Export metadata --->
 <cffunction name="meta_export" output="true">
 	<cfargument name="thestruct" type="struct">
+	<cfset consoleoutput(true, true)>
+	<cfset console("ARGUMENTS", arguments.thestruct)>
+	<cfset console("REQUEST", request.razuna)>
+	<cfabort>
 	<cfparam name="arguments.thestruct.exportname" default="#randRange(1,10000)#">
 	<cfinvoke component="defaults" method="trans" transid="download_metadata_output" returnvariable="download_metadata_output" />
 	<!--- See that we have the rendition variable defined --->
@@ -1754,10 +1758,10 @@
 	<!--- If we export all assets from folder --->
 	<cfelseif arguments.thestruct.what EQ "folder">
 		<!--- Get the cachetoken for here --->
-		<cfset variables.cachetoken = getcachetoken(type="folders", hostid=request.razuna.session.hostid)>
+		<cfset var cachetoken = getcachetoken(type="folders", hostid=request.razuna.session.hostid)>
 		<!--- Get id from folder with type --->
 		<cfquery datasource="#request.razuna.application.datasource#" name="qry" cachedwithin="1" region="razcache">
-		SELECT /* #variables.cachetoken#meta_export */ img_id AS theid, 'img' AS thetype, folder_id_r,
+		SELECT /* #cachetoken#meta_export */ img_id AS theid, 'img' AS thetype, folder_id_r,
 		img_filename as url_file_name, cloud_url_org, img_create_time AS create_date, img_change_time AS change_date, img_size AS size, img_width AS width, img_height AS height, img_upc_number as upc_number, expiry_date
 		FROM #arguments.thestruct.hostdbprefix#images
 		WHERE (img_group IS NULL OR img_group = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="">)
@@ -1812,15 +1816,15 @@
 		</cfloop>
 	<!--- This is coming from a file list --->
 	<cfelse>
-		<cfif arguments.thestruct.request.razuna.session.file_id EQ "all">
+		<cfif request.razuna.session.file_id EQ "all">
 			<!--- As we have all get all IDS from this search --->
-			<cfinvoke component="search" method="getAllIdsMain" searchupc="#arguments.thestruct.request.razuna.session.search.searchupc#" searchtext="#arguments.thestruct.request.razuna.session.search.searchtext#" searchtype="#arguments.thestruct.request.razuna.session.search.searchtype#" searchrenditions="#arguments.thestruct.request.razuna.session.search.searchrenditions#" searchfolderid="#arguments.thestruct.request.razuna.session.search.searchfolderid#" hostid="#arguments.thestruct.hostid#" returnvariable="ids">
+			<cfinvoke component="search" method="getAllIdsMain" searchupc="#request.razuna.session.search.searchupc#" searchtext="#request.razuna.session.search.searchtext#" searchtype="#request.razuna.session.search.searchtype#" searchrenditions="#request.razuna.session.search.searchrenditions#" searchfolderid="#request.razuna.session.search.searchfolderid#" hostid="#arguments.thestruct.hostid#" returnvariable="ids">
 				<!--- Set the fileid --->
-				<cfset arguments.thestruct.request.razuna.session.file_id = ids>
+				<cfset request.razuna.session.file_id = ids>
 		</cfif>
-		<cfset variables.cachetoken = getcachetoken(type="folders", hostid=request.razuna.session.hostid)>
+		<cfset var cachetoken = getcachetoken(type="folders", hostid=request.razuna.session.hostid)>
 		<!--- Loop over filelist --->
-		<cfloop list="#arguments.thestruct.request.razuna.session.file_id#" delimiters="," index="i">
+		<cfloop list="#request.razuna.session.file_id#" delimiters="," index="i">
 			<!--- The first part is the ID the last the type --->
 			<cfset arguments.thestruct.file_id = listfirst(i, "-")>
 			<cfset arguments.thestruct.filetype = listlast(i, "-")>
@@ -1828,7 +1832,7 @@
 			<!--- Get details about file --->
 			<cfquery datasource="#request.razuna.application.datasource#" name="qry" cachedwithin="1" region="razcache">
 			<cfif arguments.thestruct.filetype EQ 'img'>
-			SELECT /* #variables.cachetoken#meta_export */ img_id AS theid, 'img' AS thetype, folder_id_r,
+			SELECT /* #cachetoken#meta_export */ img_id AS theid, 'img' AS thetype, folder_id_r,
 			img_filename as url_file_name, cloud_url_org, img_create_time AS create_date, img_change_time AS change_date, img_size AS size, img_width AS width, img_height AS height, img_upc_number as upc_number, expiry_date
 			FROM #arguments.thestruct.hostdbprefix#images
 			WHERE img_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
@@ -1920,7 +1924,7 @@
 			<cfinvoke method="readxmpdb" thestruct="#arguments.thestruct#" returnVariable="arguments.thestruct.qry_xmp" />
 			<!--- The file_url --->
 			<cfif arguments.thestruct.storage EQ "local">
-				<cfset arguments.thestruct.file_url = "#arguments.thestruct.request.razuna.session.thehttp##cgi.http_host##cgi.context_path#/assets/#arguments.thestruct.request.razuna.session.hostid#/#qry_image.path_to_asset#/#qry_image.filenameorg#">
+				<cfset arguments.thestruct.file_url = "#request.razuna.session.thehttp##cgi.http_host##cgi.context_path#/assets/#request.razuna.session.hostid#/#qry_image.path_to_asset#/#qry_image.filenameorg#">
 			<cfelse>
 				<cfset arguments.thestruct.file_url = qry_image.cloud_url_org>
 			</cfif>
@@ -1949,7 +1953,7 @@
 			<!--- Get keywords and description --->
 			<cfinvoke component="videos" method="gettext" qry="#arguments.thestruct.qry#" returnVariable="arguments.thestruct.qry_text" />
 			<cfif arguments.thestruct.storage EQ "local">
-				<cfset arguments.thestruct.file_url = "#arguments.thestruct.request.razuna.session.thehttp##cgi.http_host##cgi.context_path#/assets/#arguments.thestruct.request.razuna.session.hostid#/#qry_video.path_to_asset#/#qry_video.filenameorg#">
+				<cfset arguments.thestruct.file_url = "#request.razuna.session.thehttp##cgi.http_host##cgi.context_path#/assets/#request.razuna.session.hostid#/#qry_video.path_to_asset#/#qry_video.filenameorg#">
 			<cfelse>
 				<cfset arguments.thestruct.file_url = qry_video.cloud_url_org>
 			</cfif>
@@ -1990,7 +1994,7 @@
 			<!--- Get keywords and description --->
 			<cfinvoke component="audios" method="gettext" qry="#arguments.thestruct.qry#" returnVariable="arguments.thestruct.qry_text" />
 			<cfif arguments.thestruct.storage EQ "local">
-				<cfset arguments.thestruct.file_url = "#arguments.thestruct.request.razuna.session.thehttp##cgi.http_host##cgi.context_path#/assets/#arguments.thestruct.request.razuna.session.hostid#/#qry_audio.detail.path_to_asset#/#qry_audio.detail.filenameorg#">
+				<cfset arguments.thestruct.file_url = "#request.razuna.session.thehttp##cgi.http_host##cgi.context_path#/assets/#request.razuna.session.hostid#/#qry_audio.detail.path_to_asset#/#qry_audio.detail.filenameorg#">
 			<cfelse>
 				<cfset arguments.thestruct.file_url = qry_audio.detail.cloud_url_org>
 			</cfif>
@@ -2021,7 +2025,7 @@
 			<!--- Get PDF XMP --->
 			<cfinvoke component="files" method="getpdfxmp" thestruct="#arguments.thestruct#" returnVariable="arguments.thestruct.qry_pdfxmp" />
 			<cfif arguments.thestruct.storage EQ "local">
-				<cfset arguments.thestruct.file_url = "#arguments.thestruct.request.razuna.session.thehttp##cgi.http_host##cgi.context_path#/assets/#arguments.thestruct.request.razuna.session.hostid#/#qry_doc.path_to_asset#/#qry_doc.filenameorg#">
+				<cfset arguments.thestruct.file_url = "#request.razuna.session.thehttp##cgi.http_host##cgi.context_path#/assets/#request.razuna.session.hostid#/#qry_doc.path_to_asset#/#qry_doc.filenameorg#">
 			<cfelse>
 				<cfset arguments.thestruct.file_url = qry_doc.cloud_url_org>
 			</cfif>
@@ -2046,7 +2050,7 @@
 	<cfif isdefined("arguments.thestruct.exportname")>
 		<cfset var suffix = "#arguments.thestruct.exportname#">
 	<cfelse>
-		<cfset var suffix = "#arguments.thestruct.request.razuna.session.hostid#-#arguments.thestruct.request.razuna.session.theuserid#">
+		<cfset var suffix = "#request.razuna.session.hostid#-#request.razuna.session.theuserid#">
 	</cfif>
 	<!--- Write file to file system --->
 	<cffile action="write" file="#arguments.thestruct.thepath#/outgoing/metadata-export-#suffix#.csv" output="#csv#" charset="utf-8" nameconflict="overwrite">
@@ -2093,7 +2097,7 @@
 	<cfif isdefined("arguments.thestruct.exportname")>
 		<cfset var suffix = "#arguments.thestruct.exportname#">
 	<cfelse>
-		<cfset var suffix = "#arguments.thestruct.request.razuna.session.hostid#-#arguments.thestruct.request.razuna.session.theuserid#">
+		<cfset var suffix = "#request.razuna.session.hostid#-#request.razuna.session.theuserid#">
 	</cfif>
 	<!--- Write file to file system --->
 	<cfset SpreadsheetWrite(sxls,"#arguments.thestruct.thepath#/outgoing/metadata-export-#suffix#.#arguments.thestruct.format#",true)>

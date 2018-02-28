@@ -1390,20 +1390,18 @@
 
 <!--- Get scripts --->
 <cffunction name="getScripts" access="public" returntype="query">
-	<cfargument name="hostdbprefix" required="yes" type="string">
-	<cfargument name="hostid" required="yes" type="numeric">
 	<cfset var qry = "">
 	<cfquery datasource="#request.razuna.application.datasource#" name="qry">
 	SELECT value, date_added, sched_id, 
 		(
 			SELECT value
-			FROM #arguments.hostdbprefix#scheduled_scripts
+			FROM #request.razuna.session.hostdbprefix#scheduled_scripts
 			WHERE id_name = <cfqueryparam CFSQLType="cf_sql_varchar" value="sched_script_active">
-			AND host_id = <cfqueryparam CFSQLType="cf_sql_numeric" value="#arguments.hostid#">
+			AND host_id = <cfqueryparam CFSQLType="cf_sql_numeric" value="#request.razuna.session.hostid#">
 		) as active
-	FROM #arguments.hostdbprefix#scheduled_scripts
+	FROM #request.razuna.session.hostdbprefix#scheduled_scripts
 	WHERE id_name = <cfqueryparam CFSQLType="cf_sql_varchar" value="sched_script_name">
-	AND host_id = <cfqueryparam CFSQLType="cf_sql_numeric" value="#arguments.hostid#">
+	AND host_id = <cfqueryparam CFSQLType="cf_sql_numeric" value="#request.razuna.session.hostid#">
 	GROUP BY sched_id, date_added, value
 	ORDER BY date_added DESC
 	</cfquery>
@@ -1413,17 +1411,14 @@
 <!--- Get scripts --->
 <cffunction name="getScript" access="public" returntype="struct">
 	<cfargument name="id" required="yes" type="string">
-	<cfargument name="hostdbprefix" required="yes" type="string">
-	<cfargument name="hostid" required="yes" type="numeric">
-	<cfargument name="datasource" required="yes" type="string">
 	<cfset var qry = "">
 	<cfset var _data = structNew()>
 	<cfset _data.new_record = false>
-	<cfquery datasource="#arguments.datasource#" name="qry">
+	<cfquery datasource="#request.razuna.application.datasource#" name="qry">
 	SELECT id_name, value, sched_id
-	FROM #arguments.hostdbprefix#scheduled_scripts
+	FROM #request.razuna.session.hostdbprefix#scheduled_scripts
 	WHERE sched_id = <cfqueryparam CFSQLType="cf_sql_varchar" value="#arguments.id#">
-	AND host_id = <cfqueryparam CFSQLType="cf_sql_numeric" value="#arguments.hostid#">
+	AND host_id = <cfqueryparam CFSQLType="cf_sql_numeric" value="#request.razuna.session.hostid#">
 	</cfquery>
 	<!--- Define defautl values --->
 	<cfset _data.SCHED_SCRIPT_NAME = 'ScriptName'>
@@ -1462,10 +1457,6 @@
 <!--- Save scripts --->
 <cffunction name="saveScript" access="public">
 	<cfargument name="thestruct" required="yes" type="struct">
-	<cfargument name="hostdbprefix" required="yes" type="string">
-	<cfargument name="hostid" required="yes" type="numeric">
-	<cfset consoleoutput(true,true)>
-	<cfset console(arguments.thestruct)>
 
 	<!--- Set date for insert (so they all have the same value) --->
 	<cfset _date = now()>
@@ -1476,7 +1467,7 @@
 	<!--- Else we remove all records for this id --->
 	<cfelse>
 		<cfquery datasource="#request.razuna.application.datasource#">
-		DELETE FROM #arguments.hostdbprefix#scheduled_scripts
+		DELETE FROM #request.razuna.session.hostdbprefix#scheduled_scripts
 		WHERE sched_id = <cfqueryparam CFSQLType="cf_sql_varchar" value="#arguments.thestruct.sched_id#">
 		</cfquery>
 	</cfif>
@@ -1487,12 +1478,12 @@
 			<cfset console("Field: ", field, arguments.thestruct['#field#'])>
 			<!--- Insert --->
 			<cfquery datasource="#request.razuna.application.datasource#">
-			INSERT INTO #arguments.hostdbprefix#scheduled_scripts
+			INSERT INTO #request.razuna.session.hostdbprefix#scheduled_scripts
 			(id_name, value, host_id, date_added, sched_id)
 			VALUES(
 				<cfqueryparam CFSQLType="cf_sql_varchar" value="#field#">,
 				<cfqueryparam CFSQLType="cf_sql_varchar" value="#arguments.thestruct['#field#']#">,
-				<cfqueryparam CFSQLType="cf_sql_numeric" value="#arguments.hostid#">,
+				<cfqueryparam CFSQLType="cf_sql_numeric" value="#request.razuna.session.hostid#">,
 				<cfqueryparam CFSQLType="cf_sql_timestamp" value="#_date#">,
 				<cfqueryparam CFSQLType="cf_sql_varchar" value="#arguments.thestruct.sched_id#">
 			)
@@ -1510,8 +1501,6 @@
 <!--- FTP connection --->
 <cffunction name="scriptFtpConnection" access="public" output="true">
 	<cfargument name="thestruct" required="yes" type="struct">
-	<cfargument name="hostdbprefix" required="yes" type="string">
-	<cfargument name="hostid" required="yes" type="numeric">
 
 	<cfoutput><h5>Trying to connect to the FTP host</h5></cfoutput>
 	<cfflush>
@@ -1535,16 +1524,8 @@
 <!--- Search files for scripts (used in preview and from script directly) --->
 <cffunction name="scriptFileSearch" access="public" returntype="query">
 	<cfargument name="thestruct" required="yes" type="struct">
-	<cfargument name="hostdbprefix" required="yes" type="string">
-	<cfargument name="hostid" required="yes" type="numeric">
-	<cfargument name="datasource" required="yes" type="string">
 	<cfargument name="files_since" required="false" type="string" default="">
 	<cfargument name="files_since_unit" required="false" type="string" default="">
-
-	<cfset consoleoutput(true, true)>
-	<cfset console(arguments.thestruct)>
-	<cfset console(arguments)>
-
 
 	<cfset var qry = "">
 	<cfset var _img = "">
@@ -1589,19 +1570,20 @@
 	</cfif>
 
 	<!--- Images --->
-	<cfquery datasource="#arguments.datasource#" name="_img">
-	SELECT i.img_filename as filename, i.path_to_asset, i.cloud_url, i.cloud_url_org, 'img' as type, f.folder_name
+	<cfquery datasource="#request.razuna.application.datasource#" name="_img">
+	SELECT i.img_filename as filename, i.path_to_asset, i.cloud_url, i.cloud_url_org, 'img' as type, f.folder_name,
+	<cfif request.razuna.application.thedatabase EQ "mssql">img_id + '-img'<cfelse>concat(img_id,'-img')</cfif> as file_id
 	<cfif ListLen(_labels)>
 		, l.label_path
 	<cfelse>
 		, '' as label_path
 	</cfif>
-	FROM #arguments.hostdbprefix#folders f, #arguments.hostdbprefix#images i
+	FROM #request.razuna.session.hostdbprefix#folders f, #request.razuna.session.hostdbprefix#images i
 	<cfif ListLen(_labels)>
 		LEFT JOIN ct_labels ct ON ct.ct_id_r = i.img_id
-		LEFT JOIN #arguments.hostdbprefix#labels l ON l.label_id = ct.ct_label_id
+		LEFT JOIN #request.razuna.session.hostdbprefix#labels l ON l.label_id = ct.ct_label_id
 	</cfif>
-	WHERE i.host_id = <cfqueryparam CFSQLType="cf_sql_numeric" value="#arguments.hostid#">
+	WHERE i.host_id = <cfqueryparam CFSQLType="cf_sql_numeric" value="#request.razuna.session.hostid#">
 	AND i.in_trash = <cfqueryparam CFSQLType="cf_sql_varchar" value="f">
 	AND f.folder_id = i.folder_id_r
 	<cfif _filename NEQ "">
@@ -1626,19 +1608,20 @@
 
 
 	<!--- Videos --->
-	<cfquery datasource="#arguments.datasource#" name="_vid">
-	SELECT i.vid_filename as filename, i.path_to_asset, i.cloud_url, i.cloud_url_org, 'vid' as type, f.folder_name
+	<cfquery datasource="#request.razuna.application.datasource#" name="_vid">
+	SELECT i.vid_filename as filename, i.path_to_asset, i.cloud_url, i.cloud_url_org, 'vid' as type, f.folder_name,
+	<cfif request.razuna.application.thedatabase EQ "mssql">vid_id + '-vid'<cfelse>concat(vid_id,'-vid')</cfif> as file_id
 	<cfif ListLen(_labels)>
 		, l.label_path
 	<cfelse>
 		, '' as label_path
 	</cfif>
-	FROM #arguments.hostdbprefix#folders f, #arguments.hostdbprefix#videos i
+	FROM #request.razuna.session.hostdbprefix#folders f, #request.razuna.session.hostdbprefix#videos i
 	<cfif ListLen(_labels)>
 		LEFT JOIN ct_labels ct ON ct.ct_id_r = i.vid_id
-		LEFT JOIN #arguments.hostdbprefix#labels l ON l.label_id = ct.ct_label_id
+		LEFT JOIN #request.razuna.session.hostdbprefix#labels l ON l.label_id = ct.ct_label_id
 	</cfif>
-	WHERE i.host_id = <cfqueryparam CFSQLType="cf_sql_numeric" value="#arguments.hostid#">
+	WHERE i.host_id = <cfqueryparam CFSQLType="cf_sql_numeric" value="#request.razuna.session.hostid#">
 	AND i.in_trash = <cfqueryparam CFSQLType="cf_sql_varchar" value="f">
 	AND f.folder_id = i.folder_id_r
 	<cfif _filename NEQ "">
@@ -1659,19 +1642,20 @@
 	</cfquery>
 
 	<!--- Audios --->
-	<cfquery datasource="#arguments.datasource#" name="_aud">
-	SELECT i.aud_name as filename, i.path_to_asset, i.cloud_url, i.cloud_url_org, 'aud' as type, f.folder_name
+	<cfquery datasource="#request.razuna.application.datasource#" name="_aud">
+	SELECT i.aud_name as filename, i.path_to_asset, i.cloud_url, i.cloud_url_org, 'aud' as type, f.folder_name,
+	<cfif request.razuna.application.thedatabase EQ "mssql">aud_id + '-aud'<cfelse>concat(aud_id,'-aud')</cfif> as file_id
 	<cfif ListLen(_labels)>
 		, l.label_path
 	<cfelse>
 		, '' as label_path
 	</cfif>
-	FROM #arguments.hostdbprefix#folders f, #arguments.hostdbprefix#audios i
+	FROM #request.razuna.session.hostdbprefix#folders f, #request.razuna.session.hostdbprefix#audios i
 	<cfif ListLen(_labels)>
 		LEFT JOIN ct_labels ct ON ct.ct_id_r = i.aud_id
-		LEFT JOIN #arguments.hostdbprefix#labels l ON l.label_id = ct.ct_label_id
+		LEFT JOIN #request.razuna.session.hostdbprefix#labels l ON l.label_id = ct.ct_label_id
 	</cfif>
-	WHERE i.host_id = <cfqueryparam CFSQLType="cf_sql_numeric" value="#arguments.hostid#">
+	WHERE i.host_id = <cfqueryparam CFSQLType="cf_sql_numeric" value="#request.razuna.session.hostid#">
 	AND i.in_trash = <cfqueryparam CFSQLType="cf_sql_varchar" value="f">
 	AND f.folder_id = i.folder_id_r
 	<cfif _filename NEQ "">
@@ -1692,19 +1676,20 @@
 	</cfquery>
 
 	<!--- Files --->
-	<cfquery datasource="#arguments.datasource#" name="_doc">
-	SELECT i.file_name as filename, i.path_to_asset, i.cloud_url, i.cloud_url_org, 'doc' as type, f.folder_name
+	<cfquery datasource="#request.razuna.application.datasource#" name="_doc">
+	SELECT i.file_name as filename, i.path_to_asset, i.cloud_url, i.cloud_url_org, 'doc' as type, f.folder_name,
+	<cfif request.razuna.application.thedatabase EQ "mssql">file_id + '-doc'<cfelse>concat(file_id,'-doc')</cfif> as file_id
 	<cfif ListLen(_labels)>
 		, l.label_path
 	<cfelse>
 		, '' as label_path
 	</cfif>
-	FROM #arguments.hostdbprefix#folders f, #arguments.hostdbprefix#files i
+	FROM #request.razuna.session.hostdbprefix#folders f, #request.razuna.session.hostdbprefix#files i
 	<cfif ListLen(_labels)>
 		LEFT JOIN ct_labels ct ON ct.ct_id_r = i.file_id
-		LEFT JOIN #arguments.hostdbprefix#labels l ON l.label_id = ct.ct_label_id
+		LEFT JOIN #request.razuna.session.hostdbprefix#labels l ON l.label_id = ct.ct_label_id
 	</cfif>
-	WHERE i.host_id = <cfqueryparam CFSQLType="cf_sql_numeric" value="#arguments.hostid#">
+	WHERE i.host_id = <cfqueryparam CFSQLType="cf_sql_numeric" value="#request.razuna.session.hostid#">
 	AND i.in_trash = <cfqueryparam CFSQLType="cf_sql_varchar" value="f">
 	AND f.folder_id = i.folder_id_r
 	<cfif _filename NEQ "">
@@ -1742,12 +1727,10 @@
 <!--- Get scripts that need to be executed in the time frame argument --->
 <cffunction name="getScriptTime" access="public" returntype="query">
 	<cfargument name="script_interval" required="yes" type="string">
-	<cfargument name="datasource" required="yes" type="string">
-	<cfargument name="hostdbprefix" required="yes" type="string">
 	<cfset var qry = "">
-	<cfquery datasource="#arguments.datasource#" name="qry">
+	<cfquery datasource="#request.razuna.application.datasource#" name="qry">
 	SELECT host_id, sched_id
-	FROM #arguments.hostdbprefix#scheduled_scripts
+	FROM #request.razuna.session.hostdbprefix#scheduled_scripts
 	WHERE id_name = <cfqueryparam CFSQLType="cf_sql_varchar" value="sched_script_interval">
 	AND value = <cfqueryparam CFSQLType="cf_sql_varchar" value="#arguments.script_interval#">
 	</cfquery>

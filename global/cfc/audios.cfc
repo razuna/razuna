@@ -238,10 +238,10 @@
 		<cfset var cachetoken = getcachetoken(type="audios", hostid=request.razuna.session.hostid)>
 		<!--- Query --->
 		<cfquery datasource="#request.razuna.application.datasource#" name="qry" cachedwithin="1" region="razcache">
-		SELECT /* #cachetoken#filedetailaud */ #arguments.thecolumn#, CASE WHEN NOT(i.aud_group ='' OR i.aud_group is null) THEN (SELECT expiry_date FROM #arguments.thestruct.request.razuna.session.hostdbprefix#audios WHERE aud_id = i.aud_group) ELSE expiry_date END expiry_date_actual
-		FROM #arguments.thestruct.request.razuna.session.hostdbprefix#audios i
+		SELECT /* #cachetoken#filedetailaud */ #arguments.thecolumn#, CASE WHEN NOT(i.aud_group ='' OR i.aud_group is null) THEN (SELECT expiry_date FROM #request.razuna.session.hostdbprefix#audios WHERE aud_id = i.aud_group) ELSE expiry_date END expiry_date_actual
+		FROM #request.razuna.session.hostdbprefix#audios i
 		WHERE aud_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.theid#">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.request.razuna.session.hostid#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 		</cfquery>
 	<cfreturn qry />
 </cffunction>
@@ -262,14 +262,14 @@
 	a.aud_create_date, a.aud_create_time, a.aud_change_date, a.aud_change_time, a.aud_name_noext,
 	a.aud_name_org, a.aud_name_org filenameorg, a.shared, a.aud_size, a.aud_meta, a.link_kind, a.link_path_url,
 	a.path_to_asset, a.lucene_key, a.aud_upc_number, a.expiry_date,s.set2_img_download_org, s.set2_intranet_gen_download, s.set2_url_website,
-	u.user_first_name, u.user_last_name, fo.folder_name, CASE WHEN NOT(a.aud_group ='' OR a.aud_group is null) THEN (SELECT expiry_date FROM #arguments.thestruct.request.razuna.session.hostdbprefix#audios WHERE aud_id = a.aud_group) ELSE expiry_date END expiry_date_actual,
+	u.user_first_name, u.user_last_name, fo.folder_name, CASE WHEN NOT(a.aud_group ='' OR a.aud_group is null) THEN (SELECT expiry_date FROM #request.razuna.session.hostdbprefix#audios WHERE aud_id = a.aud_group) ELSE expiry_date END expiry_date_actual,
 	'' as perm
-	FROM #arguments.thestruct.request.razuna.session.hostdbprefix#audios a
-	LEFT JOIN #arguments.thestruct.request.razuna.session.hostdbprefix#settings_2 s ON s.set2_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.setid#"> AND s.host_id = a.host_id
+	FROM #request.razuna.session.hostdbprefix#audios a
+	LEFT JOIN #request.razuna.session.hostdbprefix#settings_2 s ON s.set2_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.setid#"> AND s.host_id = a.host_id
 	LEFT JOIN users u ON u.user_id = a.aud_owner
-	LEFT JOIN #arguments.thestruct.request.razuna.session.hostdbprefix#folders fo ON fo.folder_id = a.folder_id_r AND fo.host_id = a.host_id
+	LEFT JOIN #request.razuna.session.hostdbprefix#folders fo ON fo.folder_id = a.folder_id_r AND fo.host_id = a.host_id
 	WHERE a.aud_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
-	AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.request.razuna.session.hostid#">
+	AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 	</cfquery>
 	<cfif details.recordcount NEQ 0>
 		<!--- Get proper folderaccess --->
@@ -282,9 +282,9 @@
 	<!--- Get descriptions and keywords --->
 	<cfquery datasource="#request.razuna.application.datasource#" name="desc" cachedwithin="1" region="razcache">
 	SELECT /* #cachetoken#detaildescaud */ aud_description, aud_keywords, lang_id_r, aud_description as thedesc, aud_keywords as thekeys
-	FROM #arguments.thestruct.request.razuna.session.hostdbprefix#audios_text
+	FROM #request.razuna.session.hostdbprefix#audios_text
 	WHERE aud_id_r = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
-	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.request.razuna.session.hostid#">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
 	</cfquery>
 	<cftry>
 		<cfset var thesize = 0>

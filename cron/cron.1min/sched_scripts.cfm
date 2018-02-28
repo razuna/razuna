@@ -136,10 +136,10 @@ TODO:
 		<!--- Check what files we need to grab (Originals and renditions) Guess we could pass this in the search above --->
 
 		<!--- Collect files here --->
-		<cfset list_files = _collectFiles( files=qry_files, storage=_storage, path_temp=_path_temp )>
+		<!--- <cfset list_files = _collectFiles( files=qry_files, storage=_storage, path_temp=_path_temp )> --->
 
 		<!--- Check if we have to transform any files --->
-		<cfset _transcodeFiles( files=qry_files, script=qry_script, storage=_storage, path_temp=_path_temp )>
+		<!--- <cfset _transcodeFiles( files=qry_files, script=qry_script, storage=_storage, path_temp=_path_temp )> --->
 
 		<!--- Check if we have to create a metadata file --->
 		<cfset _metaFile( files=qry_files, script=qry_script, storage=_storage, path_temp=_path_temp )>
@@ -197,10 +197,10 @@ TODO:
 	<cfelseif arguments.storage EQ "amazon">
 		<!--- Download files to temp diretory --->
 		<cfthread name="#_tn#" intstruct="#arguments#">
-			<cfloop query=attributes.intstruct.files>
+			<!--- <cfloop query=attributes.intstruct.files>
 				<cfhttp url="#cloud_url#" file="thumb_#filename#" path="#attributes.intstruct.path_temp#" />
 				<cfhttp url="#cloud_url_org#" file="#filename#" path="#attributes.intstruct.path_temp#" />
-			</cfloop>
+			</cfloop> --->
 		</cfthread>
 	</cfif>
 
@@ -279,45 +279,19 @@ TODO:
 	<!--- If metadata not empty --->
 	<cfif arguments.script.sched_script_files_include_metadata>
 
-		
+		<cfset arguments.folder_id = "">
+		<cfset arguments.what = "">
+		<cfset arguments.thepath = arguments.path_temp>
+		<cfset arguments.format = "xls">
+		<cfset arguments.include_renditions = false>
 
-		<!--- Name for thread --->
-		<cfset var _tn = createuuid('')>
+		<cfset request.razuna.session.file_id = valueList(arguments.files.file_id)>
 
-		<!--- Loop over files but only images --->
-		<!--- <cfthread name="#_tn#" intstruct="#arguments#">
-			<cfloop query=attributes.intstruct.files>
-				<!--- Path to file --->
-				<cfset _path_to_file = "#attributes.intstruct.path_temp#/#filename#">
-				<!--- Check type and exists --->
-				<cfif type EQ "img" AND FileExists( _path_to_file )>
-					<cfset _w = "">
-					<cfset _h = "">
-					<cfset _d = "72">
-					<cfset _ext = listlast(filename, ".")>
-					<cfset _filename_no_ext = replacenocase( filename, ".#_ext#", "" )>
-					<!--- Get sizes of image --->
-					<cfexecute name="#attributes.intstruct.exiftool#" arguments="-S -s -ImageHeight #_path_to_file#" timeout="60" variable="theheight" />
-					<cfexecute name="#attributes.intstruct.exiftool#" arguments="-S -s -ImageWidth #_path_to_file#" timeout="60" variable="thewidth" />
-					<!--- If with is bigger than wanted canvas --->
-					<cfif thewidth GT attributes.intstruct.script.SCHED_SCRIPT_IMG_CANVAS_WIDTH>
-						<cfset _w = attributes.intstruct.script.SCHED_SCRIPT_IMG_CANVAS_WIDTH>
-					</cfif>
-					<!--- If height is bigger than wanted canvas --->
-					<cfif theheight GT attributes.intstruct.script.SCHED_SCRIPT_IMG_CANVAS_HEIGTH>
-						<cfset _h = attributes.intstruct.script.SCHED_SCRIPT_IMG_CANVAS_HEIGTH>
-					</cfif>
-					<cfif attributes.intstruct.script.SCHED_SCRIPT_IMG_DPI NEQ "">
-						<cfset _d = attributes.intstruct.script.SCHED_SCRIPT_IMG_DPI>
-					</cfif>
-					<!--- Create canvas with file --->
-					<cfexecute name="#attributes.intstruct.convert#" arguments="convert #_path_to_file# -resize #_w#x#_h# -gravity center -background white -extent #attributes.intstruct.script.SCHED_SCRIPT_IMG_CANVAS_WIDTH#x#attributes.intstruct.script.SCHED_SCRIPT_IMG_CANVAS_HEIGTH# -density #_d# #attributes.intstruct.path_temp#/#_filename_no_ext#_extended.jpg" timeout="120" />
-				</cfif>
-			</cfloop>
-		</cfthread>
+		<cfinvoke componten="global.cfc.settings" method="get_export_template_details" returnvariable="arguments.export_template" />
 
-		<!--- Only release when thread is done --->
-		<cfthread action="join" name="#_tn#" /> --->
+		<cfinvoke componten="global.cfc.xmp" method="meta_export" thestruct="#arguments#" returnvariable="export" />
+
+
 
 	</cfif>
 
