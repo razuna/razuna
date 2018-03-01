@@ -38,8 +38,8 @@
 				If activated, the metadata form will show after a user has uploaded all his files. Define below what metadata fields you want to have your user to fill in.
 				<br /><br />
 				<strong>Activate form after upload</strong><br />
-				<input type="radio" name="mf_active" value="true"<cfif result.cfc.pl.getSettings.qry_mf_active.mf_value> checked="checked"</cfif>> Form is active<br />
-				<input type="radio" name="mf_active" value="false"<cfif !result.cfc.pl.getSettings.qry_mf_active.mf_value> checked="checked"</cfif>> Form is inactive
+				<input type="radio" name="mf_active" value="true"<cfif result.cfc.pl.getSettings.qry_mf_active.mf_value EQ "true"> checked="checked"</cfif>> Form is active<br />
+				<input type="radio" name="mf_active" value="false"<cfif result.cfc.pl.getSettings.qry_mf_active.mf_value EQ "false"> checked="checked"</cfif>> Form is inactive
 				<br /><br />
 				<hr />
 				<input type="button" value="Add field" onclick="appendAction();" class="button" />

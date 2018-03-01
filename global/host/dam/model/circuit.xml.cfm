@@ -5,13 +5,13 @@
 -->
 <circuit access="internal">
 
-	<!--
-		Example model fuseaction that just references an action fuse.
-		Model fuseactions should only reference actions and queries.
+	<fuseaction name="preprocess">
+		<set name="attributes.application" value="#application.razuna#" />
+		<set name="attributes.session" value="#session#" />
+		<set name="request.razuna" value="#attributes#" />
+		<!-- <include template="t" /> -->
+	</fuseaction>
 
-	<fuseaction name="getTime">
-		<include template="act_get_time" />
-	</fuseaction>-->
 
 	<!--
 		This is executed at application startup (from <appinit>) and
