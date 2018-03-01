@@ -54,17 +54,17 @@
 				</cfquery>
 				<!--- Update indexing flag --->
 				<cfif type EQ 'img'>
-					<cfset var tbl = 'images'>
-					<cfset var col = 'img_id'>
+					<cfset tbl = 'images'>
+					<cfset col = 'img_id'>
 				<cfelseif type EQ 'aud'>
-					<cfset var tbl = 'audios'>
-					<cfset var col = 'aud_id'>
+					<cfset tbl = 'audios'>
+					<cfset col = 'aud_id'>
 				<cfelseif type EQ 'vid'>
-					<cfset var tbl = 'videos'>
-					<cfset var col = 'vid_id'>
+					<cfset tbl = 'videos'>
+					<cfset col = 'vid_id'>
 				<cfelseif type EQ 'doc'>
-					<cfset var tbl = 'files'>
-					<cfset var col = 'file_id'>
+					<cfset tbl = 'files'>
+					<cfset col = 'file_id'>
 				</cfif>
 				<cfquery datasource="#_db#">
 				UPDATE raz1_#tbl# SET is_indexed = '0'

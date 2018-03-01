@@ -2189,7 +2189,7 @@ Comment:<br>
 			<!--- Check if lucene.lock file exists and a) If it is older than a day then delete it or b) if not older than a day them abort as its probably running from a previous call --->
 			<cfset var lockfilepath = "#GetTempDirectory()#/#lockfile#">
 			<cfset var lockfiledelerr = false>
-			<cfif fileExists(lockfilepath) >
+			<cfif fileExists(lockfilepath)>
 				<cfset var lockfiledate = getfileinfo(lockfilepath).lastmodified>
 				<cfif datediff("n", lockfiledate, now()) GT 5>
 					<cftry>
