@@ -24,7 +24,7 @@
 		<!--- You should wrap this in try/catch or add your own calls per version --->
 
 		<!--- For MySQL you have to append the tableoptions here --->
-		<cfset var tableoptions = "ENGINE=InnoDB CHARACTER SET utf8 COLLATE utf8_bin">
+		<cfset var tableoptions = "ENGINE=InnoDB CHARACTER SET utf8 COLLATE utf8_general_ci ROW_FORMAT=DYNAMIC;">
 		<!--- Detault types --->
 		<cfset var theclob = "clob">
 		<cfset var theint = "int">
@@ -43,7 +43,7 @@
 		<!--- Table --->
 		<cftry>
 			<cfquery datasource="#application.razuna.datasource#">
-			CREATE TABLE raz1_metaform 
+			CREATE TABLE raz1_metaform
 			(
 				mf_type		#thevarchar#(100),
 				mf_value 	#thevarchar#(500),
