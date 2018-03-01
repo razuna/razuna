@@ -388,11 +388,11 @@
 					</cfif>
 				</cfloop>
 			</cfif>
+			<!--- Flush Cache --->
+			<cfset resetcachetoken("search")>
+			<cfset resetcachetoken("general")>
 		</cfif>
 	</cfloop>
-	<!--- Flush Cache --->
-	<cfset resetcachetoken("search")>
-	<cfset resetcachetoken("general")>
 	<!--- Lucene is indexing these values in the video.cfc already thus we are done here --->
 </cffunction>
 

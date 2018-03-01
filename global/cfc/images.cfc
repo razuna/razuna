@@ -1213,12 +1213,12 @@
 		<cfset arguments.thestruct.folder_action = true>
 		<cfinvoke component="plugins" method="getactions" theaction="on_file_edit" args="#arguments.thestruct#" />
 
+		<!--- Flush Cache --->
+		<cfset resetcachetoken("folders")>
+		<cfset resetcachetoken("search")>
+		<cfset resetcachetoken("labels")>
+		<cfset resetcachetoken("images")>
 	</cfloop>
-	<!--- Flush Cache --->
-	<cfset resetcachetoken("folders")>
-	<cfset resetcachetoken("search")>
-	<cfset resetcachetoken("labels")>
-	<cfset variables.cachetoken = resetcachetoken("images")>
 </cffunction>
 
 <!--- CONVERT ASSET IN THREADS --->

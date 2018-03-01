@@ -492,9 +492,6 @@
 				<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/> --->
 			</cfcatch>
 		</cftry>
-		<!--- Flush Cache --->
-		<cfset resetcachetoken("images")>
-		<cfset resetcachetoken("search")>
 		<!--- Store XMP to file --->
 		<!--- Go grab the platform --->
 		<cfinvoke component="assets" method="iswindows" returnvariable="iswindows">
@@ -613,6 +610,9 @@
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
 		</cftransaction>
+		<!--- Flush Cache --->
+		<cfset resetcachetoken("images")>
+		<cfset resetcachetoken("search")>
 	</cfloop>
 </cffunction>
 

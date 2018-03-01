@@ -945,7 +945,6 @@
 		<cfthread intstruct="#arguments.thestruct#">
 			<cfinvoke method="updatethread" thestruct="#attributes.intstruct#" />
 		</cfthread>
-		<cfset resetcachetoken('general')>
 	</cffunction>
 
 	<!--- SAVE THE FILES DETAILS --->
