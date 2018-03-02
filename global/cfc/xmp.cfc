@@ -2079,12 +2079,12 @@
 	<cfreturn />
 </cffunction>
 
-<!--- Export CLS --->
+<!--- Export XLS --->
 <cffunction name="export_xls" output="true">
 	<cfargument name="thestruct" type="struct">
 	<!--- Create Spreadsheet --->
 	<cfif arguments.thestruct.format EQ "xls">
-		<cfset var sxls = spreadsheetnew()>
+		<cfset var sxls = spreadsheetnew(false)>
 	<cfelseif arguments.thestruct.format EQ "xlsx">
 		<cfset var sxls = spreadsheetnew(true)>
 	</cfif>
@@ -2098,8 +2098,12 @@
 	<cfset SpreadsheetSetcolumnwidth(sxls, 1, 10000)>
 	<!--- Add orders from query --->
 	<cfif arguments.thestruct.export_template.recordcount NEQ 0>
-		<cfset SpreadsheetFormatColumns(sxls, {dateformat="yyyy-mm-dd"}, '#create_date_pos#')>
-		<cfset SpreadsheetFormatColumns(sxls, {dateformat="yyyy-mm-dd"}, '#change_date_pos#')>
+		<cfif create_date_pos>
+			<cfset SpreadsheetFormatColumns(sxls, { dateFormat = "yyyy-mm-dd" }, create_date_pos)>
+		</cfif>
+		<cfif change_date_pos>
+			<cfset SpreadsheetFormatColumns(sxls, { dateFormat = "yyyy-mm-dd" }, change_date_pos)>
+		</cfif>
 	<cfelse>
 		<cfset SpreadsheetFormatrow(sxls, {alignment="vertical_top"}, 2)>
 	</cfif>
