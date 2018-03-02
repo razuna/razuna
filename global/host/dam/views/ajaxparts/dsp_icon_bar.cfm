@@ -107,11 +107,11 @@
 				</div>
 				<!--- RAZ-3192 Hide more actions for read-only groups --->
 				<cfif attributes.folderaccess NEQ "R">
-					<!--- More actions menu --->	
+					<!--- More actions menu --->
 					<div>
 						<div id="drop#thediv#" class="ddselection_header" style="width:200px;z-index:100;position:absolute;top:100px;left:<cfif attributes.folderaccess NEQ "R">358<cfelse>251</cfif>px;">
 							<!--- Add Subfolder --->
-							<cfif attributes.folderaccess NEQ "R" AND cs.icon_create_subfolder>
+							<cfif attributes.folderaccess NEQ "R" AND (cs.icon_create_subfolder OR isadmin)>
 								<p>
 									<a href="##" onclick="$('##rightside').load('#myself#c.folder_new&from=list&theid=#url.folder_id#&iscol=F');return false;" title="#myFusebox.getApplicationData().defaults.trans("tooltip_folder_desc")#">
 										<div style="float:left;padding-right:5px;">
