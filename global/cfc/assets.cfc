@@ -1782,7 +1782,7 @@
 	<!--- Check if this is the very first upload for host --->
 	<cfif not structKeyExists(session, "firstasset")>
 		<cfset var checkasset = "">
-		<cfquery datasource="#application.razuna.datasource#" name="checkasset" cachedwithin="#CreateTimeSpan(0,0,5,0)#" region="razcache">
+		<cfquery datasource="#application.razuna.datasource#" name="checkasset" cachedwithin="#CreateTimeSpan(0,0,0,30)#" region="razcache">
 			SELECT hashtag FROM  #session.hostdbprefix#images WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			UNION ALL
 			SELECT hashtag FROM  #session.hostdbprefix#audios WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -2763,27 +2763,31 @@ This is the main function called directly by a single upload else from addassets
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
 			</cfquery>
 			<!--- Put below in thread --->
-			<cfthread action="run" intstruct="#arguments.thestruct#">
+			<cfset consoleoutput(true, true)>
+			<cfset console("ID : ", arguments.thestruct.newid)>
+			<cfset console("arguments.thestruct.upcRenditionNum : ", arguments.thestruct.upcRenditionNum)>
+
+			<!--- <cfthread action="run" intstruct="#arguments.thestruct#"> --->
 				<!--- Get sharing option for folder so it can be applied to the asset --->
 				<cfquery datasource="#application.razuna.datasource#" name="get_dl_params">
 				SELECT share_dl_thumb, share_dl_org
 				FROM #session.hostdbprefix#folders
-				WHERE folder_id = <cfqueryparam value="#attributes.intstruct.qryfile.folder_id#" cfsqltype="CF_SQL_VARCHAR">
+				WHERE folder_id = <cfqueryparam value="#arguments.thestruct.qryfile.folder_id#" cfsqltype="CF_SQL_VARCHAR">
 				</cfquery>
 				<!--- Check the UPC rendition upload --->
-				<cfif !attributes.intstruct.upcRenditionNum OR attributes.intstruct.fn_ischar>
+				<cfif arguments.thestruct.upcRenditionNum>
 					 <!--- Add to shared options --->
 					<cfquery datasource="#application.razuna.datasource#">
 					INSERT INTO #session.hostdbprefix#share_options
 					(asset_id_r, host_id, group_asset_id, folder_id_r, asset_type, asset_format, asset_dl, asset_order, rec_uuid)
 					VALUES(
-					<cfqueryparam value="#attributes.intstruct.newid#" cfsqltype="CF_SQL_VARCHAR">,
-					<cfqueryparam value="#attributes.intstruct.hostid#" cfsqltype="cf_sql_numeric">,
-					<cfqueryparam value="#attributes.intstruct.newid#" cfsqltype="CF_SQL_VARCHAR">,
-					<cfqueryparam value="#attributes.intstruct.qryfile.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
+					<cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">,
+					<cfqueryparam value="#arguments.thestruct.hostid#" cfsqltype="cf_sql_numeric">,
+					<cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">,
+					<cfqueryparam value="#arguments.thestruct.qryfile.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
 					<cfqueryparam value="img" cfsqltype="cf_sql_varchar">,
-					<cfif structKeyExists(attributes.intstruct,'qryGroupDetails') AND attributes.intstruct.qryGroupDetails.recordcount NEQ 0 >
-						<cfqueryparam value="#attributes.intstruct.qryGroupDetails.id#" cfsqltype="cf_sql_varchar">,
+					<cfif structKeyExists(arguments.thestruct,'qryGroupDetails') AND arguments.thestruct.qryGroupDetails.recordcount NEQ 0 >
+						<cfqueryparam value="#arguments.thestruct.qryGroupDetails.id#" cfsqltype="cf_sql_varchar">,
 					<cfelse>
 						<cfqueryparam value="" null="true" cfsqltype="cf_sql_varchar">,
 					</cfif>
@@ -2793,75 +2797,75 @@ This is the main function called directly by a single upload else from addassets
 					)
 					</cfquery>
 				<cfelse>
-				<!--- Add to shared options --->
-				<cfquery datasource="#application.razuna.datasource#">
-				INSERT INTO #session.hostdbprefix#share_options
-				(asset_id_r, host_id, group_asset_id, folder_id_r, asset_type, asset_format, asset_dl, asset_order, rec_uuid)
-				VALUES(
-				<cfqueryparam value="#attributes.intstruct.newid#" cfsqltype="CF_SQL_VARCHAR">,
-				<cfqueryparam value="#attributes.intstruct.hostid#" cfsqltype="cf_sql_numeric">,
-				<cfqueryparam value="#attributes.intstruct.newid#" cfsqltype="CF_SQL_VARCHAR">,
-				<cfqueryparam value="#attributes.intstruct.qryfile.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
-				<cfqueryparam value="img" cfsqltype="cf_sql_varchar">,
-				<cfqueryparam value="thumb" cfsqltype="cf_sql_varchar">,
-				<cfqueryparam value="#iif(get_dl_params.share_dl_thumb eq 't',1,0)#" cfsqltype="cf_sql_varchar">,
-				<cfqueryparam value="1" cfsqltype="cf_sql_varchar">,
-				<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
-				)
-				</cfquery>
-				<cfquery datasource="#application.razuna.datasource#">
-				INSERT INTO #session.hostdbprefix#share_options
-				(asset_id_r, host_id, group_asset_id, folder_id_r, asset_type, asset_format, asset_dl, asset_order, rec_uuid)
-				VALUES(
-				<cfqueryparam value="#attributes.intstruct.newid#" cfsqltype="CF_SQL_VARCHAR">,
-				<cfqueryparam value="#attributes.intstruct.hostid#" cfsqltype="cf_sql_numeric">,
-				<cfqueryparam value="#attributes.intstruct.newid#" cfsqltype="CF_SQL_VARCHAR">,
-				<cfqueryparam value="#attributes.intstruct.qryfile.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
-				<cfqueryparam value="img" cfsqltype="cf_sql_varchar">,
-				<cfqueryparam value="org" cfsqltype="cf_sql_varchar">,
-				<cfqueryparam value="#iif(get_dl_params.share_dl_org eq 't',1,0)#" cfsqltype="cf_sql_varchar">,
-				<cfqueryparam value="1" cfsqltype="cf_sql_varchar">,
-				<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
-				)
-				</cfquery>
+					<!--- Add to shared options --->
+					<cfquery datasource="#application.razuna.datasource#">
+					INSERT INTO #session.hostdbprefix#share_options
+					(asset_id_r, host_id, group_asset_id, folder_id_r, asset_type, asset_format, asset_dl, asset_order, rec_uuid)
+					VALUES(
+					<cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">,
+					<cfqueryparam value="#arguments.thestruct.hostid#" cfsqltype="cf_sql_numeric">,
+					<cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">,
+					<cfqueryparam value="#arguments.thestruct.qryfile.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
+					<cfqueryparam value="img" cfsqltype="cf_sql_varchar">,
+					<cfqueryparam value="thumb" cfsqltype="cf_sql_varchar">,
+					<cfqueryparam value="#iif(get_dl_params.share_dl_thumb eq 't',1,0)#" cfsqltype="cf_sql_varchar">,
+					<cfqueryparam value="1" cfsqltype="cf_sql_varchar">,
+					<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
+					)
+					</cfquery>
+					<cfquery datasource="#application.razuna.datasource#">
+					INSERT INTO #session.hostdbprefix#share_options
+					(asset_id_r, host_id, group_asset_id, folder_id_r, asset_type, asset_format, asset_dl, asset_order, rec_uuid)
+					VALUES(
+					<cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">,
+					<cfqueryparam value="#arguments.thestruct.hostid#" cfsqltype="cf_sql_numeric">,
+					<cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">,
+					<cfqueryparam value="#arguments.thestruct.qryfile.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
+					<cfqueryparam value="img" cfsqltype="cf_sql_varchar">,
+					<cfqueryparam value="org" cfsqltype="cf_sql_varchar">,
+					<cfqueryparam value="#iif(get_dl_params.share_dl_org eq 't',1,0)#" cfsqltype="cf_sql_varchar">,
+					<cfqueryparam value="1" cfsqltype="cf_sql_varchar">,
+					<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
+					)
+					</cfquery>
 				</cfif>
 				<!--- If there are metadata fields then add them here --->
-				<cfif structKeyExists(attributes.intstruct,'metadata') AND attributes.intstruct.metadata EQ 1>
+				<cfif structKeyExists(arguments.thestruct,'metadata') AND arguments.thestruct.metadata EQ 1>
 					<!--- Check if API is called the old way --->
-					<cfif structkeyexists(attributes.intstruct,"sessiontoken")>
+					<cfif structkeyexists(arguments.thestruct,"sessiontoken")>
 						<cfinvoke component="global.api.asset" method="setmetadata">
-							<cfinvokeargument name="sessiontoken" value="#attributes.intstruct.sessiontoken#">
-							<cfinvokeargument name="assetid" value="#attributes.intstruct.newid#">
+							<cfinvokeargument name="sessiontoken" value="#arguments.thestruct.sessiontoken#">
+							<cfinvokeargument name="assetid" value="#arguments.thestruct.newid#">
 							<cfinvokeargument name="assettype" value="img">
-							<cfinvokeargument name="assetmetadata" value="#attributes.intstruct.assetmetadata#">
+							<cfinvokeargument name="assetmetadata" value="#arguments.thestruct.assetmetadata#">
 						</cfinvoke>
 					<cfelse>
 						<!--- API2 --->
 						<cfinvoke component="global.api2.asset" method="setmetadata">
-							<cfinvokeargument name="api_key" value="#attributes.intstruct.api_key#">
-							<cfinvokeargument name="assetid" value="#attributes.intstruct.newid#">
+							<cfinvokeargument name="api_key" value="#arguments.thestruct.api_key#">
+							<cfinvokeargument name="assetid" value="#arguments.thestruct.newid#">
 							<cfinvokeargument name="assettype" value="img">
-							<cfinvokeargument name="assetmetadata" value="#attributes.intstruct.assetmetadata#">
+							<cfinvokeargument name="assetmetadata" value="#arguments.thestruct.assetmetadata#">
 						</cfinvoke>
 						<!--- Add custom fields --->
 						<cfinvoke component="global.api2.customfield" method="setfieldvalue">
-							<cfinvokeargument name="api_key" value="#attributes.intstruct.api_key#">
-							<cfinvokeargument name="assetid" value="#attributes.intstruct.newid#">
-							<cfinvokeargument name="field_values" value="#attributes.intstruct.assetmetadatacf#">
+							<cfinvokeargument name="api_key" value="#arguments.thestruct.api_key#">
+							<cfinvokeargument name="assetid" value="#arguments.thestruct.newid#">
+							<cfinvokeargument name="field_values" value="#arguments.thestruct.assetmetadatacf#">
 						</cfinvoke>
 					</cfif>
 				</cfif>
 				<!--- Log --->
 				<cfinvoke component="defaults" method="trans" transid="added" returnvariable="added_txt" />
 				<cfinvoke component="extQueryCaching" method="log_assets">
-					<cfinvokeargument name="theuserid" value="#attributes.intstruct.theuserid#">
+					<cfinvokeargument name="theuserid" value="#arguments.thestruct.theuserid#">
 					<cfinvokeargument name="logaction" value="Add">
-					<cfinvokeargument name="logdesc" value="#added_txt#: #attributes.intstruct.qryfile.filename#">
+					<cfinvokeargument name="logdesc" value="#added_txt#: #arguments.thestruct.qryfile.filename#">
 					<cfinvokeargument name="logfiletype" value="img">
-					<cfinvokeargument name="assetid" value="#attributes.intstruct.newid#">
-					<cfinvokeargument name="folderid" value="#attributes.intstruct.qryfile.folder_id#">
+					<cfinvokeargument name="assetid" value="#arguments.thestruct.newid#">
+					<cfinvokeargument name="folderid" value="#arguments.thestruct.qryfile.folder_id#">
 				</cfinvoke>
-			</cfthread>
+			<!--- </cfthread> --->
 			<!--- RFS --->
 			<cfif application.razuna.rfs>
 				<cfset arguments.thestruct.assettype = "img">
