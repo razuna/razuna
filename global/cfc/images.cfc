@@ -1072,6 +1072,13 @@
 						<cfif ishere.recordcount NEQ 0>
 							<cfset tdesc = evaluate(thisdesc)>
 							<cfset tkeywords = evaluate(thiskeywords)>
+							<!--- If the first character is a comma remove it --->
+							<cfset var _first = left(tkeywords, 1)>
+							<cfif _first EQ ",">
+								<cfset var _len = len(tkeywords)>
+								<cfset var _len_new = _len - 1>
+								<cfset tkeywords = mid(tkeywords, 2, _len_new)>
+							</cfif>
 							<!--- If users chooses to append values --->
 							<cfif !arguments.thestruct.batch_replace>
 								<cfif ishere.img_description NEQ "">
@@ -1081,6 +1088,8 @@
 									<cfset tkeywords = ishere.img_keywords & "," & tkeywords>
 								</cfif>
 							</cfif>
+							<!--- De-duplicate the list --->
+							<cfset tkeywords = ListRemoveduplicates(tkeywords, ",")>
 							<!--- Update DB --->
 							<cfquery datasource="#variables.dsn#">
 							UPDATE #session.hostdbprefix#images_text

@@ -1306,6 +1306,13 @@
 					<cfif ishere.recordcount NEQ 0>
 						<cfset var tdesc = evaluate(thisdesc)>
 						<cfset var tkeywords = evaluate(thiskeywords)>
+						<!--- If the first character is a comma remove it --->
+						<cfset var _first = left(tkeywords, 1)>
+						<cfif _first EQ ",">
+							<cfset var _len = len(tkeywords)>
+							<cfset var _len_new = _len - 1>
+							<cfset tkeywords = mid(tkeywords, 2, _len_new)>
+						</cfif>
 						<!--- If users chooses to append values --->
 						<cfif !arguments.thestruct.batch_replace>
 							<cfif ishere.vid_description NEQ "">
@@ -1315,6 +1322,8 @@
 								<cfset tkeywords = ishere.vid_keywords & "," & tkeywords>
 							</cfif>
 						</cfif>
+						<!--- De-duplicate the list --->
+						<cfset tkeywords = ListRemoveduplicates(tkeywords, ",")>
 						<!--- Update --->
 						<cfquery datasource="#variables.dsn#">
 						UPDATE #session.hostdbprefix#videos_text
