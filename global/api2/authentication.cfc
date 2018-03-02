@@ -24,7 +24,7 @@
 *
 --->
 <cfcomponent output="false">
-	
+
 	<!--- Set application values --->
 	<cfparam name="application.razuna.api.lucene" default="global.cfc.lucene">
 
@@ -54,7 +54,7 @@
 		WHERE user_api_key = <cfqueryparam value="#theapikey#" cfsqltype="cf_sql_varchar">
 		<cfif thehostid NEQ "">
 			AND ct.ct_u_h_host_id = <cfqueryparam value="#thehostid#" cfsqltype="cf_sql_numeric">
-		</cfif> 
+		</cfif>
 		GROUP BY user_id, ct_g_u_grp_id, ct_u_h_host_id
 		</cfquery>
 		<!--- If user not found then deny access --->
@@ -118,7 +118,7 @@
 		<!--- Return --->
 		<cfreturn status>
 	</cffunction>
-	
+
 	<!--- Create timeout error --->
 	<cffunction name="timeout" access="public" output="false">
 		<cfargument name="type" required="false" default="q" type="string" />
@@ -293,7 +293,7 @@
 				<cfhttpparam name="assetid" value="#arguments.assetid#" type="url" />
 				<cfhttpparam name="dsn" value="#application.razuna.api.dsn#" type="url" />
 				<cfhttpparam name="prefix" value="#application.razuna.api.prefix["#arguments.api_key#"]#" type="url" />
-				<cfhttpparam name="hostid" value="#application.razuna.api.hostid["#arguments.api_key#"]#" type="url" />	
+				<cfhttpparam name="hostid" value="#application.razuna.api.hostid["#arguments.api_key#"]#" type="url" />
 			</cfhttp>
 		</cfif>
 	</cffunction>
@@ -307,6 +307,7 @@
 		<cfargument name="maxrows" required="true" type="numeric">
 		<cfargument name="folderid" required="true" type="string">
 		<cfargument name="showrenditions" required="false" default="true" type="string">
+		<cfargument name="search_upc" type="boolean" required="false" default="false">
 		<!--- Renditions param is boolean convert it here --->
 		<cfif !arguments.showrenditions>
 			<cfset var _rendition = "t">
@@ -315,7 +316,7 @@
 		</cfif>
 		<!--- Call Lucene --->
 		<cfif application.razuna.api.lucene EQ "global.cfc.lucene">
-			<cfinvoke component="#application.razuna.api.lucene#" method="search" returnvariable="qrylucene"> 
+			<cfinvoke component="#application.razuna.api.lucene#" method="search" returnvariable="qrylucene">
 				<cfinvokeargument name="criteria" value="#arguments.criteria#" />
 				<cfinvokeargument name="category" value="#arguments.category#" />
 				<cfinvokeargument name="hostid" value="#arguments.hostid#" />
@@ -323,6 +324,7 @@
 				<cfinvokeargument name="maxrows" value="#arguments.maxrows#" />
 				<cfinvokeargument name="folderid" value="#arguments.folderid#" />
 				<cfinvokeargument name="search_rendition" value="#_rendition#" />
+				<cfinvokeargument name="search_upc" value="#arguments.search_upc#" />
 			</cfinvoke>
 		<cfelse>
 			<cfhttp url="#application.razuna.api.lucene#/global/cfc/lucene.cfc">
@@ -334,6 +336,7 @@
 				<cfhttpparam name="maxrows" value="#arguments.maxrows#" type="url" />
 				<cfhttpparam name="folderid" value="#arguments.folderid#" type="url" />
 				<cfhttpparam name="search_rendition" value="#_rendition#" type="url" />
+				<cfinvokeargument name="search_upc" value="#arguments.search_upc#" />
 			</cfhttp>
 			<!--- Set the return --->
 			<cfwddx action="wddx2cfml" input="#cfhttp.filecontent#" output="qrylucene" />
@@ -411,7 +414,7 @@
 		<cfset qry.thetotal = qdocc + qimgc + qvidc + qaudc>
 		<!--- Return --->
 		<cfreturn qry>
-	</cffunction>  
+	</cffunction>
 
 	<!--- Check for desktop user --->
 	<cffunction name="checkDesktop" access="public" output="no">
@@ -434,7 +437,7 @@
 		<cfquery datasource="#application.razuna.api.dsn#" name="qry" cachedwithin="1" region="razcache">
 		SELECT /* #theapikey##thehostid#checkdesktop */ u.user_id, gu.ct_g_u_grp_id grpid, ct.ct_u_h_host_id hostid
 		FROM ct_users_hosts ct, users u left join ct_groups_users gu on gu.ct_g_u_user_id = u.user_id
-		WHERE user_api_key = <cfqueryparam value="#theapikey#" cfsqltype="cf_sql_varchar"> 
+		WHERE user_api_key = <cfqueryparam value="#theapikey#" cfsqltype="cf_sql_varchar">
 		AND u.user_id = ct.ct_u_h_user_id
 		<cfif thehostid NEQ "">
 			AND ct.ct_u_h_host_id = <cfqueryparam value="#thehostid#" cfsqltype="cf_sql_numeric">
@@ -503,7 +506,7 @@
 				fg.grp_id_r IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#session.thegroupofuser#" list="true">)
 				OR
 				fg.grp_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
-				OR 
+				OR
 				f.folder_owner =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.theuserid#">
 			)
 			UNION ALL
@@ -516,7 +519,7 @@
 				fg.grp_id_r IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#session.thegroupofuser#" list="true">)
 				OR
 				fg.grp_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
-				OR 
+				OR
 				f.folder_owner =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.theuserid#">
 			)
 			UNION ALL
@@ -529,7 +532,7 @@
 				fg.grp_id_r IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#session.thegroupofuser#" list="true">)
 				OR
 				fg.grp_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
-				OR 
+				OR
 				f.folder_owner =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.theuserid#">
 			)
 			UNION ALL
@@ -542,7 +545,7 @@
 				fg.grp_id_r IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#session.thegroupofuser#" list="true">)
 				OR
 				fg.grp_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
-				OR 
+				OR
 				f.folder_owner =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.theuserid#">
 			)
 			</cfquery>
@@ -591,7 +594,7 @@
 				fg.grp_id_r IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#session.thegroupofuser#" list="true">)
 				OR
 				fg.grp_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
-				OR 
+				OR
 				f.folder_owner =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.theuserid#">
 				)
 			</cfquery>
@@ -642,20 +645,20 @@
 				WHERE
 				ct_label_id = <cfqueryparam value="#arguments.label_id#" cfsqltype="cf_sql_varchar" />
 				<!--- Ensure user has access to folder in which asset resides --->
-				AND 
+				AND
 				(
 				<!--- Check if user is owner of folder containing asset that has label--->
 				EXISTS (
-					SELECT 1 FROM #application.razuna.api.prefix["#arguments.api_key#"]#folders WHERE folder_id =  i.folder_id_r AND folder_owner = '#session.theuserid#' 
+					SELECT 1 FROM #application.razuna.api.prefix["#arguments.api_key#"]#folders WHERE folder_id =  i.folder_id_r AND folder_owner = '#session.theuserid#'
 					UNION
-					SELECT 1 FROM #application.razuna.api.prefix["#arguments.api_key#"]#folders WHERE folder_id =  a.folder_id_r AND folder_owner = '#session.theuserid#' 
+					SELECT 1 FROM #application.razuna.api.prefix["#arguments.api_key#"]#folders WHERE folder_id =  a.folder_id_r AND folder_owner = '#session.theuserid#'
 					UNION
-					SELECT 1 FROM #application.razuna.api.prefix["#arguments.api_key#"]#folders WHERE folder_id =  v.folder_id_r AND folder_owner = '#session.theuserid#' 
+					SELECT 1 FROM #application.razuna.api.prefix["#arguments.api_key#"]#folders WHERE folder_id =  v.folder_id_r AND folder_owner = '#session.theuserid#'
 					UNION
-					SELECT 1 FROM #application.razuna.api.prefix["#arguments.api_key#"]#folders WHERE folder_id =  f.folder_id_r AND folder_owner = '#session.theuserid#' 
+					SELECT 1 FROM #application.razuna.api.prefix["#arguments.api_key#"]#folders WHERE folder_id =  f.folder_id_r AND folder_owner = '#session.theuserid#'
 					UNION
-					SELECT 1 FROM #application.razuna.api.prefix["#arguments.api_key#"]#folders WHERE folder_id =  fo.folder_id_r AND folder_owner = '#session.theuserid#' 
-					) 
+					SELECT 1 FROM #application.razuna.api.prefix["#arguments.api_key#"]#folders WHERE folder_id =  fo.folder_id_r AND folder_owner = '#session.theuserid#'
+					)
 				OR
 				<!--- Check if folder containing asset that has label is accessible to 'Everyone' and that user has appropriate access privileges on it   --->
 				EXISTS (
