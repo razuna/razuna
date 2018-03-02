@@ -1197,9 +1197,8 @@
 			<cfelse>
 				<cfset var md5here = 0>
 			</cfif>
-
-			<!--- If file does not exsist continue else send user an eMail --->
-			<cfif md5here EQ 0>
+			<!--- If file does not exist continue else send user an eMail --->
+			<cfif ! md5here>
 				<!--- If we only have the folder_id as variable --->
 				<cfif structkeyexists(arguments.thestruct,"folder_id")>
 					<cfset arguments.thestruct.destfolderid = arguments.thestruct.folder_id>
@@ -7207,7 +7206,7 @@ This is the main function called directly by a single upload else from addassets
 <!--- Check for existing MD5 mash records --->
 <cffunction name="checkmd5" output="false">
 	<cfargument name="md5hash" type="string">
-	<cfargument name="checkinfolder" type="string" required="false" default = "" hint="check only in this folder if specified">
+	<cfargument name="checkinfolder" type="string" required="false" default ="">
 	<!--- Param --->
 	<cfset var rec = 0>
 	<!--- Images --->

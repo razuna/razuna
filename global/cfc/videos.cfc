@@ -2432,19 +2432,17 @@
 <!--- Check for existing MD5 mash records --->
 <cffunction name="checkmd5" output="false">
 	<cfargument name="md5hash" type="string">
-	<cfargument name="checkinfolder" type="string" required="false" default = "" hint="check only in this folder if specified">
-	<!--- Get the cachetoken for here --->
-	<cfset variables.cachetoken = getcachetoken("videos")>
+	<cfargument name="checkinfolder" type="string" required="false" default="">
 	<cfset var qry = "">
 	<!--- Query --->
-	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetoken#checkmd5 */ vid_id, vid_filename as name, folder_id_r
+	<cfquery datasource="#application.razuna.datasource#" name="qry">
+	SELECT hashtag
 	FROM #session.hostdbprefix#videos
 	WHERE hashtag = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.md5hash#">
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
-	<cfif isdefined("arguments.checkinfolder") AND arguments.checkinfolder NEQ "">
-	AND folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.checkinfolder#">
+	<cfif arguments.checkinfolder NEQ "">
+		AND folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.checkinfolder#">
 	</cfif>
 	</cfquery>
 	<cfreturn qry />
