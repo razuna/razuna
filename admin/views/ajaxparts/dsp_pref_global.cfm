@@ -26,7 +26,7 @@
 <cfoutput>
 <table border="0" cellpadding="0" cellspacing="0" width="700" class="grid">
 	<!--- <tr>
-	<th class="textbold" colspan="2">#defaultsObj.trans("settings_languages")# - <a href="##" onclick="loadcontent('pglobal','#myself#c.prefs_update_langs');">Update Languages</a></th>
+	<th class="textbold" colspan="2">#myFusebox.getApplicationData().defaults.trans("settings_languages")# - <a href="##" onclick="loadcontent('pglobal','#myself#c.prefs_update_langs');">Update Languages</a></th>
 	</tr>
 	<cfloop query="qry_langs">
 		<tr>
@@ -35,18 +35,18 @@
 		</tr>
 	</cfloop>
 	<tr>
-	<th class="textbold" colspan="2">#defaultsObj.trans("date")#</th>
+	<th class="textbold" colspan="2">#myFusebox.getApplicationData().defaults.trans("date")#</th>
 	</tr>
 	<tr>
-	<td>#defaultsObj.trans("date_format")#</td>
+	<td>#myFusebox.getApplicationData().defaults.trans("date_format")#</td>
 	<td colspan="2"><select name="set2_date_format" class="text">
-	<option value="euro"<cfif #prefs.set2_date_format# EQ "euro"> selected</cfif>>#defaultsObj.trans("date_euro")#</option>
-	<option value="us"<cfif #prefs.set2_date_format# EQ "us"> selected</cfif>>#defaultsObj.trans("date_us")#</option>
-	<option value="sql"<cfif #prefs.set2_date_format# EQ "sql"> selected</cfif>>#defaultsObj.trans("date_sql")#</option>
+	<option value="euro"<cfif #prefs.set2_date_format# EQ "euro"> selected</cfif>>#myFusebox.getApplicationData().defaults.trans("date_euro")#</option>
+	<option value="us"<cfif #prefs.set2_date_format# EQ "us"> selected</cfif>>#myFusebox.getApplicationData().defaults.trans("date_us")#</option>
+	<option value="sql"<cfif #prefs.set2_date_format# EQ "sql"> selected</cfif>>#myFusebox.getApplicationData().defaults.trans("date_sql")#</option>
 	</select></td>
 	</tr>
 	<tr>
-	<td>#defaultsObj.trans("date_delimiter")#</td>
+	<td>#myFusebox.getApplicationData().defaults.trans("date_delimiter")#</td>
 	<td colspan="2"><select name="set2_date_format_del" class="text">
 	<option value="/"<cfif #prefs.set2_date_format_del# EQ "/"> selected</cfif>>/</option>
 	<option value="."<cfif #prefs.set2_date_format_del# EQ "."> selected</cfif>>.</option>
@@ -56,18 +56,18 @@
 	</select></td>
 	</tr> --->
 	<tr>
-	<th class="textbold" colspan="2">#defaultsObj.trans("header_email_settings")#</th>
+	<th class="textbold" colspan="2">#myFusebox.getApplicationData().defaults.trans("header_email_settings")#</th>
 	</tr>
 	<tr>
-	<td colspan="2">#defaultsObj.trans("header_email_settings_desc")#</td>
+	<td colspan="2">#myFusebox.getApplicationData().defaults.trans("header_email_settings_desc")#</td>
 	</tr>
 	<tr>
-	<td valign="top">#defaultsObj.trans("from")#</td>
-	<td><input type="text" name="SET2_EMAIL_from" value="#prefs.SET2_EMAIL_from#" size="40" class="text"><br /><em>#defaultsObj.trans("email_from_desc")#</em></td>
+	<td valign="top">#myFusebox.getApplicationData().defaults.trans("from")#</td>
+	<td><input type="text" name="SET2_EMAIL_from" value="#prefs.SET2_EMAIL_from#" size="40" class="text"><br /><em>#myFusebox.getApplicationData().defaults.trans("email_from_desc")#</em></td>
 	</tr>
 	<tr>
 	<td valign="top">Mail Server</td>
-	<td><input type="text" name="SET2_EMAIL_SERVER" value="#prefs.SET2_EMAIL_SERVER#" size="40" class="text"><br /><em>#defaultsObj.trans("field_emty_take_default")#</em></td>
+	<td><input type="text" name="SET2_EMAIL_SERVER" value="#prefs.SET2_EMAIL_SERVER#" size="40" class="text"><br /><em>#myFusebox.getApplicationData().defaults.trans("field_emty_take_default")#</em></td>
 	</tr>
 	<tr>
 	<td valign="top">Port</td>
@@ -77,25 +77,25 @@
 	<tr>
 	<td valign="top">Use SSL</td>
 	<td>
-		<label><input type="radio"<cfif prefs.SET2_EMAIL_USE_SSL> checked="checked" </cfif> value="true" name="SET2_EMAIL_USE_SSL"> #defaultsObj.trans("yes")# </label>
-		<label><input type="radio"<cfif !prefs.SET2_EMAIL_USE_SSL> checked="checked" </cfif> value="false" name="SET2_EMAIL_USE_SSL"> #defaultsObj.trans("no")# </label>
+		<label><input type="radio"<cfif prefs.SET2_EMAIL_USE_SSL> checked="checked" </cfif> value="true" name="SET2_EMAIL_USE_SSL"> #myFusebox.getApplicationData().defaults.trans("yes")# </label>
+		<label><input type="radio"<cfif !prefs.SET2_EMAIL_USE_SSL> checked="checked" </cfif> value="false" name="SET2_EMAIL_USE_SSL"> #myFusebox.getApplicationData().defaults.trans("no")# </label>
 	</td>
 	</tr>
 	<tr>
 	<td valign="top">Use TLS</td>
 	<td>
-		<label><input type="radio"<cfif prefs.SET2_EMAIL_USE_TLS> checked="checked" </cfif> value="true" name="SET2_EMAIL_USE_TLS"> #defaultsObj.trans("yes")# </label>
-		<label><input type="radio"<cfif !prefs.SET2_EMAIL_USE_TLS> checked="checked" </cfif> value="false" name="SET2_EMAIL_USE_TLS"> #defaultsObj.trans("no")# </label>
+		<label><input type="radio"<cfif prefs.SET2_EMAIL_USE_TLS> checked="checked" </cfif> value="true" name="SET2_EMAIL_USE_TLS"> #myFusebox.getApplicationData().defaults.trans("yes")# </label>
+		<label><input type="radio"<cfif !prefs.SET2_EMAIL_USE_TLS> checked="checked" </cfif> value="false" name="SET2_EMAIL_USE_TLS"> #myFusebox.getApplicationData().defaults.trans("no")# </label>
 	</td>
 	</tr>
 
 	<tr>
-	<td valign="top" nowrap="true">#defaultsObj.trans("smtp_username")#</td>
-	<td><input type="text" name="SET2_EMAIL_smtp_user" value="#prefs.SET2_EMAIL_smtp_user#" size="40" class="text"><br /><em>#defaultsObj.trans("smtp_username_desc")#</em></td>
+	<td valign="top" nowrap="true">#myFusebox.getApplicationData().defaults.trans("smtp_username")#</td>
+	<td><input type="text" name="SET2_EMAIL_smtp_user" value="#prefs.SET2_EMAIL_smtp_user#" size="40" class="text"><br /><em>#myFusebox.getApplicationData().defaults.trans("smtp_username_desc")#</em></td>
 	</tr>
 	<tr>
-	<td valign="top" nowrap="true">#defaultsObj.trans("smtp_password")#</td>
-	<td><input type="password" name="SET2_EMAIL_smtp_password" value="#prefs.SET2_EMAIL_smtp_password#" size="40" class="text"><br /><em>#defaultsObj.trans("smtp_password_desc")#</em><br /><br /><em>#defaultsObj.trans("smtp_only_apply")#</em>
+	<td valign="top" nowrap="true">#myFusebox.getApplicationData().defaults.trans("smtp_password")#</td>
+	<td><input type="password" name="SET2_EMAIL_smtp_password" value="#prefs.SET2_EMAIL_smtp_password#" size="40" class="text"><br /><em>#myFusebox.getApplicationData().defaults.trans("smtp_password_desc")#</em><br /><br /><em>#myFusebox.getApplicationData().defaults.trans("smtp_only_apply")#</em>
 	</td>
 	</tr>
 </table>

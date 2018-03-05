@@ -34,12 +34,12 @@
 		<cfargument name="thestruct" type="struct">
 		<cfset var qry = "">
 		<!--- Get the cachetoken for here --->
-		<cfset var cachetoken = getcachetoken(type="general", hostid=request.razuna.session.hostid)>
+		<cfset var cachetoken = getcachetoken(type="general", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 		<!--- Query --->
-		<cfquery dataSource="#request.razuna.application.datasource#" name="qry" cachedwithin="1" region="razcache">
+		<cfquery dataSource="#arguments.thestruct.razuna.application.datasource#" name="qry" cachedwithin="1" region="razcache">
 		SELECT /* #cachetoken#getwidgets */ widget_id, widget_name, widget_description
-		FROM #request.razuna.session.hostdbprefix#widgets
-		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
+		FROM #arguments.thestruct.razuna.session.hostdbprefix#widgets
+		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 		AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
 		AND col_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.col_id#">
 		</cfquery>
@@ -51,16 +51,16 @@
 	<cffunction name="detail" output="true" access="public" returnType="query">
 		<cfargument name="thestruct" type="struct">
 		<!--- Get the cachetoken for here --->
-		<cfset variables.cachetoken = getcachetoken(type="general", hostid=request.razuna.session.hostid)>
+		<cfset variables.cachetoken = getcachetoken(type="general", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 		<!--- Params --->
 		<cfparam name="arguments.thestruct.external" default="f">
 		<cfset var qry = "">
 		<!--- Query --->
-		<cfquery dataSource="#request.razuna.application.datasource#" name="qry" cachedwithin="1" region="razcache">
+		<cfquery dataSource="#arguments.thestruct.razuna.application.datasource#" name="qry" cachedwithin="1" region="razcache">
 		SELECT /* #cachetoken#detailwidget */ widget_id, col_id_r, folder_id_r, widget_name, widget_description, widget_permission, widget_password, widget_style, widget_dl_org, widget_uploading, widget_dl_thumb
-		FROM #request.razuna.session.hostdbprefix#widgets
+		FROM #arguments.thestruct.razuna.session.hostdbprefix#widgets
 		WHERE widget_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.widget_id#">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 		<cfif arguments.thestruct.external EQ "f">
 			AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
 			AND col_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.col_id#">
@@ -78,8 +78,8 @@
 			<!--- Create new ID --->
 			<cfset var newid = createuuid("")>
 			<!--- Insert --->
-			<cfquery dataSource="#request.razuna.application.datasource#">
-			INSERT INTO #request.razuna.session.hostdbprefix#widgets
+			<cfquery dataSource="#arguments.thestruct.razuna.application.datasource#">
+			INSERT INTO #arguments.thestruct.razuna.session.hostdbprefix#widgets
 			(widget_id, col_id_r, folder_id_r, widget_name, widget_description, widget_permission, widget_password, widget_style, widget_dl_org, widget_uploading, host_id, widget_dl_thumb)
 			VALUES(
 			<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#newid#">,
@@ -92,15 +92,15 @@
 			<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.widget_style#">,
 			<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.widget_dl_org#">,
 			<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.widget_uploading#">,
-			<cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#request.razuna.session.hostid#">,
+			<cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#arguments.thestruct.razuna.session.hostid#">,
 			<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.widget_dl_thumb#">
 			)
 			</cfquery>
 			<cfset arguments.thestruct.widget_id = newid>
 		<cfelse>
 			<!--- Update --->
-			<cfquery dataSource="#request.razuna.application.datasource#">
-			UPDATE #request.razuna.session.hostdbprefix#widgets
+			<cfquery dataSource="#arguments.thestruct.razuna.application.datasource#">
+			UPDATE #arguments.thestruct.razuna.session.hostdbprefix#widgets
 			SET
 			widget_name = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.widget_name#">,
 			widget_description = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.widget_description#">,
@@ -111,11 +111,11 @@
 			widget_dl_thumb = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.widget_dl_thumb#">,
 			widget_uploading = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.widget_uploading#">
 			WHERE widget_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.widget_id#">
-			AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#request.razuna.session.hostid#">
+			AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#arguments.thestruct.razuna.session.hostid#">
 			</cfquery>
 		</cfif>
 		<!--- Flush Cache --->
-		<cfset resetcachetoken(type="general", hostid=request.razuna.session.hostid)>
+		<cfset resetcachetoken(type="general", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 		<!--- Return --->
 		<cfoutput>#arguments.thestruct.widget_id#</cfoutput>
 		<cfreturn />
@@ -126,19 +126,19 @@
 		<cfargument name="thestruct" type="struct">
 		<cfset var qry = "">
 		<!--- Query --->
-		<cfquery dataSource="#request.razuna.application.datasource#" name="qry">
+		<cfquery dataSource="#arguments.thestruct.razuna.application.datasource#" name="qry">
 		SELECT widget_id
-		FROM #request.razuna.session.hostdbprefix#widgets
+		FROM #arguments.thestruct.razuna.session.hostdbprefix#widgets
 		WHERE widget_password = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.pass#">
 		AND widget_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.widget_id#">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 		</cfquery>
 		<cfif qry.recordcount EQ 1>
-			<cfset request.razuna.session.widget_login = "T">
+			<cfset arguments.thestruct.razuna.session.widget_login = "T">
 			<!--- <cfoutput>true</cfoutput> --->
 			<cflocation url="index.cfm?fa=c.w_proxy" />
 		<cfelse>
-			<cfset request.razuna.session.widget_login = "F">
+			<cfset arguments.thestruct.razuna.session.widget_login = "F">
 			<!--- <cfoutput>false</cfoutput> --->
 			<cflocation url="index.cfm?fa=c.w&le=t&wid=#arguments.thestruct.widget_id#" />
 		</cfif>
@@ -151,13 +151,13 @@
 		<cfargument name="thestruct" type="struct">
 		<cfset var qry = "">
 		<!--- Remove --->
-		<cfquery dataSource="#request.razuna.application.datasource#" name="qry">
-		DELETE FROM #request.razuna.session.hostdbprefix#widgets
+		<cfquery dataSource="#arguments.thestruct.razuna.application.datasource#" name="qry">
+		DELETE FROM #arguments.thestruct.razuna.session.hostdbprefix#widgets
 		WHERE widget_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#id#">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 		</cfquery>
 		<!--- Flush Cache --->
-		<cfset resetcachetoken(type="general", hostid=request.razuna.session.hostid)>
+		<cfset resetcachetoken(type="general", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 		<!--- Return --->
 		<cfreturn  />
 	</cffunction>

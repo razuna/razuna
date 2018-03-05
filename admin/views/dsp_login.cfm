@@ -38,7 +38,7 @@ Page output starts here
 		<input type="hidden" name="#theaction#" value="#xfa.submitform#">
 		<table width="100%" border="0" cellpadding="0" cellspacing="0">
 		    <!--- <tr>
-		        <td width="100%" nowrap>#defaultsObj.trans("username")#</td>
+		        <td width="100%" nowrap>#myFusebox.getApplicationData().defaults.trans("username")#</td>
 			</tr> --->
 			<tr>
 		        <td width="100%" nowrap style="padding-bottom:10px;">
@@ -47,7 +47,7 @@ Page output starts here
 				</td>
 		    </tr>
 		   <!---  <tr>
-		        <td>#defaultsObj.trans("password")#</td>
+		        <td>#myFusebox.getApplicationData().defaults.trans("password")#</td>
 			</tr> --->
 			<tr>
 		        <td>
@@ -56,16 +56,16 @@ Page output starts here
 				</td>
 		    </tr>
 		    <tr>
-				<td><input type="checkbox" name="rem_login" id="rem_login" value="T"<cfif structkeyexists(cookie,"loginadminrem") AND cookie.loginadminrem EQ "t"> checked="checked"</cfif>> <a href="##" onclick="clickcbk('form_login','rem_login',0);return false;" style="color:##000000;text-decoration:none;">#defaultsObj.trans("remember_login")#</a></td>
+				<td><input type="checkbox" name="rem_login" id="rem_login" value="T"<cfif structkeyexists(cookie,"loginadminrem") AND cookie.loginadminrem EQ "t"> checked="checked"</cfif>> <a href="##" onclick="clickcbk('form_login','rem_login',0);return false;" style="color:##000000;text-decoration:none;">#myFusebox.getApplicationData().defaults.trans("remember_login")#</a></td>
 			</tr>
 		    <tr>
-		        <td style="padding-bottom:10px;padding-top:10px;"><input type="submit" name="submitbutton" value="#defaultsObj.trans("button_login")#" class="button" /></td>
+		        <td style="padding-bottom:10px;padding-top:10px;"><input type="submit" name="submitbutton" value="#myFusebox.getApplicationData().defaults.trans("button_login")#" class="button" /></td>
 		    </tr>
 			<tr>
 		        <td style="padding-bottom:10px;">
-			        <cfset thelangs = #defaultsObj.getlangsadmin(thispath)#>
+			        <cfset thelangs = #myFusebox.getApplicationData().defaults.getlangsadmin(thispath)#>
 					<select name="app_lang" onChange="javascript:changelang('form_login');">
-						<option value="javascript:void();" selected>#defaultsObj.trans("changelang")#</option>
+						<option value="javascript:void();" selected>#myFusebox.getApplicationData().defaults.trans("changelang")#</option>
 						<cfloop query="thelangs">
 						<cfset thislang = replacenocase("#name#", ".xml", "", "ALL")>
 						<option value="#myself##xfa.switchlang#&to=index&thelang=#thislang#">#ucase(left(thislang,1))##mid(thislang,2,20)#</option>
@@ -74,13 +74,13 @@ Page output starts here
 				</td>
 		    </tr>
 		    <tr>
-				<td nowrap="true"><a href="##" onclick="loadcontent('login_feedback','#myself##xfa.forgotpass#&firsttime=#attributes.firsttime#');return false;">#defaultsObj.trans("forgot_password")#</a></td>
+				<td nowrap="true"><a href="##" onclick="loadcontent('login_feedback','#myself##xfa.forgotpass#&firsttime=#attributes.firsttime#');return false;">#myFusebox.getApplicationData().defaults.trans("forgot_password")#</a></td>
 			</tr>
 		</table>
 		</form>
 		
 			<cfif attributes.loginerror EQ "T">
-				<div id="alertbox" style="padding-top:10px;" class="alert">#defaultsObj.trans("login_error")#</div>
+				<div id="alertbox" style="padding-top:10px;" class="alert">#myFusebox.getApplicationData().defaults.trans("login_error")#</div>
 			</cfif>
 			<cfif attributes.nohost EQ "T">
 				<table width="100%" border="0" cellpadding="0" cellspacing="0">

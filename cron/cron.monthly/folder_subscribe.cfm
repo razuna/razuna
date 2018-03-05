@@ -35,7 +35,7 @@
 
 	<!--- Get database --->
 	<cfquery datasource="razuna_default" name="_config">
-	SELECT conf_datasource, conf_database, conf_datasource, conf_storage, conf_aws_access_key, conf_aws_secret_access_key, conf_aws_location, conf_aws_tenant_in_one_bucket_name, conf_aws_tenant_in_one_bucket_enable, conf_url_assets
+	SELECT conf_datasource, conf_database, conf_storage, conf_aws_access_key, conf_aws_secret_access_key, conf_aws_location, conf_aws_tenant_in_one_bucket_name, conf_aws_tenant_in_one_bucket_enable, conf_url_assets
 	FROM razuna_config
 	</cfquery>
 

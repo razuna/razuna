@@ -37,7 +37,7 @@
 		<cfloop query="qry_log">
 			<tr class="list">
 				<td nowrap="true"><a href="#myself#c.log_errors_detail&id=#id#" target="_blank">View Detail</a></td>
-				<td nowrap="true">#dateformat(err_date, "#myFusebox.getApplicationData().defaults.getdateformat()#")#</td>
+				<td nowrap="true">#dateformat(err_date, "#myFusebox.getApplicationData().defaults.getdateformat(thestruct=attributes)#")#</td>
 				<td nowrap="true">#TimeFormat(err_date, 'HH:mm:ss')#</td>
 				<td nowrap="true" align="center"><a href="##" onclick="showwindow('#myself#c.log_errors_win&id=#id#','Send Report',450,1);return false;">Send report to Razuna</a></td>
 			</tr>

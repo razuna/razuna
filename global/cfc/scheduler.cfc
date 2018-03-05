@@ -33,13 +33,14 @@
 
 <!--- GET ALL SCHEDULED EVENTS ------------------------------------------------------------------>
 <cffunction name="getAllEvents" returntype="query" output="true" access="public">
+	<cfargument name="thestruct" type="struct" required="true" />
 	<cfset var qry = "">
 	<!--- Query to get all records --->
-	<cfquery datasource="#request.razuna.application.datasource#" name="qry">
+	<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qry">
 	SELECT sched_id, sched_name, sched_method, sched_status
-	FROM #request.razuna.session.hostdbprefix#schedules
-	WHERE set2_id_r  = <cfqueryparam value="#request.razuna.application.setid#" cfsqltype="cf_sql_numeric">
-	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
+	FROM #arguments.thestruct.razuna.session.hostdbprefix#schedules
+	WHERE set2_id_r  = <cfqueryparam value="#arguments.thestruct.razuna.application.setid#" cfsqltype="cf_sql_numeric">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 	ORDER BY sched_name, sched_method
 	</cfquery>
 	<cfreturn qry>
@@ -47,45 +48,46 @@
 
 <!--- GET SCHEDULED EVENTS ------------------------------------------------------------------>
 <cffunction name="getEvents" returntype="query" output="true" access="public">
+	<cfargument name="thestruct" type="struct" required="true" />
 	<!--- Query to get records for paging --->
-	<cfinvoke method="getAllEvents" returnvariable="thetotal">
+	<cfinvoke method="getAllEvents" thestruct="#arguments.thestruct#" returnvariable="thetotal">
 	<cfset var qry = "">
 	<!--- Set the session for offset correctly if the total count of assets in lower the the total rowmaxpage --->
-	<cfif thetotal.recordcount LTE request.razuna.session.rowmaxpage_sched>
-		<cfset request.razuna.session.offset_sched = 0>
+	<cfif thetotal.recordcount LTE arguments.thestruct.razuna.session.rowmaxpage_sched>
+		<cfset arguments.thestruct.razuna.session.offset_sched = 0>
 	</cfif>
-	<cfif request.razuna.session.offset_sched EQ 0>
+	<cfif arguments.thestruct.razuna.session.offset_sched EQ 0>
 		<cfset var min = 0>
-		<cfset var max = request.razuna.session.rowmaxpage_sched>
+		<cfset var max = arguments.thestruct.razuna.session.rowmaxpage_sched>
 	<cfelse>
-		<cfset var min = request.razuna.session.offset_sched * request.razuna.session.rowmaxpage_sched>
-		<cfset var max = (request.razuna.session.offset_sched + 1) * request.razuna.session.rowmaxpage_sched>
+		<cfset var min = arguments.thestruct.razuna.session.offset_sched * arguments.thestruct.razuna.session.rowmaxpage_sched>
+		<cfset var max = (arguments.thestruct.razuna.session.offset_sched + 1) * arguments.thestruct.razuna.session.rowmaxpage_sched>
 	</cfif>
 	<!--- MySQL Offset --->
-	<cfset var mysqloffset = request.razuna.session.offset_sched * request.razuna.session.rowmaxpage_sched>
+	<cfset var mysqloffset = arguments.thestruct.razuna.session.offset_sched * arguments.thestruct.razuna.session.rowmaxpage_sched>
 	<!--- Query to get records --->
-	<cfquery datasource="#request.razuna.application.datasource#" name="qry">
-		SELECT <cfif request.razuna.application.thedatabase EQ "mssql"> TOP #request.razuna.session.rowmaxpage_sched#</cfif> sched_id, sched_name, sched_method, sched_status,
+	<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qry">
+		SELECT <cfif arguments.thestruct.razuna.application.thedatabase EQ "mssql"> TOP #arguments.thestruct.razuna.session.rowmaxpage_sched#</cfif> sched_id, sched_name, sched_method, sched_status,
 		(
 			SELECT count(sched_id)
-			FROM #request.razuna.session.hostdbprefix#schedules
-			WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
+			FROM #arguments.thestruct.razuna.session.hostdbprefix#schedules
+			WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 		) as thetotal
-		FROM #request.razuna.session.hostdbprefix#schedules
-		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
-		<cfif request.razuna.application.thedatabase EQ "mssql">
+		FROM #arguments.thestruct.razuna.session.hostdbprefix#schedules
+		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
+		<cfif arguments.thestruct.razuna.application.thedatabase EQ "mssql">
 			AND sched_id NOT IN
 			(
 				SELECT TOP #min# sched_id
-				FROM #request.razuna.session.hostdbprefix#schedules
-				WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
+				FROM #arguments.thestruct.razuna.session.hostdbprefix#schedules
+				WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 				ORDER BY sched_name, sched_method DESC
 			)
 		</cfif>
 		GROUP BY sched_id, sched_name, sched_method, sched_status, host_id
 		ORDER BY sched_name, sched_method DESC
-		<cfif request.razuna.application.thedatabase EQ "mysql" OR request.razuna.application.thedatabase EQ "h2">
-			LIMIT #mysqloffset#, #request.razuna.session.rowmaxpage_sched#
+		<cfif arguments.thestruct.razuna.application.thedatabase EQ "mysql" OR arguments.thestruct.razuna.application.thedatabase EQ "h2">
+			LIMIT #mysqloffset#, #arguments.thestruct.razuna.session.rowmaxpage_sched#
 		</cfif>
 	</cfquery>
 	<cfreturn qry>
@@ -100,7 +102,7 @@
 	<cfparam default="" name="arguments.thestruct.upl_template">
 	<!--- AD group users list --->
 	<cfparam default="" name="arguments.thestruct.grp_id_assigneds">
-	<cfparam default="1" name="request.razuna.session.theuserid">
+	<cfparam default="1" name="arguments.thestruct.razuna.session.theuserid">
 	<cfset schedData.serverFolderRecurse = arguments.thestruct.serverFolderRecurse>
 	<cfset schedData.zipExtract = arguments.thestruct.zipExtract>
 	<cftry>
@@ -112,8 +114,8 @@
 		<cfinvoke method="initMethodFields" returnvariable="schedData" thestruct="#arguments.thestruct#">
 		<!--- get next id --->
 		<cfset var newschid = createuuid()>
-		<cfquery datasource="#request.razuna.application.datasource#">
-		INSERT INTO #request.razuna.session.hostdbprefix#schedules
+		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
+		INSERT INTO #arguments.thestruct.razuna.session.hostdbprefix#schedules
 		(sched_id,
 		 set2_id_r,
 		 sched_user,
@@ -145,8 +147,8 @@
 		)
 		VALUES
 		(<cfqueryparam value="#newschid#" cfsqltype="CF_SQL_VARCHAR">,
-		 <cfqueryparam value="#request.razuna.application.setid#" cfsqltype="cf_sql_numeric">,
-		 <cfqueryparam value="#request.razuna.session.theuserid#" cfsqltype="CF_SQL_VARCHAR">,
+		 <cfqueryparam value="#arguments.thestruct.razuna.application.setid#" cfsqltype="cf_sql_numeric">,
+		 <cfqueryparam value="#arguments.thestruct.razuna.session.theuserid#" cfsqltype="CF_SQL_VARCHAR">,
 		 <cfqueryparam value="#schedData.method#" cfsqltype="cf_sql_varchar">,
 		 <cfqueryparam value="#schedData.taskName#" cfsqltype="cf_sql_varchar">,
 		 <cfqueryparam value="#schedData.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
@@ -164,7 +166,7 @@
 		 <cfqueryparam value="#schedData.ftpPass#" cfsqltype="cf_sql_varchar">,
 		 <cfqueryparam value="#schedData.ftpFolder#" cfsqltype="cf_sql_varchar">,
 		 <cfqueryparam value="#schedData.ftpemails#" cfsqltype="cf_sql_varchar">,
-		 <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">,
+		 <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">,
 		 <cfqueryparam value="#arguments.thestruct.upl_template#" cfsqltype="cf_sql_varchar">,
 		 <cfqueryparam value="#arguments.thestruct.grp_id_assigneds#" cfsqltype="cf_sql_varchar">
 		 <cfif schedData.ftpPassive is not "">, <cfqueryparam value="#schedData.ftpPassive#" cfsqltype="cf_sql_numeric"></cfif>
@@ -174,7 +176,7 @@
 		 <cfif schedData.endTime is not "">, <cfqueryparam value="#schedData.endTime#" cfsqltype="cf_sql_timestamp"></cfif> )
 		</cfquery>
 		<!--- Get Server URL --->
-		<cfset serverUrl = "#request.razuna.session.thehttp##cgi.HTTP_HOST##cgi.SCRIPT_NAME#">
+		<cfset serverUrl = "#arguments.thestruct.razuna.session.thehttp##cgi.HTTP_HOST##cgi.SCRIPT_NAME#">
 		<!--- Save scheduled event in CFML scheduling engine --->
 		<cfschedule action="update"
 					task="RazScheduledUploadEvent[#newschid#]"
@@ -186,7 +188,7 @@
 					endTime="#schedData.endTime#"
 					interval="#schedData.interval#">
 		<!--- Log the insert --->
-		<cfinvoke method="tolog" theschedid="#newschid#" theuserid="#request.razuna.session.theuserid#" theaction="Insert" thedesc="Scheduled Task successfully saved">
+		<cfinvoke method="tolog" theschedid="#newschid#" theuserid="#arguments.thestruct.razuna.session.theuserid#" theaction="Insert" thedesc="Scheduled Task successfully saved" thestruct="#arguments.thestruct#">
 		<cfcatch>
 		</cfcatch>
 	</cftry>
@@ -291,9 +293,10 @@
 	<cfargument name="theuserid"  default="0" required="no"  type="string">
 	<cfargument name="theaction"  default=""  required="yes" type="string">
 	<cfargument name="thedesc"    default=""  required="yes" type="string">
+	<cfargument name="thestruct" type="struct" required="true" />
 	<cftry>
-		<cfquery datasource="#request.razuna.application.datasource#">
-		INSERT INTO #request.razuna.session.hostdbprefix#schedules_log
+		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
+		INSERT INTO #arguments.thestruct.razuna.session.hostdbprefix#schedules_log
 		(sched_log_id, sched_id_r, sched_log_action, sched_log_date,
 		sched_log_time, sched_log_desc<cfif structkeyexists(arguments,"theuserid")>, sched_log_user</cfif>, host_id)
 		VALUES
@@ -305,10 +308,10 @@
 		<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">,
 		<cfqueryparam value="#arguments.thedesc#" cfsqltype="cf_sql_varchar">
 		<cfif structkeyexists(arguments,"theuserid")>,<cfqueryparam value="#arguments.theuserid#" cfsqltype="CF_SQL_VARCHAR"></cfif>,
-		<cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
+		<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 		)
 		</cfquery>
-		<cfset variables.cachetoken = resetcachetoken(type="logs", hostid=request.razuna.session.hostid)>
+		<cfset variables.cachetoken = resetcachetoken(type="logs", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 		<cfcatch type="database">
 		</cfcatch>
 	</cftry>
@@ -316,12 +319,13 @@
 
 <!--- DELETE SCHEDULED EVENT --------------------------------------------------------------------->
 <cffunction name="remove" output="true" access="public">
-	<cfargument name="sched_id"   type="string" required="yes" default="">
+	<cfargument name="sched_id" type="string" required="yes" default="">
+	<cfargument name="thestruct" type="struct" required="true" />
 	<!--- append to the DB --->
-	<cfquery datasource="#request.razuna.application.datasource#">
-	DELETE FROM #request.razuna.session.hostdbprefix#schedules
+	<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
+	DELETE FROM #arguments.thestruct.razuna.session.hostdbprefix#schedules
 	WHERE sched_id = <cfqueryparam value="#arguments.sched_id#" cfsqltype="CF_SQL_VARCHAR">
-	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 	</cfquery>
 	<!--- Delete scheduled event from CF scheduling engine --->
 	<cfschedule action="delete" task="RazScheduledUploadEvent[#arguments.sched_id#]">
@@ -331,10 +335,11 @@
 <!--- GET DETAIL OF ONE SCHEDULED EVENT ---------------------------------------------------------->
 <cffunction name="detail" returntype="query" output="true" access="public">
 	<cfargument name="sched_id" type="string" required="yes">
+	<cfargument name="thestruct" type="struct" required="true" />
 	<!--- Param --->
 	<cfset var qSchedDetail = "">
 	<!--- Query to get all records --->
-	<cfquery datasource="#request.razuna.application.datasource#" name="qSchedDetail">
+	<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qSchedDetail">
 	SELECT s.sched_id, s.set2_id_r, s.sched_user, s.sched_status, s.sched_method, s.sched_name,
 	s.sched_folder_id_r, s.sched_zip_extract, s.sched_server_folder, s.sched_mail_pop, s.sched_mail_user,
 	s.sched_mail_pass, s.sched_mail_subject, s.sched_ftp_server, s.sched_ftp_user, s.sched_ftp_pass,
@@ -342,9 +347,9 @@
 	s.sched_end_time, s.sched_ftp_passive, s.sched_server_recurse, s.sched_server_files, s.sched_upl_template,
 	s.sched_ad_user_groups, s.host_id,s.sched_ftp_email,
 	f.folder_name as folder_name
-	FROM #request.razuna.session.hostdbprefix#schedules s LEFT JOIN #request.razuna.session.hostdbprefix#folders f ON s.sched_folder_id_r = f.folder_id AND f.host_id = s.host_id
+	FROM #arguments.thestruct.razuna.session.hostdbprefix#schedules s LEFT JOIN #arguments.thestruct.razuna.session.hostdbprefix#folders f ON s.sched_folder_id_r = f.folder_id AND f.host_id = s.host_id
 	WHERE s.sched_id = <cfqueryparam value="#arguments.sched_id#" cfsqltype="CF_SQL_VARCHAR">
-	AND s.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
+	AND s.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 	</cfquery>
 	<cfreturn qSchedDetail>
 </cffunction>
@@ -369,11 +374,11 @@
 		<!--- Validate and initialise fields depending on upload method --->
 		<cfinvoke method="initMethodFields" returnvariable="schedData" thestruct="#arguments.thestruct#">
 		<!--- append to the DB --->
-		<cfquery datasource="#request.razuna.application.datasource#">
-		UPDATE #request.razuna.session.hostdbprefix#schedules
+		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
+		UPDATE #arguments.thestruct.razuna.session.hostdbprefix#schedules
 		SET
-		set2_id_r = <cfqueryparam value="#request.razuna.application.setid#" cfsqltype="cf_sql_numeric">,
-		sched_user = <cfqueryparam value="#request.razuna.session.theuserid#" cfsqltype="CF_SQL_VARCHAR">,
+		set2_id_r = <cfqueryparam value="#arguments.thestruct.razuna.application.setid#" cfsqltype="cf_sql_numeric">,
+		sched_user = <cfqueryparam value="#arguments.thestruct.razuna.session.theuserid#" cfsqltype="CF_SQL_VARCHAR">,
 		sched_method = <cfqueryparam value="#schedData.method#" cfsqltype="cf_sql_varchar">,
 		sched_name = <cfqueryparam value="#schedData.taskName#" cfsqltype="cf_sql_varchar">,
 		sched_folder_id_r = <cfqueryparam value="#schedData.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
@@ -424,9 +429,9 @@
 			<cfqueryparam value="#schedData.endTime#" cfsqltype="cf_sql_timestamp" null="true">
 		</cfif>
 		WHERE sched_id = <cfqueryparam value="#schedData.sched_id#" cfsqltype="CF_SQL_VARCHAR">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 		</cfquery>
-		<cfset serverUrl = "#request.razuna.session.thehttp##cgi.HTTP_HOST##cgi.SCRIPT_NAME#">
+		<cfset serverUrl = "#arguments.thestruct.razuna.session.thehttp##cgi.HTTP_HOST##cgi.SCRIPT_NAME#">
 		<!--- Update scheduled event in CF scheduling engine --->
 		<cfschedule action="update"
 			task="RazScheduledUploadEvent[#schedData.sched_id#]"
@@ -438,7 +443,7 @@
 			endTime="#schedData.endTime#"
 			interval="#schedData.interval#">
 		<!--- Log the update --->
-		<cfinvoke method="tolog" theschedid="#schedData.sched_id#" theuserid="#request.razuna.session.theuserid#" theaction="Update" thedesc="Scheduled Task successfully updated">
+		<cfinvoke method="tolog" theschedid="#schedData.sched_id#" theuserid="#arguments.thestruct.razuna.session.theuserid#" theaction="Update" thedesc="Scheduled Task successfully updated" thestruct="#arguments.thestruct#">
 		<cfcatch>
 		</cfcatch>
 	</cftry>
@@ -480,6 +485,7 @@
 				<cfinvokeargument name="thecount" value="#count#">
 				<cfinvokeargument name="thedirstring" value="#thisdir#">
 				<cfinvokeargument name="qReturn" value="#Arguments.qReturn#">
+				<cfinvokeargument name="thestruct" value="#arguments.thestruct#">
 			</cfinvoke>
 		</cfif>
 	</cfoutput>
@@ -489,15 +495,16 @@
 <!--- RUN SCHEDULED EVENT ------------------------------------------------------------------------>
 <cffunction name="run" returntype="string" output="true" access="public">
 	<cfargument name="sched_id" type="string" required="yes" default="">
+	<cfargument name="thestruct" type="struct" required="true" />
 	<cfset var returncode = "success_run">
 	<cftry>
 		<!--- Run --->
 		<cfschedule action="run" task="RazScheduledUploadEvent[#arguments.sched_id#]">
 		<!--- Log --->
-		<cfinvoke method="tolog" theschedid="#arguments.sched_id#" theuserid="#request.razuna.session.theuserid#" theaction="Run" thedesc="Scheduled Task successfully run">
+		<cfinvoke method="tolog" theschedid="#arguments.sched_id#" theuserid="#arguments.thestruct.razuna.session.theuserid#" theaction="Run" thedesc="Scheduled Task successfully run" thestruct="#arguments.thestruct#">
 		<cfcatch>
 			<!--- Log the error --->
-			<cfinvoke method="tolog" theschedid="#arguments.sched_id#" theuserid="#request.razuna.session.theuserid#" theaction="Run" thedesc="Scheduled Task failed while running [#cfcatch.type# - #cfcatch.message#]">
+			<cfinvoke method="tolog" theschedid="#arguments.sched_id#" theuserid="#arguments.thestruct.razuna.session.theuserid#" theaction="Run" thedesc="Scheduled Task failed while running [#cfcatch.type# - #cfcatch.message#]" thestruct="#arguments.thestruct#">
 			<cfset returncode = "sched_error">
 		</cfcatch>
 	</cftry>
@@ -506,12 +513,13 @@
 
 <!--- GET LOG ENTRIES FOR SCHEDULED EVENT -------------------------------------------------------->
 <cffunction name="getlog" returntype="query" output="true" access="public">
-	<cfargument name="sched_id"   type="string" required="yes" default="">
+	<cfargument name="sched_id" type="string" required="yes" default="">
+	<cfargument name="thestruct" type="struct" required="true" />
 	<cfset var qry = "">
 	<!--- Query to get all records --->
-	<cfquery datasource="#request.razuna.application.datasource#" name="qry">
+	<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qry">
 	SELECT l.sched_log_date, l.sched_log_time, l.sched_log_desc, l.sched_log_action, l.sched_log_user, u.user_login_name
-	FROM #request.razuna.session.hostdbprefix#schedules_log l, users u
+	FROM #arguments.thestruct.razuna.session.hostdbprefix#schedules_log l, users u
 	WHERE l.sched_id_r = <cfqueryparam value="#arguments.sched_id#" cfsqltype="CF_SQL_VARCHAR">
 	AND l.sched_log_user = u.user_id <!--- (+) --->
 	ORDER BY sched_log_date DESC, sched_log_time DESC, sched_log_id DESC
@@ -521,9 +529,10 @@
 
 <!--- REMOVE LOG -------------------------------------------------------->
 <cffunction name="removelog" returntype="query" output="true" access="public">
-	<cfargument name="sched_id"   type="string" required="yes" default="">
-	<cfquery datasource="#request.razuna.application.datasource#">
-	DELETE FROM #request.razuna.session.hostdbprefix#schedules_log
+	<cfargument name="sched_id" type="string" required="yes" default="">
+	<cfargument name="thestruct" type="struct" required="true" />
+	<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
+	DELETE FROM #arguments.thestruct.razuna.session.hostdbprefix#schedules_log
 	WHERE sched_id_r = <cfqueryparam value="#arguments.sched_id#" cfsqltype="CF_SQL_VARCHAR">
 	</cfquery>
 </cffunction>
@@ -547,6 +556,7 @@
 	<cfargument name="ad_ldap" type="string" required="false" default="">
 	<cfargument name="ad_domain" type="string" required="false" default="">
 	<cfargument name="ldap_dn" type="string" required="false" default="">
+	<cfargument name="thestruct" type="struct" required="true" />
 	<!--- Param --->
 	<cfset var doit = structnew()>
 	<cfset var x = structnew()>
@@ -565,7 +575,7 @@
 	<cfset x.assetpath = arguments.assetpath>
 	<cfset x.dynpath = arguments.dynpath>
 	<!--- Get details of this schedule --->
-	<cfinvoke method="detail" sched_id="#arguments.sched_id#" returnvariable="doit.qry_detail">
+	<cfinvoke method="detail" sched_id="#arguments.sched_id#" thestruct="#arguments.thestruct#" returnvariable="doit.qry_detail">
 	<!-- Set return into scope -->
 	<cfset x.folder_id = doit.qry_detail.sched_folder_id_r>
 	<cfset x.sched_action = doit.qry_detail.sched_server_files>
@@ -573,9 +583,9 @@
 	<cfset x.directory = doit.qry_detail.sched_server_folder>
 	<cfset x.recurse = doit.qry_detail.sched_server_recurse>
 	<cfset x.zip_extract = doit.qry_detail.sched_zip_extract>
-	<cfset request.razuna.session.theuserid = doit.qry_detail.sched_user>
+	<cfset arguments.thestruct.razuna.session.theuserid = doit.qry_detail.sched_user>
 	<!-- Get AWS Bucket -->
-	<cfinvoke component="global.cfc.settings" method="prefs_storage" returnvariable="qry_storage" />
+	<cfinvoke component="global.cfc.settings" method="prefs_storage" thestruct="#arguments.thestruct#" returnvariable="qry_storage" />
 	<!-- Set bucket -->
 	<cfset x.awsbucket  = qry_storage.set2_aws_bucket />
 	<!--- If no record found simply abort --->
@@ -585,66 +595,28 @@
 	<cfelse>
 		<!--- SERVER --->
 		<cfif doit.qry_detail.sched_method EQ "server">
-			<!---
-			<!--- Look into the directory --->
-			<cfdirectory action="list" directory="#doit.qry_detail.sched_server_folder#" recurse="false" name="dirhere" />
-			<!--- Filter content --->
-			<cfquery dbtype="query" name="dirhere">
-			SELECT *
-			FROM dirhere
-			WHERE size != 0
-			AND attributes != 'H'
-			AND name != 'thumbs.db'
-			AND name NOT LIKE '.DS_STORE%'
-			AND name NOT LIKE '__MACOSX%'
-			AND name != '.svn'
-			AND name != '.git'
-			</cfquery>
-			<!--- NO files here simply abort --->
-			<cfif dirhere.recordcount EQ 0>
-				<cfabort>
-			</cfif>
-			<!--- Files here thus... --->
-			<!--- Get the name of the original directory --->
-			<cfset var thedirname = listlast(doit.qry_detail.sched_server_folder,"/\")>
-			<!--- The path without the name --->
-			<cfset var thedirpath = replacenocase(doit.qry_detail.sched_server_folder,thedirname,"","one")>
-			<!--- Create a temp directory name --->
-			<cfset var tempid = createuuid("")>
-			<cfset var tempdir = thedirpath & "task_" & tempid>
-			<!--- Now rename the original directory --->
-			<cfdirectory action="rename" directory="#doit.qry_detail.sched_server_folder#" newdirectory="#tempdir#" mode="775" />
-			<!--- and recreate the original directory --->
-			<cfif !directoryExists(doit.qry_detail.sched_server_folder)>
-				<cfdirectory action="create" directory="#doit.qry_detail.sched_server_folder#" mode="775" />
-			</cfif>
-			<!--- Set the qry to the new directory --->
-			<cfset QuerySetcell( doit.qry_detail, "sched_server_folder", "#tempdir#" )>
-			<!--- Sleep the process (just making sure that the rename had enough time) --->
-			<cfset sleep(5000)>
-			 --->
 			<!-- CFC: Log start -->
-			<cfinvoke method="tolog" theschedid="#arguments.sched_id#" theaction="Upload" thedesc="Start Processing Scheduled Task" />
+			<cfinvoke method="tolog" theschedid="#arguments.sched_id#" theaction="Upload" thedesc="Start Processing Scheduled Task" thestruct="#arguments.thestruct#" />
 			<!-- Set params for adding assets -->
 			<cfset x.thefile = doit.dirlist>
 			<!-- CFC: Add to system -->
-			<cfinvoke component="assets" method="addassetscheduledserverthread" thestruct="#x#" />
+			<cfinvoke component="assets" method="addassetscheduledserverthread" thestruct="#arguments.thestruct#" thestruct="#x#" />
 		<!--- FTP --->
 		<cfelseif doit.qry_detail.sched_method EQ "ftp">
 			<cfset var runtimeqry = "">
 			<!--- Get last run time --->
-			<cfquery datasource="#request.razuna.application.datasource#" name="runtimeqry">
+			<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="runtimeqry">
 				SELECT SCHED_RUN_TIME
-				FROM #request.razuna.session.hostdbprefix#schedules
+				FROM #arguments.thestruct.razuna.session.hostdbprefix#schedules
 				WHERE sched_id = <cfqueryparam value="#x.sched_id#" cfsqltype="cf_sql_varchar">
 			</cfquery>
 			<!--- Run the task only if its not already running or if the last run time is > 24 hrs --->
 			<cfif runtimeqry.sched_run_time EQ '' OR (isdate(runtimeqry.sched_run_time) AND datediff("h",runtimeqry.sched_run_time,now()) GT 24)>
 				<!-- Params -->
-				<cfset request.razuna.session.ftp_server = doit.qry_detail.sched_ftp_server>
-				<cfset request.razuna.session.ftp_user = doit.qry_detail.sched_ftp_user>
-				<cfset request.razuna.session.ftp_pass = doit.qry_detail.sched_ftp_pass>
-				<cfset request.razuna.session.ftp_passive = doit.qry_detail.sched_ftp_passive>
+				<cfset arguments.thestruct.razuna.session.ftp_server = doit.qry_detail.sched_ftp_server>
+				<cfset arguments.thestruct.razuna.session.ftp_user = doit.qry_detail.sched_ftp_user>
+				<cfset arguments.thestruct.razuna.session.ftp_pass = doit.qry_detail.sched_ftp_pass>
+				<cfset arguments.thestruct.razuna.session.ftp_passive = doit.qry_detail.sched_ftp_passive>
 				<cfset x.filesonly = true> <!--- For scheduled upload we only upload files in folder and ignore any subfolders --->
 				<cfset x.folderpath   = doit.qry_detail.sched_ftp_folder> <!--- Set path to folder --->
 				<!-- CFC: Get FTP directory for adding to the system -->
@@ -662,9 +634,9 @@
 			<cfset x.email_address = doit.qry_detail.sched_mail_user>
 			<cfset x.email_pass = doit.qry_detail.sched_mail_pass>
 			<cfset x.email_subject = doit.qry_detail.sched_mail_subject>
-			<cfset request.razuna.session.email_server = doit.qry_detail.sched_mail_pop>
-			<cfset request.razuna.session.email_address = doit.qry_detail.sched_mail_user>
-			<cfset request.razuna.session.email_pass = doit.qry_detail.sched_mail_pass>
+			<cfset arguments.thestruct.razuna.session.email_server = doit.qry_detail.sched_mail_pop>
+			<cfset arguments.thestruct.razuna.session.email_address = doit.qry_detail.sched_mail_user>
+			<cfset arguments.thestruct.razuna.session.email_pass = doit.qry_detail.sched_mail_pass>
 			<!-- CFC: Get the email ids for adding to the system -->
 			<cfinvoke component="email" method="emailheaders" thestruct="#x#" returnvariable="themails" />
 			<cfset x.emailid = valuelist(themails.qryheaders.messagenumber)>
@@ -674,10 +646,10 @@
 		<cfelseif doit.qry_detail.sched_method EQ "ADServer">
 			<!--- Get LDAP User list --->
 
-			<cfinvoke component="global.cfc.settings" method="get_ad_server_userlist"  returnvariable="results"  thestruct="#arguments#">
+			<cfinvoke component="global.cfc.settings" method="get_ad_server_userlist" thestruct="#arguments.thestruct#" returnvariable="results" />
 			<cfif results.recordcount NEQ 0>
 				<cfset emailList = valuelist(results.mail)>
-				<cfquery datasource="#request.razuna.application.datasource#" name="qry">
+				<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qry">
 					SELECT u.user_email
 					FROM users u, ct_users_hosts ct
 					WHERE u.user_email in (<cfqueryparam value="#lcase(emailList)#" cfsqltype="cf_sql_varchar" list="true">)
@@ -705,7 +677,7 @@
 						</cfif>
 					</cfloop>
 					<!-- CFC: Log start -->
-					<cfinvoke method="tolog" theschedid="#arguments.sched_id#" theaction="Upload" thedesc="Start Processing Scheduled Task" />
+					<cfinvoke method="tolog" theschedid="#arguments.sched_id#" theaction="Upload" thedesc="Start Processing Scheduled Task" thestruct="#arguments.thestruct#" />
 				</cfif>
 			</cfif>
 		</cfif>
@@ -715,15 +687,16 @@
 
 <!--- RUN FOLDER SUBSCRIBE SCHEDULE -------------------------------------------------------->
 <cffunction name="folder_subscribe_task" output="true" access="public" >
+	<cfargument name="thestruct" type="struct" required="true" />
 
 	<!--- Check / create lock --->
 	<cfset _lockFile("subscribe")>
 
 	<!--- Delete Users that no longer have permissions to access the folder to whom they were subscribed --->
-	<cfquery datasource="#request.razuna.application.datasource#" name="getusers_wo_access">
+	<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="getusers_wo_access">
 	SELECT f.folder_id, u.user_id, f.host_id
-	FROM #request.razuna.session.hostdbprefix#folders f
-	INNER JOIN #request.razuna.session.hostdbprefix#folder_subscribe fs ON f.folder_id = fs.folder_id AND f.host_id = fs.host_id
+	FROM #arguments.thestruct.razuna.session.hostdbprefix#folders f
+	INNER JOIN #arguments.thestruct.razuna.session.hostdbprefix#folder_subscribe fs ON f.folder_id = fs.folder_id AND f.host_id = fs.host_id
 	INNER JOIN users u ON u.user_id = fs.user_id
 	WHERE
 	<!--- User is not administrator --->
@@ -731,14 +704,14 @@
 	<!--- User is not folder_owner --->
 	AND f.folder_owner <>  fs.user_id
 	 <!--- Folder is not shared with everybody --->
-	AND NOT EXISTS (SELECT 1 FROM #request.razuna.session.hostdbprefix#folders_groups fg WHERE f.folder_id = fg.folder_id_r AND fg.grp_id_r = '0')
+	AND NOT EXISTS (SELECT 1 FROM #arguments.thestruct.razuna.session.hostdbprefix#folders_groups fg WHERE f.folder_id = fg.folder_id_r AND fg.grp_id_r = '0')
 	<!--- User is not part of group that has access to folder --->
-	AND NOT EXISTS (SELECT 1 FROM ct_groups_users cu, #request.razuna.session.hostdbprefix#folders_groups g WHERE cu.ct_g_u_user_id = fs.user_id AND cu.ct_g_u_grp_id = g.grp_id_r AND f.folder_id = g.folder_id_r)
+	AND NOT EXISTS (SELECT 1 FROM ct_groups_users cu, #arguments.thestruct.razuna.session.hostdbprefix#folders_groups g WHERE cu.ct_g_u_user_id = fs.user_id AND cu.ct_g_u_grp_id = g.grp_id_r AND f.folder_id = g.folder_id_r)
 	</cfquery>
 	<cfloop query="getusers_wo_access">
-		<cfquery datasource="#request.razuna.application.datasource#">
+		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
 		DELETE
-		FROM #request.razuna.session.hostdbprefix#folder_subscribe
+		FROM #arguments.thestruct.razuna.session.hostdbprefix#folder_subscribe
 		WHERE folder_id = <cfqueryparam value="#getusers_wo_access.folder_id#" cfsqltype="cf_sql_varchar">
 		AND user_id = <cfqueryparam value="#getusers_wo_access.user_id#" cfsqltype="cf_sql_varchar">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#host_id#">
@@ -746,23 +719,23 @@
 	</cfloop>
 
 	<!--- Get User subscribed folders --->
-	<cfquery datasource="#request.razuna.application.datasource#" name="qGetUserSubscriptions">
+	<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qGetUserSubscriptions">
 	SELECT fs.fs_id, fs.user_id, fs.folder_id, fs.asset_description, fs.asset_keywords, fs.last_mail_notification_time, fs.host_id, fo.folder_name
-	FROM #request.razuna.session.hostdbprefix#folder_subscribe fs
-	LEFT JOIN #request.razuna.session.hostdbprefix#folders fo ON fs.folder_id = fo.folder_id AND fs.host_id = fo.host_id
+	FROM #arguments.thestruct.razuna.session.hostdbprefix#folder_subscribe fs
+	LEFT JOIN #arguments.thestruct.razuna.session.hostdbprefix#folders fo ON fs.folder_id = fo.folder_id AND fs.host_id = fo.host_id
 	WHERE
 	<!--- H2 or MSSQL --->
-	<cfif request.razuna.application.thedatabase EQ "h2" OR request.razuna.application.thedatabase EQ "mssql">
+	<cfif arguments.thestruct.razuna.application.thedatabase EQ "h2" OR arguments.thestruct.razuna.application.thedatabase EQ "mssql">
 		DATEADD(HOUR, mail_interval_in_hours, last_mail_notification_time)
 	<!--- MYSQL --->
-	<cfelseif request.razuna.application.thedatabase EQ "mysql">
+	<cfelseif arguments.thestruct.razuna.application.thedatabase EQ "mysql">
 		DATE_ADD(last_mail_notification_time, INTERVAL mail_interval_in_hours HOUR)
 	</cfif>
 	< <cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">
 	</cfquery>
 
 	<!--- Date Format --->
-	<cfinvoke component="defaults" method="getdateformat" returnvariable="dateformat">
+	<cfinvoke component="defaults" method="getdateformat" thestruct="#arguments.thestruct#" returnvariable="dateformat">
 	<!--- Get Assets Log of Subscribed folders --->
 	<cfoutput query="qGetUserSubscriptions">
 		<!--- Var --->
@@ -770,11 +743,11 @@
 		<cfset var folders_list = "">
 		<cfset var damset = "">
 		<!--- Get Sub-folders of Folder subscribe --->
-		<cfinvoke component="folders" method="recfolder" thelist="#qGetUserSubscriptions.folder_id#" returnvariable="folders_list" />
+		<cfinvoke component="folders" method="recfolder" thelist="#qGetUserSubscriptions.folder_id#" thestruct="#arguments.thestruct#" returnvariable="folders_list" />
 		<!--- Get UPC setting --->
-		<cfinvoke component="settings" method="getsettingsfromdam" returnvariable="damset" />
+		<cfinvoke component="settings" method="getsettingsfromdam" thestruct="#arguments.thestruct#" returnvariable="damset" />
 		<!--- Get Updated Assets --->
-		<cfquery datasource="#request.razuna.application.datasource#" name="qGetUpdatedAssets">
+		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qGetUpdatedAssets">
 		SELECT l.asset_id_r, l.log_timestamp, l.log_action, l.log_file_type, l.log_desc, l.host_id, u.user_first_name, u.user_last_name, u.user_id, fo.folder_name, ii.path_to_asset img_asset_path, aa.path_to_asset aud_asset_path, vv.path_to_asset vid_asset_path, ff.path_to_asset file_asset_path,
 		ii.img_filename_org img_filenameorg, aa.aud_name_org aud_filenameorg,vv.vid_name_org vid_filenameorg, ff.file_name_org file_filenameorg, ii.cloud_url_org img_cloud_url, aa.cloud_url_org aud_cloud_url, vv.cloud_url_org vid_cloud_url, ff.cloud_url_org file_cloud_url , ii.thumb_extension img_thumb_ext, vv.vid_name_image vid_thumb, ii.cloud_url img_cloud_thumb, vv.cloud_url vid_cloud_thumb
 		<cfif qGetUserSubscriptions.asset_keywords eq 'T' OR qGetUserSubscriptions.asset_description eq 'T'>
@@ -784,18 +757,18 @@
 		<cfif damset.set2_upc_enabled EQ 'true'>
 			, ii.img_upc_number, aa.aud_upc_number, vv.vid_upc_number, ff.file_upc_number
 		</cfif>
-		FROM #request.razuna.session.hostdbprefix#log_assets l
+		FROM #arguments.thestruct.razuna.session.hostdbprefix#log_assets l
 		LEFT JOIN users u ON l.log_user = u.user_id
-		LEFT JOIN #request.razuna.session.hostdbprefix#folders fo ON l.folder_id = fo.folder_id AND l.host_id = fo.host_id
-		LEFT JOIN #request.razuna.session.hostdbprefix#audios aa ON aa.aud_id = l.asset_id_r AND l.host_id = aa.host_id
-		LEFT JOIN #request.razuna.session.hostdbprefix#files ff ON ff.file_id = l.asset_id_r AND l.host_id = ff.host_id
-		LEFT JOIN #request.razuna.session.hostdbprefix#images ii ON ii.img_id = l.asset_id_r AND l.host_id = ii.host_id
-		LEFT JOIN #request.razuna.session.hostdbprefix#videos vv ON vv.vid_id = l.asset_id_r AND l.host_id = vv.host_id
+		LEFT JOIN #arguments.thestruct.razuna.session.hostdbprefix#folders fo ON l.folder_id = fo.folder_id AND l.host_id = fo.host_id
+		LEFT JOIN #arguments.thestruct.razuna.session.hostdbprefix#audios aa ON aa.aud_id = l.asset_id_r AND l.host_id = aa.host_id
+		LEFT JOIN #arguments.thestruct.razuna.session.hostdbprefix#files ff ON ff.file_id = l.asset_id_r AND l.host_id = ff.host_id
+		LEFT JOIN #arguments.thestruct.razuna.session.hostdbprefix#images ii ON ii.img_id = l.asset_id_r AND l.host_id = ii.host_id
+		LEFT JOIN #arguments.thestruct.razuna.session.hostdbprefix#videos vv ON vv.vid_id = l.asset_id_r AND l.host_id = vv.host_id
 		<cfif qGetUserSubscriptions.asset_keywords eq 'T' OR qGetUserSubscriptions.asset_description eq 'T'>
-			LEFT JOIN #request.razuna.session.hostdbprefix#audios_text a ON a.aud_id_r = l.asset_id_r AND a.lang_id_r = 1 AND l.host_id = a.host_id
-			LEFT JOIN #request.razuna.session.hostdbprefix#files_desc f ON f.file_id_r = l.asset_id_r AND f.lang_id_r = 1 AND l.host_id = f.host_id
-			LEFT JOIN #request.razuna.session.hostdbprefix#images_text i ON i.img_id_r = l.asset_id_r AND i.lang_id_r = 1 AND l.host_id = i.host_id
-			LEFT JOIN #request.razuna.session.hostdbprefix#videos_text v ON v.vid_id_r = l.asset_id_r AND v.lang_id_r = 1 AND l.host_id = v.host_id
+			LEFT JOIN #arguments.thestruct.razuna.session.hostdbprefix#audios_text a ON a.aud_id_r = l.asset_id_r AND a.lang_id_r = 1 AND l.host_id = a.host_id
+			LEFT JOIN #arguments.thestruct.razuna.session.hostdbprefix#files_desc f ON f.file_id_r = l.asset_id_r AND f.lang_id_r = 1 AND l.host_id = f.host_id
+			LEFT JOIN #arguments.thestruct.razuna.session.hostdbprefix#images_text i ON i.img_id_r = l.asset_id_r AND i.lang_id_r = 1 AND l.host_id = i.host_id
+			LEFT JOIN #arguments.thestruct.razuna.session.hostdbprefix#videos_text v ON v.vid_id_r = l.asset_id_r AND v.lang_id_r = 1 AND l.host_id = v.host_id
 		</cfif>
 		WHERE l.folder_id IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#folders_list#" list="true">)
 		AND l.log_timestamp > <cfqueryparam cfsqltype="cf_sql_timestamp" value="#qGetUserSubscriptions.last_mail_notification_time#">
@@ -807,7 +780,7 @@
 		<cfset var datacols = "">
 		<cfset var fields = "">
 		<!--- Get metafields --->
-		<cfinvoke component="settings" method="get_notifications" returnvariable="fields" datasource="#request.razuna.application.datasource#" dbprefix="#request.razuna.session.hostdbprefix#" host_id="#host_id#">
+		<cfinvoke component="settings" method="get_notifications" returnvariable="fields" datasource="#arguments.thestruct.razuna.application.datasource#" dbprefix="#arguments.thestruct.razuna.session.hostdbprefix#" host_id="#host_id#" thestruct="#arguments.thestruct#">
 		<!--- Get Email subject --->
 		<cfif fields.set2_folder_subscribe_email_sub NEQ "">
 			<cfset email_subject = "#fields.set2_folder_subscribe_email_sub#">
@@ -824,7 +797,7 @@
 		<!--- Email if assets are updated in Subscribed folders --->
 		<cfif qGetUpdatedAssets.recordcount>
 			<!--- Get columns --->
-			<cfinvoke component="settings" method="getmeta_asset" assetid="#qGetUpdatedAssets.asset_id_r#" metafields="#fields.set2_folder_subscribe_meta#" returnvariable="datacols">
+			<cfinvoke component="settings" method="getmeta_asset" assetid="#qGetUpdatedAssets.asset_id_r#" metafields="#fields.set2_folder_subscribe_meta#" thestruct="#arguments.thestruct#" returnvariable="datacols">
 			<!--- Mail content --->
 			<cfsavecontent variable="mail" >
 				#email_intro#<br>
@@ -860,16 +833,16 @@
 						<td>
 						<!--- If action is not file delete then show thumb--->
 						<cfif qGetUpdatedAssets.log_action NEQ 'delete'>
-							<cfif request.razuna.application.storage EQ "local">
+							<cfif arguments.thestruct.razuna.application.storage EQ "local">
 								<cfswitch expression="#qGetUpdatedAssets.log_file_type#">
 									<cfcase value="img">
 										<cfif img_asset_path NEQ "">
-											<img src= "#request.razuna.session.thehttp##cgi.http_host##cgi.context_path#/assets/#host_id#/#img_asset_path#/thumb_#qGetUpdatedAssets.asset_id_r#.#img_thumb_ext#" height="50" onerror = "this.src=''">
+											<img src= "#arguments.thestruct.razuna.session.thehttp##cgi.http_host##cgi.context_path#/assets/#host_id#/#img_asset_path#/thumb_#qGetUpdatedAssets.asset_id_r#.#img_thumb_ext#" height="50" onerror = "this.src=''">
 										</cfif>
 									</cfcase>
 									<cfcase value="vid">
 										<cfif vid_asset_path NEQ "">
-											<img src="#request.razuna.session.thehttp##cgi.http_host##cgi.context_path#/assets/#host_id#/#vid_asset_path#/#vid_thumb#"  height="50" onerror = "this.src=''">
+											<img src="#arguments.thestruct.razuna.session.thehttp##cgi.http_host##cgi.context_path#/assets/#host_id#/#vid_asset_path#/#vid_thumb#"  height="50" onerror = "this.src=''">
 										</cfif>
 									</cfcase>
 								</cfswitch>
@@ -948,26 +921,26 @@
 						<td align="center" valign="top" width="80">
 						<!--- If action is not file delete then show file url --->
 						<cfif qGetUpdatedAssets.log_action NEQ 'delete'>
-							<cfif request.razuna.application.storage EQ "local">
+							<cfif arguments.thestruct.razuna.application.storage EQ "local">
 								<cfswitch expression="#qGetUpdatedAssets.log_file_type#">
 									<cfcase value="img">
 										<cfif img_asset_path NEQ "">
-											#request.razuna.session.thehttp##cgi.http_host##cgi.context_path#/assets/#host_id#/#img_asset_path#/#img_filenameorg#
+											#arguments.thestruct.razuna.session.thehttp##cgi.http_host##cgi.context_path#/assets/#host_id#/#img_asset_path#/#img_filenameorg#
 										</cfif>
 									</cfcase>
 									<cfcase value="doc">
 										<cfif file_asset_path NEQ "">
-											#request.razuna.session.thehttp##cgi.http_host##cgi.context_path#/assets/#host_id#/#file_asset_path#/#file_filenameorg#
+											#arguments.thestruct.razuna.session.thehttp##cgi.http_host##cgi.context_path#/assets/#host_id#/#file_asset_path#/#file_filenameorg#
 										</cfif>
 									</cfcase>
 									<cfcase value="vid">
 										<cfif vid_asset_path NEQ "">
-											#request.razuna.session.thehttp##cgi.http_host##cgi.context_path#/assets/#host_id#/#vid_asset_path#/#vid_filenameorg#
+											#arguments.thestruct.razuna.session.thehttp##cgi.http_host##cgi.context_path#/assets/#host_id#/#vid_asset_path#/#vid_filenameorg#
 										</cfif>
 									</cfcase>
 									<cfcase value="aud">
 										<cfif aud_asset_path NEQ "">
-											#request.razuna.session.thehttp##cgi.http_host##cgi.context_path#/assets/#host_id#/#aud_asset_path#/#aud_filenameorg#
+											#arguments.thestruct.razuna.session.thehttp##cgi.http_host##cgi.context_path#/assets/#host_id#/#aud_asset_path#/#aud_filenameorg#
 										</cfif>
 									</cfcase>
 								</cfswitch>
@@ -998,7 +971,7 @@
 							</cfif>
 						</cfif>
 						</td>
-						<cfinvoke component="settings" method="getmeta_asset" assetid= "#qGetUpdatedAssets.asset_id_r#" metafields="#fields.set2_folder_subscribe_meta#" returnvariable="data">
+						<cfinvoke component="settings" method="getmeta_asset" assetid= "#qGetUpdatedAssets.asset_id_r#" metafields="#fields.set2_folder_subscribe_meta#" thestruct="#arguments.thestruct#" returnvariable="data">
 						<cfloop list="#datacols.columnlist#" index="col">
 							<td>#data["#col#"][1]#</td>
 						</cfloop>
@@ -1012,11 +985,11 @@
 			<!--- Get user details --->
 			<cfinvoke component="users" method="details" thestruct="#arguments.thestruct#" returnvariable="usersdetail">
 			<!--- Send the email --->
-			<cfinvoke component="email" method="send_email" to="#usersdetail.user_email#" subject="#email_subject#" themessage="#mail#" userid="#usersdetail.user_id#"/>
+			<cfinvoke component="email" method="send_email" to="#usersdetail.user_email#" subject="#email_subject#" themessage="#mail#" userid="#usersdetail.user_id#" thestruct="#arguments.thestruct#" />
 		</cfif>
 		<!--- Update Folder Subscribe --->
-		<cfquery datasource="#request.razuna.application.datasource#">
-		UPDATE #request.razuna.session.hostdbprefix#folder_subscribe
+		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
+		UPDATE #arguments.thestruct.razuna.session.hostdbprefix#folder_subscribe
 		SET last_mail_notification_time = <cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">
 		WHERE fs_id = <cfqueryparam value="#qGetUserSubscriptions.fs_id#" cfsqltype="cf_sql_varchar">
 		</cfquery>
@@ -1027,12 +1000,13 @@
 </cffunction>
 
 <cffunction name="asset_expiry_task" output="true" access="public" >
+	<cfargument name="thestruct" type="struct" required="true" />
 
 	<!--- Check / create lock --->
 	<cfset _lockFile("expiry")>
 
 	<!--- Check if expiry label is not present for a host --->
-	<cfquery datasource="#request.razuna.application.datasource#" name="getmissing_labels">
+	<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="getmissing_labels">
 	SELECT h.HOST_ID
 	FROM raz1_labels l RIGHT JOIN hosts h
 	ON l.label_text='Asset has expired' AND l.host_id=h.host_id AND l.label_id_r = '0'
@@ -1040,7 +1014,7 @@
 	</cfquery>
 	<cfloop query="getmissing_labels">
 		<!--- Insert label for asset expiry if missing --->
-		<cfquery datasource="#request.razuna.application.datasource#">
+		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
 		INSERT INTO raz1_labels (label_id,label_text, label_date,user_id,host_id,label_id_r,label_path)
 		VALUES  (<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#createuuid()#">,
 				<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="Asset has expired">,
@@ -1053,7 +1027,7 @@
 		</cfquery>
 	</cfloop>
 	<!--- Get assets that have expired --->
-	<cfquery datasource="#request.razuna.application.datasource#" name="getexpired_assets">
+	<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="getexpired_assets">
 	SELECT img_id id, host_id, 'img' type, (SELECT MAX(label_id) FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=i.host_id AND label_id_r = '0')label_id FROM raz1_images i WHERE expiry_date < <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#"> AND NOT EXISTS (SELECT 1 FROM ct_labels WHERE ct_id_r=i.img_id AND ct_label_id IN (SELECT label_id FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=i.host_id  AND label_id_r = '0'))
 	UNION ALL
 	SELECT aud_id id, host_id, 'aud' type,(SELECT MAX(label_id)  FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=a.host_id AND label_id_r = '0')label_id  FROM raz1_audios a WHERE expiry_date < <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#"> AND NOT EXISTS (SELECT 1 FROM ct_labels WHERE ct_id_r=a.aud_id AND ct_label_id IN (SELECT label_id FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=a.host_id AND label_id_r = '0'))
@@ -1065,7 +1039,7 @@
 	SELECT file_id id, host_id, 'doc' type,(SELECT MAX(label_id)  FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=f.host_id AND label_id_r = '0')label_id FROM raz1_files f WHERE expiry_date < <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#"> AND NOT EXISTS (SELECT 1 FROM ct_labels WHERE ct_id_r=f.file_id AND ct_label_id IN (SELECT label_id FROM raz1_labels WHERE label_text ='Asset has expired'AND host_id=f.host_id AND label_id_r = '0'))
 	</cfquery>
 	<!--- Get users that are in groups which have access to the expired assets and notify them about the expiry --->
-	<cfquery datasource="#request.razuna.application.datasource#" name="getusers2notify">
+	<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="getusers2notify">
 	SELECT i.img_id id, i.img_filename name, i.host_id, f.folder_id, f.folder_name, u.user_email, u.user_Id, 'img' type, path_to_asset, thumb_extension thumb, cloud_url cloud_thumb
 	FROM raz1_images i, raz1_folders f,raz1_folders_groups fg, ct_groups_users cu, users u
 	WHERE i.folder_id_r = f.folder_id
@@ -1119,7 +1093,7 @@
 	<cfloop query="getexpired_assets">
 		<cfif getexpired_assets.label_id NEQ ''>
 			<!--- Insert label for asset expiry --->
-			<cfquery datasource="#request.razuna.application.datasource#">
+			<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
 			INSERT INTO ct_labels (ct_label_id,ct_id_r,ct_type,rec_uuid)
 			VALUES  (<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#label_id#">,
 					<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#id#">,
@@ -1141,14 +1115,14 @@
 				<cfset var tbl = 'files'>
 				<cfset var col = 'file_id'>
 			</cfif>
-			<cfquery datasource="#request.razuna.application.datasource#">
+			<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
 			UPDATE raz1_#tbl# SET is_indexed = '0'
 			WHERE #col# =<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#id#">
 			</cfquery>
 		</cfif>
 	</cfloop>
 	<!--- Get assets that  were expired but now have been reset --->
-	<cfquery datasource="#request.razuna.application.datasource#" name="getreset_assets">
+	<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="getreset_assets">
 	SELECT i.img_id id, rec_uuid FROM ct_labels c, raz1_images i WHERE i.img_id=c.ct_id_r AND c.ct_label_id in (SELECT label_id FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=i.host_id AND label_id_r = '0')
 	AND (expiry_date IS NULL OR expiry_date >= <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#">)
 	UNION ALL
@@ -1165,26 +1139,26 @@
 	<cfset var assetlist = valuelist(getreset_assets.id)>
 	<cfif resetlist neq ''>
 		<!--- Remove expired label from assets  that have been reset --->
-		<cfquery datasource="#request.razuna.application.datasource#">
+		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
 			DELETE FROM ct_labels WHERE rec_uuid IN ( <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#resetlist#" list="true">)
 		</cfquery>
 		<!--- Update indexing statuses --->
-		<cfquery datasource="#request.razuna.application.datasource#">
+		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
 			UPDATE raz1_images SET is_indexed = '0' WHERE img_id IN ( <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#assetlist#" list="true">)
 		</cfquery>
-		<cfquery datasource="#request.razuna.application.datasource#">
+		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
 			UPDATE raz1_audios SET is_indexed = '0' WHERE aud_id IN ( <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#assetlist#" list="true">)
 		</cfquery>
-		<cfquery datasource="#request.razuna.application.datasource#">
+		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
 			UPDATE raz1_videos SET is_indexed = '0' WHERE vid_id IN ( <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#assetlist#" list="true">)
 		</cfquery>
-		<cfquery datasource="#request.razuna.application.datasource#">
+		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
 			UPDATE raz1_files SET is_indexed = '0' WHERE file_id IN ( <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#assetlist#" list="true">)
 		</cfquery>
 	</cfif>
 	<!--- Reset labels cache if labels have been modified--->
 	<cfif getexpired_assets.recordcount NEQ 0 OR getreset_assets.recordcount NEQ 0>
-		<cfset resetcachetoken(type="labels","true")>
+		<cfset resetcachetoken(type="labels", nohost="true", thestruct=arguments.thestruct)>
 	</cfif>
 
 	<cfloop query ="getuserinfo">
@@ -1192,9 +1166,9 @@
 		<cfset var datacols= "">
 		<cfset var fields= "">
 		<!--- Get metafields --->
-		<cfinvoke component="global.cfc.settings" method="get_notifications" returnvariable="fields" datasource="#request.razuna.application.datasource#" dbprefix="#request.razuna.session.hostdbprefix#" host_id="#host_id#">
+		<cfinvoke component="global.cfc.settings" method="get_notifications" returnvariable="fields" datasource="#arguments.thestruct.razuna.application.datasource#" dbprefix="#arguments.thestruct.razuna.session.hostdbprefix#" host_id="#host_id#" thestruct="#arguments.thestruct#" >
 		<!--- Get columns --->
-		<cfinvoke component="global.cfc.settings" method="getmeta_asset" assetid= "#getusers2notify.id#" metafields="#fields.set2_asset_expiry_meta#" returnvariable="datacols">
+		<cfinvoke component="global.cfc.settings" method="getmeta_asset" assetid= "#getusers2notify.id#" metafields="#fields.set2_asset_expiry_meta#" returnvariable="datacols" thestruct="#arguments.thestruct#">
 
 		<!--- Send out notification email about expiry to users in groups that have access to the expired assets--->
 		<!--- Get Email subject --->
@@ -1228,19 +1202,19 @@
 					</cfloop>
 				</tr>
 			<cfloop query = "getusers2email">
-				<cfinvoke component="global.cfc.settings" method="getmeta_asset" assetid= "#getusers2email.id#" metafields="#fields.set2_asset_expiry_meta#" returnvariable="data">
+				<cfinvoke component="global.cfc.settings" method="getmeta_asset" assetid= "#getusers2email.id#" metafields="#fields.set2_asset_expiry_meta#" returnvariable="data" thestruct="#arguments.thestruct#">
 				<tr>
 					<td nowrap="true">#getusers2email.id#</td>
 					<td nowrap="true">#getusers2email.name#</td>
 					<td>
-					<cfif request.razuna.application.storage EQ "local">
+					<cfif arguments.thestruct.razuna.application.storage EQ "local">
 						<cfif path_to_asset NEQ "">
 							<cfswitch expression="#getusers2email.type#">
 								<cfcase value="img">
-									<img src= "#request.razuna.session.thehttp##cgi.http_host##cgi.context_path#/assets/#request.razuna.session.hostid#/#path_to_asset#/thumb_#getusers2email.id#.#thumb#" height="50" onerror = "this.src=''">
+									<img src= "#arguments.thestruct.razuna.session.thehttp##cgi.http_host##cgi.context_path#/assets/#arguments.thestruct.razuna.session.hostid#/#path_to_asset#/thumb_#getusers2email.id#.#thumb#" height="50" onerror = "this.src=''">
 								</cfcase>
 								<cfcase value="vid">
-									<img src="#request.razuna.session.thehttp##cgi.http_host##cgi.context_path#/assets/#request.razuna.session.hostid#/#path_to_asset#/#thumb#"  height="50" onerror = "this.src=''">
+									<img src="#arguments.thestruct.razuna.session.thehttp##cgi.http_host##cgi.context_path#/assets/#arguments.thestruct.razuna.session.hostid#/#path_to_asset#/#thumb#"  height="50" onerror = "this.src=''">
 								</cfcase>
 							</cfswitch>
 						</cfif>
@@ -1268,7 +1242,7 @@
 		</cfsavecontent>
 		</cfoutput>
 		<!--- Send the email --->
-		<cfinvoke component="email" method="send_email" to="#getuserinfo.user_email#" subject="#email_subject#" themessage="#msgbody#" userid="#getuserinfo.user_id#"/>
+		<cfinvoke component="email" method="send_email" to="#getuserinfo.user_email#" subject="#email_subject#" themessage="#msgbody#" userid="#getuserinfo.user_id#" thestruct="#arguments.thestruct#" />
 	</cfloop>
 
 	<cfset _removeLockFile('expiry') />
@@ -1276,8 +1250,9 @@
 </cffunction>
 
 <cffunction name="ftp_notifications_task" output="true" access="public" >
+	<cfargument name="thestruct" type="struct" required="true" />
 	<!--- Check if expiry label is not present for a host --->
-	<cfquery datasource="#request.razuna.application.datasource#" name="getlogs">
+	<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="getlogs">
 	SELECT l.sched_log_id, s.sched_id, s.sched_ftp_email, l.sched_log_action, l.sched_log_desc, l.sched_log_time
 	FROM raz1_schedules_log l, raz1_schedules s
 	WHERE s.sched_id = l.sched_id_r
@@ -1311,7 +1286,7 @@
 						<td>#getdata.sched_log_desc#</td>
 						<td>#dateformat(getdata.sched_log_time,"mm/dd/yyyy")#  #timeformat(getdata.sched_log_time,"hh:mm tt")#</td>
 					</tr>
-					<cfquery datasource="#request.razuna.application.datasource#" name="getlogs">
+					<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="getlogs">
 					UPDATE raz1_schedules_log SET notified=<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="true">
 					WHERE sched_log_id =<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#getdata.sched_log_id#">
 					</cfquery>
@@ -1320,7 +1295,7 @@
 		 </cfsavecontent>
 		</cfoutput>
 		 <!--- Send the email --->
-		<cfinvoke component="email" method="send_email" to="#getusers.sched_ftp_email#" subject="FTP Task Notifications" themessage="#msgbody#"/>
+		<cfinvoke component="email" method="send_email" to="#getusers.sched_ftp_email#" subject="FTP Task Notifications" themessage="#msgbody#" thestruct="#arguments.thestruct#" />
 	</cfloop>
 </cffunction>
 
@@ -1390,18 +1365,19 @@
 
 <!--- Get scripts --->
 <cffunction name="getScripts" access="public" returntype="query">
+	<cfargument name="thestruct" type="struct" required="true" />
 	<cfset var qry = "">
-	<cfquery datasource="#request.razuna.application.datasource#" name="qry">
+	<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qry">
 	SELECT value, date_added, sched_id, 
 		(
 			SELECT value
-			FROM #request.razuna.session.hostdbprefix#scheduled_scripts
+			FROM #arguments.thestruct.razuna.session.hostdbprefix#scheduled_scripts
 			WHERE id_name = <cfqueryparam CFSQLType="cf_sql_varchar" value="sched_script_active">
-			AND host_id = <cfqueryparam CFSQLType="cf_sql_numeric" value="#request.razuna.session.hostid#">
+			AND host_id = <cfqueryparam CFSQLType="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 		) as active
-	FROM #request.razuna.session.hostdbprefix#scheduled_scripts
+	FROM #arguments.thestruct.razuna.session.hostdbprefix#scheduled_scripts
 	WHERE id_name = <cfqueryparam CFSQLType="cf_sql_varchar" value="sched_script_name">
-	AND host_id = <cfqueryparam CFSQLType="cf_sql_numeric" value="#request.razuna.session.hostid#">
+	AND host_id = <cfqueryparam CFSQLType="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 	GROUP BY sched_id, date_added, value
 	ORDER BY date_added DESC
 	</cfquery>
@@ -1411,14 +1387,15 @@
 <!--- Get scripts --->
 <cffunction name="getScript" access="public" returntype="struct">
 	<cfargument name="id" required="yes" type="string">
+	<cfargument name="thestruct" type="struct" required="true" />
 	<cfset var qry = "">
 	<cfset var _data = structNew()>
 	<cfset _data.new_record = false>
-	<cfquery datasource="#request.razuna.application.datasource#" name="qry">
+	<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qry">
 	SELECT id_name, value, sched_id
-	FROM #request.razuna.session.hostdbprefix#scheduled_scripts
+	FROM #arguments.thestruct.razuna.session.hostdbprefix#scheduled_scripts
 	WHERE sched_id = <cfqueryparam CFSQLType="cf_sql_varchar" value="#arguments.id#">
-	AND host_id = <cfqueryparam CFSQLType="cf_sql_numeric" value="#request.razuna.session.hostid#">
+	AND host_id = <cfqueryparam CFSQLType="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 	</cfquery>
 	<!--- Define defautl values --->
 	<cfset _data.SCHED_SCRIPT_NAME = 'ScriptName'>
@@ -1466,8 +1443,8 @@
 		<cfset arguments.thestruct.sched_id = createuuid('')>
 	<!--- Else we remove all records for this id --->
 	<cfelse>
-		<cfquery datasource="#request.razuna.application.datasource#">
-		DELETE FROM #request.razuna.session.hostdbprefix#scheduled_scripts
+		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
+		DELETE FROM #arguments.thestruct.razuna.session.hostdbprefix#scheduled_scripts
 		WHERE sched_id = <cfqueryparam CFSQLType="cf_sql_varchar" value="#arguments.thestruct.sched_id#">
 		</cfquery>
 	</cfif>
@@ -1477,13 +1454,13 @@
 		<cfif field CONTAINS "sched_script_">
 			<cfset console("Field: ", field, arguments.thestruct['#field#'])>
 			<!--- Insert --->
-			<cfquery datasource="#request.razuna.application.datasource#">
-			INSERT INTO #request.razuna.session.hostdbprefix#scheduled_scripts
+			<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
+			INSERT INTO #arguments.thestruct.razuna.session.hostdbprefix#scheduled_scripts
 			(id_name, value, host_id, date_added, sched_id)
 			VALUES(
 				<cfqueryparam CFSQLType="cf_sql_varchar" value="#field#">,
 				<cfqueryparam CFSQLType="cf_sql_varchar" value="#arguments.thestruct['#field#']#">,
-				<cfqueryparam CFSQLType="cf_sql_numeric" value="#request.razuna.session.hostid#">,
+				<cfqueryparam CFSQLType="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">,
 				<cfqueryparam CFSQLType="cf_sql_timestamp" value="#_date#">,
 				<cfqueryparam CFSQLType="cf_sql_varchar" value="#arguments.thestruct.sched_id#">
 			)
@@ -1570,20 +1547,20 @@
 	</cfif>
 
 	<!--- Images --->
-	<cfquery datasource="#request.razuna.application.datasource#" name="_img">
+	<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="_img">
 	SELECT i.img_filename as filename, i.path_to_asset, i.cloud_url, i.cloud_url_org, 'img' as type, f.folder_name,
-	<cfif request.razuna.application.thedatabase EQ "mssql">img_id + '-img'<cfelse>concat(img_id,'-img')</cfif> as file_id
+	<cfif arguments.thestruct.razuna.application.thedatabase EQ "mssql">img_id + '-img'<cfelse>concat(img_id,'-img')</cfif> as file_id
 	<cfif ListLen(_labels)>
 		, l.label_path
 	<cfelse>
 		, '' as label_path
 	</cfif>
-	FROM #request.razuna.session.hostdbprefix#folders f, #request.razuna.session.hostdbprefix#images i
+	FROM #arguments.thestruct.razuna.session.hostdbprefix#folders f, #arguments.thestruct.razuna.session.hostdbprefix#images i
 	<cfif ListLen(_labels)>
 		LEFT JOIN ct_labels ct ON ct.ct_id_r = i.img_id
-		LEFT JOIN #request.razuna.session.hostdbprefix#labels l ON l.label_id = ct.ct_label_id
+		LEFT JOIN #arguments.thestruct.razuna.session.hostdbprefix#labels l ON l.label_id = ct.ct_label_id
 	</cfif>
-	WHERE i.host_id = <cfqueryparam CFSQLType="cf_sql_numeric" value="#request.razuna.session.hostid#">
+	WHERE i.host_id = <cfqueryparam CFSQLType="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 	AND i.in_trash = <cfqueryparam CFSQLType="cf_sql_varchar" value="f">
 	AND f.folder_id = i.folder_id_r
 	<cfif _filename NEQ "">
@@ -1608,20 +1585,20 @@
 
 
 	<!--- Videos --->
-	<cfquery datasource="#request.razuna.application.datasource#" name="_vid">
+	<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="_vid">
 	SELECT i.vid_filename as filename, i.path_to_asset, i.cloud_url, i.cloud_url_org, 'vid' as type, f.folder_name,
-	<cfif request.razuna.application.thedatabase EQ "mssql">vid_id + '-vid'<cfelse>concat(vid_id,'-vid')</cfif> as file_id
+	<cfif arguments.thestruct.razuna.application.thedatabase EQ "mssql">vid_id + '-vid'<cfelse>concat(vid_id,'-vid')</cfif> as file_id
 	<cfif ListLen(_labels)>
 		, l.label_path
 	<cfelse>
 		, '' as label_path
 	</cfif>
-	FROM #request.razuna.session.hostdbprefix#folders f, #request.razuna.session.hostdbprefix#videos i
+	FROM #arguments.thestruct.razuna.session.hostdbprefix#folders f, #arguments.thestruct.razuna.session.hostdbprefix#videos i
 	<cfif ListLen(_labels)>
 		LEFT JOIN ct_labels ct ON ct.ct_id_r = i.vid_id
-		LEFT JOIN #request.razuna.session.hostdbprefix#labels l ON l.label_id = ct.ct_label_id
+		LEFT JOIN #arguments.thestruct.razuna.session.hostdbprefix#labels l ON l.label_id = ct.ct_label_id
 	</cfif>
-	WHERE i.host_id = <cfqueryparam CFSQLType="cf_sql_numeric" value="#request.razuna.session.hostid#">
+	WHERE i.host_id = <cfqueryparam CFSQLType="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 	AND i.in_trash = <cfqueryparam CFSQLType="cf_sql_varchar" value="f">
 	AND f.folder_id = i.folder_id_r
 	<cfif _filename NEQ "">
@@ -1642,20 +1619,20 @@
 	</cfquery>
 
 	<!--- Audios --->
-	<cfquery datasource="#request.razuna.application.datasource#" name="_aud">
+	<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="_aud">
 	SELECT i.aud_name as filename, i.path_to_asset, i.cloud_url, i.cloud_url_org, 'aud' as type, f.folder_name,
-	<cfif request.razuna.application.thedatabase EQ "mssql">aud_id + '-aud'<cfelse>concat(aud_id,'-aud')</cfif> as file_id
+	<cfif arguments.thestruct.razuna.application.thedatabase EQ "mssql">aud_id + '-aud'<cfelse>concat(aud_id,'-aud')</cfif> as file_id
 	<cfif ListLen(_labels)>
 		, l.label_path
 	<cfelse>
 		, '' as label_path
 	</cfif>
-	FROM #request.razuna.session.hostdbprefix#folders f, #request.razuna.session.hostdbprefix#audios i
+	FROM #arguments.thestruct.razuna.session.hostdbprefix#folders f, #arguments.thestruct.razuna.session.hostdbprefix#audios i
 	<cfif ListLen(_labels)>
 		LEFT JOIN ct_labels ct ON ct.ct_id_r = i.aud_id
-		LEFT JOIN #request.razuna.session.hostdbprefix#labels l ON l.label_id = ct.ct_label_id
+		LEFT JOIN #arguments.thestruct.razuna.session.hostdbprefix#labels l ON l.label_id = ct.ct_label_id
 	</cfif>
-	WHERE i.host_id = <cfqueryparam CFSQLType="cf_sql_numeric" value="#request.razuna.session.hostid#">
+	WHERE i.host_id = <cfqueryparam CFSQLType="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 	AND i.in_trash = <cfqueryparam CFSQLType="cf_sql_varchar" value="f">
 	AND f.folder_id = i.folder_id_r
 	<cfif _filename NEQ "">
@@ -1676,20 +1653,20 @@
 	</cfquery>
 
 	<!--- Files --->
-	<cfquery datasource="#request.razuna.application.datasource#" name="_doc">
+	<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="_doc">
 	SELECT i.file_name as filename, i.path_to_asset, i.cloud_url, i.cloud_url_org, 'doc' as type, f.folder_name,
-	<cfif request.razuna.application.thedatabase EQ "mssql">file_id + '-doc'<cfelse>concat(file_id,'-doc')</cfif> as file_id
+	<cfif arguments.thestruct.razuna.application.thedatabase EQ "mssql">file_id + '-doc'<cfelse>concat(file_id,'-doc')</cfif> as file_id
 	<cfif ListLen(_labels)>
 		, l.label_path
 	<cfelse>
 		, '' as label_path
 	</cfif>
-	FROM #request.razuna.session.hostdbprefix#folders f, #request.razuna.session.hostdbprefix#files i
+	FROM #arguments.thestruct.razuna.session.hostdbprefix#folders f, #arguments.thestruct.razuna.session.hostdbprefix#files i
 	<cfif ListLen(_labels)>
 		LEFT JOIN ct_labels ct ON ct.ct_id_r = i.file_id
-		LEFT JOIN #request.razuna.session.hostdbprefix#labels l ON l.label_id = ct.ct_label_id
+		LEFT JOIN #arguments.thestruct.razuna.session.hostdbprefix#labels l ON l.label_id = ct.ct_label_id
 	</cfif>
-	WHERE i.host_id = <cfqueryparam CFSQLType="cf_sql_numeric" value="#request.razuna.session.hostid#">
+	WHERE i.host_id = <cfqueryparam CFSQLType="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 	AND i.in_trash = <cfqueryparam CFSQLType="cf_sql_varchar" value="f">
 	AND f.folder_id = i.folder_id_r
 	<cfif _filename NEQ "">
@@ -1727,10 +1704,11 @@
 <!--- Get scripts that need to be executed in the time frame argument --->
 <cffunction name="getScriptTime" access="public" returntype="query">
 	<cfargument name="script_interval" required="yes" type="string">
+	<cfargument name="thestruct" type="struct" required="true" />
 	<cfset var qry = "">
-	<cfquery datasource="#request.razuna.application.datasource#" name="qry">
+	<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qry">
 	SELECT host_id, sched_id
-	FROM #request.razuna.session.hostdbprefix#scheduled_scripts
+	FROM #arguments.thestruct.razuna.session.hostdbprefix#scheduled_scripts
 	WHERE id_name = <cfqueryparam CFSQLType="cf_sql_varchar" value="sched_script_interval">
 	AND value = <cfqueryparam CFSQLType="cf_sql_varchar" value="#arguments.script_interval#">
 	</cfquery>

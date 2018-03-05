@@ -28,6 +28,22 @@
 		<cfreturn true />
 	</cffunction>
 
+	<!--- On Request start --->
+	<cffunction name="OnRequestStart" access="public" output="false">
+		<cfset var _config = "">
+		<!--- Get database --->
+		<cfquery datasource="razuna_default" name="_config">
+		SELECT conf_database, conf_datasource, conf_storage, conf_aws_access_key, conf_aws_secret_access_key, conf_aws_location, conf_aws_tenant_in_one_bucket_name, conf_aws_tenant_in_one_bucket_enable
+		FROM razuna_config
+		</cfquery>
+		<!--- Put into request scope --->
+		<cfset request.razuna = structnew()>
+		<cfset request.razuna.application.datasource = _config.conf_datasource>
+		<cfset request.razuna.application.storage = _config.conf_storage>
+		<cfset request.razuna.application.thedatabase = _config.conf_database>
+
+
+	</cffunction>
 
 	<!--- <cffunction	name="OnSessionStart" access="public" returntype="void"	output="false" hint="Fires when the session is first created.">
 

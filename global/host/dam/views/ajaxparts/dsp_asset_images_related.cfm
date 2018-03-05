@@ -87,7 +87,7 @@
 						<cfset args.detail.path_to_asset = path_to_asset>
 						<cfset args.detail.img_filename_org = img_filename>
 						<cfset args.thefiletype = "img">
-						<cfinvoke component="global.cfc.plugins" method="getactions" theaction="show_in_direct_link" args="#args#" returnvariable="pl">
+						<cfinvoke component="global.cfc.plugins" method="getactions" theaction="show_in_direct_link" args="#args#" thestruct="#attributes#" returnvariable="pl">
 						<!--- Show plugin --->
 						<cfif structKeyExists(pl,"pview")>
 							<cfloop list="#pl.pview#" delimiters="," index="i">

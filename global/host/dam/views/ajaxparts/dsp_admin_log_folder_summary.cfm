@@ -47,7 +47,7 @@
 	<cfif isDefined("showcrumbs")>
 		<!--- Get entire folder path --->
 		<cfset folderpath = "">
-		<cfset crumbs = myFusebox.getApplicationData().folders.getbreadcrumb(folder_id)>
+		<cfset crumbs = myFusebox.getApplicationData().folders.getbreadcrumb(folder_id_r=folder_id, thestruct=attributes)>
 		<cfloop list="#crumbs#" delimiters=";" index="i">
 			<cfset folderpath = folderpath & " / <a href='##' onclick=loadcontent('log_show','#myself#c.log_folder_summary&folder_id=#ListGetAt(i,2,'|')#&showcrumbs=yes');>#ListGetAt(i,1,'|')#</a>">
 		</cfloop>
@@ -59,9 +59,9 @@
 		<cfloop query ="folders">
 			<!--- Get asset totals for folder that is sorted so we can display it properly --->
 			<cfif session.getallassets>
-				<cfset totals = myFusebox.getApplicationData().folders.GetTotalAllAssets(folder_id)>
+				<cfset totals = myFusebox.getApplicationData().folders.GetTotalAllAssets(folder_id=folder_id, thestruct=attributes)>
 			<cfelse>
-				<cfset totals = myFusebox.getApplicationData().folders.filetotalalltypes(folder_id,'','scr')>
+				<cfset totals = myFusebox.getApplicationData().folders.filetotalalltypes(folder_id=folder_id, folderaccess='', sortby='scr', thestruct=attributes)>
 			</cfif>
 			<tr>
 				<td>

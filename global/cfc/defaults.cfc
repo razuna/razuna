@@ -31,54 +31,55 @@
 
 <!--- GET THE LANGUAGES --->
 <cffunction name="getlangs" output="false">
+	<cfargument name="thestruct" type="struct" required="true" />
 	<cftry>
 		<!--- Get the cachetoken for here --->
-		<cfset variables.cachetoken = getcachetoken(type="settings", hostid=request.razuna.session.hostid)>
+		<cfset variables.cachetoken = getcachetoken(type="settings", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 		<!--- Query --->
-		<cfquery datasource="#request.razuna.application.datasource#" name="thelangs" cachedwithin="1" region="razcache">
+		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="thelangs" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#getlangs */ lang_id, lang_name
-		FROM #request.razuna.session.hostdbprefix#languages
+		FROM #arguments.thestruct.razuna.session.hostdbprefix#languages
 		WHERE lang_active = <cfqueryparam value="t" cfsqltype="cf_sql_varchar">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 		ORDER BY lang_id
 		</cfquery>
 		<!--- If no record is found then insert the default English one --->
 		<cfif thelangs.recordcount EQ 0>
 			<!--- Check if english is here or not --->
-			<cfquery datasource="#request.razuna.application.datasource#" name="thelangseng" cachedwithin="1" region="razcache">
+			<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="thelangseng" cachedwithin="1" region="razcache">
 			SELECT /* #variables.cachetoken#getlangeng */ lang_id
-			FROM #request.razuna.session.hostdbprefix#languages
-			WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
+			FROM #arguments.thestruct.razuna.session.hostdbprefix#languages
+			WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 			AND lang_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="1">
 			</cfquery>
 			<cfif thelangseng.recordcount EQ 0>
-				<cfquery datasource="#request.razuna.application.datasource#">
-				INSERT INTO #request.razuna.session.hostdbprefix#languages
+				<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
+				INSERT INTO #arguments.thestruct.razuna.session.hostdbprefix#languages
 				(lang_id, lang_name, lang_active, host_id, rec_uuid)
 				VALUES(
 				<cfqueryparam value="1" cfsqltype="cf_sql_numeric">,
 				<cfqueryparam value="English" cfsqltype="cf_sql_varchar">,
 				<cfqueryparam value="t" cfsqltype="cf_sql_varchar">,
-				<cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">,
+				<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">,
 				<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 				)
 				</cfquery>
 			<cfelse>
-				<cfquery datasource="#request.razuna.application.datasource#">
-				UPDATE #request.razuna.session.hostdbprefix#languages
+				<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
+				UPDATE #arguments.thestruct.razuna.session.hostdbprefix#languages
 				SET lang_active = <cfqueryparam value="t" cfsqltype="cf_sql_varchar">
 				WHERE lang_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="1">
-				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 				</cfquery>
 			</cfif>
 			<!--- Reset Cache --->
-			<cfset variables.cachetoken = resetcachetoken(type="general", hostid=request.razuna.session.hostid)>
+			<cfset variables.cachetoken = resetcachetoken(type="general", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 			<!--- Query again --->
-			<cfquery datasource="#request.razuna.application.datasource#" name="thelangs" cachedwithin="1" region="razcache">
+			<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="thelangs" cachedwithin="1" region="razcache">
 			SELECT /* #variables.cachetoken#getlangsagain */ lang_id, lang_name
-			FROM #request.razuna.session.hostdbprefix#languages
+			FROM #arguments.thestruct.razuna.session.hostdbprefix#languages
 			WHERE lang_active = <cfqueryparam value="t" cfsqltype="cf_sql_varchar">
-			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 			ORDER BY lang_id
 			</cfquery>
 		</cfif>
@@ -109,9 +110,9 @@
 <cffunction name="trans" access="public" output="false" returntype="string">
 	<cfargument name="transid" default="" required="yes" type="string">
 	<cfargument name="values" type="array" required="false" default="#arrayNew(1)#" />
-	<cfargument name="thelang" default="#request.razuna.session.thelang#" required="false" type="string">
+	<cfargument name="thelang" default="English" required="false" type="string">
 	<cfargument name="thetransfile" default="#arguments.thelang#" required="false" type="string">
-	<cfreturn request.razuna.application.trans.getString(resourceBundleName = 'HomePage', key = arguments.transid, locale = arguments.thetransfile, values = arguments.values)>
+	<cfreturn application.razuna.trans.getString(resourceBundleName = 'HomePage', key = arguments.transid, locale = arguments.thetransfile, values = arguments.values)>
 </cffunction>
 
 <!--- PARSE THE LANGUAGE ID FOR ADMIN --->
@@ -136,8 +137,7 @@
 
 
 <!--- Get absolute path from relative path --->
-<cffunction name="getAbsolutePath" returntype="string"
-						output="false" access="public" >
+<cffunction name="getAbsolutePath" returntype="string" output="false" access="public" >
 	<cfargument name="pathSourceAbsolute" type="string" required="true" >
 	<cfargument name="pathTargetRelative" type="string" required="true" >
 	<!--- function internal vars --->
@@ -155,12 +155,13 @@
 </cffunction>
 
 <!--- GET THE PATH OF THIS HOST --->
-<cffunction  name="hostpath" output="false" returntype="string">
+<cffunction name="hostpath" output="false" returntype="string">
+	<cfargument name="thestruct" type="struct" required="true" />
 	<cfset var hostp = 0>
-	<cfquery datasource="#request.razuna.application.datasource#" name="hostp">
+	<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="hostp">
 	SELECT host_path
 	FROM hosts
-	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
+	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 	</cfquery>
 	<cfreturn trim(hostp.host_path)>
 </cffunction>
@@ -172,25 +173,27 @@
 </cffunction>
 
 <!--- GET HOW MANY LANGUAGES THIS HOST IS ALLOWED --->
-<cffunction  name="howmanylang" output="false" returntype="numeric">
+<cffunction name="howmanylang" output="false" returntype="numeric">
+	<cfargument name="thestruct" type="struct" required="true" />
 	<cfset var langs = 0>
-	<cfquery datasource="#request.razuna.application.datasource#" name="langs">
+	<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="langs">
 		SELECT host_lang 
 		FROM hosts
-		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
+		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 	</cfquery>
 	<cfreturn val(langs.host_lang)>
 </cffunction>
 
 <!--- GET THE LANGUAGE TAG --->
-<cffunction  name="thislang" output="false" returntype="string">
+<cffunction name="thislang" output="false" returntype="string">
 	<cfargument name="theid" default="" required="yes" type="string">
+	<cfargument name="thestruct" type="struct" required="true" />
 	<cfset var thislang = 0>
-	<cfquery datasource="#request.razuna.application.datasource#" name="thislang">
+	<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="thislang">
 	SELECT set_pref 
-	FROM #request.razuna.session.hostdbprefix#settings
+	FROM #arguments.thestruct.razuna.session.hostdbprefix#settings
 	WHERE set_id = <cfqueryparam value="#arguments.theid#" cfsqltype="cf_sql_varchar">
-	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 	</cfquery>
 	<cfreturn trim(thislang.set_pref)>
 </cffunction>
@@ -208,24 +211,16 @@
 </cffunction>
 
 <!--- GET THE DATE FORMAT OF THIS HOST --->
-<cffunction  name="getdateformat" output="false" returntype="string">
-	<cfargument name="datasource" type="string" required="false" default="">
-	<cfargument name="dbprefix" type="string" required="false" default="">
-	<cfargument name="host_id" type="numeric" required="false" default="0">
-	<!--- Decide what to take --->
-	<cfif ! arguments.host_id>
-		<cfset arguments.datasource = request.razuna.application.datasource>
-		<cfset arguments.host_id = request.razuna.session.hostid>
-		<cfset arguments.dbprefix = request.razuna.session.hostdbprefix>
-	</cfif>
+<cffunction name="getdateformat" output="false" returntype="string">
+	<cfargument name="thestruct" type="struct" required="true" />
 	<!--- init function internal vars --->
 	<cfset var qDateFormat = 0>
 	<cfset var mydate = "">
-	<cfquery datasource="#arguments.datasource#" name="qDateFormat">
+	<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qDateFormat">
 	SELECT set2_date_format, set2_date_format_del
-	FROM #arguments.dbprefix#settings_2
+	FROM #arguments.thestruct.razuna.session.hostdbprefix#settings_2
 	WHERE set2_id = <cfqueryparam value="1" cfsqltype="cf_sql_numeric">
-	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.host_id#">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 	</cfquery>
 	<cfswitch expression="#qDateFormat.set2_date_format#">
 		<cfcase value="euro">

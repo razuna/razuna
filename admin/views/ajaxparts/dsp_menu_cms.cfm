@@ -37,7 +37,7 @@
 								<td width="27">
 									<img src="images/button_menu/pageexplorer_24.png" alt="" width="24" height="24" border="0" align="left">
 								</td>
-								<td width="212" class="textbold">#defaultsObj.trans("pageexplorer")#</td>
+								<td width="212" class="textbold">#myFusebox.getApplicationData().defaults.trans("pageexplorer")#</td>
 							</tr>
 						</table>
 					</td>
@@ -46,7 +46,7 @@
 			<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table_border">
 				<tr>
 					<td valign="top">
-						<a href="##" onclick="javascript:loadcontent('rightside','#myself##xfa.pageexplorer#');return false;">&raquo; #defaultsObj.trans("pageexplorer")#</a>
+						<a href="##" onclick="javascript:loadcontent('rightside','#myself##xfa.pageexplorer#');return false;">&raquo; #myFusebox.getApplicationData().defaults.trans("pageexplorer")#</a>
 					</td>
 				</tr>
 			</table>
@@ -59,7 +59,7 @@
 								<td width="27">
 									<img src="images/button_menu/news_24.png" alt="" width="24" height="24" border="0" align="left">
 								</td>
-								<td width="212" class="textbold">#defaultsObj.trans("news")#</td>
+								<td width="212" class="textbold">#myFusebox.getApplicationData().defaults.trans("news")#</td>
 							</tr>
 						</table>
 					</td>
@@ -68,7 +68,7 @@
 			<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table_border">
 				<tr>
 					<td valign="top">
-						<a href="##" onclick="javascript:loadcontent('rightside','#myself##xfa.news_cat_explorer#');return false;">&raquo; #defaultsObj.trans("news_edit")#</a>
+						<a href="##" onclick="javascript:loadcontent('rightside','#myself##xfa.news_cat_explorer#');return false;">&raquo; #myFusebox.getApplicationData().defaults.trans("news_edit")#</a>
 					</td>
 				</tr>
 			</table>
@@ -90,50 +90,50 @@
 			<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table_border">
 				<tr>
 					<td valign="top">
-						<a href="##" onclick="javascript:loadcontent('rightside','#myself##xfa.faq_cat_explorer#');return false;">&raquo; #defaultsObj.trans("faq_edit")#</a>
+						<a href="##" onclick="javascript:loadcontent('rightside','#myself##xfa.faq_cat_explorer#');return false;">&raquo; #myFusebox.getApplicationData().defaults.trans("faq_edit")#</a>
 					</td>
 				</tr>
 			</table>
 			<!--- Mailing
 			<table width="100%" border="0" cellspacing="0" cellpadding="0" style="padding-top:15px;">
 			<tr>
-			<td height="30" nowrap background="images/button_menu/bggrey.gif" id="divlink_4"><table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="27"><img src="images/button_menu/mail_24.png" alt="" width="24" height="24" border="0" align="left"></td><td width="212" class="textbold">#defaultsObj.trans("user_mailinglist")#</td></tr></table></td>
+			<td height="30" nowrap background="images/button_menu/bggrey.gif" id="divlink_4"><table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="27"><img src="images/button_menu/mail_24.png" alt="" width="24" height="24" border="0" align="left"></td><td width="212" class="textbold">#myFusebox.getApplicationData().defaults.trans("user_mailinglist")#</td></tr></table></td>
 			</tr>
 			</table>
 			<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table_border">
 			<tr>
-			<td valign="top"><a href="">&raquo; #defaultsObj.trans("mailing_sendmail")#</a></td>
+			<td valign="top"><a href="">&raquo; #myFusebox.getApplicationData().defaults.trans("mailing_sendmail")#</a></td>
 			</tr>
 			<tr>
-			<td valign="top"><a href="">&raquo; #defaultsObj.trans("mailing_editlists")#</a></td>
+			<td valign="top"><a href="">&raquo; #myFusebox.getApplicationData().defaults.trans("mailing_editlists")#</a></td>
 			</tr>
 			<tr>
-			<td valign="top"><a href="">&raquo; #defaultsObj.trans("mailing_archive")#</a></td>
+			<td valign="top"><a href="">&raquo; #myFusebox.getApplicationData().defaults.trans("mailing_archive")#</a></td>
 			</tr>
 			</table> --->
 			<!--- Reports
 			<table width="100%" border="0" cellspacing="0" cellpadding="0" style="padding-top:15px;">
 			<tr>
-			<td height="30" nowrap background="images/button_menu/bggrey.gif" id="divlink_5"><table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="27"><img src="images/button_menu/chart_24.png" alt="" width="24" height="24" border="0" align="left"></td><td width="212" class="textbold">#defaultsObj.trans("reports")#</td></tr></table></td>
+			<td height="30" nowrap background="images/button_menu/bggrey.gif" id="divlink_5"><table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="27"><img src="images/button_menu/chart_24.png" alt="" width="24" height="24" border="0" align="left"></td><td width="212" class="textbold">#myFusebox.getApplicationData().defaults.trans("reports")#</td></tr></table></td>
 			</tr>
 			</table>
 			<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table_border">
 			<tr>
-			<td valign="top"><a href="">&raquo; #defaultsObj.trans("report_stats")# (Website)</a></td>
+			<td valign="top"><a href="">&raquo; #myFusebox.getApplicationData().defaults.trans("report_stats")# (Website)</a></td>
 			</tr>
 			<tr>
-			<td valign="top"><a href="">&raquo; #defaultsObj.trans("report_stats")# (Media Center)</a></td>
+			<td valign="top"><a href="">&raquo; #myFusebox.getApplicationData().defaults.trans("report_stats")# (Media Center)</a></td>
 			</tr>
 			</table> --->
 			<!--- Flex
 			<table width="100%" border="0" cellspacing="0" cellpadding="0" style="padding-top:15px;">
 			<tr>
-			<td height="30" nowrap background="images/button_menu/bggrey.gif" id="divlink_6"><table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="27"><img src="images/button_menu/flex_24.png" alt="" width="24" height="24" border="0" align="left"></td><td width="212" class="textbold">#defaultsObj.trans("flexbuilder")#</td></tr></table></td>
+			<td height="30" nowrap background="images/button_menu/bggrey.gif" id="divlink_6"><table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="27"><img src="images/button_menu/flex_24.png" alt="" width="24" height="24" border="0" align="left"></td><td width="212" class="textbold">#myFusebox.getApplicationData().defaults.trans("flexbuilder")#</td></tr></table></td>
 			</tr>
 			</table>
 			<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table_border">
 			<tr>
-			<td valign="top"><a href="">&raquo; #defaultsObj.trans("flexbuilder_list")#</a></td>
+			<td valign="top"><a href="">&raquo; #myFusebox.getApplicationData().defaults.trans("flexbuilder_list")#</a></td>
 			</tr>
 			</table> --->
 

@@ -33,7 +33,7 @@
 	<cffunction name="rfs_get_all" output="true" access="public" >
 		<cfargument name="thestruct" type="struct">
 		<!--- Query --->
-		<cfquery dataSource="#request.razuna.application.datasource#" name="qry">
+		<cfquery dataSource="#arguments.thestruct.razuna.application.datasource#" name="qry">
 		SELECT rfs_id, rfs_server_name, rfs_active
 		FROM rfs
 		ORDER BY rfs_date_change
@@ -45,8 +45,9 @@
 	<!--- Rendering Farm: get detail --->
 	<cffunction name="rfs_get_detail" output="true" access="public" >
 		<cfargument name="rfs_id" type="string" required="true">
+		<cfargument name="thestruct" type="struct" required="true" />
 		<!--- Query --->
-		<cfquery dataSource="#request.razuna.application.datasource#" name="qry">
+		<cfquery dataSource="#arguments.thestruct.razuna.application.datasource#" name="qry">
 		SELECT rfs_id, rfs_active, rfs_server_name, rfs_imagemagick, rfs_ffmpeg, rfs_dcraw, rfs_exiftool, rfs_mp4box, rfs_date_add, rfs_date_change,
 		rfs_location
 		FROM rfs
@@ -60,7 +61,7 @@
 	<cffunction name="rfs_remove" output="true" access="public" >
 		<cfargument name="thestruct" type="struct" required="true">
 		<!--- Query --->
-		<cfquery dataSource="#request.razuna.application.datasource#">
+		<cfquery dataSource="#arguments.thestruct.razuna.application.datasource#">
 		DELETE FROM rfs
 		WHERE rfs_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.id#">
 		</cfquery>
@@ -74,7 +75,7 @@
 		<!--- If we add a record then do an insert --->
 		<cfif arguments.thestruct.rfs_add>
 			<!--- Insert --->
-			<cfquery dataSource="#request.razuna.application.datasource#" name="qry">
+			<cfquery dataSource="#arguments.thestruct.razuna.application.datasource#" name="qry">
 			INSERT INTO rfs
 			(
 			rfs_id,
@@ -106,7 +107,7 @@
 			</cfquery>
 		<cfelse>
 			<!--- Update --->
-			<cfquery dataSource="#request.razuna.application.datasource#" name="qry">
+			<cfquery dataSource="#arguments.thestruct.razuna.application.datasource#" name="qry">
 			UPDATE rfs
 			SET
 			rfs_active = <cfqueryparam CFSQLType="CF_SQL_DOUBLE" value="#arguments.thestruct.rfs_active#">,
@@ -140,13 +141,13 @@
 		<!--- Param --->
 		<cfparam name="arguments.thestruct.upl_template" default="0" />
 		<!--- Get remote server records --->
-		<cfquery dataSource="#request.razuna.application.datasource#" name="qry">
+		<cfquery dataSource="#arguments.thestruct.razuna.application.datasource#" name="qry">
 		SELECT rfs_id, rfs_server_name, rfs_location
 		FROM rfs
 		WHERE rfs_active = <cfqueryparam CFSQLType="CF_SQL_DOUBLE" value="true">
 		</cfquery>
 		<!--- Get settings --->
-		<cfinvoke component="settings" method="thissetting" thefield="rendering_farm_server" returnVariable="thehost" />
+		<cfinvoke component="settings" method="thissetting" thefield="rendering_farm_server" thestruct="#arguments.thestruct#" returnVariable="thehost" />
 
 		<!--- Check here is the server is busy or not. If so, check for an alternate server in the pool --->
 
@@ -171,12 +172,12 @@
 		<!--- Send the server ID with the request. The remote server checks the ID to this record --->
 		<cfhttp url="#qry.rfs_server_name#" timeout="30">
 			<cfhttpparam name="rfsid" value="#qry.rfs_id#" type="URL">
-			<cfhttpparam name="hostid" value="#request.razuna.session.hostid#" type="URL">
-			<cfhttpparam name="userid" value="#request.razuna.session.theuserid#" type="URL">
+			<cfhttpparam name="hostid" value="#arguments.thestruct.razuna.session.hostid#" type="URL">
+			<cfhttpparam name="userid" value="#arguments.thestruct.razuna.session.theuserid#" type="URL">
 			<cfhttpparam name="dynpath" value="#arguments.thestruct.dynpath#" type="URL">
 			<cfhttpparam name="httphost" value="#thehost#" type="URL">
-			<cfhttpparam name="storage" value="#request.razuna.application.storage#" type="URL">
-			<cfhttpparam name="dsnhost" value="#request.razuna.application.datasource#" type="URL">
+			<cfhttpparam name="storage" value="#arguments.thestruct.razuna.application.storage#" type="URL">
+			<cfhttpparam name="dsnhost" value="#arguments.thestruct.razuna.application.datasource#" type="URL">
 			<cfhttpparam name="assettype" value="#arguments.thestruct.assettype#" type="URL">
 			<cfif structkeyexists(arguments.thestruct,"convert")>
 				<cfhttpparam name="upl_template" value="#arguments.thestruct.upl_template#" type="URL">
@@ -204,7 +205,7 @@
 		<cfargument name="thestruct" type="struct">
 		<cftry>
 			<!--- Get remote server records --->
-			<cfquery dataSource="#request.razuna.application.datasource#" name="qry">
+			<cfquery dataSource="#arguments.thestruct.razuna.application.datasource#" name="qry">
 			SELECT rfs_server_name, rfs_location
 			FROM rfs
 			WHERE rfs_active = <cfqueryparam CFSQLType="CF_SQL_DOUBLE" value="true">
@@ -215,22 +216,22 @@
 			<!--- IMAGES --->
 			<cfif arguments.thestruct.rfs_assettype EQ "img">
 				<cfset var forpath = "img">
-				<cfset var fordb = "#request.razuna.session.hostdbprefix#images">
+				<cfset var fordb = "#arguments.thestruct.razuna.session.hostdbprefix#images">
 				<cfset var fordbid = "img_id">
 			<!--- VIDEOS --->
 			<cfelseif arguments.thestruct.rfs_assettype EQ "vid">
 				<cfset var forpath = "vid">
-				<cfset var fordb = "#request.razuna.session.hostdbprefix#videos">
+				<cfset var fordb = "#arguments.thestruct.razuna.session.hostdbprefix#videos">
 				<cfset var fordbid = "vid_id">
 			<!--- AUDIOS --->
 			<cfelseif arguments.thestruct.rfs_assettype EQ "aud">
 				<cfset var forpath = "aud">
-				<cfset var fordb = "#request.razuna.session.hostdbprefix#audios">
+				<cfset var fordb = "#arguments.thestruct.razuna.session.hostdbprefix#audios">
 				<cfset var fordbid = "aud_id">
 			<!--- Docs and all other files --->
 			<cfelse>
 				<cfset var forpath = "doc">
-				<cfset var fordb = "#request.razuna.session.hostdbprefix#files">
+				<cfset var fordb = "#arguments.thestruct.razuna.session.hostdbprefix#files">
 				<cfset var fordbid = "file_id">
 			</cfif>
 			<!--- If we come from convert we have jsondata in the arguments --->
@@ -239,7 +240,7 @@
 				<cfset arguments.thestruct.json = deserializejson(arguments.thestruct.rfs_jsondata)>
 				<cfset structappend(arguments.thestruct, arguments.thestruct.json)>
 				<!--- Put asset path together --->
-				<cfset var storein = arguments.thestruct.assetpath & "/" & request.razuna.session.hostid & "/" & arguments.thestruct.rfs_folderid & "/" & forpath & "/" & arguments.thestruct.newid>
+				<cfset var storein = arguments.thestruct.assetpath & "/" & arguments.thestruct.razuna.session.hostid & "/" & arguments.thestruct.rfs_folderid & "/" & forpath & "/" & arguments.thestruct.newid>
 				<!--- Create folder --->
 				<cfif NOT directoryexists(storein)>
 					<cfdirectory action="create" directory="#storein#" mode="775">
@@ -253,7 +254,7 @@
 				</cfif>
 			<cfelse>
 				<!--- Put asset path together --->
-				<cfset var storein = arguments.thestruct.assetpath & "/" & request.razuna.session.hostid & "/" & arguments.thestruct.rfs_folderid & "/" & forpath & "/" & arguments.thestruct.rfs_assetid>
+				<cfset var storein = arguments.thestruct.assetpath & "/" & arguments.thestruct.razuna.session.hostid & "/" & arguments.thestruct.rfs_folderid & "/" & forpath & "/" & arguments.thestruct.rfs_assetid>
 				<!--- Create folder --->
 				<cfif NOT directoryexists(storein)>
 					<cfdirectory action="create" directory="#storein#" mode="775">
@@ -272,7 +273,7 @@
 			</cfif>
 			<!--- If we are the preview file then set the available flag --->
 			<cfif !structkeyexists(arguments.thestruct,"rfs_jsondata")>
-				<cfquery datasource="#request.razuna.application.datasource#">
+				<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
 				UPDATE #fordb#
 				SET is_available = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">
 				WHERE #fordbid# = <cfqueryparam value="#arguments.thestruct.rfs_assetid#" cfsqltype="cf_sql_varchar">

@@ -634,7 +634,7 @@
 			<cfquery datasource="#arguments.thestruct.dsn#">
 			INSERT INTO options
 			(opt_id, opt_value, rec_uuid)
-			VALUES ('conf_db_type', '#request.razuna.session.firsttime.database_type#', '#createuuid()#')
+			VALUES ('conf_db_type', '#arguments.thestruct.razuna.session.firsttime.database_type#', '#createuuid()#')
 			</cfquery>
 			<!--- USERS --->
 			<cfquery datasource="#arguments.thestruct.dsn#">
@@ -941,6 +941,7 @@
 		<cfargument name="dsn" type="string" required="true">
 		<cfargument name="theschema" type="string" required="true">
 		<cfargument name="host_db_prefix" type="string" required="true">
+		<cfargument name="thestruct" type="struct" required="true" />
 		<!--- Params --->
 		<cfset arguments.thestruct = structnew()>
 		<cfset arguments.thestruct.dsn = arguments.dsn>
@@ -2493,8 +2494,9 @@
 	
 	<!--- Clear database completely --->
 	<cffunction name="clearall" access="public" output="false">
+		<cfargument name="thestruct" type="struct" required="true" />
 		<!--- Query Tables --->
-		<cfquery datasource="#request.razuna.session.firsttime.database#" name="qrytables">
+		<cfquery datasource="#arguments.thestruct.razuna.session.firsttime.database#" name="qrytables">
 		SELECT lower(table_name) as thetable
 		FROM information_schema.tables
 		WHERE table_catalog = 'RAZUNA'
@@ -2504,24 +2506,24 @@
 		<!--- Loop and drop tables --->
 		<cfloop query="qrytables">
 			<cftry>
-				<cfquery datasource="#request.razuna.session.firsttime.database#">
+				<cfquery datasource="#arguments.thestruct.razuna.session.firsttime.database#">
 				ALTER TABLE #thetable# SET REFERENTIAL_INTEGRITY false
 				</cfquery>
-				<cfquery datasource="#request.razuna.session.firsttime.database#">
+				<cfquery datasource="#arguments.thestruct.razuna.session.firsttime.database#">
 				DROP TABLE #thetable#
 				</cfquery>
 				<cfcatch type="any"></cfcatch>
 			</cftry>
 		</cfloop>
 		<!--- Query Sequences --->
-		<cfquery datasource="#request.razuna.session.firsttime.database#" name="qryseq">
+		<cfquery datasource="#arguments.thestruct.razuna.session.firsttime.database#" name="qryseq">
 		SELECT sequence_name as theseq
 		FROM information_schema.sequences
 		WHERE IS_GENERATED = false
 		</cfquery>
 		<!--- Loop over Sequences and remove them --->
 		<cfloop query="qryseq">
-			<cfquery datasource="#request.razuna.session.firsttime.database#">
+			<cfquery datasource="#arguments.thestruct.razuna.session.firsttime.database#">
 			DROP SEQUENCE #theseq#
 			</cfquery>
 		</cfloop>

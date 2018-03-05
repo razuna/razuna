@@ -65,7 +65,7 @@
 						<cfset args.detail.path_to_asset = path_to_asset>
 						<cfset args.detail.aud_name_org = aud_name>
 						<cfset args.thefiletype = "aud">
-						<cfinvoke component="global.cfc.plugins" method="getactions" theaction="show_in_direct_link" args="#args#" returnvariable="pl">
+						<cfinvoke component="global.cfc.plugins" method="getactions" theaction="show_in_direct_link" args="#args#" thestruct="#attributes#" returnvariable="pl">
 						<!--- Show plugin --->
 						<cfif structKeyExists(pl,"pview")>
 							<cfloop list="#pl.pview#" delimiters="," index="i">

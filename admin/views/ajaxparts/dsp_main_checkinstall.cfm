@@ -25,36 +25,36 @@
 --->
 <cfoutput><table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
 	<tr>
-		<td colspan="2">#defaultsObj.trans("complete_install_tasks_desc")#</td>
+		<td colspan="2">#myFusebox.getApplicationData().defaults.trans("complete_install_tasks_desc")#</td>
 	</tr>
 	<tr>
-		<th width="100%">#defaultsObj.trans("installation_checklist_task")#</th>
-		<th align="center" width="1%" nowrap>#defaultsObj.trans("installation_checklist_progress")#</th>
+		<th width="100%">#myFusebox.getApplicationData().defaults.trans("installation_checklist_task")#</th>
+		<th align="center" width="1%" nowrap>#myFusebox.getApplicationData().defaults.trans("installation_checklist_progress")#</th>
 	</tr>
 	<!--- IM --->
 	<tr>
-		<td<cfif tools.imagemagick EQ ""> class="alerttext"</cfif> style="border-right:none;"><a href="##" onclick="javascript:loadcontent('rightside','#myself#c.prefs_global_main');return false;">#defaultsObj.trans("installation_checklist_impath")#</a></td>
+		<td<cfif tools.imagemagick EQ ""> class="alerttext"</cfif> style="border-right:none;"><a href="##" onclick="javascript:loadcontent('rightside','#myself#c.prefs_global_main');return false;">#myFusebox.getApplicationData().defaults.trans("installation_checklist_impath")#</a></td>
 		<td align="center" style="border-left:none;"><cfif tools.imagemagick IS NOT ""><img src="images/men_ok.png" border="0"><cfelse><img src="images/men_nope.png" border="0"></cfif></td>
 	</tr>
 	<!--- FFMPEG --->
 	<tr>
-		<td<cfif tools.ffmpeg EQ ""> class="alerttext"</cfif> style="border-right:none;"><a href="##" onclick="javascript:loadcontent('rightside','#myself#c.prefs_global_main');return false;">#defaultsObj.trans("installation_checklist_ffmpeg")#</a></td>
+		<td<cfif tools.ffmpeg EQ ""> class="alerttext"</cfif> style="border-right:none;"><a href="##" onclick="javascript:loadcontent('rightside','#myself#c.prefs_global_main');return false;">#myFusebox.getApplicationData().defaults.trans("installation_checklist_ffmpeg")#</a></td>
 		<td align="center" style="border-left:none;"><cfif tools.ffmpeg IS NOT ""><img src="images/men_ok.png" border="0"><cfelse><img src="images/men_nope.png" border="0"></cfif></td>
 	</tr>
 	<!--- Exiftool --->
 	<tr>
-		<td<cfif tools.exiftool EQ ""> class="alerttext"</cfif> style="border-right:none;"><a href="##" onclick="javascript:loadcontent('rightside','#myself#c.prefs_global_main');return false;">#defaultsObj.trans("installation_checklist_exiftool")#</a></td>
+		<td<cfif tools.exiftool EQ ""> class="alerttext"</cfif> style="border-right:none;"><a href="##" onclick="javascript:loadcontent('rightside','#myself#c.prefs_global_main');return false;">#myFusebox.getApplicationData().defaults.trans("installation_checklist_exiftool")#</a></td>
 		<td align="center" style="border-left:none;"><cfif tools.exiftool IS NOT ""><img src="images/men_ok.png" border="0"><cfelse><img src="images/men_nope.png" border="0"></cfif></td>
 	</tr>
 	<!--- Path to assets --->
 	<cfif application.razuna.thedatabase NEQ "oracle">
 		<tr>
-			<td<cfif chklist_settings.set2_path_to_assets EQ ""> class="alerttext"</cfif> style="border-right:none;"><a href="##" onclick="javascript:loadcontent('rightside','#myself#c.prefs');return false;">#defaultsObj.trans("installation_checklist_assetpath")#</a></td>
+			<td<cfif chklist_settings.set2_path_to_assets EQ ""> class="alerttext"</cfif> style="border-right:none;"><a href="##" onclick="javascript:loadcontent('rightside','#myself#c.prefs');return false;">#myFusebox.getApplicationData().defaults.trans("installation_checklist_assetpath")#</a></td>
 			<td align="center" style="border-left:none;"><cfif #chklist_settings.set2_path_to_assets# IS NOT ""><img src="images/men_ok.png" border="0"><cfelse><img src="images/men_nope.png" border="0"></cfif></td>
 		</tr>
 	</cfif>
 	<tr>
-		<td<cfif #chklist_settings.set2_email_from# EQ ""> class="alerttext"</cfif> style="border-right:none;"><a href="##" onclick="javascript:loadcontent('rightside','#myself#c.prefs');return false;">#defaultsObj.trans("installation_checklist_emailfrom")#</a></td>
+		<td<cfif #chklist_settings.set2_email_from# EQ ""> class="alerttext"</cfif> style="border-right:none;"><a href="##" onclick="javascript:loadcontent('rightside','#myself#c.prefs');return false;">#myFusebox.getApplicationData().defaults.trans("installation_checklist_emailfrom")#</a></td>
 		<td align="center" style="border-left:none;"><cfif #chklist_settings.set2_email_from# IS NOT ""><img src="images/men_ok.png" border="0"><cfelse><img src="images/men_nope.png" border="0"></cfif></td>
 	</tr>
 </table>

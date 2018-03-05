@@ -56,11 +56,11 @@
 		<br />
 		<input name="db_schema" id="db_schema" type="text" class="text" size="30" value="#qry_options.ss_db_schema#">
 		<br />
-		<strong>#defaultsObj.trans("username")#</strong> 
+		<strong>#myFusebox.getApplicationData().defaults.trans("username")#</strong> 
 		<br />
 		<input name="db_user" id="db_user" type="text" class="text" size="30" value="#qry_options.ss_db_user#">
 		<br />
-		<strong>#defaultsObj.trans("password")#</strong>
+		<strong>#myFusebox.getApplicationData().defaults.trans("password")#</strong>
 		<br />
 		<input name="db_pass" id="db_pass" type="password" size="30" class="text" value="#qry_options.ss_db_pass#">
 	</div>

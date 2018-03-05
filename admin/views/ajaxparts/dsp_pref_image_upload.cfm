@@ -46,8 +46,8 @@ function GetCurrentURL() {
 <cfinput type="hidden" name="theurl" value="#theurl#">
 <cfinput type="hidden" name="uploadnow" value="T">
 <cfinput type="hidden" name="thefield" value="#attributes.thefield#">
-<cfinput size="50" type="file" name="#attributes.thefield#" validate="regular_expression" pattern="logo.jpg" validateat="onSubmit" required="true" message="#defaultsObj.trans("error_image")#" />
-<cfinput type="submit" name="save" value="#defaultsObj.trans("button_upload")#" class="button"> 
+<cfinput size="50" type="file" name="#attributes.thefield#" validate="regular_expression" pattern="logo.jpg" validateat="onSubmit" required="true" message="#myFusebox.getApplicationData().defaults.trans("error_image")#" />
+<cfinput type="submit" name="save" value="#myFusebox.getApplicationData().defaults.trans("button_upload")#" class="button"> 
 </cfform>
 <cfif isdefined('form.fieldnames')>Logo is uploaded. Please click the refresh link below.</cfif>
 </cfoutput>

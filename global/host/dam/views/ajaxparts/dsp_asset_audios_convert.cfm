@@ -55,7 +55,7 @@
 							<cfset args = structNew()>
 							<cfset args.detail = qry_detail.detail>
 							<cfset args.thefiletype = "aud">
-							<cfinvoke component="global.cfc.plugins" method="getactions" theaction="show_in_direct_link" args="#args#" returnvariable="pl">
+							<cfinvoke component="global.cfc.plugins" method="getactions" theaction="show_in_direct_link" args="#args#" thestruct="#attributes#" returnvariable="pl">
 							<!--- Show plugin --->
 							<cfif structKeyExists(pl,"pview")>
 								<cfloop list="#pl.pview#" delimiters="," index="i">

@@ -25,14 +25,14 @@
 --->
 <cfoutput>
 	<form id="form_account">
-		<span class="loginform_header">#defaultsObj.trans("header_first_time_database")#</span>
+		<span class="loginform_header">#myFusebox.getApplicationData().defaults.trans("header_first_time_database")#</span>
 		<br />
-		#defaultsObj.trans("header_first_time_database_desc")#
+		#myFusebox.getApplicationData().defaults.trans("header_first_time_database_desc")#
 		<br />
 		<br />
-		<span class="loginform_header">#defaultsObj.trans("header_first_time_database_2")#</span>
+		<span class="loginform_header">#myFusebox.getApplicationData().defaults.trans("header_first_time_database_2")#</span>
 		<br />
-		#defaultsObj.trans("header_first_time_database_2_desc")#
+		#myFusebox.getApplicationData().defaults.trans("header_first_time_database_2_desc")#
 		<br />
 		<br />
 		<select id="database">
@@ -44,10 +44,10 @@
 		</select>
 		<div>
 			<div style="float:left;padding:20px 0px 0px 0px;">
-				<input type="button" id="next" value="#defaultsObj.trans("back")#" onclick="location.href=('/');" class="button">
+				<input type="button" id="next" value="#myFusebox.getApplicationData().defaults.trans("back")#" onclick="location.href=('/');" class="button">
 			</div>
 			<div style="float:right;padding:20px 0px 0px 0px;">
-				<input type="button" id="next" value="#defaultsObj.trans("continue")#" onclick="gotodbform();" class="button">
+				<input type="button" id="next" value="#myFusebox.getApplicationData().defaults.trans("continue")#" onclick="gotodbform();" class="button">
 			</div>
 		</div>
 	</form>

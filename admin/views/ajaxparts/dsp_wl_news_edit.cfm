@@ -61,7 +61,7 @@
 			});
 			// Display saved message
 			$("##wlfeedbacknews").css("display","");
-			$("##wlfeedbacknews").html('#defaultsObj.trans("saved_changes")#');
+			$("##wlfeedbacknews").html('#myFusebox.getApplicationData().defaults.trans("saved_changes")#');
 			// Refresh list
 			loadcontent('wl_news','#myself#c.wl_news');
 			return false;

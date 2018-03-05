@@ -34,7 +34,7 @@
 		<p>Before you continue please make sure that you created an update of your database.</p>
 		<p>Once done, please click on the update button below (you will see each step of the update).</p>
 		<br />
-		<p><a href="#myself#c.update_do" class="button" style="text-decoration: none;">#defaultsObj.trans("button_update")#</a></p>
+		<p><a href="#myself#c.update_do" class="button" style="text-decoration: none;">#myFusebox.getApplicationData().defaults.trans("button_update")#</a></p>
 
 	<cfelseif session.update_db_number EQ '53' AND application.razuna.thedatabase EQ "mssql">
 
@@ -53,20 +53,20 @@
 		<br />
 		<br />
 		<cfif session.updatedb>
-			#defaultsObj.trans("db_update_here")#
+			#myFusebox.getApplicationData().defaults.trans("db_update_here")#
 			<br />
 			<br />
-			<input type="submit" name="ftsubmit" value="#defaultsObj.trans("button_update")#" class="button" onclick="showupdate();">
+			<input type="submit" name="ftsubmit" value="#myFusebox.getApplicationData().defaults.trans("button_update")#" class="button" onclick="showupdate();">
 			<br />
 			<div id="updatestatus"></div>
 		<cfelse>
-			#defaultsObj.trans("db_update_done")#
+			#myFusebox.getApplicationData().defaults.trans("db_update_done")#
 			<!--- <br />
 			<br />
 			Note: You should check the <a href="#session.thehttp# #cgi.HTTP_HOST##dynpath#/bluedragon/administrator" target="_blank">Update Logfile in the OpenBD Administration</a> for any errors before continuing! Errors with "Database already exists" are of no worries, it only means you already have the update for that one table done!  --->
 			<br />
 			<br />
-			<input type="submit" name="ftsubmit" value="#defaultsObj.trans("button_update_continue")#" class="button" onclick="location.href='#self#';">
+			<input type="submit" name="ftsubmit" value="#myFusebox.getApplicationData().defaults.trans("button_update_continue")#" class="button" onclick="location.href='#self#';">
 		</cfif>
 		
 		</div>

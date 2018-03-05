@@ -46,27 +46,27 @@
 	<cfparam name="arguments.thestruct.thisview" default="">
 	<cfparam name="arguments.thestruct.folderaccess" default="">
 	<!--- Get cachetoken --->
-	<cfset var cachetoken = getcachetoken(type="audios", hostid=request.razuna.session.hostid)>
+	<cfset var cachetoken = getcachetoken(type="audios", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 	<!--- If we need to show subfolders --->
-	<cfif request.razuna.session.showsubfolders EQ "T">
-		<cfinvoke component="folders" method="getfoldersinlist" dsn="#request.razuna.application.datasource#" folder_id="#arguments.folder_id#" hostid="#request.razuna.session.hostid#" database="#request.razuna.application.thedatabase#" returnvariable="thefolders">
+	<cfif arguments.thestruct.razuna.session.showsubfolders EQ "T">
+		<cfinvoke component="folders" method="getfoldersinlist" dsn="#arguments.thestruct.razuna.application.datasource#" folder_id="#arguments.folder_id#" hostid="#arguments.thestruct.razuna.session.hostid#" database="#arguments.thestruct.razuna.application.thedatabase#" thestruct="#arguments.thestruct#" returnvariable="thefolders">
 		<cfset var thefolderlist = arguments.folder_id & "," & ValueList(thefolders.folder_id)>
 	<cfelse>
 		<cfset var thefolderlist = arguments.folder_id & ",">
 	</cfif>
 	<!--- Set the session for offset correctly if the total count of assets in lower the the total rowmaxpage --->
-	<cfif arguments.thestruct.qry_filecount LTE request.razuna.session.rowmaxpage>
-		<cfset request.razuna.session.offset = 0>
+	<cfif arguments.thestruct.qry_filecount LTE arguments.thestruct.razuna.session.rowmaxpage>
+		<cfset arguments.thestruct.razuna.session.offset = 0>
 	</cfif>
 	<!--- This is for Oracle and MSQL. Calculate the offset .Show the limit only if pages is null or current (from print) --->
 	<cfif arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current">
-		<cfif request.razuna.session.offset EQ 0>
+		<cfif arguments.thestruct.razuna.session.offset EQ 0>
 			<cfset var min = 0>
-			<cfset var max = request.razuna.session.rowmaxpage>
+			<cfset var max = arguments.thestruct.razuna.session.rowmaxpage>
 		<cfelse>
-			<cfset var min = request.razuna.session.offset * request.razuna.session.rowmaxpage>
-			<cfset var max = (request.razuna.session.offset + 1) * request.razuna.session.rowmaxpage>
-			<cfif request.razuna.application.thedatabase EQ "db2">
+			<cfset var min = arguments.thestruct.razuna.session.offset * arguments.thestruct.razuna.session.rowmaxpage>
+			<cfset var max = (arguments.thestruct.razuna.session.offset + 1) * arguments.thestruct.razuna.session.rowmaxpage>
+			<cfif arguments.thestruct.razuna.application.thedatabase EQ "db2">
 				<cfset min = min + 1>
 			</cfif>
 		</cfif>
@@ -75,17 +75,17 @@
 		<cfset var max = 1000>
 	</cfif>
 	<!--- Set sortby variable --->
-	<cfset var sortby = request.razuna.session.sortby>
+	<cfset var sortby = arguments.thestruct.razuna.session.sortby>
 	<!--- Set the order by --->
-	<cfif request.razuna.session.sortby EQ "name" OR request.razuna.session.sortby EQ "kind">
+	<cfif arguments.thestruct.razuna.session.sortby EQ "name" OR arguments.thestruct.razuna.session.sortby EQ "kind">
 		<cfset var sortby = "filename_forsort">
-	<cfelseif request.razuna.session.sortby EQ "sizedesc">
+	<cfelseif arguments.thestruct.razuna.session.sortby EQ "sizedesc">
 		<cfset var sortby = "size DESC">
-	<cfelseif request.razuna.session.sortby EQ "sizeasc">
+	<cfelseif arguments.thestruct.razuna.session.sortby EQ "sizeasc">
 		<cfset var sortby = "size ASC">
-	<cfelseif request.razuna.session.sortby EQ "dateadd">
+	<cfelseif arguments.thestruct.razuna.session.sortby EQ "dateadd">
 		<cfset var sortby = "date_create DESC">
-	<cfelseif request.razuna.session.sortby EQ "datechanged">
+	<cfelseif arguments.thestruct.razuna.session.sortby EQ "datechanged">
 		<cfset var sortby = "date_change DESC">
 	</cfif>
 	<!--- If there is a columnlist then take it else the default--->
@@ -95,21 +95,21 @@
 		<cfset var thecolumns = "a.aud_id, a.aud_name, a.aud_extension, a.aud_create_date, a.aud_change_date, a.folder_id_r, a.is_available">
 	</cfif>
 	<!--- Oracle --->
-	<cfif request.razuna.application.thedatabase EQ "oracle">
+	<cfif arguments.thestruct.razuna.application.thedatabase EQ "oracle">
 		<!--- Clean columnlist --->
 		<cfset var thecolumnlist = replacenocase(arguments.columnlist,"v.","","all")>
 		<!--- Query --->
-		<cfquery datasource="#request.razuna.application.datasource#" name="qLocal" cachedwithin="1" region="razcache">
+		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qLocal" cachedwithin="1" region="razcache">
 		SELECT /* #cachetoken#getFolderAssetsaud */ rn, aud_id, aud_name, aud_extension, aud_create_date, aud_change_date, folder_id_r, keywords, description, labels, filename_forsort, size, hashtag, date_create, date_change
 		FROM (
 			SELECT ROWNUM AS rn, aud_id, aud_name, aud_extension, aud_create_date, aud_change_date, folder_id_r, keywords, description, labels, filename_forsort, size, hashtag, date_create, date_change
 			FROM (
 				SELECT #thecolumns#, att.aud_keywords keywords, att.aud_description description, '' as labels, a.aud_name filename_forsort, a.aud_size size, a.hashtag, a.aud_create_time date_create, a.aud_change_time date_change
-				FROM #request.razuna.session.hostdbprefix#audios a LEFT JOIN #request.razuna.session.hostdbprefix#audios_text att ON a.aud_id = att.aud_id_r AND att.lang_id_r = 1 AND a.host_id = att.host_id
+				FROM #arguments.thestruct.razuna.session.hostdbprefix#audios a LEFT JOIN #arguments.thestruct.razuna.session.hostdbprefix#audios_text att ON a.aud_id = att.aud_id_r AND att.lang_id_r = 1 AND a.host_id = att.host_id
 				WHERE a.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 				AND (a.aud_group IS NULL OR a.aud_group = '')
 				AND a.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
-				AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
+				AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 				ORDER BY #sortby#
 				)
 			WHERE ROWNUM <= <cfqueryparam cfsqltype="cf_sql_numeric" value="#max#">
@@ -117,20 +117,20 @@
 		WHERE rn > <cfqueryparam cfsqltype="cf_sql_numeric" value="#min#">
 		</cfquery>
 	<!--- DB2 --->
-	<cfelseif request.razuna.application.thedatabase EQ "db2">
+	<cfelseif arguments.thestruct.razuna.application.thedatabase EQ "db2">
 		<!--- Clean columnlist --->
 		<cfset var thecolumnlist = replacenocase(arguments.columnlist,"v.","","all")>
 		<!--- Query --->
-		<cfquery datasource="#request.razuna.application.datasource#" name="qLocal" cachedwithin="1" region="razcache">
+		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qLocal" cachedwithin="1" region="razcache">
 		SELECT /* #cachetoken#getFolderAssetsaud */ #thecolumnlist#, att.aud_keywords keywords, att.aud_description description, '' as labels, filename_forsort, size, hashtag, date_create, date_change
 		FROM (
 			SELECT row_number() over() as rownr, a.*, att.*,
 			a.aud_name filename_forsort,	a.aud_size size, a.hashtag, a.aud_create_time date_create, a.aud_change_time date_change
-			FROM audios a LEFT JOIN #request.razuna.session.hostdbprefix#audios_text att ON a.aud_id = att.aud_id_r AND att.lang_id_r = 1 AND a.host_id = att.host_id
+			FROM audios a LEFT JOIN #arguments.thestruct.razuna.session.hostdbprefix#audios_text att ON a.aud_id = att.aud_id_r AND att.lang_id_r = 1 AND a.host_id = att.host_id
 			WHERE a.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 			AND (a.aud_group IS NULL OR a.aud_group = '')
 			AND a.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
-			AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
+			AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 			ORDER BY #sortby#
 		)
 		<!--- Show the limit only if pages is null or current (from print) --->
@@ -141,24 +141,24 @@
 	<!--- Other DB's --->
 	<cfelse>
 		<!--- MySQL Offset --->
-		<cfset var mysqloffset = request.razuna.session.offset * request.razuna.session.rowmaxpage>
+		<cfset var mysqloffset = arguments.thestruct.razuna.session.offset * arguments.thestruct.razuna.session.rowmaxpage>
 		<!--- For aliases --->
 		<cfset var alias = '0,'>
 		<!--- Query Aliases --->
-		<cfquery datasource="#request.razuna.application.datasource#" name="qry_aliases" cachedwithin="1" region="razcache">
+		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qry_aliases" cachedwithin="1" region="razcache">
 		SELECT /* #cachetoken#getallaliases */ asset_id_r, type
 		FROM ct_aliases c
 		WHERE folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 		AND type = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="aud">
-		AND NOT EXISTS (SELECT 1 FROM #request.razuna.session.hostdbprefix#audios WHERE aud_id = c.asset_id_r AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">)
+		AND NOT EXISTS (SELECT 1 FROM #arguments.thestruct.razuna.session.hostdbprefix#audios WHERE aud_id = c.asset_id_r AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">)
 		</cfquery>
 		<cfif qry_aliases.recordcount NEQ 0>
 			<cfset var alias = valueList(qry_aliases.asset_id_r)>
 		</cfif>
 		<!--- Query --->
-		<cfquery datasource="#request.razuna.application.datasource#" name="qLocal" cachedwithin="1" region="razcache">
+		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qLocal" cachedwithin="1" region="razcache">
 		<!--- MSSQL --->
-		<cfif request.razuna.application.thedatabase EQ "mssql" AND (arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current")>
+		<cfif arguments.thestruct.razuna.application.thedatabase EQ "mssql" AND (arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current")>
 			SELECT * FROM (
 			SELECT ROW_NUMBER() OVER ( ORDER BY #sortby# ) AS RowNum,sorted_inline_view.* FROM (
 		</cfif>
@@ -172,46 +172,46 @@
 				</cfif>.#m#
 			</cfloop>
 		</cfif>
-		FROM #request.razuna.session.hostdbprefix#audios a LEFT JOIN #request.razuna.session.hostdbprefix#audios_text att ON a.aud_id = att.aud_id_r AND att.lang_id_r = 1 AND a.host_id = att.host_id
+		FROM #arguments.thestruct.razuna.session.hostdbprefix#audios a LEFT JOIN #arguments.thestruct.razuna.session.hostdbprefix#audios_text att ON a.aud_id = att.aud_id_r AND att.lang_id_r = 1 AND a.host_id = att.host_id
 		WHERE a.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 		AND (a.aud_group IS NULL OR a.aud_group = '')
 		AND a.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
-		AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
-		AND a.is_available <cfif request.razuna.application.thedatabase EQ "mysql"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="cf_sql_varchar" value="2">
+		AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
+		AND a.is_available <cfif arguments.thestruct.razuna.application.thedatabase EQ "mysql"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="cf_sql_varchar" value="2">
 		<cfif arguments.thestruct.folderaccess EQ 'R'>
 			AND (a.expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR a.expiry_date is null)
 		</cfif>
 		OR a.aud_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#alias#" list="true">)
 		<!--- MSSQL --->
-		<cfif request.razuna.application.thedatabase EQ "mssql" AND (arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current")>
+		<cfif arguments.thestruct.razuna.application.thedatabase EQ "mssql" AND (arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current")>
 			) sorted_inline_view
 			 ) resultSet
-			  WHERE RowNum > #mysqloffset# AND RowNum <= #mysqloffset+request.razuna.session.rowmaxpage#
+			  WHERE RowNum > #mysqloffset# AND RowNum <= #mysqloffset+arguments.thestruct.razuna.session.rowmaxpage#
 		</cfif>
 		<!--- Show the limit only if pages is null or current (from print) --->
 		<cfif arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current">
-			<cfif request.razuna.application.thedatabase EQ "mysql" OR request.razuna.application.thedatabase EQ "h2">
-				ORDER BY #sortby# LIMIT #mysqloffset#, #request.razuna.session.rowmaxpage#
+			<cfif arguments.thestruct.razuna.application.thedatabase EQ "mysql" OR arguments.thestruct.razuna.application.thedatabase EQ "h2">
+				ORDER BY #sortby# LIMIT #mysqloffset#, #arguments.thestruct.razuna.session.rowmaxpage#
 			</cfif>
 		</cfif>
 		</cfquery>
 	</cfif>
-	<!--- If coming from custom view and the request.razuna.session.customfileid is not empty --->
-	<cfif request.razuna.session.customfileid NEQ "">
+	<!--- If coming from custom view and the arguments.thestruct.razuna.session.customfileid is not empty --->
+	<cfif arguments.thestruct.razuna.session.customfileid NEQ "">
 		<cfquery dbtype="query" name="qLocal">
 		SELECT *
 		FROM qLocal
-		WHERE aud_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#request.razuna.session.customfileid#" list="true">)
+		WHERE aud_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.razuna.session.customfileid#" list="true">)
 		</cfquery>
 	</cfif>
 	<!--- Only get the labels if in the combinded view --->
-	<cfif request.razuna.session.view EQ "combined">
+	<cfif arguments.thestruct.razuna.session.view EQ "combined">
 		<!--- Get the cachetoken for here --->
-		<cfset variables.cachetokenlabels = getcachetoken(type="labels", hostid=request.razuna.session.hostid)>
+		<cfset variables.cachetokenlabels = getcachetoken(type="labels", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 		<!--- Loop over files and get labels and add to qry --->
 		<cfloop query="qLocal">
 			<!--- Query labels --->
-			<cfquery name="qry_l" datasource="#request.razuna.application.datasource#" cachedwithin="1" region="razcache">
+			<cfquery name="qry_l" datasource="#arguments.thestruct.razuna.application.datasource#" cachedwithin="1" region="razcache">
 			SELECT /* #variables.cachetokenlabels#getallassetslabels */ ct_label_id
 			FROM ct_labels
 			WHERE ct_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#aud_id#">
@@ -223,7 +223,7 @@
 		</cfloop>
 	</cfif>
 	<!--- Add the custom fields to query --->
-	<cfinvoke component="folders" method="addCustomFieldsToQuery" theqry="#qLocal#" returnvariable="qLocal" />
+	<cfinvoke component="folders" method="addCustomFieldsToQuery" theqry="#qLocal#" thestruct="#arguments.thestruct#" returnvariable="qLocal" />
 	<!--- Return --->
 	<cfreturn qLocal />
 </cffunction>
@@ -233,15 +233,16 @@
 <cffunction name="filedetail" access="public" output="false" returntype="query">
 	<cfargument name="theid" type="string" required="true">
 	<cfargument name="thecolumn" type="string" required="true">
+	<cfargument name="thestruct" type="struct" required="true" />
 		<cfset var qry = "">
 		<!--- Get the cachetoken for here --->
-		<cfset var cachetoken = getcachetoken(type="audios", hostid=request.razuna.session.hostid)>
+		<cfset var cachetoken = getcachetoken(type="audios", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 		<!--- Query --->
-		<cfquery datasource="#request.razuna.application.datasource#" name="qry" cachedwithin="1" region="razcache">
-		SELECT /* #cachetoken#filedetailaud */ #arguments.thecolumn#, CASE WHEN NOT(i.aud_group ='' OR i.aud_group is null) THEN (SELECT expiry_date FROM #request.razuna.session.hostdbprefix#audios WHERE aud_id = i.aud_group) ELSE expiry_date END expiry_date_actual
-		FROM #request.razuna.session.hostdbprefix#audios i
+		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qry" cachedwithin="1" region="razcache">
+		SELECT /* #cachetoken#filedetailaud */ #arguments.thecolumn#, CASE WHEN NOT(i.aud_group ='' OR i.aud_group is null) THEN (SELECT expiry_date FROM #arguments.thestruct.razuna.session.hostdbprefix#audios WHERE aud_id = i.aud_group) ELSE expiry_date END expiry_date_actual
+		FROM #arguments.thestruct.razuna.session.hostdbprefix#audios i
 		WHERE aud_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.theid#">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 		</cfquery>
 	<cfreturn qry />
 </cffunction>
@@ -251,25 +252,25 @@
 	<cfargument name="thestruct" type="struct">
 	<!--- Params --->
 	<cfset var qry = structnew()>
-	<cfparam default="0" name="request.razuna.session.thegroupofuser">
+	<cfparam default="0" name="arguments.thestruct.razuna.session.thegroupofuser">
 	<!--- Get the cachetoken for here --->
-	<cfset var cachetoken = getcachetoken(type="audios", hostid=request.razuna.session.hostid)>
+	<cfset var cachetoken = getcachetoken(type="audios", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 	<!--- Get details --->
-	<cfquery datasource="#request.razuna.application.datasource#" name="details" cachedwithin="1" region="razcache">
+	<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="details" cachedwithin="1" region="razcache">
 	SELECT /* #cachetoken#detailaud */
 	a.aud_id, a.aud_name, a.folder_id_r, a.aud_extension, a.aud_online, a.aud_owner,
 	a.cloud_url, a.cloud_url_org, a.aud_group,
 	a.aud_create_date, a.aud_create_time, a.aud_change_date, a.aud_change_time, a.aud_name_noext,
 	a.aud_name_org, a.aud_name_org filenameorg, a.shared, a.aud_size, a.aud_meta, a.link_kind, a.link_path_url,
 	a.path_to_asset, a.lucene_key, a.aud_upc_number, a.expiry_date,s.set2_img_download_org, s.set2_intranet_gen_download, s.set2_url_website,
-	u.user_first_name, u.user_last_name, fo.folder_name, CASE WHEN NOT(a.aud_group ='' OR a.aud_group is null) THEN (SELECT expiry_date FROM #request.razuna.session.hostdbprefix#audios WHERE aud_id = a.aud_group) ELSE expiry_date END expiry_date_actual,
+	u.user_first_name, u.user_last_name, fo.folder_name, CASE WHEN NOT(a.aud_group ='' OR a.aud_group is null) THEN (SELECT expiry_date FROM #arguments.thestruct.razuna.session.hostdbprefix#audios WHERE aud_id = a.aud_group) ELSE expiry_date END expiry_date_actual,
 	'' as perm
-	FROM #request.razuna.session.hostdbprefix#audios a
-	LEFT JOIN #request.razuna.session.hostdbprefix#settings_2 s ON s.set2_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.setid#"> AND s.host_id = a.host_id
+	FROM #arguments.thestruct.razuna.session.hostdbprefix#audios a
+	LEFT JOIN #arguments.thestruct.razuna.session.hostdbprefix#settings_2 s ON s.set2_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.application.setid#"> AND s.host_id = a.host_id
 	LEFT JOIN users u ON u.user_id = a.aud_owner
-	LEFT JOIN #request.razuna.session.hostdbprefix#folders fo ON fo.folder_id = a.folder_id_r AND fo.host_id = a.host_id
+	LEFT JOIN #arguments.thestruct.razuna.session.hostdbprefix#folders fo ON fo.folder_id = a.folder_id_r AND fo.host_id = a.host_id
 	WHERE a.aud_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
-	AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
+	AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 	</cfquery>
 	<cfif details.recordcount NEQ 0>
 		<!--- Get proper folderaccess --->
@@ -280,11 +281,11 @@
 		</cfif>
 	</cfif>
 	<!--- Get descriptions and keywords --->
-	<cfquery datasource="#request.razuna.application.datasource#" name="desc" cachedwithin="1" region="razcache">
+	<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="desc" cachedwithin="1" region="razcache">
 	SELECT /* #cachetoken#detaildescaud */ aud_description, aud_keywords, lang_id_r, aud_description as thedesc, aud_keywords as thekeys
-	FROM #request.razuna.session.hostdbprefix#audios_text
+	FROM #arguments.thestruct.razuna.session.hostdbprefix#audios_text
 	WHERE aud_id_r = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
-	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 	</cfquery>
 	<cftry>
 		<cfset var thesize = 0>
@@ -311,15 +312,12 @@
 <!--- UPDATE AUDIOS IN THREAD --->
 <cffunction name="update" output="false">
 	<cfargument name="thestruct" type="struct">
-	<cfparam name="arguments.thestruct.sessions" default="#session#">
-	<!--- Set arguments --->
-	<cfset arguments.thestruct.setid = variables.setid>
 	<!--- <cfinvoke method="updatethread" thestruct="#arguments.thestruct#" /> --->
 	<!--- Start the thread for updating --->
 	<cfthread intstruct="#arguments.thestruct#">
 		<cfinvoke method="updatethread" thestruct="#attributes.intstruct#" />
 	</cfthread>
-	<cfset resetcachetoken(type="general", hostid=request.razuna.session.hostid)>
+	<cfset resetcachetoken(type="general", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 </cffunction>
 
 <!--- SAVE THE AUDIO DETAILS --->
@@ -335,15 +333,15 @@
 	<!--- If this is from search the file_id should be all --->
 	<cfif arguments.thestruct.file_id EQ "all">
 		<!--- As we have all get all IDS from this search --->
-		<cfinvoke component="search" method="getAllIdsMain" thestruct="#arguments.thestruct#" searchupc="#arguments.thestruct.sessions.search.searchupc#" searchtext="#arguments.thestruct.sessions.search.searchtext#" searchtype="aud" searchrenditions="#arguments.thestruct.sessions.search.searchrenditions#" searchfolderid="#arguments.thestruct.sessions.search.searchfolderid#" hostid="#arguments.thestruct.sessions.hostid#" returnvariable="ids">
+		<cfinvoke component="search" method="getAllIdsMain" thestruct="#arguments.thestruct#" searchupc="#arguments.thestruct.razuna.session.search.searchupc#" searchtext="#arguments.thestruct.razuna.session.search.searchtext#" searchtype="aud" searchrenditions="#arguments.thestruct.razuna.session.search.searchrenditions#" searchfolderid="#arguments.thestruct.razuna.session.search.searchfolderid#" hostid="#arguments.thestruct.razuna.session.hostid#" returnvariable="ids">
 			<!--- Set the fileid --->
 			<cfset arguments.thestruct.file_id = ids>
 	</cfif>
 	<!--- RAZ-2837 :: Update Metadata when renditions exists and rendition's metadata option is True --->
 	<cfif (structKeyExists(arguments.thestruct,'qry_related') AND arguments.thestruct.qry_related.recordcount NEQ 0) AND (structKeyExists(arguments.thestruct,'option_rendition_meta') AND arguments.thestruct.option_rendition_meta EQ 'true')>
 		<!--- Get additional renditions --->
-		<cfquery datasource="#request.razuna.application.datasource#" name="getaddver">
-		SELECT av_id FROM #request.razuna.session.hostdbprefix#additional_versions
+		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="getaddver">
+		SELECT av_id FROM #arguments.thestruct.razuna.session.hostdbprefix#additional_versions
 		WHERE asset_id_r in (<cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR" list="true">)
 		</cfquery>
 		<!--- Append additional renditions --->
@@ -380,12 +378,12 @@
 			<cfif thisdesc CONTAINS l OR thiskeywords CONTAINS l>
 				<cfloop list="#arguments.thestruct.file_id#" delimiters="," index="f">
 					<!--- query excisting --->
-					<cfquery datasource="#request.razuna.application.datasource#" name="ishere">
+					<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="ishere">
 					SELECT aud_id_r, aud_description, aud_keywords
-					FROM #request.razuna.session.hostdbprefix#audios_text
+					FROM #arguments.thestruct.razuna.session.hostdbprefix#audios_text
 					WHERE aud_id_r = <cfqueryparam value="#f#" cfsqltype="CF_SQL_VARCHAR">
 					AND lang_id_r = <cfqueryparam value="#l#" cfsqltype="cf_sql_numeric">
-					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
+					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 					</cfquery>
 					<cfif ishere.recordcount NEQ 0>
 						<cfset var tdesc = evaluate(thisdesc)>
@@ -400,8 +398,8 @@
 							</cfif>
 						</cfif>
 						<!--- Update --->
-						<cfquery datasource="#request.razuna.application.datasource#">
-						UPDATE #request.razuna.session.hostdbprefix#audios_text
+						<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
+						UPDATE #arguments.thestruct.razuna.session.hostdbprefix#audios_text
 						SET
 						aud_description = <cfqueryparam value="#ltrim(tdesc)#" cfsqltype="cf_sql_varchar">,
 						aud_keywords = <cfqueryparam value="#ltrim(tkeywords)#" cfsqltype="cf_sql_varchar">
@@ -409,8 +407,8 @@
 						AND lang_id_r = <cfqueryparam value="#l#" cfsqltype="cf_sql_numeric">
 						</cfquery>
 					<cfelse>
-						<cfquery datasource="#request.razuna.application.datasource#">
-						INSERT INTO #request.razuna.session.hostdbprefix#audios_text
+						<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
+						INSERT INTO #arguments.thestruct.razuna.session.hostdbprefix#audios_text
 						(id_inc, aud_id_r, lang_id_r, aud_description, aud_keywords, host_id)
 						VALUES(
 						<cfqueryparam value="#createuuid()#" cfsqltype="CF_SQL_VARCHAR">,
@@ -418,7 +416,7 @@
 						<cfqueryparam value="#l#" cfsqltype="cf_sql_numeric">,
 						<cfqueryparam value="#ltrim(evaluate(thisdesc))#" cfsqltype="cf_sql_varchar">,
 						<cfqueryparam value="#ltrim(evaluate(thiskeywords))#" cfsqltype="cf_sql_varchar">,
-						<cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
+						<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 						)
 						</cfquery>
 					</cfif>
@@ -427,8 +425,8 @@
 		</cfloop>
 
 		<cfif isdefined("arguments.thestruct.expiry_date")>
-			<cfquery datasource="#request.razuna.application.datasource#">
-				UPDATE #request.razuna.session.hostdbprefix#audios
+			<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
+				UPDATE #arguments.thestruct.razuna.session.hostdbprefix#audios
 				SET
 				<cfif expiry_date EQ '00/00/0000'>
 					expiry_date = null
@@ -438,7 +436,7 @@
 					expiry_date = expiry_date
 				</cfif>
 				WHERE aud_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
-				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 				<!--- Filter out renditions --->
 				AND aud_id  NOT IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#renlist#" list="true">)
 			</cfquery>
@@ -447,16 +445,16 @@
 		<!--- Save to the files table --->
 		<cfif structkeyexists(arguments.thestruct,"fname") AND arguments.thestruct.frombatch NEQ "T">
 			<!--- RAZ-2940: If this is an additional rendition then save to proper table --->
-			<cfquery datasource="#request.razuna.application.datasource#">
-			UPDATE #request.razuna.session.hostdbprefix#additional_versions
+			<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
+			UPDATE #arguments.thestruct.razuna.session.hostdbprefix#additional_versions
 			SET
 			av_link_title = <cfqueryparam value="#arguments.thestruct.fname#" cfsqltype="cf_sql_varchar">
 			WHERE av_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
-			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 			AND av_id  NOT IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#renlist#" list="true">)
 			</cfquery>
-			<cfquery datasource="#request.razuna.application.datasource#">
-			UPDATE #request.razuna.session.hostdbprefix#audios
+			<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
+			UPDATE #arguments.thestruct.razuna.session.hostdbprefix#audios
 			SET
 			aud_name = <cfqueryparam value="#arguments.thestruct.fname#" cfsqltype="cf_sql_varchar">,
 			aud_online = <cfqueryparam value="#arguments.thestruct.aud_online#" cfsqltype="cf_sql_varchar">,
@@ -465,26 +463,26 @@
 			</cfif>
 			shared = <cfqueryparam value="#arguments.thestruct.shared#" cfsqltype="cf_sql_varchar">
 			WHERE aud_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
-			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 			<!--- Filter out renditions whose names we do not want to update --->
 			AND aud_id  NOT IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#renlist#" list="true">)
 			</cfquery>
 		</cfif>
 		<!--- Update index --->
-		<cfquery datasource="#request.razuna.application.datasource#">
-		UPDATE #request.razuna.session.hostdbprefix#audios
+		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
+		UPDATE #arguments.thestruct.razuna.session.hostdbprefix#audios
 		SET is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
 		WHERE aud_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 		</cfquery>
 		<!--- Update main record with dates --->
-		<cfinvoke component="global" method="update_dates" type="aud" fileid="#arguments.thestruct.file_id#" />
+		<cfinvoke component="global" method="update_dates" type="aud" fileid="#arguments.thestruct.file_id#" thestruct="#arguments.thestruct#" />
 		<!--- Query --->
-		<cfquery datasource="#request.razuna.application.datasource#" name="qryorg">
+		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qryorg">
 		SELECT aud_name_org, aud_name, path_to_asset, folder_id_r, aud_group
-		FROM #request.razuna.session.hostdbprefix#audios
+		FROM #arguments.thestruct.razuna.session.hostdbprefix#audios
 		WHERE aud_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 		</cfquery>
 		<cfif qryorg.recordcount neq 0>
 			<!--- If folder_id not passed in struct then set it  --->
@@ -506,20 +504,20 @@
 				<cfset var theid = arguments.thestruct.file_id>
 			</cfif>
 			<!--- Log --->
-			<cfinvoke component="defaults" method="trans" transid="updated" returnvariable="updated" />
-			<cfset log_assets(theuserid=request.razuna.session.theuserid,logaction='Update',logdesc='#updated##rend#: #qryorg.aud_name#',logfiletype='aud',assetid=theid,folderid='#arguments.thestruct.folder_id#', hostid=request.razuna.session.hostid)>
+			<cfinvoke component="defaults" method="trans" transid="updated" thestruct="#arguments.thestruct#" returnvariable="updated" />
+			<cfset log_assets(theuserid=arguments.thestruct.razuna.session.theuserid,logaction='Update',logdesc='#updated##rend#: #qryorg.aud_name#',logfiletype='aud',assetid=theid,folderid='#arguments.thestruct.folder_id#', hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 		<cfelse>
 			<!--- If updating additional version then get info and log change--->
-			<cfquery datasource="#request.razuna.application.datasource#" name="qryaddver">
+			<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qryaddver">
 			SELECT av_link_title, folder_id_r, asset_id_r
-			FROM #request.razuna.session.hostdbprefix#additional_versions
+			FROM #arguments.thestruct.razuna.session.hostdbprefix#additional_versions
 			WHERE av_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
-			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 			</cfquery>
 			<cfif qryaddver.recordcount neq 0>
-				<cfinvoke component="defaults" method="trans" transid="updated" returnvariable="updated" />
-				<cfinvoke component="defaults" method="trans" transid="additional_rendition" returnvariable="additional_rendition" />
-				<cfset log_assets(theuserid=request.razuna.session.theuserid,logaction='Update',logdesc='#updated# #additional_rendition#: #qryaddver.av_link_title#',logfiletype='img',assetid='#qryaddver.asset_id_r#',folderid='#qryaddver.folder_id_r#', hostid=request.razuna.session.hostid)>
+				<cfinvoke component="defaults" method="trans" transid="updated" thestruct="#arguments.thestruct#" returnvariable="updated" />
+				<cfinvoke component="defaults" method="trans" transid="additional_rendition" thestruct="#arguments.thestruct#" returnvariable="additional_rendition" />
+				<cfset log_assets(theuserid=arguments.thestruct.razuna.session.theuserid,logaction='Update',logdesc='#updated# #additional_rendition#: #qryaddver.av_link_title#',logfiletype='img',assetid='#qryaddver.asset_id_r#',folderid='#qryaddver.folder_id_r#', hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 			</cfif>
 		</cfif>
 
@@ -529,27 +527,27 @@
 		<cfset arguments.thestruct.thefiletype = "aud">
 		<cfset arguments.thestruct.folder_id = qryorg.folder_id_r>
 		<cfset arguments.thestruct.folder_action = false>
-		<cfinvoke component="plugins" method="getactions" theaction="on_file_edit" args="#arguments.thestruct#" />
+		<cfinvoke component="plugins" method="getactions" theaction="on_file_edit" args="#arguments.thestruct#" thestruct="#arguments.thestruct#" />
 		<cfset arguments.thestruct.folder_action = true>
-		<cfinvoke component="plugins" method="getactions" theaction="on_file_edit" args="#arguments.thestruct#" />
+		<cfinvoke component="plugins" method="getactions" theaction="on_file_edit" args="#arguments.thestruct#" thestruct="#arguments.thestruct#" />
 
 	</cfloop>
 	<!--- Flush Cache --->
-	<cfset resetcachetoken(type="audios", hostid=request.razuna.session.hostid)>
-	<cfset resetcachetoken(type="folders", hostid=request.razuna.session.hostid)>
-	<cfset resetcachetoken(type="search", hostid=request.razuna.session.hostid)>
-	<cfset resetcachetoken(type="labels", hostid=request.razuna.session.hostid)>
+	<cfset resetcachetoken(type="audios", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
+	<cfset resetcachetoken(type="folders", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
+	<cfset resetcachetoken(type="search", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
+	<cfset resetcachetoken(type="labels", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 </cffunction>
 
 <!--- REMOVE THE AUDIO --->
 <cffunction name="removeaudio" output="false" access="public">
 	<cfargument name="thestruct" type="struct">
 	<!--- Get file detail for log --->
-	<cfquery datasource="#request.razuna.application.datasource#" name="details">
+	<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="details">
 	SELECT aud_name, folder_id_r, link_kind, link_path_url, aud_name_org filenameorg, lucene_key, path_to_asset, aud_group
-	FROM #request.razuna.session.hostdbprefix#audios
+	FROM #arguments.thestruct.razuna.session.hostdbprefix#audios
 	WHERE aud_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
-	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 	</cfquery>
 	<cfif details.recordcount NEQ 0>
 		<!--- Execute workflow --->
@@ -558,14 +556,14 @@
 		<cfset arguments.thestruct.thefiletype = "aud">
 		<cfset arguments.thestruct.folder_id = details.folder_id_r>
 		<cfset arguments.thestruct.folder_action = false>
-		<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
+		<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" thestruct="#arguments.thestruct#" />
 		<cfset arguments.thestruct.folder_action = true>
-		<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
+		<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" thestruct="#arguments.thestruct#" />
 		<!--- Update main record with dates --->
-		<cfinvoke component="global" method="update_dates" type="aud" fileid="#details.aud_group#" />
+		<cfinvoke component="global" method="update_dates" type="aud" fileid="#details.aud_group#" thestruct="#arguments.thestruct#" />
 		<!--- Log --->
 		<cfinvoke component="extQueryCaching" method="log_assets">
-			<cfinvokeargument name="theuserid" value="#request.razuna.session.theuserid#">
+			<cfinvokeargument name="theuserid" value="#arguments.thestruct.razuna.session.theuserid#">
 			<cfinvokeargument name="logaction" value="Delete">
 			<cfif details.aud_group NEQ ''>
 				<cfinvoke component="defaults" method="trans" transid="rendition" returnvariable="rendition" />
@@ -581,54 +579,54 @@
 				<cfinvokeargument name="assetid" value="#arguments.thestruct.id#">
 			</cfif>
 			<cfinvokeargument name="folderid" value="#arguments.thestruct.folder_id#">
-			<cfinvokeargument name="hostid" value="#request.razuna.session.hostid#">
+			<cfinvokeargument name="hostid" value="#arguments.thestruct.razuna.session.hostid#">
+			<cfinvokeargument name="thestruct" value="#arguments.thestruct#">
 		</cfinvoke>
 		<!--- Delete from files DB (including referenced data)--->
-		<cfquery datasource="#request.razuna.application.datasource#">
-		DELETE FROM #request.razuna.session.hostdbprefix#audios
+		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
+		DELETE FROM #arguments.thestruct.razuna.session.hostdbprefix#audios
 		WHERE aud_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 		</cfquery>
-		<cfquery datasource="#request.razuna.application.datasource#">
-		DELETE FROM #request.razuna.session.hostdbprefix#audios_text
+		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
+		DELETE FROM #arguments.thestruct.razuna.session.hostdbprefix#audios_text
 		WHERE aud_id_r = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 		</cfquery>
 		<!--- Delete from collection --->
-		<cfquery datasource="#request.razuna.application.datasource#">
-		DELETE FROM #request.razuna.session.hostdbprefix#collections_ct_files
+		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
+		DELETE FROM #arguments.thestruct.razuna.session.hostdbprefix#collections_ct_files
 		WHERE file_id_r = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
 		AND col_file_type = <cfqueryparam value="aud" cfsqltype="cf_sql_varchar">
 		</cfquery>
 		<!--- Delete from favorites --->
-		<cfquery datasource="#request.razuna.application.datasource#">
-		DELETE FROM #request.razuna.session.hostdbprefix#users_favorites
+		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
+		DELETE FROM #arguments.thestruct.razuna.session.hostdbprefix#users_favorites
 		WHERE fav_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
 		AND fav_kind = <cfqueryparam value="aud" cfsqltype="cf_sql_varchar">
-		AND user_id_r = <cfqueryparam value="#request.razuna.session.theuserid#" cfsqltype="CF_SQL_VARCHAR">
+		AND user_id_r = <cfqueryparam value="#arguments.thestruct.razuna.session.theuserid#" cfsqltype="CF_SQL_VARCHAR">
 		</cfquery>
 		<!--- Delete from Versions --->
-		<cfquery datasource="#request.razuna.application.datasource#">
-		DELETE FROM #request.razuna.session.hostdbprefix#versions
+		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
+		DELETE FROM #arguments.thestruct.razuna.session.hostdbprefix#versions
 		WHERE asset_id_r = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
 		AND ver_type = <cfqueryparam value="aud" cfsqltype="cf_sql_varchar">
 		</cfquery>
 		<!--- Delete from Share Options --->
-		<cfquery datasource="#request.razuna.application.datasource#">
-		DELETE FROM #request.razuna.session.hostdbprefix#share_options
+		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
+		DELETE FROM #arguments.thestruct.razuna.session.hostdbprefix#share_options
 		WHERE asset_id_r = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
 		</cfquery>
 		<!--- Delete aliases --->
-		<cfquery datasource="#request.razuna.application.datasource#">
+		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
 		DELETE FROM ct_aliases
 		WHERE asset_id_r = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
 		</cfquery>
 		<!--- Delete labels --->
-		<cfinvoke component="labels" method="label_ct_remove" id="#arguments.thestruct.id#" />
+		<cfinvoke component="labels" method="label_ct_remove" id="#arguments.thestruct.id#" thestruct="#arguments.thestruct#" />
 		<!--- Custom field values --->
-		<cfinvoke component="custom_fields" method="delete_values" fileid="#arguments.thestruct.id#" />
+		<cfinvoke component="custom_fields" method="delete_values" fileid="#arguments.thestruct.id#" thestruct="#arguments.thestruct#" />
 		<!--- Delete from file system --->
-		<cfset arguments.thestruct.hostid = request.razuna.session.hostid>
 		<cfset arguments.thestruct.folder_id_r = details.folder_id_r>
 		<cfset arguments.thestruct.qrydetail = details>
 		<cfset arguments.thestruct.link_kind = details.link_kind>
@@ -637,10 +635,10 @@
 			<cfinvoke method="deletefromfilesystem" thestruct="#attributes.intstruct#">
 		</cfthread>
 		<!--- Flush Cache --->
-		<cfset resetcachetoken(type="audios", hostid=request.razuna.session.hostid)>
-		<cfset resetcachetoken(type="folders", hostid=request.razuna.session.hostid)>
-		<cfset resetcachetoken(type="search", hostid=request.razuna.session.hostid)>
-		<cfset resetcachetoken(type="labels", hostid=request.razuna.session.hostid)>
+		<cfset resetcachetoken(type="audios", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
+		<cfset resetcachetoken(type="folders", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
+		<cfset resetcachetoken(type="search", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
+		<cfset resetcachetoken(type="labels", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 	</cfif>
 	<cfreturn />
 </cffunction>
@@ -649,13 +647,13 @@
 <cffunction name="trashaudio" output="false">
 	<cfargument name="thestruct" type="struct">
 		<!--- Update in_trash --->
-		<cfquery datasource="#request.razuna.application.datasource#">
-		UPDATE #request.razuna.session.hostdbprefix#audios
+		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
+		UPDATE #arguments.thestruct.razuna.session.hostdbprefix#audios
 		SET 
 		in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.trash#">,
 		aud_change_time = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">
 		WHERE aud_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 		</cfquery>
 		<!--- Execute workflow --->
 		<cfset arguments.thestruct.fileid = arguments.thestruct.id>
@@ -663,17 +661,17 @@
 		<cfset arguments.thestruct.thefiletype = "aud">
 		<!--- <cfset arguments.thestruct.folder_id = arguments.thestruct.folder_id> --->
 		<cfset arguments.thestruct.folder_action = false>
-		<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
+		<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" thestruct="#arguments.thestruct#" />
 		<cfset arguments.thestruct.folder_action = true>
-		<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
+		<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" thestruct="#arguments.thestruct#" />
 		<!--- Remove item from basket and favorites --->
-		<cfinvoke component="favorites" method="removeitem" favid="#arguments.thestruct.id#" />
-		<cfinvoke component="basket" method="removeitem" thefileid="#arguments.thestruct.id#" />
+		<cfinvoke component="favorites" method="removeitem" favid="#arguments.thestruct.id#" thestruct="#arguments.thestruct#" />
+		<cfinvoke component="basket" method="removeitem" thefileid="#arguments.thestruct.id#" thestruct="#arguments.thestruct#" />
 		<!--- Flush Cache --->
-		<cfset resetcachetoken(type="audios", hostid=request.razuna.session.hostid)>
-		<cfset resetcachetoken(type="folders", hostid=request.razuna.session.hostid)>
-		<cfset resetcachetoken(type="search", hostid=request.razuna.session.hostid)>
-		<cfset resetcachetoken(type="labels", hostid=request.razuna.session.hostid)>
+		<cfset resetcachetoken(type="audios", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
+		<cfset resetcachetoken(type="folders", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
+		<cfset resetcachetoken(type="search", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
+		<cfset resetcachetoken(type="labels", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 		<!--- return --->
 		<cfreturn />
 </cffunction>
@@ -682,12 +680,13 @@
 <cffunction name="gettrashaudio" output="false" returntype="Query">
 	<cfargument name="noread" required="false" default="false">
 	<cfargument name="nocount" required="false" default="false">
+	<cfargument name="thestruct" type="struct" required="true" />
 	<!--- Param --->
 	<cfset var qry_audio = "">
 	<!--- Get the cachetoken for here --->
-	<cfset var cachetoken = getcachetoken(type="audios", hostid=request.razuna.session.hostid)>
+	<cfset var cachetoken = getcachetoken(type="audios", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 	<!--- Query --->
-	<cfquery datasource="#request.razuna.application.datasource#" name="qry_audio" cachedwithin="#CreateTimeSpan(0,0,5,0)#" region="razcache">
+	<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qry_audio" cachedwithin="#CreateTimeSpan(0,0,5,0)#" region="razcache">
 		SELECT /* #cachetoken#gettrashaudio */
 		a.aud_id AS id,
 		a.aud_name AS filename,
@@ -703,55 +702,55 @@
 		'false' AS in_collection,
 		'audios' as what,
 		'' AS folder_main_id_r,
-		<cfif request.razuna.application.thedatabase EQ "mssql">a.aud_id + '-aud'<cfelse>concat(a.aud_id,'-aud')</cfif> as listid
+		<cfif arguments.thestruct.razuna.application.thedatabase EQ "mssql">a.aud_id + '-aud'<cfelse>concat(a.aud_id,'-aud')</cfif> as listid
 			<!--- Permfolder --->
-			<cfif request.razuna.session.is_system_admin OR request.razuna.session.is_administrator>
+			<cfif arguments.thestruct.razuna.session.is_system_admin OR arguments.thestruct.razuna.session.is_administrator>
 				, 'X' as permfolder
 			<cfelse>
 				,
 				CASE
 					WHEN (
 						SELECT DISTINCT max(fg5.grp_permission)
-						FROM #request.razuna.session.hostdbprefix#folders_groups fg5
-						WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
+						FROM #arguments.thestruct.razuna.session.hostdbprefix#folders_groups fg5
+						WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 						AND fg5.folder_id_r = a.folder_id_r
 						AND (
 							fg5.grp_id_r = '0'
-							OR fg5.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#request.razuna.session.thegroupofuser#" list="true">)
+							OR fg5.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.razuna.session.thegroupofuser#" list="true">)
 						)
 					) = 'R' THEN 'R'
 					WHEN (
 						SELECT DISTINCT max(fg5.grp_permission)
-						FROM #request.razuna.session.hostdbprefix#folders_groups fg5
-						WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
+						FROM #arguments.thestruct.razuna.session.hostdbprefix#folders_groups fg5
+						WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 						AND fg5.folder_id_r = a.folder_id_r
 						AND (
 							fg5.grp_id_r = '0'
-							OR fg5.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#request.razuna.session.thegroupofuser#" list="true">)
+							OR fg5.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.razuna.session.thegroupofuser#" list="true">)
 						)
 					) = 'W' THEN 'W'
 					WHEN (
 						SELECT DISTINCT max(fg5.grp_permission)
-						FROM #request.razuna.session.hostdbprefix#folders_groups fg5
-						WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
+						FROM #arguments.thestruct.razuna.session.hostdbprefix#folders_groups fg5
+						WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 						AND fg5.folder_id_r = a.folder_id_r
 						AND (
 							fg5.grp_id_r = '0'
-							OR fg5.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#request.razuna.session.thegroupofuser#" list="true">)
+							OR fg5.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.razuna.session.thegroupofuser#" list="true">)
 						)
 					) = 'X' THEN 'X'
 					WHEN (
 						SELECT folder_owner
-						FROM #request.razuna.session.hostdbprefix#folders f
+						FROM #arguments.thestruct.razuna.session.hostdbprefix#folders f
 						WHERE f.folder_id = a.folder_id_r
-					) = '#request.razuna.session.theUserID#' THEN 'X'
+					) = '#arguments.thestruct.razuna.session.theUserID#' THEN 'X'
 				END as permfolder
 			</cfif>
 		FROM
-			#request.razuna.session.hostdbprefix#audios a
+			#arguments.thestruct.razuna.session.hostdbprefix#audios a
 		WHERE
 			a.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">
-		AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
+		AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 		<cfif !nocount>
 			LIMIT 500
 		</cfif>
@@ -760,9 +759,9 @@
 		<cfset var myArray = arrayNew( 1 )>
 		<cfset var temp= ArraySet(myArray, 1, qry_audio.RecordCount, "False")>
 		<cfloop query="qry_audio">
-			<cfquery name="alert_col" datasource="#request.razuna.application.datasource#">
+			<cfquery name="alert_col" datasource="#arguments.thestruct.razuna.application.datasource#">
 			SELECT file_id_r
-			FROM #request.razuna.session.hostdbprefix#collections_ct_files
+			FROM #arguments.thestruct.razuna.session.hostdbprefix#collections_ct_files
 			WHERE file_id_r = <cfqueryparam value="#qry_audio.id#" cfsqltype="CF_SQL_VARCHAR">
 			</cfquery>
 			<cfif alert_col.RecordCount NEQ 0>
@@ -772,9 +771,9 @@
 		<cfquery name="qry_audio" dbtype="query">
 			SELECT *
 			FROM qry_audio
-			WHERE permfolder <cfif request.razuna.application.thedatabase EQ "mysql"><><cfelse>!=</cfif> <cfqueryparam value="" cfsqltype="CF_SQL_VARCHAR">
+			WHERE permfolder <cfif arguments.thestruct.razuna.application.thedatabase EQ "mysql"><><cfelse>!=</cfif> <cfqueryparam value="" cfsqltype="CF_SQL_VARCHAR">
 			<cfif noread>
-				AND permfolder <cfif request.razuna.application.thedatabase EQ "mysql"><><cfelse>!=</cfif> <cfqueryparam value="r" cfsqltype="CF_SQL_VARCHAR">
+				AND permfolder <cfif arguments.thestruct.razuna.application.thedatabase EQ "mysql"><><cfelse>!=</cfif> <cfqueryparam value="r" cfsqltype="CF_SQL_VARCHAR">
 			</cfif>
 		</cfquery>
 	</cfif>
@@ -784,24 +783,24 @@
 <!--- TRASH MANY AUDIO --->
 <cffunction name="trashaudiomany" output="true">
 	<cfargument name="thestruct" type="struct">
-	<cfif request.razuna.session.file_id EQ "all">
+	<cfif arguments.thestruct.razuna.session.file_id EQ "all">
 		<!--- As we have all get all IDS from this search --->
-		<cfinvoke component="search" method="getAllIdsMain" thestruct="#arguments.thestruct#" searchupc="#request.razuna.session.search.searchupc#" searchtext="#request.razuna.session.search.searchtext#" searchtype="aud" searchrenditions="#request.razuna.session.search.searchrenditions#" searchfolderid="#request.razuna.session.search.searchfolderid#" hostid="#request.razuna.session.hostid#" returnvariable="ids">
+		<cfinvoke component="search" method="getAllIdsMain" thestruct="#arguments.thestruct#" searchupc="#arguments.thestruct.razuna.session.search.searchupc#" searchtext="#arguments.thestruct.razuna.session.search.searchtext#" searchtype="aud" searchrenditions="#arguments.thestruct.razuna.session.search.searchrenditions#" searchfolderid="#arguments.thestruct.razuna.session.search.searchfolderid#" hostid="#arguments.thestruct.razuna.session.hostid#" returnvariable="ids">
 			<!--- Set the fileid --->
-			<cfset request.razuna.session.file_id = ids>
+			<cfset arguments.thestruct.razuna.session.file_id = ids>
 	</cfif>
 	<!--- Loop --->
 	<cfset var i = "">
-	<cfloop list="#request.razuna.session.file_id#" index="i" delimiters=",">
+	<cfloop list="#arguments.thestruct.razuna.session.file_id#" index="i" delimiters=",">
 		<cfset i = listfirst(i,"-")>
 		<!--- Update in_trash --->
-		<cfquery datasource="#request.razuna.application.datasource#">
-		UPDATE #request.razuna.session.hostdbprefix#audios
+		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
+		UPDATE #arguments.thestruct.razuna.session.hostdbprefix#audios
 		SET 
 		in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.trash#">,
 		aud_change_time = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">
 		WHERE aud_id = <cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 		</cfquery>
 		<!--- Execute workflow --->
 		<cfset arguments.thestruct.fileid = i>
@@ -809,18 +808,18 @@
 		<cfset arguments.thestruct.thefiletype = listlast(i,"-")>
 		<cfset arguments.thestruct.folder_id = arguments.thestruct.folder_id>
 		<cfset arguments.thestruct.folder_action = false>
-		<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
+		<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" thestruct="#arguments.thestruct#" />
 		<cfset arguments.thestruct.folder_action = true>
-		<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
+		<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" thestruct="#arguments.thestruct#" />
 		<!--- Remove item from basket and favorites --->
-		<cfinvoke component="favorites" method="removeitem" favid="#i#" />
-		<cfinvoke component="basket" method="removeitem" thefileid="#i#" />
+		<cfinvoke component="favorites" method="removeitem" favid="#i#" thestruct="#arguments.thestruct#" />
+		<cfinvoke component="basket" method="removeitem" thefileid="#i#" thestruct="#arguments.thestruct#" />
 	</cfloop>
 	<!--- Flush Cache --->
-	<cfset resetcachetoken(type="audios", hostid=request.razuna.session.hostid)>
-	<cfset resetcachetoken(type="folders", hostid=request.razuna.session.hostid)>
-	<cfset resetcachetoken(type="search", hostid=request.razuna.session.hostid)>
-	<cfset resetcachetoken(type="labels", hostid=request.razuna.session.hostid)>
+	<cfset resetcachetoken(type="audios", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
+	<cfset resetcachetoken(type="folders", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
+	<cfset resetcachetoken(type="search", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
+	<cfset resetcachetoken(type="labels", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 	<cfreturn />
 </cffunction>
 
@@ -828,46 +827,46 @@
 <cffunction name="restoreaudio" output="false">
 	<cfargument name="thestruct" type="struct">
 		<!--- check parent folder is exist --->
-	<cfquery datasource="#request.razuna.application.datasource#" name="thedetail">
-		SELECT folder_main_id_r,folder_id_r FROM #request.razuna.session.hostdbprefix#folders
+	<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="thedetail">
+		SELECT folder_main_id_r,folder_id_r FROM #arguments.thestruct.razuna.session.hostdbprefix#folders
 		WHERE folder_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.folder_id#">
 		AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 	</cfquery>
 	<cfset var local = structNew()>
 	<cfif thedetail.RecordCount EQ 0>
 		<cfset local.istrash = "trash">
 	<cfelse>
-		<cfquery datasource="#request.razuna.application.datasource#" name="dir_parent_id">
-			SELECT folder_id,folder_id_r,in_trash FROM #request.razuna.session.hostdbprefix#folders
+		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="dir_parent_id">
+			SELECT folder_id,folder_id_r,in_trash FROM #arguments.thestruct.razuna.session.hostdbprefix#folders
 			WHERE folder_main_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#thedetail.folder_main_id_r#">
-			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 		</cfquery>
 		<cfloop query="dir_parent_id">
-			<cfquery datasource="#request.razuna.application.datasource#" name="get_qry">
-				SELECT folder_id,in_trash FROM #request.razuna.session.hostdbprefix#folders
+			<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="get_qry">
+				SELECT folder_id,in_trash FROM #arguments.thestruct.razuna.session.hostdbprefix#folders
 				WHERE folder_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#dir_parent_id.folder_id_r#">
-				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 			</cfquery>
 			<cfif get_qry.in_trash EQ 'T'>
 				<cfset local.istrash = "trash">
 			<cfelseif get_qry.folder_id EQ dir_parent_id.folder_id_r AND get_qry.in_trash EQ 'F'>
 				<cfset local.root = "yes">
-				<cfquery datasource="#request.razuna.application.datasource#">
-					UPDATE #request.razuna.session.hostdbprefix#audios
+				<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
+					UPDATE #arguments.thestruct.razuna.session.hostdbprefix#audios
 					SET
 					in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">,
 					is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
 					WHERE aud_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
-					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
+					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 				</cfquery>
 			</cfif>
 		</cfloop>
 		<!--- Flush Cache --->
-		<cfset resetcachetoken(type="audios", hostid=request.razuna.session.hostid)>
-		<cfset resetcachetoken(type="folders", hostid=request.razuna.session.hostid)>
-		<cfset resetcachetoken(type="search", hostid=request.razuna.session.hostid)>
-		<cfset resetcachetoken(type="labels", hostid=request.razuna.session.hostid)>
+		<cfset resetcachetoken(type="audios", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
+		<cfset resetcachetoken(type="folders", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
+		<cfset resetcachetoken(type="search", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
+		<cfset resetcachetoken(type="labels", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 	</cfif>
 	<!--- Set is trash --->
 	<cfif isDefined('local.istrash') AND  local.istrash EQ "trash">
@@ -880,13 +879,7 @@
 
 <cffunction name="removeaudiomany" output="true">
 	<cfargument name="thestruct" type="struct">
-	<!--- <cfset arguments.thestruct.file_id = request.razuna.session.file_id>
-	<cfset arguments.thestruct.hostdbprefix = request.razuna.session.hostdbprefix>
-	<cfset arguments.thestruct.theuserid = request.razuna.session.theuserid> --->
 	<!--- Set Params --->
-	<cfset request.razuna.session.hostdbprefix = arguments.thestruct.hostdbprefix>
-	<cfset request.razuna.session.hostid = arguments.thestruct.hostid>
-	<cfset request.razuna.session.theuserid = arguments.thestruct.theuserid>
 	<!--- <cfthread intstruct="#arguments.thestruct#"> --->
 		<cfinvoke method="removeaudiomanythread" thestruct="#arguments.thestruct#" />
 	<!--- </cfthread> --->
@@ -897,16 +890,13 @@
 <cffunction name="removeaudiomanythread" output="false" access="public">
 	<cfargument name="thestruct" type="struct">
 	<!--- Set Params --->
-	<!--- <cfset request.razuna.session.hostdbprefix = arguments.thestruct.hostdbprefix>
-	<cfset request.razuna.session.hostid = arguments.thestruct.hostid>
-	<cfset request.razuna.session.theuserid = arguments.thestruct.theuserid> --->
 	<cfparam name="arguments.thestruct.fromfolderremove" default="false" />
 	<!--- Get storage --->
 	<cfset var qry_storage = "">
-	<cfquery datasource="#request.razuna.application.datasource#" name="qry_storage" cachedwithin="#CreateTimeSpan(0,1,0,0)#" region="razcache">
+	<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qry_storage" cachedwithin="#CreateTimeSpan(0,1,0,0)#" region="razcache">
 	SELECT set2_aws_bucket
-	FROM #arguments.thestruct.hostdbprefix#settings_2
-	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
+	FROM #arguments.thestruct.razuna.session.hostdbprefix#settings_2
+	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 	</cfquery>
 	<cfset arguments.thestruct.awsbucket = qry_storage.set2_aws_bucket>
 	<!--- Loop --->
@@ -914,11 +904,11 @@
 	<cfloop list="#arguments.thestruct.id#" index="i" delimiters=",">
 		<cfset i = listfirst(i,"-")>
 		<!--- Get file detail for log --->
-		<cfquery datasource="#request.razuna.application.datasource#" name="thedetail">
+		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="thedetail">
 		SELECT aud_name, folder_id_r, aud_name_org, aud_name_org filenameorg, link_kind, link_path_url, path_to_asset, lucene_key
-		FROM #arguments.thestruct.hostdbprefix#audios
+		FROM #arguments.thestruct.razuna.session.hostdbprefix#audios
 		WHERE aud_id = <cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 		</cfquery>
 		<cfif thedetail.recordcount NEQ 0>
 			<!--- Execute workflow --->
@@ -928,65 +918,66 @@
 				<cfset arguments.thestruct.thefiletype = "aud">
 				<cfset arguments.thestruct.folder_id = thedetail.folder_id_r>
 				<cfset arguments.thestruct.folder_action = false>
-				<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
+				<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" thestruct="#arguments.thestruct#" />
 				<cfset arguments.thestruct.folder_action = true>
-				<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
+				<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" thestruct="#arguments.thestruct#" />
 			</cfif>
 			<!--- Log --->
-			<cfinvoke component="defaults" method="trans" transid="deleted" returnvariable="deleted" />
+			<cfinvoke component="defaults" method="trans" transid="deleted" thestruct="#arguments.thestruct#" returnvariable="deleted" />
 			<cfinvoke component="extQueryCaching" method="log_assets">
-				<cfinvokeargument name="theuserid" value="#arguments.thestruct.theuserid#">
+				<cfinvokeargument name="theuserid" value="#arguments.thestruct.razuna.session.theuserid#">
 				<cfinvokeargument name="logaction" value="Delete">
 				<cfinvokeargument name="logdesc" value="#deleted#: #thedetail.aud_name#">
 				<cfinvokeargument name="logfiletype" value="aud">
 				<cfinvokeargument name="assetid" value="#i#">
 				<cfinvokeargument name="folderid" value="#arguments.thestruct.folder_id#">
-				<cfinvokeargument name="hostid" value="#request.razuna.session.hostid#">
+				<cfinvokeargument name="hostid" value="#arguments.thestruct.razuna.session.hostid#">
+				<cfinvokeargument name="thestruct" value="#arguments.thestruct#">
 			</cfinvoke>
 			<!--- Delete from files DB (including referenced data)--->
-			<cfquery datasource="#request.razuna.application.datasource#">
-			DELETE FROM #arguments.thestruct.hostdbprefix#audios
+			<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
+			DELETE FROM #arguments.thestruct.razuna.session.hostdbprefix#audios
 			WHERE aud_id = <cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">
-			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 			</cfquery>
-			<cfquery datasource="#request.razuna.application.datasource#">
-			DELETE FROM #arguments.thestruct.hostdbprefix#audios_text
+			<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
+			DELETE FROM #arguments.thestruct.razuna.session.hostdbprefix#audios_text
 			WHERE aud_id_r = <cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">
-			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 			</cfquery>
 			<!--- Delete from collection --->
-			<cfquery datasource="#request.razuna.application.datasource#">
-			DELETE FROM #arguments.thestruct.hostdbprefix#collections_ct_files
+			<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
+			DELETE FROM #arguments.thestruct.razuna.session.hostdbprefix#collections_ct_files
 			WHERE file_id_r = <cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">
 			AND col_file_type = <cfqueryparam value="aud" cfsqltype="cf_sql_varchar">
 			</cfquery>
 			<!--- Delete from favorites --->
-			<cfquery datasource="#request.razuna.application.datasource#">
-			DELETE FROM #arguments.thestruct.hostdbprefix#users_favorites
+			<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
+			DELETE FROM #arguments.thestruct.razuna.session.hostdbprefix#users_favorites
 			WHERE fav_id = <cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">
 			AND fav_kind = <cfqueryparam value="aud" cfsqltype="cf_sql_varchar">
-			AND user_id_r = <cfqueryparam value="#arguments.thestruct.theuserid#" cfsqltype="CF_SQL_VARCHAR">
+			AND user_id_r = <cfqueryparam value="#arguments.thestruct.razuna.session.theuserid#" cfsqltype="CF_SQL_VARCHAR">
 			</cfquery>
 			<!--- Delete from Versions --->
-			<cfquery datasource="#request.razuna.application.datasource#">
-			DELETE FROM #arguments.thestruct.hostdbprefix#versions
+			<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
+			DELETE FROM #arguments.thestruct.razuna.session.hostdbprefix#versions
 			WHERE asset_id_r = <cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">
 			AND ver_type = <cfqueryparam value="aud" cfsqltype="cf_sql_varchar">
 			</cfquery>
 			<!--- Delete from Share Options --->
-			<cfquery datasource="#request.razuna.application.datasource#">
-			DELETE FROM #arguments.thestruct.hostdbprefix#share_options
+			<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
+			DELETE FROM #arguments.thestruct.razuna.session.hostdbprefix#share_options
 			WHERE asset_id_r = <cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">
 			</cfquery>
 			<!--- Delete aliases --->
-			<cfquery datasource="#request.razuna.application.datasource#">
+			<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
 			DELETE FROM ct_aliases
 			WHERE asset_id_r = <cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">
 			</cfquery>
 			<!--- Delete labels --->
-			<cfinvoke component="labels" method="label_ct_remove" id="#i#" />
+			<cfinvoke component="labels" method="label_ct_remove" id="#i#" thestruct="#arguments.thestruct#" />
 			<!--- Custom field values --->
-			<cfinvoke component="custom_fields" method="delete_values" fileid="#i#" />
+			<cfinvoke component="custom_fields" method="delete_values" fileid="#i#" thestruct="#arguments.thestruct#" />
 			<!--- Delete from file system --->
 			<cfset arguments.thestruct.id = i>
 			<cfset arguments.thestruct.folder_id_r = thedetail.folder_id_r>
@@ -1000,9 +991,9 @@
 		</cfif>
 	</cfloop>
 	<!--- Flush Cache --->
-	<cfset resetcachetoken(type="audios", hostid=request.razuna.session.hostid)>
-	<cfset resetcachetoken(type="folders", hostid=request.razuna.session.hostid)>
-	<cfset resetcachetoken(type="search", hostid=request.razuna.session.hostid)>
+	<cfset resetcachetoken(type="audios", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
+	<cfset resetcachetoken(type="folders", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
+	<cfset resetcachetoken(type="search", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 	<cfreturn />
 </cffunction>
 
@@ -1014,26 +1005,21 @@
 		<!--- Delete in Lucene --->
 		<cfinvoke component="lucene" method="index_delete" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.id#" category="aud">
 		<!--- Delete File --->
-		<cfif request.razuna.application.storage EQ "local">
-			<cfif DirectoryExists("#arguments.thestruct.assetpath#/#arguments.thestruct.hostid#/#arguments.thestruct.qrydetail.path_to_asset#") AND arguments.thestruct.qrydetail.path_to_asset NEQ "">
-				<cfdirectory action="delete" directory="#arguments.thestruct.assetpath#/#arguments.thestruct.hostid#/#arguments.thestruct.qrydetail.path_to_asset#" recurse="true">
+		<cfif arguments.thestruct.razuna.application.storage EQ "local">
+			<cfif DirectoryExists("#arguments.thestruct.assetpath#/#arguments.thestruct.razuna.session.hostid#/#arguments.thestruct.qrydetail.path_to_asset#") AND arguments.thestruct.qrydetail.path_to_asset NEQ "">
+				<cfdirectory action="delete" directory="#arguments.thestruct.assetpath#/#arguments.thestruct.razuna.session.hostid#/#arguments.thestruct.qrydetail.path_to_asset#" recurse="true">
 			</cfif>
 			<!--- Versions --->
-			<cfif DirectoryExists("#arguments.thestruct.assetpath#/#request.razuna.session.hostid#/versions/aud/#arguments.thestruct.id#") AND arguments.thestruct.id NEQ "">
-				<cfdirectory action="delete" directory="#arguments.thestruct.assetpath#/#request.razuna.session.hostid#/versions/aud/#arguments.thestruct.id#" recurse="true">
+			<cfif DirectoryExists("#arguments.thestruct.assetpath#/#arguments.thestruct.razuna.session.hostid#/versions/aud/#arguments.thestruct.id#") AND arguments.thestruct.id NEQ "">
+				<cfdirectory action="delete" directory="#arguments.thestruct.assetpath#/#arguments.thestruct.razuna.session.hostid#/versions/aud/#arguments.thestruct.id#" recurse="true">
 			</cfif>
-		<!--- Nirvanix --->
-		<cfelseif request.razuna.application.storage EQ "nirvanix" AND arguments.thestruct.qrydetail.path_to_asset NEQ "">
-			<cfinvoke component="nirvanix" method="DeleteFolders" nvxsession="#arguments.thestruct.nvxsession#" folderpath="/#arguments.thestruct.qrydetail.path_to_asset#">
-			<!--- Versions --->
-			<cfinvoke component="nirvanix" method="DeleteFolders" nvxsession="#arguments.thestruct.nvxsession#" folderpath="/versions/aud/#arguments.thestruct.id#">
 		<!--- Amazon --->
-		<cfelseif request.razuna.application.storage EQ "amazon" AND arguments.thestruct.qrydetail.path_to_asset NEQ "">
-			<cfinvoke component="amazon" method="deletefolder" folderpath="#arguments.thestruct.qrydetail.path_to_asset#" awsbucket="#arguments.thestruct.awsbucket#" />
+		<cfelseif arguments.thestruct.razuna.application.storage EQ "amazon" AND arguments.thestruct.qrydetail.path_to_asset NEQ "">
+			<cfinvoke component="amazon" method="deletefolder" folderpath="#arguments.thestruct.qrydetail.path_to_asset#" awsbucket="#arguments.thestruct.awsbucket#" thestruct="#arguments.thestruct#" />
 			<!--- Versions --->
-			<cfinvoke component="amazon" method="deletefolder" folderpath="versions/aud/#arguments.thestruct.id#" awsbucket="#arguments.thestruct.awsbucket#" />
+			<cfinvoke component="amazon" method="deletefolder" folderpath="versions/aud/#arguments.thestruct.id#" awsbucket="#arguments.thestruct.awsbucket#" thestruct="#arguments.thestruct#" />
 		<!--- Akamai --->
-		<cfelseif request.razuna.application.storage EQ "akamai">
+		<cfelseif arguments.thestruct.razuna.application.storage EQ "akamai">
 			<cfinvoke component="akamai" method="Delete">
 				<cfinvokeargument name="theasset" value="">
 				<cfinvokeargument name="thetype" value="#arguments.thestruct.akaaud#">
@@ -1045,23 +1031,23 @@
 		</cfif>
 		<!--- REMOVE RELATED FOLDERS ALSO!!!! --->
 		<!--- Get all that have the same vid_id as related --->
-		<cfquery datasource="#request.razuna.application.datasource#" name="qry">
+		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qry">
 		SELECT path_to_asset
-		FROM #request.razuna.session.hostdbprefix#audios
+		FROM #arguments.thestruct.razuna.session.hostdbprefix#audios
 		WHERE aud_group = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 		</cfquery>
 		<!--- Loop over the found records --->
 		<cfloop query="qry">
 			<cftry>
-				<cfif request.razuna.application.storage EQ "local">
-					<cfif DirectoryExists("#arguments.thestruct.assetpath#/#arguments.thestruct.hostid#/#path_to_asset#") AND path_to_asset NEQ "">
-						<cfdirectory action="delete" directory="#arguments.thestruct.assetpath#/#arguments.thestruct.hostid#/#path_to_asset#" recurse="true">
+				<cfif arguments.thestruct.razuna.application.storage EQ "local">
+					<cfif DirectoryExists("#arguments.thestruct.assetpath#/#arguments.thestruct.razuna.session.hostid#/#path_to_asset#") AND path_to_asset NEQ "">
+						<cfdirectory action="delete" directory="#arguments.thestruct.assetpath#/#arguments.thestruct.razuna.session.hostid#/#path_to_asset#" recurse="true">
 					</cfif>
-				<cfelseif request.razuna.application.storage EQ "nirvanix" AND path_to_asset NEQ "">
+				<cfelseif arguments.thestruct.razuna.application.storage EQ "nirvanix" AND path_to_asset NEQ "">
 					<cfinvoke component="nirvanix" method="DeleteFolders" nvxsession="#arguments.thestruct.nvxsession#" folderpath="/#path_to_asset#">
-				<cfelseif request.razuna.application.storage EQ "amazon" AND path_to_asset NEQ "">
-					<cfinvoke component="amazon" method="deletefolder" awsbucket="#arguments.thestruct.awsbucket#" folderpath="#path_to_asset#">
+				<cfelseif arguments.thestruct.razuna.application.storage EQ "amazon" AND path_to_asset NEQ "">
+					<cfinvoke component="amazon" method="deletefolder" awsbucket="#arguments.thestruct.awsbucket#" folderpath="#path_to_asset#" thestruct="#arguments.thestruct#" />
 				</cfif>
 				<cfcatch type="any">
 				</cfcatch>
@@ -1069,10 +1055,10 @@
 		</cfloop>
 		<!--- Delete related videos as well --->
 		<cfif qry.recordcount NEQ 0>
-			<cfquery datasource="#request.razuna.application.datasource#">
-			DELETE FROM #request.razuna.session.hostdbprefix#audios
+			<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
+			DELETE FROM #arguments.thestruct.razuna.session.hostdbprefix#audios
 			WHERE aud_group = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
-			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 			</cfquery>
 		</cfif>
 		<cfcatch type="any">
@@ -1087,17 +1073,13 @@
 <!--- MOVE FILE IN THREADS --->
 <cffunction name="movethread" output="false">
 	<cfargument name="thestruct" type="struct">
-	<cfparam name="arguments.thestruct.sessions" default="#session#">
 	<!--- Loop over files --->
 	<cfthread intstruct="#arguments.thestruct#">
 
 		<!--- If this is from search the file_id should be all --->
 		<cfif attributes.intstruct.file_id EQ "all">
-			<!--- <cfset consoleoutput(true, true)>
-			<cfset console(attributes.intstruct.sessions)>
-			<cfset console(attributes.intstruct.sessions.search)> --->
 			<!--- As we have all get all IDS from this search --->
-			<cfinvoke component="search" method="getAllIdsMain" thestruct="#arguments.thestruct#" searchupc="#attributes.intstruct.sessions.search.searchupc#" searchtext="#attributes.intstruct.sessions.search.searchtext#" searchtype="aud" searchrenditions="#attributes.intstruct.sessions.search.searchrenditions#" searchfolderid="#attributes.intstruct.sessions.search.searchfolderid#" hostid="#attributes.intstruct.sessions.hostid#" returnvariable="ids">
+			<cfinvoke component="search" method="getAllIdsMain" thestruct="#arguments.thestruct#" searchupc="#attributes.intstruct.session.search.searchupc#" searchtext="#attributes.intstruct.session.search.searchtext#" searchtype="aud" searchrenditions="#attributes.intstruct.session.search.searchrenditions#" searchfolderid="#attributes.intstruct.session.search.searchfolderid#" hostid="#attributes.intstruct.session.hostid#" returnvariable="ids">
 				<!--- Set the fileid --->
 				<cfset attributes.intstruct.file_id = ids>
 		</cfif>
@@ -1111,8 +1093,8 @@
 		</cfloop>
 	</cfthread>
 	<!--- Flush Cache --->
-	<cfset resetcachetoken(type="folders", hostid=request.razuna.session.hostid)>
-	<cfset resetcachetoken(type="audios", hostid=request.razuna.session.hostid)>
+	<cfset resetcachetoken(type="folders", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
+	<cfset resetcachetoken(type="audios", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 </cffunction>
 
 <!--- MOVE FILE --->
@@ -1122,34 +1104,34 @@
 			<cfset arguments.thestruct.qryaud = "">
 			<!--- Move --->
 			<cfset arguments.thestruct.file_id = arguments.thestruct.aud_id>
-			<cfinvoke method="filedetail" theid="#arguments.thestruct.aud_id#" thecolumn="aud_name, folder_id_r" returnvariable="arguments.thestruct.qryaud">
+			<cfinvoke method="filedetail" theid="#arguments.thestruct.aud_id#" thecolumn="aud_name, folder_id_r" thestruct="#arguments.thestruct#" returnvariable="arguments.thestruct.qryaud">
 			<!--- If no records found then return --->
 			<cfif arguments.thestruct.qryaud.recordcount EQ 0>
 				<cfreturn>
 			</cfif>
 			<cfset var qry_alias="">
 			<!--- Check if this is an alias --->
-			<cfinvoke component="global" method="getAlias" asset_id_r="#arguments.thestruct.aud_id#" folder_id_r="#request.razuna.session.thefolderorg#" returnvariable="qry_alias"/>
+			<cfinvoke component="global" method="getAlias" asset_id_r="#arguments.thestruct.aud_id#" folder_id_r="#arguments.thestruct.razuna.session.thefolderorg#" thestruct="#arguments.thestruct#" returnvariable="qry_alias"/>
 			<!--- If this is an alias --->
 			<cfif qry_alias>
 				<!--- Move alias --->
-				<cfinvoke component="global" method="moveAlias" asset_id_r="#arguments.thestruct.aud_id#" new_folder_id_r="#arguments.thestruct.folder_id#" pre_folder_id_r="#request.razuna.session.thefolderorg#"/>
+				<cfinvoke component="global" method="moveAlias" asset_id_r="#arguments.thestruct.aud_id#" new_folder_id_r="#arguments.thestruct.folder_id#" pre_folder_id_r="#arguments.thestruct.razuna.session.thefolderorg#" thestruct="#arguments.thestruct#" />
 			<cfelse>
 				<!--- Ignore if the folder id is the same --->
 				<cfif arguments.thestruct.qryaud.recordcount NEQ 0 AND arguments.thestruct.folder_id NEQ arguments.thestruct.qryaud.folder_id_r>
 					<!--- Update DB --->
-					<cfquery datasource="#request.razuna.application.datasource#">
-					UPDATE #request.razuna.session.hostdbprefix#audios
+					<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
+					UPDATE #arguments.thestruct.razuna.session.hostdbprefix#audios
 					SET
 					folder_id_r = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
 					in_trash = <cfqueryparam value="F" cfsqltype="cf_sql_varchar">,
 					is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
 					WHERE aud_id = <cfqueryparam value="#arguments.thestruct.aud_id#" cfsqltype="CF_SQL_VARCHAR">
-					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
+					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 					</cfquery>
 					<!--- <cfthread intstruct="#arguments.thestruct#"> --->
 						<!--- Update Dates --->
-						<cfinvoke component="global" method="update_dates" type="aud" fileid="#arguments.thestruct.aud_id#" />
+						<cfinvoke component="global" method="update_dates" type="aud" fileid="#arguments.thestruct.aud_id#" thestruct="#arguments.thestruct#" />
 						<!--- Move related renditions too --->
 						<cfinvoke method="moverelated" thestruct="#arguments.thestruct#">
 						<!--- Execute workflow --->
@@ -1158,28 +1140,28 @@
 						<cfset arguments.thestruct.thefiletype = "aud">
 						<cfset arguments.thestruct.folder_id = arguments.thestruct.folder_id>
 						<cfset arguments.thestruct.folder_action = false>
-						<cfinvoke component="plugins" method="getactions" theaction="on_file_move" args="#arguments.thestruct#" />
+						<cfinvoke component="plugins" method="getactions" theaction="on_file_move" args="#arguments.thestruct#" thestruct="#arguments.thestruct#" />
 						<cfset arguments.thestruct.folder_action = true>
-						<cfinvoke component="plugins" method="getactions" theaction="on_file_move" args="#arguments.thestruct#" />
-						<cfinvoke component="plugins" method="getactions" theaction="on_file_add" args="#arguments.thestruct#" />
+						<cfinvoke component="plugins" method="getactions" theaction="on_file_move" args="#arguments.thestruct#" thestruct="#arguments.thestruct#" />
+						<cfinvoke component="plugins" method="getactions" theaction="on_file_add" args="#arguments.thestruct#" thestruct="#arguments.thestruct#" />
 					<!--- </cfthread> --->
 					<!--- Delete any aliases of the file in the folder if present --->
-					<cfquery datasource="#request.razuna.application.datasource#">
+					<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
 					DELETE  FROM ct_aliases
 					WHERE asset_id_r = <cfqueryparam value="#arguments.thestruct.aud_id#" cfsqltype="CF_SQL_VARCHAR">
 					AND folder_id_r = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">
 					</cfquery>
 					<!--- Log --->
-					<cfinvoke component="defaults" method="trans" transid="moved" returnvariable="moved" />
-					<cfset log_assets(theuserid=request.razuna.session.theuserid,logaction='Move',logdesc='#moved#: #arguments.thestruct.qryaud.aud_name#',logfiletype='aud',assetid=arguments.thestruct.aud_id,folderid='#arguments.thestruct.folder_id#', hostid=request.razuna.session.hostid)>
+					<cfinvoke component="defaults" method="trans" transid="moved" thestruct="#arguments.thestruct#" returnvariable="moved" />
+					<cfset log_assets(theuserid=arguments.thestruct.razuna.session.theuserid,logaction='Move',logdesc='#moved#: #arguments.thestruct.qryaud.aud_name#',logfiletype='aud',assetid=arguments.thestruct.aud_id,folderid='#arguments.thestruct.folder_id#', hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 				</cfif>
 			</cfif>
 			<cfcatch type="any">
 			</cfcatch>
 		</cftry>
 		<!--- Flush Cache --->
-		<!--- <cfset resetcachetoken(type="folders", hostid=request.razuna.session.hostid)>
-		<cfset resetcachetoken(type="audios", hostid=request.razuna.session.hostid)> --->
+		<!--- <cfset resetcachetoken(type="folders", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
+		<cfset resetcachetoken(type="audios", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)> --->
 	<cfreturn />
 </cffunction>
 
@@ -1187,23 +1169,23 @@
 <cffunction name="moverelated" output="false">
 	<cfargument name="thestruct" type="struct">
 	<!--- Get all that have the same aud_id as related --->
-	<cfquery datasource="#request.razuna.application.datasource#" name="qryintern">
+	<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qryintern">
 	SELECT folder_id_r, aud_id
-	FROM #request.razuna.session.hostdbprefix#audios
+	FROM #arguments.thestruct.razuna.session.hostdbprefix#audios
 	WHERE aud_group = <cfqueryparam value="#arguments.thestruct.aud_id#" cfsqltype="CF_SQL_VARCHAR">
-	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 	</cfquery>
 	<!--- Loop over the found records --->
 	<cfif qryintern.recordcount NEQ 0>
 		<cfloop query="qryintern">
 			<!--- Update renditions --->
-			<cfquery datasource="#request.razuna.application.datasource#">
-			UPDATE #request.razuna.session.hostdbprefix#audios
+			<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
+			UPDATE #arguments.thestruct.razuna.session.hostdbprefix#audios
 			SET
 			folder_id_r = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
 			is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
 			WHERE aud_id = <cfqueryparam value="#aud_id#" cfsqltype="CF_SQL_VARCHAR">
-			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 			</cfquery>
 		</cfloop>
 	</cfif>
@@ -1215,16 +1197,16 @@
 	<cfargument name="thestruct" type="struct">
 	<!--- Param --->
 	<cfparam default="F" name="arguments.thestruct.related">
-	<cfparam default="0" name="request.razuna.session.thegroupofuser">
+	<cfparam default="0" name="arguments.thestruct.razuna.session.thegroupofuser">
 	<cfset var qry = "">
 	<!--- Get cachetoken --->
-	<cfset var cachetoken = getcachetoken(type="audios", hostid=request.razuna.session.hostid)>
+	<cfset var cachetoken = getcachetoken(type="audios", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 	<!--- Qry. We take the query and do a IN --->
-	<cfquery datasource="#request.razuna.application.datasource#" name="qry" cachedwithin="1" region="razcache">
+	<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #cachetoken#detailforbasketaud */ a.aud_id, a.aud_name filename, a.aud_extension, a.aud_group, a.folder_id_r, a.aud_size,
 	a.link_kind, a.link_path_url, a.path_to_asset, a.aud_name_org filename_org, f.share_dl_org, f.share_dl_thumb,
 	'' as perm
-	FROM #request.razuna.session.hostdbprefix#audios a, #request.razuna.session.hostdbprefix#folders f
+	FROM #arguments.thestruct.razuna.session.hostdbprefix#audios a, #arguments.thestruct.razuna.session.hostdbprefix#folders f
 	WHERE a.folder_id_r = f.folder_id AND
 	<cfif arguments.thestruct.related EQ "T">
 		a.aud_group
@@ -1254,7 +1236,7 @@
 <cffunction name="convertaudio" output="true">
 	<cfargument name="thestruct" type="struct">
 	<!--- RFS --->
-	<cfif request.razuna.application.rfs>
+	<cfif arguments.thestruct.razuna.application.rfs>
 		<cfset arguments.thestruct.convert = true>
 		<cfset arguments.thestruct.assettype = "aud">
 		<!--- <cfthread intstruct="#arguments.thestruct#"> --->
@@ -1274,9 +1256,7 @@
 	<cftry>
 		<!--- Param --->
 		<cfparam name="fromadmin" default="F">
-		<cfset arguments.thestruct.dsn = request.razuna.application.datasource>
-		<cfset arguments.thestruct.setid = request.razuna.application.setid>
-		<cfset arguments.thestruct.hostid = request.razuna.session.hostid>
+		<cfset arguments.thestruct.setid = arguments.thestruct.razuna.application.setid>
 		<cfset var cloud_url = structnew()>
 		<cfset var cloud_url_org = structnew()>
 		<cfset var cloud_url_2 = structnew()>
@@ -1289,13 +1269,13 @@
 		<cfparam name="arguments.thestruct.save_renditions" default="true">
 		<cfparam name="arguments.thestruct.renditions_on_the_fly" default="false">
 		<!--- Get Tools --->
-		<cfinvoke component="settings" method="get_tools" returnVariable="arguments.thestruct.thetools" />
+		<cfinvoke component="settings" method="get_tools" thestruct="#arguments.thestruct#" returnVariable="arguments.thestruct.thetools" />
 		<!--- Go grab the platform --->
 		<cfinvoke component="assets" method="iswindows" returnvariable="iswindows">
 		<!--- Get details --->
 		<cfinvoke method="detail" thestruct="#arguments.thestruct#" returnvariable="arguments.thestruct.qry_detail">
 		<!--- Update main record with dates --->
-		<cfinvoke component="global" method="update_dates" type="aud" fileid="#arguments.thestruct.qry_detail.detail.aud_group#" />
+		<cfinvoke component="global" method="update_dates" type="aud" fileid="#arguments.thestruct.qry_detail.detail.aud_group#" thestruct="#arguments.thestruct#" />
 		<!--- Create a temp directory to hold the video file (needed because we are doing other files from it as well) --->
 		<cfset var tempfolder = "aud#createuuid('')#">
 		<!--- set the folder path in a var --->
@@ -1307,19 +1287,19 @@
 		<!--- Get name without extension --->
 		<cfset arguments.thestruct.thenamenoext = listfirst(arguments.thestruct.qry_detail.detail.aud_name_org, ".")>
 		<!--- Local --->
-		<cfif request.razuna.application.storage EQ "local" AND arguments.thestruct.link_kind NEQ "lan">
+		<cfif arguments.thestruct.razuna.application.storage EQ "local" AND arguments.thestruct.link_kind NEQ "lan">
 			<!--- Now get the extension and the name after the position from above --->
 			<cfset arguments.thestruct.thename = arguments.thestruct.qry_detail.detail.aud_name_org>
 			<!--- Check to see if original file is in WAV format if so take it else take the WAV one --->
 			<cfif arguments.thestruct.qry_detail.detail.aud_extension EQ "WAV">
 				<!--- Set the input path --->
-				<cfset var inputpath = "#arguments.thestruct.assetpath#/#request.razuna.session.hostid#/#arguments.thestruct.qry_detail.detail.path_to_asset#/#arguments.thestruct.qry_detail.detail.aud_name_org#">
+				<cfset var inputpath = "#arguments.thestruct.assetpath#/#arguments.thestruct.razuna.session.hostid#/#arguments.thestruct.qry_detail.detail.path_to_asset#/#arguments.thestruct.qry_detail.detail.aud_name_org#">
 			<cfelse>
-				<cfset var inputpath = "#arguments.thestruct.assetpath#/#request.razuna.session.hostid#/#arguments.thestruct.qry_detail.detail.path_to_asset#/#arguments.thestruct.qry_detail.detail.aud_name_noext#.wav">
+				<cfset var inputpath = "#arguments.thestruct.assetpath#/#arguments.thestruct.razuna.session.hostid#/#arguments.thestruct.qry_detail.detail.path_to_asset#/#arguments.thestruct.qry_detail.detail.aud_name_noext#.wav">
 			</cfif>
 			<cfthread name="convert#tempfolder#" />
 		<!--- Nirvanix --->
-		<cfelseif request.razuna.application.storage EQ "nirvanix" AND arguments.thestruct.link_kind NEQ "lan">
+		<cfelseif arguments.thestruct.razuna.application.storage EQ "nirvanix" AND arguments.thestruct.link_kind NEQ "lan">
 			<!--- Check to see if original file is in WAV format if so take it else take the WAV one --->
 			<cfif arguments.thestruct.qry_detail.detail.aud_extension EQ "WAV">
 				<!--- Set Name --->
@@ -1337,7 +1317,7 @@
 			<!--- Set the input path --->
 			<cfset var inputpath = "#arguments.thestruct.thisfolder#/#arguments.thestruct.thename#">
 		<!--- Amazon --->
-		<cfelseif request.razuna.application.storage EQ "amazon" AND arguments.thestruct.link_kind NEQ "lan">
+		<cfelseif arguments.thestruct.razuna.application.storage EQ "amazon" AND arguments.thestruct.link_kind NEQ "lan">
 			<!--- Check to see if original file is in WAV format if so take it else take the WAV one --->
 			<cfif arguments.thestruct.qry_detail.detail.aud_extension EQ "WAV">
 				<!--- Set Name --->
@@ -1348,6 +1328,7 @@
 						<cfinvokeargument name="key" value="/#attributes.intstruct.qry_detail.detail.path_to_asset#/#attributes.intstruct.qry_detail.detail.aud_name_org#">
 						<cfinvokeargument name="theasset" value="#attributes.intstruct.thisfolder#/#attributes.intstruct.qry_detail.detail.aud_name_org#">
 						<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
+						<cfinvokeargument name="thestruct" value="#attributes.intstruct#">
 					</cfinvoke>
 				</cfthread>
 			<cfelse>
@@ -1359,6 +1340,7 @@
 						<cfinvokeargument name="key" value="/#attributes.intstruct.qry_detail.detail.path_to_asset#/#attributes.intstruct.thename#">
 						<cfinvokeargument name="theasset" value="#attributes.intstruct.thisfolder#/#attributes.intstruct.qry_detail.detail.aud_name_noext#.wav">
 						<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
+						<cfinvokeargument name="thestruct" value="#attributes.intstruct#">
 					</cfinvoke>
 				</cfthread>
 			</cfif>
@@ -1368,7 +1350,7 @@
 			<!--- Set the input path --->
 			<cfset var inputpath = "#thisfolder#/#arguments.thestruct.thename#">
 		<!--- Akamai --->
-		<cfelseif request.razuna.application.storage EQ "akamai" AND arguments.thestruct.link_kind NEQ "lan">
+		<cfelseif arguments.thestruct.razuna.application.storage EQ "akamai" AND arguments.thestruct.link_kind NEQ "lan">
 			<!--- Check to see if original file is in WAV format if so take it else take the WAV one --->
 			<cfif arguments.thestruct.qry_detail.detail.aud_extension EQ "WAV">
 				<!--- Set Name --->
@@ -1387,7 +1369,7 @@
 			<cfset var inputpath = "#arguments.thestruct.thisfolder#/#arguments.thestruct.thename#">
 		<!--- If on LAN --->
 		<cfelseif arguments.thestruct.link_kind EQ "lan">
-			<cfset var inputpath = "#arguments.thestruct.assetpath#/#request.razuna.session.hostid#/#arguments.thestruct.qry_detail.detail.path_to_asset#/#arguments.thestruct.thenamenoext#.wav">
+			<cfset var inputpath = "#arguments.thestruct.assetpath#/#arguments.thestruct.razuna.session.hostid#/#arguments.thestruct.qry_detail.detail.path_to_asset#/#arguments.thestruct.thenamenoext#.wav">
 			<cfthread name="convert#tempfolder#" />
 		</cfif>
 		<!--- Wait for the thread above until the file is downloaded fully --->
@@ -1410,12 +1392,12 @@
 			<cfset newid.id = createuuid("")>
 			<!--- If from upload templates --->
 			<cfif arguments.thestruct.upl_template NEQ 0 AND arguments.thestruct.upl_template NEQ "undefined"  AND arguments.thestruct.upl_template NEQ "">
-				<cfquery datasource="#request.razuna.application.datasource#" name="qry_b">
+				<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qry_b">
 				SELECT upl_temp_field, upl_temp_value
-				FROM #request.razuna.session.hostdbprefix#upload_templates_val
+				FROM #arguments.thestruct.razuna.session.hostdbprefix#upload_templates_val
 				WHERE upl_temp_field = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="convert_bitrate_#theformat#">
 				AND upl_temp_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.upl_template#">
-				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 				</cfquery>
 				<!--- Set image width and height --->
 				<cfset var thebitrate  = qry_b.upl_temp_value>
@@ -1450,10 +1432,10 @@
 				<cfset arguments.thestruct.thesh = "#GetTempDirectory()#/#newid.id#.bat">
 			</cfif>
 			<!--- Get user --->
-			<cfquery datasource="#request.razuna.application.datasource#" name="qryuser">
+			<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qryuser">
 			SELECT user_email
 			FROM users
-			WHERE user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#request.razuna.session.theuserid#">
+			WHERE user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.razuna.session.theuserid#">
 			</cfquery>
 			<!--- WAV (just copy the file) --->
 			<cfif theformat EQ "WAV">
@@ -1474,12 +1456,12 @@
 				<cfif _is_error>
 					<!--- Delete scripts --->
 					<cffile action="delete" file="#arguments.thestruct.thesh#">
-					<cfset log_assets(theuserid=request.razuna.session.theuserid,logaction='Convert',logdesc='ERROR converting: #arguments.thestruct.qry_detail.detail.aud_name# to #finalaudioname# #_convert_error#',logfiletype='aud',assetid='#arguments.thestruct.file_id#',folderid='#arguments.thestruct.qry_detail.detail.folder_id_r#', hostid=request.razuna.session.hostid)>
+					<cfset log_assets(theuserid=arguments.thestruct.razuna.session.theuserid,logaction='Convert',logdesc='ERROR converting: #arguments.thestruct.qry_detail.detail.aud_name# to #finalaudioname# #_convert_error#',logfiletype='aud',assetid='#arguments.thestruct.file_id#',folderid='#arguments.thestruct.qry_detail.detail.folder_id_r#', hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 					<cfset var transvalues = arraynew()>
 					<cfset transvalues[1] = "#ucase(theformat)#">
-					<cfinvoke component="defaults" method="trans" transid="audio_convert_error_subject" values="#transvalues#" returnvariable="convert_error_sub" />
-					<cfinvoke component="defaults" method="trans" transid="audio_convert_error_message" values="#transvalues#" returnvariable="convert_error_msg" />
-					<cfinvoke component="email" method="send_email" to="#qryuser.user_email#" subject="#convert_error_sub#" themessage="#convert_error_msg#" />
+					<cfinvoke component="defaults" method="trans" transid="audio_convert_error_subject" values="#transvalues#" thestruct="#arguments.thestruct#" returnvariable="convert_error_sub" />
+					<cfinvoke component="defaults" method="trans" transid="audio_convert_error_message" values="#transvalues#" thestruct="#arguments.thestruct#" returnvariable="convert_error_msg" />
+					<cfinvoke component="email" method="send_email" to="#qryuser.user_email#" subject="#convert_error_sub#" themessage="#convert_error_msg#" thestruct="#arguments.thestruct#" />
 					<cfcontinue>
 				</cfif>
 			</cfif>
@@ -1491,9 +1473,9 @@
 				<!--- RAZ-2810 Customise email message --->
 				<cfset var transvalues = arraynew()>
 				<cfset transvalues[1] = "#ucase(theformat)#">
-				<cfinvoke component="defaults" method="trans" transid="audio_convert_error_subject" values="#transvalues#" returnvariable="convert_error_sub" />
-				<cfinvoke component="defaults" method="trans" transid="audio_convert_error_message" values="#transvalues#" returnvariable="convert_error_msg" />
-				<cfinvoke component="email" method="send_email" to="#qryuser.user_email#" subject="#convert_error_sub#" themessage="#convert_error_msg#" />
+				<cfinvoke component="defaults" method="trans" transid="audio_convert_error_subject" values="#transvalues#" thestruct="#arguments.thestruct#" returnvariable="convert_error_sub" />
+				<cfinvoke component="defaults" method="trans" transid="audio_convert_error_message" values="#transvalues#" thestruct="#arguments.thestruct#" returnvariable="convert_error_msg" />
+				<cfinvoke component="email" method="send_email" to="#qryuser.user_email#" subject="#convert_error_sub#" themessage="#convert_error_msg#" thestruct="#arguments.thestruct#" />
 			<cfelse>
 				<!--- Get size of original --->
 				<cfinvoke component="global" method="getfilesize" filepath="#thisfolder#/#finalaudioname#" returnvariable="orgsize">
@@ -1502,34 +1484,17 @@
 					<cfset var md5hash = hashbinary("#thisfolder#/#finalaudioname#")>
 				</cfif>
 				<!--- Storage: Local --->
-				<cfif request.razuna.application.storage EQ "local">
+				<cfif arguments.thestruct.razuna.application.storage EQ "local">
 					<!--- For Renditions on the fly we just copy the files instead of move --->
 					<cfset var _file_action = arguments.thestruct.renditions_on_the_fly ? 'copy' : 'move'>
 					<!--- Now move the files to its own folder --->
 					<!--- Create folder first --->
-					<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#request.razuna.session.hostid#/#arguments.thestruct.qry_detail.detail.folder_id_r#/aud/#newid.id#" mode="775">
+					<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#arguments.thestruct.razuna.session.hostid#/#arguments.thestruct.qry_detail.detail.folder_id_r#/aud/#newid.id#" mode="775">
 					<!--- Move Audio --->
-					<cffile action="#_file_action#" source="#thisfolder#/#finalaudioname#" destination="#arguments.thestruct.assetpath#/#request.razuna.session.hostid#/#arguments.thestruct.qry_detail.detail.folder_id_r#/aud/#newid.id#" mode="775">
+					<cffile action="#_file_action#" source="#thisfolder#/#finalaudioname#" destination="#arguments.thestruct.assetpath#/#arguments.thestruct.razuna.session.hostid#/#arguments.thestruct.qry_detail.detail.folder_id_r#/aud/#newid.id#" mode="775">
 					<cfthread name="uploadconvert#newid.id#"></cfthread>
-				<!--- Nirvanix --->
-				<cfelseif request.razuna.application.storage EQ "nirvanix">
-					<!--- Set variables for thread --->
-					<cfset arguments.thestruct.newid = newid.id>
-					<cfset arguments.thestruct.finalaudioname = finalaudioname>
-					<!--- Upload: Audio --->
-					<cfthread name="uploadconvert#newid.id#" intstruct="#arguments.thestruct#">
-						<cfinvoke component="nirvanix" method="Upload">
-							<cfinvokeargument name="destFolderPath" value="/#attributes.intstruct.qry_detail.detail.folder_id_r#/aud/#attributes.intstruct.newid#">
-							<cfinvokeargument name="uploadfile" value="#attributes.intstruct.thisfolder#/#attributes.intstruct.finalaudioname#">
-							<cfinvokeargument name="nvxsession" value="#attributes.intstruct.nvxsession#">
-						</cfinvoke>
-					</cfthread>
-					<!--- Wait for this thread to finish --->
-					<cfthread action="join" name="uploadconvert#newid.id#" />
-					<!--- Get signed URLS --->
-					<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url_org" theasset="#arguments.thestruct.qry_detail.detail.folder_id_r#/aud/#arguments.thestruct.newid#/#arguments.thestruct.finalaudioname#" nvxsession="#arguments.thestruct.nvxsession#">
 				<!--- Amazon --->
-				<cfelseif request.razuna.application.storage EQ "amazon">
+				<cfelseif arguments.thestruct.razuna.application.storage EQ "amazon">
 					<!--- Set variables for thread --->
 					<cfset arguments.thestruct.newid = newid.id>
 					<cfset arguments.thestruct.finalaudioname = finalaudioname>
@@ -1539,14 +1504,15 @@
 							<cfinvokeargument name="key" value="/#attributes.intstruct.qry_detail.detail.folder_id_r#/aud/#attributes.intstruct.newid#/#attributes.intstruct.finalaudioname#">
 							<cfinvokeargument name="theasset" value="#attributes.intstruct.thisfolder#/#attributes.intstruct.finalaudioname#">
 							<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
+							<cfinvokeargument name="thestruct" value="#attributes.intstruct#">
 						</cfinvoke>
 					</cfthread>
 					<!--- Wait for this thread to finish --->
 					<cfthread action="join" name="uploadconvert#newid.id#" />
 					<!--- Get signed URLS --->
-					<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_org" key="#arguments.thestruct.qry_detail.detail.folder_id_r#/aud/#arguments.thestruct.newid#/#arguments.thestruct.finalaudioname#" awsbucket="#arguments.thestruct.awsbucket#">
+					<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_org" key="#arguments.thestruct.qry_detail.detail.folder_id_r#/aud/#arguments.thestruct.newid#/#arguments.thestruct.finalaudioname#" awsbucket="#arguments.thestruct.awsbucket#" thestruct="#arguments.thestruct#" />
 				<!--- Akamai --->
-				<cfelseif request.razuna.application.storage EQ "akamai">
+				<cfelseif arguments.thestruct.razuna.application.storage EQ "akamai">
 					<!--- Set variables for thread --->
 					<cfset arguments.thestruct.newid = newid.id>
 					<cfset arguments.thestruct.finalaudioname = finalaudioname>
@@ -1564,22 +1530,22 @@
 				</cfif>
 
 				<cfif arguments.thestruct.save_renditions>
-					<cfquery datasource="#request.razuna.application.datasource#">
-					INSERT INTO #request.razuna.session.hostdbprefix#audios
+					<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
+					INSERT INTO #arguments.thestruct.razuna.session.hostdbprefix#audios
 					(aud_id, host_id)
 					VALUES(
 					<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#newid.id#">,
-					<cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
+					<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 					)
 					</cfquery>
 
 					<!--- Add to shared options --->
-					<cfquery datasource="#request.razuna.application.datasource#">
-					INSERT INTO #request.razuna.session.hostdbprefix#share_options
+					<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
+					INSERT INTO #arguments.thestruct.razuna.session.hostdbprefix#share_options
 					(asset_id_r, host_id, group_asset_id, folder_id_r, asset_type, asset_format, asset_dl, asset_order, rec_uuid)
 					VALUES(
 					<cfqueryparam value="#newid.id#" cfsqltype="CF_SQL_VARCHAR">,
-					<cfqueryparam value="#request.razuna.session.hostid#" cfsqltype="cf_sql_numeric">,
+					<cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric">,
 					<cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">,
 					<cfqueryparam value="#arguments.thestruct.qry_detail.detail.folder_id_r#" cfsqltype="CF_SQL_VARCHAR">,
 					<cfqueryparam value="aud" cfsqltype="cf_sql_varchar">,
@@ -1593,13 +1559,14 @@
 					<!--- Check if UPC criterion is satisfied and needs to be enabled--->
 					<cfinvoke component="global" method="isUPC" returnvariable="upcstruct">
 						<cfinvokeargument name="folder_id" value="#arguments.thestruct.qry_detail.detail.folder_id_r#"/>
+						<cfinvokeargument name="thestruct" value="#arguments.thestruct#"/>
 					</cfinvoke>
 					<!--- If UPC is enabled then rename rendition according to UPC naming convention --->
 					 <cfif upcstruct.upcenabled>
 					 	<cfset var get_upc ="">
 					 	<!--- Get UPC number for asset  from database --->
-						<cfquery datasource="#request.razuna.application.datasource#" name="get_upc">
-							SELECT aud_upc_number as upcnumber FROM  #request.razuna.session.hostdbprefix#audios
+						<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="get_upc">
+							SELECT aud_upc_number as upcnumber FROM  #arguments.thestruct.razuna.session.hostdbprefix#audios
 							WHERE aud_id =
 							 <cfif isDefined('arguments.thestruct.aud_group_id') AND arguments.thestruct.aud_group_id NEQ ''>
 								<cfqueryparam value="#arguments.thestruct.aud_group_id#" cfsqltype="cf_sql_varchar">
@@ -1615,8 +1582,8 @@
 					</cfif>
 
 					<!--- Update the audio record with other information --->
-					<cfquery datasource="#request.razuna.application.datasource#">
-					UPDATE #request.razuna.session.hostdbprefix#audios
+					<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
+					UPDATE #arguments.thestruct.razuna.session.hostdbprefix#audios
 					SET
 					<cfif isDefined('arguments.thestruct.aud_group_id') AND arguments.thestruct.aud_group_id NEQ ''>
 						aud_group = <cfqueryparam value="#arguments.thestruct.aud_group_id#" cfsqltype="cf_sql_varchar">,
@@ -1629,7 +1596,7 @@
 							<cfelse>
 								<cfqueryparam value="#finalaudioname#" cfsqltype="cf_sql_varchar">
 							</cfif>,
-					aud_owner = <cfqueryparam value="#request.razuna.session.theuserid#" cfsqltype="CF_SQL_VARCHAR">,
+					aud_owner = <cfqueryparam value="#arguments.thestruct.razuna.session.theuserid#" cfsqltype="CF_SQL_VARCHAR">,
 					aud_create_date = <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">,
 					aud_change_date = <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">,
 					aud_create_time = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
@@ -1644,21 +1611,21 @@
 					is_available = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">,
 					hashtag = <cfqueryparam value="#md5hash#" cfsqltype="cf_sql_varchar">
 					WHERE aud_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#newid.id#">
-					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
+					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 					</cfquery>
 					<!--- RAZ-2837 : Copy/Update original file's metadata to rendition --->
 					<cfif structKeyExists(arguments.thestruct,'option_rendition_meta') AND arguments.thestruct.option_rendition_meta EQ 'true'>
 						<!--- Get descriptions and keywords  --->
-						<cfquery datasource="#request.razuna.application.datasource#" name="qry_theaudtxt">
+						<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qry_theaudtxt">
 							SELECT lang_id_r,aud_description as thedesc,aud_keywords as thekeys
-							FROM #request.razuna.session.hostdbprefix#audios_text
+							FROM #arguments.thestruct.razuna.session.hostdbprefix#audios_text
 							WHERE aud_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.file_id#">
-							AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
+							AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 						</cfquery>
 						<cfif qry_theaudtxt.recordcount neq 0>
 							<!--- Add to descriptions and keywords--->
-							<cfquery datasource="#request.razuna.application.datasource#">
-								INSERT INTO #request.razuna.session.hostdbprefix#audios_text
+							<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
+								INSERT INTO #arguments.thestruct.razuna.session.hostdbprefix#audios_text
 								(id_inc, aud_id_r, lang_id_r, aud_description, aud_keywords, host_id)
 								VALUES(
 								<cfqueryparam value="#createuuid()#" cfsqltype="CF_SQL_VARCHAR">,
@@ -1666,20 +1633,20 @@
 								<cfqueryparam value="#qry_theaudtxt.lang_id_r#" cfsqltype="cf_sql_numeric">,
 								<cfqueryparam value="#ltrim(qry_theaudtxt.thedesc)#" cfsqltype="cf_sql_varchar">,
 								<cfqueryparam value="#ltrim(qry_theaudtxt.thekeys)#" cfsqltype="cf_sql_varchar">,
-								<cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
+								<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 								)
 							</cfquery>
 						</cfif>
 						<cfif structKeyExists(arguments.thestruct,'qry_cf') AND arguments.thestruct.qry_cf.recordcount NEQ 0>
 							<cfloop query="arguments.thestruct.qry_cf">
-								<cfquery datasource="#request.razuna.application.datasource#">
-									INSERT INTO #request.razuna.session.hostdbprefix#custom_fields_values
+								<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
+									INSERT INTO #arguments.thestruct.razuna.session.hostdbprefix#custom_fields_values
 									(cf_id_r, asset_id_r, cf_value, host_id, rec_uuid)
 									VALUES(
 									<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#cf_id#">,
 									<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#newid.id#">,
 									<cfqueryparam cfsqltype="cf_sql_varchar" value="#cf_value#">,
-									<cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">,
+									<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">,
 									<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 									)
 								</cfquery>
@@ -1693,12 +1660,12 @@
 					<cfset arguments.thestruct.thefiletype = "aud">
 					<cfset arguments.thestruct.folder_action = false>
 					<!--- Check on any plugin that call the on_rendition_add action --->
-					<cfinvoke component="plugins" method="getactions" theaction="on_rendition_add" args="#arguments.thestruct#" />
+					<cfinvoke component="plugins" method="getactions" theaction="on_rendition_add" args="#arguments.thestruct#" thestruct="#arguments.thestruct#" />
 				</cfif>
 
 				<!--- Log --->
-				<cfinvoke component="defaults" method="trans" transid="converted" returnvariable="converted" />
-				<cfset log_assets(theuserid=request.razuna.session.theuserid,logaction='Convert',logdesc='#converted#: #arguments.thestruct.qry_detail.detail.aud_name# to #finalaudioname#',logfiletype='aud',assetid='#arguments.thestruct.file_id#',folderid='#arguments.thestruct.qry_detail.detail.folder_id_r#', hostid=request.razuna.session.hostid)>
+				<cfinvoke component="defaults" method="trans" transid="converted" thestruct="#arguments.thestruct#" returnvariable="converted" />
+				<cfset log_assets(theuserid=arguments.thestruct.razuna.session.theuserid,logaction='Convert',logdesc='#converted#: #arguments.thestruct.qry_detail.detail.aud_name# to #finalaudioname#',logfiletype='aud',assetid='#arguments.thestruct.file_id#',folderid='#arguments.thestruct.qry_detail.detail.folder_id_r#', hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 
 				<!--- For renditions on the fly we move all the renditons into a folder --->
 				<cfif arguments.thestruct.renditions_on_the_fly>
@@ -1709,7 +1676,7 @@
 			</cfif>
 		</cfloop>
 		<!--- Flush Cache --->
-		<cfset variables.cachetoken = resetcachetoken(type="audios", hostid=request.razuna.session.hostid)>
+		<cfset variables.cachetoken = resetcachetoken(type="audios", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 		<cfcatch type="any">
 			<cfset consoleoutput(true, true)>
 			<cfset console(cfcatch)>
@@ -1725,13 +1692,13 @@
 	<cfargument name="thestruct" type="struct">
 	<cfset var qry = "">
 	<!--- Get the cachetoken for here --->
-	<cfset var cachetoken = getcachetoken(type="audios", hostid=request.razuna.session.hostid)>
+	<cfset var cachetoken = getcachetoken(type="audios", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 	<!--- Query --->
-	<cfquery datasource="#request.razuna.application.datasource#" name="qry" cachedwithin="1" region="razcache">
+	<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #cachetoken#relatedaudios */ aud_id, folder_id_r, aud_name, aud_extension, aud_size, path_to_asset, aud_group, aud_name_org, cloud_url_org, hashtag
-	FROM #request.razuna.session.hostdbprefix#audios
+	FROM #arguments.thestruct.razuna.session.hostdbprefix#audios
 	WHERE aud_group = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
-	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 	AND is_available = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">
 	ORDER BY aud_extension
 	</cfquery>
@@ -1749,24 +1716,24 @@
 	<!--- Put the audio id into a variable --->
 	<cfset var theaudioid = #arguments.thestruct.file_id#>
 	<!--- The tool paths --->
-	<cfinvoke component="settings" method="get_tools" returnVariable="arguments.thestruct.thetools" />
+	<cfinvoke component="settings" method="get_tools" thestruct="#arguments.thestruct#" returnVariable="arguments.thestruct.thetools" />
 	<!--- Go grab the platform --->
 	<cfinvoke component="assets" method="iswindows" returnvariable="arguments.thestruct.iswindows">
-	<!--- set request.razuna.session.artofimage value if it is empty  --->
-	<cfif request.razuna.session.artofimage EQ "">
-		<cfset request.razuna.session.artofimage = arguments.thestruct.artofimage>
+	<!--- set arguments.thestruct.razuna.session.artofimage value if it is empty  --->
+	<cfif arguments.thestruct.razuna.session.artofimage EQ "">
+		<cfset arguments.thestruct.razuna.session.artofimage = arguments.thestruct.artofimage>
 	</cfif>
 	<!--- Start the loop to get the different kinds of audios --->
-	<cfloop delimiters="," list="#request.razuna.session.artofimage#" index="art">
+	<cfloop delimiters="," list="#arguments.thestruct.razuna.session.artofimage#" index="art">
 		<!--- Since the video format could be from the related table we need to check this here so if the value is a number it is the id for the video --->
 		<cfif art NEQ "audio">
 			<!--- Set the video id for this type of format and set the extension --->
 			<cfset theaudioid = art>
-			<cfquery name="ext" datasource="#request.razuna.application.datasource#">
+			<cfquery name="ext" datasource="#arguments.thestruct.razuna.application.datasource#">
 			SELECT aud_extension
-			FROM #request.razuna.session.hostdbprefix#audios
+			FROM #arguments.thestruct.razuna.session.hostdbprefix#audios
 			WHERE aud_id = <cfqueryparam value="#theaudioid#" cfsqltype="CF_SQL_VARCHAR">
-			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 			</cfquery>
 			<cfset art = ext.aud_extension>
 		</cfif>
@@ -1775,19 +1742,18 @@
 		<!--- Set the colname to get from oracle to video_preview else to video always --->
 		<cfset var thecolname = "audio">
 		<!--- Query the db --->
-		<cfquery name="qry" datasource="#request.razuna.application.datasource#">
+		<cfquery name="qry" datasource="#arguments.thestruct.razuna.application.datasource#">
 		SELECT a.aud_name, a.aud_extension, a.aud_name_org, a.folder_id_r, a.aud_group, a.link_kind,
 		a.link_path_url, a.path_to_asset, a.cloud_url_org
-		FROM #request.razuna.session.hostdbprefix#audios a, #request.razuna.session.hostdbprefix#settings_2 s
+		FROM #arguments.thestruct.razuna.session.hostdbprefix#audios a, #arguments.thestruct.razuna.session.hostdbprefix#settings_2 s
 		WHERE a.aud_id = <cfqueryparam value="#theaudioid#" cfsqltype="CF_SQL_VARCHAR">
-		AND s.set2_id = <cfqueryparam value="#variables.setid#" cfsqltype="cf_sql_numeric">
-		AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
-		AND s.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
+		AND s.set2_id = <cfqueryparam value="#arguments.thestruct.razuna.application.setid#" cfsqltype="cf_sql_numeric">
+		AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
+		AND s.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 		</cfquery>
 		<!--- If we have the preview the name is different --->
 		<cfset var thefinalname = qry.aud_name_org>
 		<!--- Put variables into struct for threads --->
-		<cfset arguments.thestruct.hostid = request.razuna.session.hostid>
 		<cfset arguments.thestruct.qry = qry>
 		<cfset arguments.thestruct.theaudioid = theaudioid>
 		<cfset arguments.thestruct.tempfolder = tempfolder>
@@ -1795,27 +1761,28 @@
 		<cfset arguments.thestruct.thefinalname = thefinalname>
 		<cfset arguments.thestruct.thecolname = thecolname>
 		<!--- Local --->
-		<cfif request.razuna.application.storage EQ "local" AND qry.link_kind EQ "">
+		<cfif arguments.thestruct.razuna.application.storage EQ "local" AND qry.link_kind EQ "">
 			<cfthread name="download#art##theaudioid#" intstruct="#arguments.thestruct#">
-				<cffile action="copy" source="#attributes.intstruct.assetpath#/#attributes.intstruct.hostid#/#attributes.intstruct.qry.path_to_asset#/#attributes.intstruct.thefinalname#" destination="#attributes.intstruct.thepath#/outgoing/#attributes.intstruct.tempfolder#/#attributes.intstruct.art#/#attributes.intstruct.thefinalname#" mode="775">
+				<cffile action="copy" source="#attributes.intstruct.assetpath#/#attributes.intstruct.razuna.session.hostid#/#attributes.intstruct.qry.path_to_asset#/#attributes.intstruct.thefinalname#" destination="#attributes.intstruct.thepath#/outgoing/#attributes.intstruct.tempfolder#/#attributes.intstruct.art#/#attributes.intstruct.thefinalname#" mode="775">
 			</cfthread>
 		<!--- Nirvanix --->
-		<cfelseif request.razuna.application.storage EQ "nirvanix" AND qry.link_kind EQ "">
+		<cfelseif arguments.thestruct.razuna.application.storage EQ "nirvanix" AND qry.link_kind EQ "">
 			<cfthread name="download#art##theaudioid#" intstruct="#arguments.thestruct#">
 				<cfhttp url="#attributes.intstruct.qry.cloud_url_org#" file="#attributes.intstruct.thefinalname#" path="#attributes.intstruct.thepath#/outgoing/#attributes.intstruct.tempfolder#/#attributes.intstruct.art#"></cfhttp>
 			</cfthread>
 		<!--- Amazon --->
-		<cfelseif request.razuna.application.storage EQ "amazon" AND qry.link_kind EQ "">
+		<cfelseif arguments.thestruct.razuna.application.storage EQ "amazon" AND qry.link_kind EQ "">
 			<!--- Download file --->
 			<cfthread name="download#art##theaudioid#" intstruct="#arguments.thestruct#">
 				<cfinvoke component="amazon" method="Download">
 					<cfinvokeargument name="key" value="/#attributes.intstruct.qry.path_to_asset#/#attributes.intstruct.thefinalname#">
 					<cfinvokeargument name="theasset" value="#attributes.intstruct.thepath#/outgoing/#attributes.intstruct.tempfolder#/#attributes.intstruct.art#/#attributes.intstruct.thefinalname#">
 					<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
+					<cfinvokeargument name="thestruct" value="#attributes.intstruct#">
 				</cfinvoke>
 			</cfthread>
 		<!--- Akamai --->
-		<cfelseif request.razuna.application.storage EQ "akamai" AND qry.link_kind EQ "">
+		<cfelseif arguments.thestruct.razuna.application.storage EQ "akamai" AND qry.link_kind EQ "">
 			<cfthread name="download#art##theaudioid#" intstruct="#arguments.thestruct#">
 				<cfhttp url="#attributes.intstruct.akaurl##attributes.intstruct.akaaud#/#attributes.intstruct.thefinalname#" file="#attributes.intstruct.thefinalname#" path="#attributes.intstruct.thepath#/outgoing/#attributes.intstruct.tempfolder#/#attributes.intstruct.art#"></cfhttp>
 			</cfthread>
@@ -1828,7 +1795,7 @@
 					<cffile action="copy" source="#attributes.intstruct.qry.link_path_url#" destination="#attributes.intstruct.thepath#/outgoing/#attributes.intstruct.tempfolder#/#attributes.intstruct.art#/#attributes.intstruct.thefinalname#" mode="775">
 				<!--- different format --->
 				<cfelse>
-					<cffile action="copy" source="#attributes.intstruct.assetpath#/#attributes.intstruct.hostid#/#attributes.intstruct.qry.path_to_asset#/#attributes.intstruct.thefinalname#" destination="#attributes.intstruct.thepath#/outgoing/#attributes.intstruct.tempfolder#/#attributes.intstruct.art#/#attributes.intstruct.thefinalname#" mode="775">
+					<cffile action="copy" source="#attributes.intstruct.assetpath#/#attributes.intstruct.razuna.session.hostid#/#attributes.intstruct.qry.path_to_asset#/#attributes.intstruct.thefinalname#" destination="#attributes.intstruct.thepath#/outgoing/#attributes.intstruct.tempfolder#/#attributes.intstruct.art#/#attributes.intstruct.thefinalname#" mode="775">
 				</cfif>
 			</cfthread>
 		</cfif>
@@ -1838,11 +1805,11 @@
 		<cfset var theext = qry.aud_extension>
 		<!--- If the art id not thumb and original we need to get the name from the parent record --->
 		<cfif qry.aud_group NEQ "">
-			<cfquery name="qry" datasource="#request.razuna.application.datasource#">
+			<cfquery name="qry" datasource="#arguments.thestruct.razuna.application.datasource#">
 			SELECT aud_name
-			FROM #request.razuna.session.hostdbprefix#audios
+			FROM #arguments.thestruct.razuna.session.hostdbprefix#audios
 			WHERE aud_id = <cfqueryparam value="#qry.aud_group#" cfsqltype="CF_SQL_VARCHAR">
-			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 			</cfquery>
 		</cfif>
 		<!--- If filename contains /\ --->
@@ -1857,7 +1824,7 @@
 	<cfset zipname = replace(zipname,"\","-","all")>
 	<cfset zipname = replace(zipname, " ", "_", "All")>
 	<!--- check the create zip --->
-	<cfif structKeyExists(request.razuna.session,"createzip") AND request.razuna.session.createzip EQ 'no'>
+	<cfif structKeyExists(arguments.thestruct.razuna.session,"createzip") AND arguments.thestruct.razuna.session.createzip EQ 'no'>
 		<cfset zipname = zipname>
 	<cfelse>
 	<cfset zipname = zipname & ".zip">
@@ -1868,7 +1835,7 @@
 		<cfcatch type="any">
 		</cfcatch>
 	</cftry>
-	<cfif structKeyExists(request.razuna.session,"createzip") AND request.razuna.session.createzip EQ 'no'>
+	<cfif structKeyExists(arguments.thestruct.razuna.session,"createzip") AND arguments.thestruct.razuna.session.createzip EQ 'no'>
 		<!--- Delete if any folder exists in same name and rename the temp folder --->
 		<cfif directoryExists("#arguments.thestruct.thepath#/outgoing/#zipname#")>
 			<cfdirectory action="delete" directory="#arguments.thestruct.thepath#/outgoing/#zipname#" recurse="true">
@@ -1898,8 +1865,9 @@
 <!--- Get description and keywords for print --->
 <cffunction name="gettext" output="false">
 	<cfargument name="qry" type="query">
+	<cfargument name="thestruct" type="struct" required="true" />
 	<!--- Get the cachetoken for here --->
-	<cfset var cachetoken = getcachetoken(type="audios", hostid=request.razuna.session.hostid)>
+	<cfset var cachetoken = getcachetoken(type="audios", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 	<!--- Get how many loop --->
 	<cfset var howmanyloop = ceiling(arguments.qry.recordcount / 990)>
 	<!--- Set outer loop --->
@@ -1909,16 +1877,16 @@
 	<cfset var q_start = 1>
 	<cfset var q_end = 990>
 	<!--- Query --->
-	<cfquery datasource="#request.razuna.application.datasource#" name="qryintern" cachedwithin="1" region="razcache">
+	<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qryintern" cachedwithin="1" region="razcache">
 		<cfloop from="#pos_start#" to="#pos_end#" index="i">
 			<cfif q_start NEQ 1>
 				UNION ALL
 			</cfif>
 			SELECT /* #cachetoken#gettextaud */ aud_id_r tid, aud_description description, aud_keywords keywords
-			FROM #request.razuna.session.hostdbprefix#audios_text
+			FROM #arguments.thestruct.razuna.session.hostdbprefix#audios_text
 			WHERE aud_id_r IN ('0'<cfloop query="arguments.qry" startrow="#q_start#" endrow="#q_end#">,'#id#'</cfloop>)
 			AND lang_id_r = <cfqueryparam cfsqltype="cf_sql_numeric" value="1">
-			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 			<cfset q_start = q_end + 1>
 	    	<cfset q_end = q_end + 990>
 	    </cfloop>
@@ -1930,8 +1898,9 @@
 <!--- Get rawmetadata --->
 <cffunction name="getrawmetadata" output="false">
 	<cfargument name="qry" type="query">
+	<cfargument name="thestruct" type="struct" required="true" />
 	<!--- Get the cachetoken for here --->
-	<cfset var cachetoken = getcachetoken(type="audios", hostid=request.razuna.session.hostid)>
+	<cfset var cachetoken = getcachetoken(type="audios", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 	<!--- Get how many loop --->
 	<cfset var howmanyloop = ceiling(arguments.qry.recordcount / 990)>
 	<!--- Set outer loop --->
@@ -1941,15 +1910,15 @@
 	<cfset var q_start = 1>
 	<cfset var q_end = 990>
 	<!--- Query --->
-	<cfquery datasource="#request.razuna.application.datasource#" name="qryintern" cachedwithin="1" region="razcache">
+	<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qryintern" cachedwithin="1" region="razcache">
 		<cfloop from="#pos_start#" to="#pos_end#" index="i">
 			<cfif q_start NEQ 1>
 				UNION ALL
 			</cfif>
 			SELECT /* #cachetoken#gettextrm */ aud_meta rawmetadata
-			FROM #request.razuna.session.hostdbprefix#audios
+			FROM #arguments.thestruct.razuna.session.hostdbprefix#audios
 			WHERE aud_id IN ('0'<cfloop query="arguments.qry" startrow="#q_start#" endrow="#q_end#">,'#id#'</cfloop>)
-			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 			<cfset q_start = q_end + 1>
 	    	<cfset q_end = q_end + 990>
 	    </cfloop>
@@ -1963,13 +1932,13 @@
 	<cfargument name="thestruct" type="struct">
 	<cfset var qry = "">
 	<!--- Query --->
-	<cfquery datasource="#request.razuna.application.datasource#" name="qry">
+	<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qry">
 	SELECT
 	aud_id id, aud_name, folder_id_r, cloud_url, cloud_url_org, aud_name_org filenameorg, link_kind, link_path_url,
 	path_to_asset, lucene_key
-	FROM #request.razuna.session.hostdbprefix#audios
+	FROM #arguments.thestruct.razuna.session.hostdbprefix#audios
 	WHERE (folder_id_r IS NULL OR folder_id_r = '')
-	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 	</cfquery>
 	<!--- Return --->
 	<cfreturn qry>
@@ -1979,15 +1948,16 @@
 <cffunction name="checkmd5" output="false">
 	<cfargument name="md5hash" type="string">
 	<cfargument name="checkinfolder" type="string" required="false" default="">
+	<cfargument name="thestruct" type="struct" required="true" />
 	<!--- Get the cachetoken for here --->
-	<cfset var cachetoken = getcachetoken(type="audios", hostid=request.razuna.session.hostid)>
+	<cfset var cachetoken = getcachetoken(type="audios", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 	<cfset var qry = "">
 	<!--- Query --->
-	<cfquery datasource="#request.razuna.application.datasource#" name="qry" cachedwithin="1" region="razcache">
+	<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #cachetoken#checkmd5 */ aud_id, aud_name as name, folder_id_r
-	FROM #request.razuna.session.hostdbprefix#audios
+	FROM #arguments.thestruct.razuna.session.hostdbprefix#audios
 	WHERE hashtag = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.md5hash#">
-	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 	AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 	<cfif isdefined("arguments.checkinfolder") AND arguments.checkinfolder NEQ "">
 	AND folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.checkinfolder#">
@@ -2000,57 +1970,57 @@
 <cffunction name="copymetadataupdate" output="false">
 	<cfargument name="thestruct" type="struct">
 	<!--- select audio name --->
-	<!--- <cfquery datasource="#request.razuna.application.datasource#" name="thedetail">
+	<!--- <cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="thedetail">
 		SELECT aud_name
-		FROM #request.razuna.session.hostdbprefix#audios
+		FROM #arguments.thestruct.razuna.session.hostdbprefix#audios
 		WHERE aud_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.file_id#">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 	</cfquery> --->
 	<!--- select audio details --->
-	<cfquery datasource="#request.razuna.application.datasource#" name="theaudtext">
+	<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="theaudtext">
 		SELECT aud_description,aud_keywords , lang_id_r
-		FROM #request.razuna.session.hostdbprefix#audios_text
+		FROM #arguments.thestruct.razuna.session.hostdbprefix#audios_text
 		WHERE aud_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.file_id#">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 	</cfquery>
 	<cfif arguments.thestruct.insert_type EQ 'replace'>
 		<!--- replace the metadata --->
 		<!--- update audio name --->
 		<cfloop list="#arguments.thestruct.idlist#" index="i">
-			<!--- <cfquery datasource="#request.razuna.application.datasource#" name="update">
-				UPDATE #request.razuna.session.hostdbprefix#audios
+			<!--- <cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="update">
+				UPDATE #arguments.thestruct.razuna.session.hostdbprefix#audios
 				SET aud_NAME = <cfqueryparam cfsqltype="cf_sql_varchar" value="#thedetail.aud_name#">
 				WHERE aud_ID  = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
-				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 			</cfquery> --->
 			<cfloop query="theaudtext">
-				<cfquery datasource="#request.razuna.application.datasource#" name="checkid">
+				<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="checkid">
 					SELECT aud_id_r
-					FROM #request.razuna.session.hostdbprefix#audios_text
+					FROM #arguments.thestruct.razuna.session.hostdbprefix#audios_text
 					WHERE aud_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
-					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
+					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 					AND lang_id_r = <cfqueryparam cfsqltype="cf_sql_numeric" value="#theaudtext.lang_id_r#">
 				</cfquery>
 				<cfif checkid.RecordCount>
 					<!--- update audio desc and keywords --->
-					<cfquery datasource="#request.razuna.application.datasource#" name="updateaudtext">
-						UPDATE #request.razuna.session.hostdbprefix#audios_text
+					<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="updateaudtext">
+						UPDATE #arguments.thestruct.razuna.session.hostdbprefix#audios_text
 						SET aud_description = <cfqueryparam cfsqltype="cf_sql_varchar" value="#theaudtext.aud_description#">,
 						aud_keywords = <cfqueryparam cfsqltype="cf_sql_varchar" value="#theaudtext.aud_keywords#">
 						WHERE aud_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
-						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
+						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 						AND lang_id_r = <cfqueryparam cfsqltype="cf_sql_numeric" value="#theaudtext.lang_id_r#">
 					</cfquery>
 				<cfelse>
-					<cfquery datasource="#request.razuna.application.datasource#">
-						INSERT INTO #request.razuna.session.hostdbprefix#audios_text
+					<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
+						INSERT INTO #arguments.thestruct.razuna.session.hostdbprefix#audios_text
 						(id_inc, aud_id_r, aud_description, aud_keywords, host_id, lang_id_r)
 						VALUES(
 						<cfqueryparam value="#createuuid()#" cfsqltype="CF_SQL_VARCHAR">,
 						<cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">,
 						<cfqueryparam value="#theaudtext.aud_description#" cfsqltype="cf_sql_varchar">,
 						<cfqueryparam value="#theaudtext.aud_keywords#" cfsqltype="cf_sql_varchar">,
-						<cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">,
+						<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">,
 						<cfqueryparam cfsqltype="cf_sql_numeric" value="#theaudtext.lang_id_r#">
 						)
 					</cfquery>
@@ -2061,34 +2031,34 @@
 		<!--- append the metadata --->
 		<cfloop list="#arguments.thestruct.idlist#" index="i">
 			<cfloop query="theaudtext">
-				<cfquery datasource="#request.razuna.application.datasource#" name="theaudtextdetail">
+				<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="theaudtextdetail">
 					SELECT aud_description,aud_keywords
-					FROM #request.razuna.session.hostdbprefix#audios_text
+					FROM #arguments.thestruct.razuna.session.hostdbprefix#audios_text
 					WHERE aud_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
-					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
+					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 					AND lang_id_r = <cfqueryparam cfsqltype="cf_sql_numeric" value="#theaudtext.lang_id_r#">
 				</cfquery>
 				<!--- update audio desc and keywords --->
 				<cfif theaudtextdetail.RecordCount>
-					<cfquery datasource="#request.razuna.application.datasource#" name="updateaudtext">
-						UPDATE #request.razuna.session.hostdbprefix#audios_text
+					<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="updateaudtext">
+						UPDATE #arguments.thestruct.razuna.session.hostdbprefix#audios_text
 						SET aud_description = <cfqueryparam cfsqltype="cf_sql_varchar" value="#theaudtextdetail.aud_description# #theaudtext.aud_description#">,
 						aud_keywords = <cfqueryparam cfsqltype="cf_sql_varchar" value="#theaudtextdetail.aud_keywords# #theaudtext.aud_keywords#">
 						WHERE aud_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
-						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
+						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 						AND lang_id_r = <cfqueryparam cfsqltype="cf_sql_numeric" value="#theaudtext.lang_id_r#">
 					</cfquery>
 				<cfelse>
-					<cfquery datasource="#request.razuna.application.datasource#">
-						INSERT INTO #request.razuna.session.hostdbprefix#audios_text
+					<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
+						INSERT INTO #arguments.thestruct.razuna.session.hostdbprefix#audios_text
 						(id_inc, aud_id_r, lang_id_r, aud_description, aud_keywords, host_id, lang_id_r)
 						VALUES(
 						<cfqueryparam value="#createuuid()#" cfsqltype="CF_SQL_VARCHAR">,
 						<cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">,
-						<cfqueryparam value="#request.razuna.session.thelangid#" cfsqltype="cf_sql_numeric">,
+						<cfqueryparam value="#arguments.thestruct.razuna.session.thelangid#" cfsqltype="cf_sql_numeric">,
 						<cfqueryparam value="#theaudtext.aud_description#" cfsqltype="cf_sql_varchar">,
 						<cfqueryparam value="#theaudtext.aud_keywords#" cfsqltype="cf_sql_varchar">,
-						<cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">,
+						<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">,
 						<cfqueryparam cfsqltype="cf_sql_numeric" value="#theaudtext.lang_id_r#">
 						)
 					</cfquery>
@@ -2096,17 +2066,17 @@
 			</cfloop>
 		</cfloop>
 	</cfif>
-	<cfset resetcachetoken(type="audios", hostid=request.razuna.session.hostid)>
+	<cfset resetcachetoken(type="audios", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 </cffunction>
 <!--- Get all asset from folder --->
 <cffunction name="getAllFolderAsset" output="false">
 	<cfargument name="thestruct" type="struct">
-	<cfquery datasource="#request.razuna.application.datasource#" name="qry_data">
+	<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qry_data">
 		SELECT aud_id AS id,aud_name AS filename
-		FROM #request.razuna.session.hostdbprefix#audios
+		FROM #arguments.thestruct.razuna.session.hostdbprefix#audios
 		WHERE folder_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.folder_id#">
 		AND aud_group IS NULL
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 	</cfquery>
 	<cfreturn qry_data>
 </cffunction>

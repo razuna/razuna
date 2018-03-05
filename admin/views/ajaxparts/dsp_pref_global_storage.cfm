@@ -26,7 +26,7 @@
 <cfoutput>
 	<table width="700" border="0" cellspacing="0" cellpadding="0" class="grid">
 		<tr>
-			<td colspan="3">#defaultsObj.trans("global_storage_desc")#</td>
+			<td colspan="3">#myFusebox.getApplicationData().defaults.trans("global_storage_desc")#</td>
 		</tr>
 		<tr>
 			<td colspan="3"><hr /></td>
@@ -37,7 +37,7 @@
 		</tr>
 		<tr>
 			<td align="center" valign="top"><input type="radio" name="conf_storage" value="local"<cfif gprefs.conf_storage EQ "local"> checked</cfif>></td>
-			<td colspan="2">#defaultsObj.trans("global_storage_local_desc")#</td>
+			<td colspan="2">#myFusebox.getApplicationData().defaults.trans("global_storage_local_desc")#</td>
 		</tr>
 		<!--- <tr>
 			<td></td>
@@ -55,7 +55,7 @@
 		</tr>
 		<tr>
 			<td align="center" valign="top"><input type="radio" name="conf_storage" value="nirvanix"<cfif gprefs.conf_storage EQ "nirvanix"> checked</cfif>></td>
-			<td colspan="2">#defaultsObj.trans("global_storage_nirvanix_desc")#</td>
+			<td colspan="2">#myFusebox.getApplicationData().defaults.trans("global_storage_nirvanix_desc")#</td>
 		</tr>
 		<tr>
 			<td></td>
@@ -75,7 +75,7 @@
 		<tr>
 			<td></td>
 			<td></td>
-			<td><input type="button" name="validate" value="#defaultsObj.trans("validate")#" class="button" onclick="loadcontent('divvalidate','#myself#c.prefs_nvx_validate_master&nvxname=' + escape($('##conf_nirvanix_master_name').val()) + '&nvxpass=' + escape($('##conf_nirvanix_master_pass').val()) + '&nvxkey=' + escape($('##conf_nirvanix_appkey').val()));" /><div id="divvalidate"></div></td>
+			<td><input type="button" name="validate" value="#myFusebox.getApplicationData().defaults.trans("validate")#" class="button" onclick="loadcontent('divvalidate','#myself#c.prefs_nvx_validate_master&nvxname=' + escape($('##conf_nirvanix_master_name').val()) + '&nvxpass=' + escape($('##conf_nirvanix_master_pass').val()) + '&nvxkey=' + escape($('##conf_nirvanix_appkey').val()));" /><div id="divvalidate"></div></td>
 		</tr> --->
 		<!--- Amazon --->
 		<tr>
@@ -83,7 +83,7 @@
 		</tr>
 		<tr>
 			<td align="center" valign="top"><input type="radio" name="conf_storage" value="amazon"<cfif gprefs.conf_storage EQ "amazon"> checked</cfif>></td>
-			<td colspan="2" style="padding-bottom:25px;">#defaultsObj.trans("global_storage_amazon_desc")#</td>
+			<td colspan="2" style="padding-bottom:25px;">#myFusebox.getApplicationData().defaults.trans("global_storage_amazon_desc")#</td>
 		</tr>
 		<tr>
 			<td></td>
@@ -123,7 +123,7 @@
 		<tr>
 			<td></td>
 			<td></td>
-			<td style="padding-bottom:25px;float:right;"><input type="button" name="validate" value="#defaultsObj.trans("validate")#" class="button" onclick="valaws();" /><div id="divvalidateaws"></div></td>
+			<td style="padding-bottom:25px;float:right;"><input type="button" name="validate" value="#myFusebox.getApplicationData().defaults.trans("validate")#" class="button" onclick="valaws();" /><div id="divvalidateaws"></div></td>
 		</tr>
 		<tr>
 			<td></td>
@@ -153,7 +153,7 @@
 		</tr>
 		<tr>
 			<td align="center" valign="top"><input type="radio" name="conf_storage" value="akamai"<cfif gprefs.conf_storage EQ "akamai"> checked</cfif>></td>
-			<td colspan="2">#defaultsObj.trans("global_storage_akamai_desc")#</td>
+			<td colspan="2">#myFusebox.getApplicationData().defaults.trans("global_storage_akamai_desc")#</td>
 		</tr>
 		<tr>
 			<td></td>
@@ -162,7 +162,7 @@
 		</tr>
 	</table>
 	<div style="text-align:right;padding-top:5px;padding-bottom:10px;float:right;">
-		<input type="submit" name="save" value="#defaultsObj.trans("save")#" class="button" /> 
+		<input type="submit" name="save" value="#myFusebox.getApplicationData().defaults.trans("save")#" class="button" /> 
 	</div>
 	<div style="clear:both;"></div>
 	<script type="text/javascript">

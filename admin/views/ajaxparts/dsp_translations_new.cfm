@@ -28,21 +28,21 @@
 <input type="hidden" name="#theaction#" value="c.translation_add">
 <table width="570" border="0" cellspacing="0" cellpadding="0" class="grid">
 	<tr>
-		<th colspan="2">#defaultsObj.trans("translations_new")#</th>
+		<th colspan="2">#myFusebox.getApplicationData().defaults.trans("translations_new")#</th>
 	</tr>
 	<tr>
 		<td>ID</td>
 		<td><input type="text" name="trans_id" id="trans_id" class="text" size="40"></td>
 	</tr>
-	<cfloop from="1" to="#defaultsObj.howmanylang("#request.razuna.application.datasource#")#" index="langindex">
+	<cfloop from="1" to="#myFusebox.getApplicationData().defaults.howmanylang("#request.razuna.application.datasource#")#" index="langindex">
 		<input type="hidden" name="transid" value="#langindex#">
 		<tr>
-			<td valign="top">#defaultsObj.thislang("set_lang_#langindex#")#</td>
+			<td valign="top">#myFusebox.getApplicationData().defaults.thislang("set_lang_#langindex#")#</td>
 			<td><textarea rows="4" cols="60" class="text" name="trans_lang_#langindex#"></textarea></td>
 		</tr>
 	</cfloop>
 	<tr>
-		<td colspan="2" align="right" width="100%" nowrap="true"><input type="submit" name="Submit" value="#defaultsObj.trans("translations_new")#" class="button"></td>
+		<td colspan="2" align="right" width="100%" nowrap="true"><input type="submit" name="Submit" value="#myFusebox.getApplicationData().defaults.trans("translations_new")#" class="button"></td>
 	</tr>
 </table>
 </form>

@@ -24,8 +24,6 @@
 *
 --->
 <cfcomponent extends="extQueryCaching">
-	<!--- Global Object --->
-	<cfobject component="global.cfc.global" name="gobj">
 
 	<cffunction name="init" returntype="backuprestore" access="public" output="false">
 		<cfreturn this />
@@ -56,7 +54,7 @@
 		CREATE SCHEMA #arguments.thestruct.tschema#
 		</cfquery>
 		<!--- Grab the db prefix from the host table --->
-		<cfquery datasource="#request.razuna.application.datasource#" name="qryhost">
+		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qryhost">
 		SELECT host_shard_group
 		FROM hosts
 		GROUP BY host_shard_group
@@ -76,7 +74,7 @@
 		VALUES(
 			<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.tschema#">,
 			<cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#">,
-			<cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#arguments.thestruct.hostid#">
+			<cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#arguments.thestruct.razuna.session.hostid#">
 		)
 		</cfquery>
 		<!--- Feedback --->
@@ -87,18 +85,18 @@
 			<!--- Upper Case DB prefix --->
 			<cfset theprefix = lcase(host_shard_group) & "%">
 			<!--- Oracle --->
-			<cfif request.razuna.application.thedatabase EQ "oracle">
+			<cfif arguments.thestruct.razuna.application.thedatabase EQ "oracle">
 				<!--- Feedback --->
 				<cfoutput><strong>Backing up tables...</strong><br></cfoutput>
 				<cfflush>
 				<!--- Select all host tables --->
-				<cfquery datasource="#request.razuna.application.datasource#" name="arguments.thestruct.qry">
+				<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="arguments.thestruct.qry">
 				SELECT lower(object_name) as thetable
 				FROM user_objects
 				WHERE object_type = 'TABLE'
 				AND (
 				lower(object_name) LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#theprefix#">
-				<cfif arguments.thestruct.hostid EQ 0>
+				<cfif arguments.thestruct.razuna.session.hostid EQ 0>
 					OR (
 						lower(object_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="modules">
 						OR lower(object_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="permissions">
@@ -143,17 +141,17 @@
 				<cfoutput><strong>Backing up tables... done. Continuing...</strong><br></cfoutput>
 				<cfflush>
 			<!--- DB2 --->
-			<cfelseif request.razuna.application.thedatabase EQ "db2">
+			<cfelseif arguments.thestruct.razuna.application.thedatabase EQ "db2">
 				<!--- Feedback --->
 				<cfoutput><strong>Backing up tables...</strong><br></cfoutput>
 				<cfflush>
 				<!--- Select all host tables --->
-				<cfquery datasource="#request.razuna.application.datasource#" name="arguments.thestruct.qry">
+				<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="arguments.thestruct.qry">
 				SELECT lower(tabname) as thetable
 				FROM syscat.tables
 				WHERE (
 				lower(tabname) LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(theprefix)#">
-				<cfif arguments.thestruct.hostid EQ 0>
+				<cfif arguments.thestruct.razuna.session.hostid EQ 0>
 					OR (
 						lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="modules">
 						OR lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="permissions">
@@ -189,7 +187,7 @@
 					</cfif>
 				</cfif>
 				)
-				AND tabschema = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(request.razuna.application.theschema)#">
+				AND tabschema = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(arguments.thestruct.razuna.application.theschema)#">
 				GROUP BY tabname
 				ORDER BY tabname
 				</cfquery>
@@ -204,11 +202,11 @@
 				<cfoutput><strong>Backing up tables...</strong><br></cfoutput>
 				<cfflush>
 				<!--- Select all host tables --->
-				<cfquery datasource="#request.razuna.application.datasource#" name="arguments.thestruct.qry">
+				<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="arguments.thestruct.qry">
 				SELECT lower(table_name) as thetable
 				FROM information_schema.tables
 				WHERE lower(table_name) LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(theprefix)#">
-				<cfif arguments.thestruct.hostid EQ 0>
+				<cfif arguments.thestruct.razuna.session.hostid EQ 0>
 					OR (
 						lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="modules">
 						OR lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="permissions">
@@ -278,33 +276,33 @@
 			SET REFERENTIAL_INTEGRITY false;
 			</cfquery>
 			<!--- Select records from the source table --->
-			<cfquery dataSource="#request.razuna.application.datasource#" name="sourcedb">
+			<cfquery dataSource="#arguments.thestruct.razuna.application.datasource#" name="sourcedb">
 			SELECT *
 			FROM #lcase(thetable)#
-			<cfif arguments.thestruct.hostid NEQ 0>
+			<cfif arguments.thestruct.razuna.session.hostid NEQ 0>
 				<cfif thetable EQ "MODULES">
-					WHERE mod_host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
+					WHERE mod_host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 				<cfelseif thetable EQ "PERMISSIONS">
-					WHERE per_host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
+					WHERE per_host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 				<cfelse>
-					WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
+					WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 				</cfif>
 			</cfif>
 			</cfquery>
 			<!--- Get Columns --->
-			<cfif request.razuna.application.thedatabase EQ "db2">
-				<cfquery datasource="#request.razuna.application.datasource#" name="qry_columns">
+			<cfif arguments.thestruct.razuna.application.thedatabase EQ "db2">
+				<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qry_columns">
 				SELECT colname as column_name, typename as data_type
 				FROM syscat.columns
 				WHERE lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(thetable)#">
 				ORDER BY colname, typename
 				</cfquery>
 			<cfelse>
-				<cfquery datasource="#request.razuna.application.datasource#" name="qry_columns">
-				SELECT column_name, <cfif request.razuna.application.thedatabase EQ "h2">type_name as data_type<cfelse>data_type</cfif>
-				FROM <cfif request.razuna.application.thedatabase EQ "oracle">all_tab_columns<cfelse>information_schema.columns</cfif>
+				<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qry_columns">
+				SELECT column_name, <cfif arguments.thestruct.razuna.application.thedatabase EQ "h2">type_name as data_type<cfelse>data_type</cfif>
+				FROM <cfif arguments.thestruct.razuna.application.thedatabase EQ "oracle">all_tab_columns<cfelse>information_schema.columns</cfif>
 				WHERE lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(thetable)#">
-				ORDER BY column_name, <cfif request.razuna.application.thedatabase EQ "h2">type_name<cfelse>data_type</cfif>
+				ORDER BY column_name, <cfif arguments.thestruct.razuna.application.thedatabase EQ "h2">type_name<cfelse>data_type</cfif>
 				</cfquery>
 			</cfif>
 			<!--- Create our custom list --->
@@ -380,7 +378,7 @@
 	<cffunction name="backupxml" output="true">
 		<cfargument name="thestruct" type="struct">
 		<!--- Get version --->
-		<cfinvoke component="settings" method="getconfig" thenode="version" returnVariable="version" />
+		<cfinvoke component="settings" method="getconfig" thenode="version" thestruct="#arguments.thestruct#" returnVariable="version" />
 		<!--- Feedback --->
 		<cfoutput><strong>Starting the Backup</strong><br><br></cfoutput>
 		<cfflush>
@@ -399,19 +397,19 @@
 <cfsavecontent variable="thefinalxml"><cfoutput><?xml version="1.0" encoding="UTF-8"?>
 <razuna>
 	<date>#xmlformat(thedate)#</date>
-	<origindb>#request.razuna.application.thedatabase#</origindb>
+	<origindb>#arguments.thestruct.razuna.application.thedatabase#</origindb>
 </cfoutput>
 </cfsavecontent>
 		<!--- Write the file --->
 		<cffile action="write" file="#GetTempDirectory()#/#arguments.thestruct.thedatefile#" output="#thefinalxml#" mode="775" charset="utf-8">
 		</cfif>
 		<!--- Grab the db prefix from the host table --->
-		<cfquery datasource="#request.razuna.application.datasource#" name="qryhost">
+		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qryhost">
 		SELECT host_shard_group
 		FROM hosts
 		<!--- If from admin we grab all sharding groups --->
 		<cfif arguments.thestruct.admin EQ "F">
-			WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
+			WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 		</cfif>
 		GROUP BY host_shard_group
 		</cfquery>
@@ -423,12 +421,12 @@
 			<!--- Upper Case DB prefix --->
 			<cfset theprefix = lcase(host_shard_group) & "%">
 			<!--- Oracle --->
-			<cfif request.razuna.application.thedatabase EQ "oracle">
+			<cfif arguments.thestruct.razuna.application.thedatabase EQ "oracle">
 				<cfif arguments.thestruct.admin EQ "T" AND currentRow EQ 1>
 					<!--- Feedback --->
 					<cfoutput><strong>Backing up default tables...</strong><br></cfoutput>
 					<cfflush>
-					<cfquery datasource="#request.razuna.application.datasource#" name="arguments.thestruct.qry">
+					<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="arguments.thestruct.qry">
 					SELECT lower(object_name) as thetable
 					FROM user_objects
 					WHERE object_type='TABLE'
@@ -455,7 +453,7 @@
 					<!--- Write XML --->
 					<cfinvoke method="writexml" thestruct="#arguments.thestruct#">
 					<!--- Now select CT tables only --->
-					<cfquery datasource="#request.razuna.application.datasource#" name="arguments.thestruct.qry">
+					<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="arguments.thestruct.qry">
 					SELECT lower(object_name) as thetable
 					FROM user_objects
 					WHERE object_type = 'TABLE'
@@ -476,7 +474,7 @@
 				<cfoutput><strong>Backing up tables...</strong><br></cfoutput>
 				<cfflush>
 				<!--- Select all host tables --->
-				<cfquery datasource="#request.razuna.application.datasource#" name="arguments.thestruct.qry">
+				<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="arguments.thestruct.qry">
 				SELECT lower(object_name) as thetable
 				FROM user_objects
 				WHERE object_type = 'TABLE'
@@ -496,13 +494,13 @@
 				<cfoutput><strong>Backing up tables... done. Continuing...</strong><br></cfoutput>
 				<cfflush>
 			<!--- DB2 --->
-			<cfelseif request.razuna.application.thedatabase EQ "db2">
+			<cfelseif arguments.thestruct.razuna.application.thedatabase EQ "db2">
 				<!--- If from admin select default tables also --->
 				<cfif arguments.thestruct.admin EQ "T" AND currentRow EQ 1>
 					<!--- Feedback --->
 					<cfoutput><strong>Backing up default tables...</strong><br></cfoutput>
 					<cfflush>
-					<cfquery datasource="#request.razuna.application.datasource#" name="arguments.thestruct.qry">
+					<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="arguments.thestruct.qry">
 					SELECT lower(tabname) as thetable
 					FROM syscat.tables
 					WHERE (lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="groups">
@@ -523,14 +521,14 @@
 					</cfif>
 					--->
 					)
-					AND tabschema = <cfqueryparam cfsqltype="cf_sql_varchar" value="#ucase(request.razuna.application.theschema)#">
+					AND tabschema = <cfqueryparam cfsqltype="cf_sql_varchar" value="#ucase(arguments.thestruct.razuna.application.theschema)#">
 					GROUP BY tabname
 					ORDER BY tabname
 					</cfquery>
 					<!--- Write XML --->
 					<cfinvoke method="writexml" thestruct="#arguments.thestruct#">
 					<!--- Now select CT tables only --->
-					<cfquery datasource="#request.razuna.application.datasource#" name="arguments.thestruct.qry">
+					<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="arguments.thestruct.qry">
 					SELECT lower(tabname) as thetable
 					FROM syscat.tables
 					WHERE (lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="ct_groups_users">
@@ -538,7 +536,7 @@
 					OR lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="ct_users_hosts">
 					OR lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="ct_users_remoteusers">
 					OR lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="ct_labels">)
-					AND lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(request.razuna.application.theschema)#">
+					AND lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(arguments.thestruct.razuna.application.theschema)#">
 					GROUP BY tabname
 					</cfquery>
 					<!--- Write XML --->
@@ -551,7 +549,7 @@
 				<cfoutput><strong>Backing up tables...</strong><br></cfoutput>
 				<cfflush>
 				<!--- Select all host tables --->
-				<cfquery datasource="#request.razuna.application.datasource#" name="arguments.thestruct.qry">
+				<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="arguments.thestruct.qry">
 				SELECT lower(tabname) as thetable
 				FROM syscat.tables
 				WHERE (lower(tabname) LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#theprefix#">
@@ -561,7 +559,7 @@
 				</cfif>
 				AND lower(tabname) != <cfqueryparam cfsqltype="cf_sql_varchar" value="raz1_errors">
 				AND lower(tabname) != <cfqueryparam cfsqltype="cf_sql_varchar" value="raz2_errors">
-				AND lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(request.razuna.application.theschema)#">
+				AND lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(arguments.thestruct.razuna.application.theschema)#">
 				GROUP BY tabname
 				ORDER BY tabname
 				</cfquery>
@@ -577,7 +575,7 @@
 					<!--- Feedback --->
 					<cfoutput><strong>Backing up default tables...</strong><br></cfoutput>
 					<cfflush>
-					<cfquery datasource="#request.razuna.application.datasource#" name="arguments.thestruct.qry">
+					<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="arguments.thestruct.qry">
 					SELECT lower(table_name) as thetable
 					FROM information_schema.tables
 					WHERE lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="groups">
@@ -593,7 +591,7 @@
 					OR lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="rfs">
 					OR lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="cache">
 					<!---
-					<cfif request.razuna.application.thedatabase EQ "h2" AND version EQ "1.4">
+					<cfif arguments.thestruct.razuna.application.thedatabase EQ "h2" AND version EQ "1.4">
 					<cfelse>
 						OR lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="sequences">
 					</cfif>
@@ -604,7 +602,7 @@
 					<!--- Write XML --->
 					<cfinvoke method="writexml" thestruct="#arguments.thestruct#">
 					<!--- Now select CT tables only --->
-					<cfquery datasource="#request.razuna.application.datasource#" name="arguments.thestruct.qry">
+					<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="arguments.thestruct.qry">
 					SELECT lower(table_name) as thetable
 					FROM information_schema.tables
 					WHERE (lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="ct_groups_users">
@@ -624,7 +622,7 @@
 				<cfoutput><strong>Backing up tables...</strong><br></cfoutput>
 				<cfflush>
 				<!--- Select all host tables --->
-				<cfquery datasource="#request.razuna.application.datasource#" name="arguments.thestruct.qry">
+				<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="arguments.thestruct.qry">
 				SELECT lower(table_name) as thetable
 				FROM information_schema.tables
 				WHERE lower(table_name) LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(theprefix)#">
@@ -650,10 +648,10 @@
 			<cfoutput><strong>Backing up additional tables...</strong><br><br></cfoutput>
 			<cfflush>
 			<!--- Groups --->
-			<cfquery datasource="#request.razuna.application.datasource#" name="qryt">
+			<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qryt">
 			SELECT grp_id, grp_name, grp_host_id, grp_mod_id, grp_translation_key
 			FROM groups
-			WHERE grp_host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
+			WHERE grp_host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 			</cfquery>
 			<!--- Create the XML for this table --->
 <cfsavecontent variable="thexml"><cfoutput><cfif arguments.thestruct.tofiletype EQ "xml">
@@ -681,7 +679,7 @@
 			<cfif qryt.recordcount NEQ 0>
 				<cfset var groupids = valuelist(qryt.grp_id)>
 				<!--- ct_groups_permissions --->
-				<cfquery datasource="#request.razuna.application.datasource#" name="qryt">
+				<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qryt">
 				SELECT ct_g_p_per_id, ct_g_p_grp_id
 				FROM ct_groups_permissions
 				WHERE ct_g_p_grp_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#groupids#" list="true">)
@@ -708,10 +706,10 @@
 				<cfset thexml = "">
 			</cfif>
 			<!--- ct_users_hosts --->
-			<cfquery datasource="#request.razuna.application.datasource#" name="qryt">
+			<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qryt">
 			SELECT ct_u_h_user_id, ct_u_h_host_id
 			FROM ct_users_hosts
-			WHERE ct_u_h_host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
+			WHERE ct_u_h_host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 			group by ct_u_h_user_id, ct_u_h_host_id
 			</cfquery>
 			<!--- Create the XML for this table --->
@@ -738,13 +736,13 @@
 			<cfif qryt.recordcount NEQ 0>
 				<cfset var userids = valuelist(qryt.ct_u_h_user_id)>
 				<!--- users --->
-				<cfquery datasource="#request.razuna.application.datasource#" name="qryt">
+				<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qryt">
 				SELECT user_id, user_login_name, user_email, user_first_name, user_last_name, user_pass, user_company, user_street,
 				user_street_nr, user_street_2, user_street_nr_2, user_zip, user_city, user_country, user_phone, user_phone_2, user_mobile,
 				user_fax, user_create_date, user_change_date, user_active, user_in_admin, user_in_dam, user_salutation, user_in_vp, set2_nirvanix_name, set2_nirvanix_pass
 				FROM users
 				WHERE user_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#userids#" list="true">)
-				AND user_id <cfif request.razuna.application.thedatabase EQ "oracle" OR request.razuna.application.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="1" list="true">
+				AND user_id <cfif arguments.thestruct.razuna.application.thedatabase EQ "oracle" OR arguments.thestruct.razuna.application.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="1" list="true">
 				</cfquery>
 				<!--- Create the XML for this table --->
 <cfsavecontent variable="thexml"><cfoutput><cfif arguments.thestruct.tofiletype EQ "xml">
@@ -791,7 +789,7 @@
 				<cffile action="append" file="#GetTempDirectory()#/#arguments.thestruct.thedatefile#" output="#thexml#" mode="775" charset="utf-8">
 				<cfset thexml = "">
 				<!--- ct_groups_users --->
-				<cfquery datasource="#request.razuna.application.datasource#" name="qryt">
+				<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qryt">
 				SELECT ct_g_u_grp_id, ct_g_u_user_id
 				FROM ct_groups_users
 				WHERE ct_g_u_user_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#userids#" list="true">)
@@ -821,28 +819,28 @@
 		<!--- Sequences (only needed for admin export and for version 1.4) --->
 		<cfif arguments.thestruct.admin EQ "T" AND version EQ "1.4">
 			<!--- If on Oracle or H2 we need to read and write the Sequences --->
-			<cfif request.razuna.application.thedatabase EQ "oracle">
+			<cfif arguments.thestruct.razuna.application.thedatabase EQ "oracle">
 				<!--- Query sequences --->
-				<cfquery datasource="#request.razuna.application.datasource#" name="qryt">
+				<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qryt">
 				SELECT sequence_name as theseq, last_number as thevalue
 				FROM all_sequences
-				WHERE sequence_owner = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#ucase(request.razuna.application.theschema)#">
+				WHERE sequence_owner = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#ucase(arguments.thestruct.razuna.application.theschema)#">
 				</cfquery>
-			<cfelseif request.razuna.application.thedatabase EQ "h2">
-				<cfquery datasource="#request.razuna.application.datasource#" name="qryt">
+			<cfelseif arguments.thestruct.razuna.application.thedatabase EQ "h2">
+				<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qryt">
 				SELECT sequence_name as theseq, current_value as thevalue
 				FROM information_schema.sequences
 				WHERE IS_GENERATED = false
 				</cfquery>
-			<cfelseif request.razuna.application.thedatabase EQ "db2">
-				<cfquery datasource="#request.razuna.application.datasource#" name="qryt">
+			<cfelseif arguments.thestruct.razuna.application.thedatabase EQ "db2">
+				<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qryt">
 				SELECT seqname as theseq, nextcachefirstvalue as thevalue
 				FROM syscat.sequences
-				WHERE seqschema = <cfqueryparam cfsqltype="cf_sql_varchar" value="#ucase(request.razuna.application.theschema)#">
+				WHERE seqschema = <cfqueryparam cfsqltype="cf_sql_varchar" value="#ucase(arguments.thestruct.razuna.application.theschema)#">
 				AND seqtype = <cfqueryparam cfsqltype="cf_sql_varchar" value="S">
 				</cfquery>
 			</cfif>
-<cfif request.razuna.application.thedatabase EQ "oracle" OR request.razuna.application.thedatabase EQ "h2" OR request.razuna.application.thedatabase EQ "db2">
+<cfif arguments.thestruct.razuna.application.thedatabase EQ "oracle" OR arguments.thestruct.razuna.application.thedatabase EQ "h2" OR arguments.thestruct.razuna.application.thedatabase EQ "db2">
 <cfsavecontent variable="thexml"><cfoutput><cfif arguments.thestruct.tofiletype EQ "xml">
 	<sequences>
 		<cfloop query="qryt"><record id="#currentRow#">
@@ -876,9 +874,9 @@
 		<cfflush>
 		<!--- Backup Dir --->
 		<cfif arguments.thestruct.admin EQ "F">
-			<cfset var backupdir = "#arguments.thestruct.thepath#/backup/#request.razuna.session.hostid#">
+			<cfset var backupdir = "#arguments.thestruct.thepath#/backup/#arguments.thestruct.razuna.session.hostid#">
 			<cfset var scriptname = replacenocase(cgi.script_name,"index.cfm","","one")>
-			<cfset var backupdl = "backup/#request.razuna.session.hostid#/#arguments.thestruct.thedatefile#.zip">
+			<cfset var backupdl = "backup/#arguments.thestruct.razuna.session.hostid#/#arguments.thestruct.thedatefile#.zip">
 		<cfelseif arguments.thestruct.admin EQ "T">
 			<cfset var backupdir = ExpandPath("backup")>
 			<cfset var backupdl = "admin/backup/#arguments.thestruct.thedatefile#.zip">
@@ -925,19 +923,18 @@
 		<cfoutput><strong>Checking consistency of records...</strong><br><br></cfoutput>
 		<cfflush>
 		<!--- Check that records have values and insert rec_uuid if not there already --->
-		<cfinvoke method="check_rec_uuid" theschema="#arguments.thestruct.back_id#" />
+		<cfinvoke method="check_rec_uuid" theschema="#arguments.thestruct.back_id#" thestruct="#arguments.thestruct#" />
 		<!--- Params --->
 		<cfparam name="arguments.thestruct.admin" default="F">
 		<cfparam name="arguments.thestruct.uploadxml" default="F">
-		<cfparam name="arguments.thestruct.dsn" default="#request.razuna.application.datasource#">
-		<cfparam name="arguments.thestruct.theschema" default="#request.razuna.application.theschema#">
+		<cfparam name="arguments.thestruct.dsn" default="#arguments.thestruct.razuna.application.datasource#">
+		<cfparam name="arguments.thestruct.theschema" default="#arguments.thestruct.razuna.application.theschema#">
 		<cfset var thecol = "">
 		<cfset var theval = "">
 		<cfset var tempgroup = "">
 		<cfset var thecounter = 1>
 		<cfset var errordate = "import_" & dateformat(now(),"yyyy-mm-dd") & "_" & timeformat(now(),"HH-mm-ss-l")>
 		<!--- Set variables into struct for thread below --->
-		<cfset arguments.thestruct.hostid = request.razuna.session.hostid>
 		<cfset var tt = createuuid()>
 		<!--- Loop over the backed up table names and remove all records first --->
 		<cfoutput><strong>Database setup...</strong><br><br></cfoutput>
@@ -946,10 +943,10 @@
 			<cfoutput>Currently cleaning up #thetable#<br></cfoutput>
 			<cfflush>
 			<!--- Drop Constraints --->
-			<cfinvoke method="dropconst" theindex="#thetable#">
+			<cfinvoke method="dropconst" theindex="#thetable#" thestruct="#arguments.thestruct#">
 			<!--- Delete records --->
 			<cftry>
-				<cfquery datasource="#request.razuna.application.datasource#">
+				<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
 				DELETE FROM #lcase(thetable)#
 				<!--- If on host we only remove the records with the same host_id --->
 				</cfquery>
@@ -978,7 +975,7 @@
 				<cfoutput>Currently restoring table #thetable#<br></cfoutput>
 				<cfflush>
 				<!--- Drop Constraints --->
-				<cfinvoke method="dropconst" theindex="#thetable#">
+				<cfinvoke method="dropconst" theindex="#thetable#" thestruct="#arguments.thestruct#">
 				<!--- Select records from the backup table --->
 				<cfquery dataSource="razuna_backup" name="sourcedb">
 				SELECT *
@@ -1004,11 +1001,11 @@
 				<cfset len_count_meta = 1>
 				<cfset len_count_meta2 = 1>
 				<!--- Drop Constraints --->
-				<cfinvoke method="dropconst" theindex="#lcase(thetable)#">
+				<cfinvoke method="dropconst" theindex="#lcase(thetable)#" thestruct="#arguments.thestruct#">
 				<!--- Insert records into target db --->
 				<cfloop query="sourcedb">
 					<cftry>
-						<cfquery dataSource="#request.razuna.application.datasource#">
+						<cfquery dataSource="#arguments.thestruct.razuna.application.datasource#">
 						INSERT INTO #lcase(thetable)#
 						(<cfloop list="#sourcedb.columnlist#" index="m">#listfirst(m,"-")#<cfif len_count_meta NEQ len_meta>, </cfif><cfset len_count_meta = len_count_meta + 1></cfloop>)
 						VALUES(
@@ -1073,9 +1070,11 @@
 			</cftry>
 		</cfloop>
 		<!--- Flush Cache --->
-		<cfset resetcachetokenall(request.razuna.session.hostid)>
+		<cfset resetcachetokenall(hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 		<!--- Final Feedback --->
 		<cfoutput><br><br><span style="font-weight:bold;color:green;">Restore done! You can <a href="##" onclick="window.close();">close this window now</a>.</span><br></cfoutput>
+		<!--- Global Object --->
+		<cfobject component="global.cfc.global" name="gobj">
 		<!--- Fix db integrity issues if any --->
 		<cfset gobj.fixdbintegrityissues()>
 		<!--- Return --->
@@ -1676,10 +1675,11 @@
 	<!--- Drop Constraints --->
 	<cffunction name="dropconst" output="true">
 		<cfargument name="theindex" type="string">
+		<cfargument name="thestruct" type="struct">
 		<!--- MSSQL: Drop all constraints --->
-		<cfif request.razuna.application.thedatabase EQ "mssql">
+		<cfif arguments.thestruct.razuna.application.thedatabase EQ "mssql">
 			<cftry>
-				<cfquery datasource="#request.razuna.application.datasource#">
+				<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
 				ALTER TABLE #lcase(arguments.theindex)# NOCHECK CONSTRAINT ALL
 				</cfquery>
 				<cfcatch type="database">
@@ -1687,14 +1687,14 @@
 				</cfcatch>
 			</cftry>
 		<!--- MySQL: Drop all constraints --->
-		<cfelseif request.razuna.application.thedatabase EQ "mysql">
-			<cfquery datasource="#request.razuna.application.datasource#">
+		<cfelseif arguments.thestruct.razuna.application.thedatabase EQ "mysql">
+			<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
 			SET FOREIGN_KEY_CHECKS = 0
 			</cfquery>
 		<!--- H2: Drop all constraints --->
-		<cfelseif request.razuna.application.thedatabase EQ "h2">
+		<cfelseif arguments.thestruct.razuna.application.thedatabase EQ "h2">
 			<cftry>
-				<cfquery datasource="#request.razuna.application.datasource#">
+				<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
 				ALTER TABLE #lcase(arguments.theindex)# SET REFERENTIAL_INTEGRITY false
 				</cfquery>
 				<cfcatch type="database">
@@ -1702,15 +1702,15 @@
 				</cfcatch>
 			</cftry>
 		<!--- Oracle: Drop all constraints --->
-		<cfelseif request.razuna.application.thedatabase EQ "oracle">
+		<cfelseif arguments.thestruct.razuna.application.thedatabase EQ "oracle">
 			<cftry>
-				<cfquery datasource="#request.razuna.application.datasource#" name="con">
+				<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="con">
 				SELECT constraint_name
 				FROM user_constraints
 				WHERE lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(arguments.theindex)#">
 				</cfquery>
 				<cfloop query="con">
-					<cfquery datasource="#request.razuna.application.datasource#">
+					<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
 					ALTER TABLE #lcase(arguments.theindex)# DISABLE CONSTRAINT #constraint_name# CASCADE
 					</cfquery>
 				</cfloop>
@@ -1726,16 +1726,17 @@
 	<!--- Drop Constraints --->
 	<cffunction name="dropconstall" output="true">
 		<cfargument name="theindex" type="string">
+		<cfargument name="thestruct" type="struct">
 		<!--- MSSQL: Drop all constraints --->
-		<cfif request.razuna.application.thedatabase EQ "mssql">
+		<cfif arguments.thestruct.razuna.application.thedatabase EQ "mssql">
 			<cftry>
-				<cfquery datasource="#request.razuna.application.datasource#" name="con">
+				<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="con">
 				SELECT table_name, constraint_name
 				FROM information_schema.constraint_column_usage
 				WHERE lower(table_name) LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(arguments.theindex)#%">
 				</cfquery>
 				<cfloop query="con">
-					<cfquery datasource="#request.razuna.application.datasource#">
+					<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
 					ALTER TABLE #lcase(table_name)# NOCHECK CONSTRAINT ALL
 					</cfquery>
 				</cfloop>
@@ -1744,18 +1745,18 @@
 				</cfcatch>
 			</cftry>
 		<!--- MySQL: Drop all constraints --->
-		<cfelseif request.razuna.application.thedatabase EQ "mysql">
+		<cfelseif arguments.thestruct.razuna.application.thedatabase EQ "mysql">
 			<cftry>
-				<cfquery datasource="#request.razuna.application.datasource#">
+				<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
 				SET foreign_key_checks = 0
 				</cfquery>
-				<cfquery datasource="#request.razuna.application.datasource#" name="con">
+				<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="con">
 				SELECT table_name
 				FROM information_schema.tables
 				WHERE lower(table_name) LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(arguments.theindex)#%">
 				</cfquery>
 				<cfloop query="con">
-					<cfquery datasource="#request.razuna.application.datasource#">
+					<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
 					ALTER TABLE #lcase(table_name)# DISABLE KEYS
 					</cfquery>
 				</cfloop>
@@ -1764,20 +1765,20 @@
 				</cfcatch>
 			</cftry>
 		<!--- H2: Drop all constraints --->
-		<cfelseif request.razuna.application.thedatabase EQ "h2">
-			<cfquery datasource="#request.razuna.application.datasource#">
+		<cfelseif arguments.thestruct.razuna.application.thedatabase EQ "h2">
+			<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
 			SET REFERENTIAL_INTEGRITY false
 			</cfquery>
 		<!--- Oracle: Drop all constraints --->
-		<cfelseif request.razuna.application.thedatabase EQ "oracle">
+		<cfelseif arguments.thestruct.razuna.application.thedatabase EQ "oracle">
 			<cftry>
-				<cfquery datasource="#request.razuna.application.datasource#" name="con">
+				<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="con">
 				SELECT constraint_name, table_name
 				FROM user_constraints
 				WHERE lower(table_name) LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(arguments.theindex)#%">
 				</cfquery>
 				<cfloop query="con">
-					<cfquery datasource="#request.razuna.application.datasource#">
+					<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
 					ALTER TABLE #lcase(table_name)# DISABLE CONSTRAINT #constraint_name# CASCADE
 					</cfquery>
 				</cfloop>
@@ -1802,8 +1803,8 @@
 			<cfoutput>Currently running backup of #thetable#<br></cfoutput>
 			<cfflush>
 			<!--- Get Columns --->
-			<cfif request.razuna.application.thedatabase EQ "db2">
-				<cfquery datasource="#request.razuna.application.datasource#" name="qry_columns">
+			<cfif arguments.thestruct.razuna.application.thedatabase EQ "db2">
+				<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qry_columns">
 				SELECT colname as column_name, typename as data_type
 				FROM syscat.columns
 				WHERE lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(thetable)#">
@@ -1816,12 +1817,12 @@
 				AND colname != 'COMP'
 				AND colname != 'COMP_UW'
 				AND colname != 'SET2_INTRANET_LOGO'
-				AND tabschema = <cfqueryparam cfsqltype="cf_sql_varchar" value="#ucase(request.razuna.application.theschema)#">
+				AND tabschema = <cfqueryparam cfsqltype="cf_sql_varchar" value="#ucase(arguments.thestruct.razuna.application.theschema)#">
 				</cfquery>
 			<cfelse>
-				<cfquery datasource="#request.razuna.application.datasource#" name="qry_columns">
-				SELECT column_name, <cfif request.razuna.application.thedatabase EQ "h2">type_name as data_type<cfelse>data_type</cfif>
-				FROM <cfif request.razuna.application.thedatabase EQ "oracle">all_tab_columns<cfelse>information_schema.columns</cfif>
+				<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qry_columns">
+				SELECT column_name, <cfif arguments.thestruct.razuna.application.thedatabase EQ "h2">type_name as data_type<cfelse>data_type</cfif>
+				FROM <cfif arguments.thestruct.razuna.application.thedatabase EQ "oracle">all_tab_columns<cfelse>information_schema.columns</cfif>
 				WHERE lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(thetable)#">
 				AND column_name != 'ADMIN'
 				AND column_name != 'NAME'
@@ -1832,7 +1833,7 @@
 				AND column_name != 'COMP'
 				AND column_name != 'COMP_UW'
 				AND column_name != 'SET2_INTRANET_LOGO'
-				AND table_schema = <cfqueryparam cfsqltype="cf_sql_varchar" value="#ucase(request.razuna.application.theschema)#">
+				AND table_schema = <cfqueryparam cfsqltype="cf_sql_varchar" value="#ucase(arguments.thestruct.razuna.application.theschema)#">
 				</cfquery>
 			</cfif>
 			<!--- Create our custom list --->
@@ -1840,16 +1841,16 @@
 				<cfset thecolumns = thecolumns & column_name & "--" & data_type & ",">
 			</cfloop>
 			<!--- Query values from table --->
-			<cfquery datasource="#request.razuna.application.datasource#" name="qryt">
+			<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qryt">
 			SELECT #valuelist(qry_columns.column_name)#
 			FROM #thetable#
 			<cfif arguments.thestruct.admin EQ "F">
 				<cfif thetable EQ "MODULES">
-					WHERE mod_host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
+					WHERE mod_host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 				<cfelseif thetable EQ "PERMISSIONS">
-					WHERE per_host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
+					WHERE per_host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 				<cfelse>
-					WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
+					WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 				</cfif>
 			</cfif>
 			</cfquery>
@@ -1913,14 +1914,15 @@
 	<!--- Save scheduled backup --->
 	<cffunction name="setschedbackup" output="false">
 		<cfargument name="interval" type="string">
+		<cfargument name="thestruct" type="struct">
 		<!--- If we need to reset the key then save first --->
 		<cfif arguments.interval EQ 0>
-			<cfinvoke component="settings" method="savesetting" thefield="sched_backup" thevalue="0" />
+			<cfinvoke component="settings" method="savesetting" thefield="sched_backup" thestruct="#arguments.thestruct#" thevalue="0" />
 			<cfschedule action="delete" task="RazScheduledBackup" />
 		<cfelse>
-			<cfinvoke component="settings" method="savesetting" thefield="sched_backup" thevalue="#arguments.interval#" />
+			<cfinvoke component="settings" method="savesetting" thefield="sched_backup" thestruct="#arguments.thestruct#" thevalue="#arguments.interval#" />
 			<!--- Get Server URL --->
-			<cfset serverUrl = "#request.razuna.session.thehttp##cgi.HTTP_HOST##cgi.SCRIPT_NAME#">
+			<cfset serverUrl = "#arguments.thestruct.razuna.session.thehttp##cgi.HTTP_HOST##cgi.SCRIPT_NAME#">
 			<cfset startDate = LSDateFormat(now(), "mm/dd/yyyy")>
 			<cfset startTime = LSTimeFormat(now(), "HH:mm")>
 			<!--- Save scheduled event in CFML scheduling engine --->

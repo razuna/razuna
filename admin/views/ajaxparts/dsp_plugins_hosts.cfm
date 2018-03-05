@@ -24,7 +24,7 @@
 *
 --->
 <cfoutput>
-	<div>#defaultsObj.trans("plugins_hosts_tab_desc")#</div>
+	<div>#myFusebox.getApplicationData().defaults.trans("plugins_hosts_tab_desc")#</div>
 	<br />
 	<table border="0" cellspacing="0" cellpadding="0" class="grid">
 		<tr>
@@ -55,7 +55,7 @@
 	</table>
 	<div style="clear:both;"></div>
 	<div style="padding-top:5px;padding-bottom:10px;">
-		<input type="button" name="savebutton" value="#defaultsObj.trans("save")#" class="button" onclick="saveplhost();" /> 
+		<input type="button" name="savebutton" value="#myFusebox.getApplicationData().defaults.trans("save")#" class="button" onclick="saveplhost();" /> 
 	</div>
 	<div id="plfeedback" style="font-weight:bold;color:green;"></div>
 </cfoutput>

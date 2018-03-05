@@ -25,96 +25,63 @@
 --->
 <cfcomponent  output="false">
 
-<!--- FUNCTION: INIT --->
-<cffunction name="init" returntype="modules" access="public" output="false">
-	<cfreturn this />
-</cffunction>
+	<!--- FUNCTION: INIT --->
+	<cffunction name="init" returntype="modules" access="public" output="false">
+		<cfreturn this />
+	</cffunction>
 
-<!--- ------------------------------------------------------------------------------------- --->
-<!--- Get ids in struct --->
-<cffunction  name="getIdStruct" returntype="struct">
-	<!--- function internal vars --->
-	<cfset var localquery = getall()>
-	<cfset var returnStruct = StructNew()>
-	<cfloop query="localquery">
-		<cfset returnStruct[localquery.mod_short] = localquery.mod_id>
-	</cfloop>
-	<cfreturn returnStruct />
-</cffunction>
+	<!--- ------------------------------------------------------------------------------------- --->
+	<!--- Get ids in struct --->
+	<cffunction  name="getIdStruct" returntype="struct">
+		<cfargument name="thestruct" type="struct" required="true" />
+		<!--- function internal vars --->
+		<cfset var localquery = getall(thestruct=arguments.thestruct)>
+		<cfset var returnStruct = StructNew()>
+		<cfloop query="localquery">
+			<cfset returnStruct[localquery.mod_short] = localquery.mod_id>
+		</cfloop>
+		<cfreturn returnStruct />
+	</cffunction>
 
-<!--- ------------------------------------------------------------------------------------- --->
-<!--- Get all the records --->
-<cffunction  name="getall" returntype="query">
-	<cfargument name="orderBy" type="string" required="false" default="mod_short, mod_name" "ORDER BY #yourtext#""">
-	<!--- function internal vars --->
-	<cfset var localquery = 0>
-	<cfquery datasource="#request.razuna.application.datasource#" name="localquery">
-		SELECT mod_id, mod_name, mod_short, mod_host_id
-		FROM modules
-		WHERE (
-			mod_host_id = <cfqueryparam value="#request.razuna.session.hostid#" cfsqltype="cf_sql_numeric">
-			OR mod_host_id IS NULL
-			OR mod_host_id = ''
-			)
-		ORDER BY #arguments.orderBy#
-	</cfquery>
-	<cfreturn localquery>
-</cffunction>
+	<!--- ------------------------------------------------------------------------------------- --->
+	<!--- Get all the records --->
+	<cffunction  name="getall" returntype="query">
+		<cfargument name="orderBy" type="string" required="false" default="mod_short, mod_name" "ORDER BY #yourtext#""">
+		<cfargument name="thestruct" type="struct" required="true" />
+		<!--- function internal vars --->
+		<cfset var localquery = 0>
+		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="localquery">
+			SELECT mod_id, mod_name, mod_short, mod_host_id
+			FROM modules
+			WHERE (
+				mod_host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric">
+				OR mod_host_id IS NULL
+				OR mod_host_id = ''
+				)
+			ORDER BY #arguments.orderBy#
+		</cfquery>
+		<cfreturn localquery>
+	</cffunction>
 
-<!--- ------------------------------------------------------------------------------------- --->
-<!--- Get id from short --->
-<cffunction  name="getid" returntype="numeric">
-	<cfargument name="mod_short" type="string" required="yes">
-	<!--- function internal vars --->
-	<cfset var localquery = 0>
-	<cfquery datasource="#request.razuna.application.datasource#" name="localquery">
-		SELECT mod_id
-		FROM modules
-		WHERE mod_short = <cfqueryparam value="#arguments.mod_short#" cfsqltype="cf_sql_varchar">
-		AND (
-			mod_host_id = <cfqueryparam value="#request.razuna.session.hostid#" cfsqltype="cf_sql_numeric">
-			OR mod_host_id IS NULL
-			OR mod_host_id = ''
-			)
-	</cfquery>
-	<cfreturn Val(localquery.mod_id)>
-</cffunction>
-
-
-
-
-
-
-
-
-<!--- NOT USED --->
-
-
-
-<!--- ------------------------------------------------------------------------------------- --->
-<!--- Get one detailled record --->
-<cffunction  name="getdetail" returntype="query">
-	<cfargument name="func_dsn" type="string" required="yes">
-	<cfargument name="func_id" type="numeric" required="yes">
-	<!--- function internal vars --->
-	<cfset var localquery = 0>
-	<cfquery datasource="#arguments.func_dsn#" name="localquery">
-		SELECT		*
-		FROM			modules
-		WHERE			mod_id = <cfqueryparam value="#arguments.func_id#" cfsqltype="cf_sql_numeric">
-							AND
-							(
-								mod_host_id = <cfqueryparam value="#request.razuna.session.hostid#" cfsqltype="cf_sql_numeric">
-								OR
-								mod_host_id IS NULL
-								OR 
-								mod_host_id = ''
-							)
-	</cfquery>
-	<cfreturn localquery>
-</cffunction>
-
-
+	<!--- ------------------------------------------------------------------------------------- --->
+	<!--- Get id from short --->
+	<cffunction  name="getid" returntype="numeric">
+		<cfargument name="mod_short" type="string" required="yes">
+		<cfargument name="thestruct" type="struct" required="true" />
+		<!--- function internal vars --->
+		<cfset var localquery = 0>
+		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="localquery">
+			SELECT mod_id
+			FROM modules
+			WHERE mod_short = <cfqueryparam value="#arguments.mod_short#" cfsqltype="cf_sql_varchar">
+			AND (
+				mod_host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric">
+				OR mod_host_id IS NULL
+				OR mod_host_id = ''
+				)
+		</cfquery>
+		<cfreturn Val(localquery.mod_id)>
+	</cffunction>
 
 
 </cfcomponent>

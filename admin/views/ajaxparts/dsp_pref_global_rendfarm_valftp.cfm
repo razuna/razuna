@@ -26,8 +26,8 @@
 <cfoutput>
 <cfset o = ftpopen(server=attributes.server,username=attributes.user,password=attributes.pass,passive=attributes.passive)>
 <cfif o.succeeded>
-	<span style="color:green;font-weight:bold;">#defaultsObj.trans("server_validated")#</span>
+	<span style="color:green;font-weight:bold;">#myFusebox.getApplicationData().defaults.trans("server_validated")#</span>
 <cfelse>
-	<span style="color:red;font-weight:bold;">#defaultsObj.trans("server_problem")# #o.errortext#</span>
+	<span style="color:red;font-weight:bold;">#myFusebox.getApplicationData().defaults.trans("server_problem")# #o.errortext#</span>
 </cfif>
 </cfoutput>

@@ -1,13 +1,5 @@
 <cfcomponent>
-	
-	<!--- Invoke with --->
-	<!--- 
-	<cfinvoke component="debugme" method="cfthread_join_dump" 
-	emailto="support@razuna.com" 
-	emailfrom="server@razuna.com" 
-	emailsubject="debug" 
-	threadname="trwritexmp89">
-	 --->
+
 	<cffunction name="cfthread_join_dump">
 		<cfargument name="emailto" type="string">
 		<cfargument name="emailfrom" type="string">
@@ -22,15 +14,7 @@
 			<cfdump var="#evaluate(dumpname)#" />
 		</cfmail>
 	</cffunction>
-	
-	<!--- Invoke with --->
-	<!--- 
-	<cfinvoke component="debugme" method="email_dump" 
-	emailto="support@razuna.com" 
-	emailfrom="server@razuna.com" 
-	emailsubject="debug" 
-	dump="">
-	 --->
+
 	<cffunction name="email_dump">
 		<cfargument name="emailto" type="string">
 		<cfargument name="emailfrom" type="string">
@@ -41,7 +25,7 @@
 			<cfdump var="#arguments.dump#" />
 		</cfmail>
 	</cffunction>
-	
+
 	<cffunction name="email_message">
 		<cfargument name="emailto" type="string">
 		<cfargument name="emailfrom" type="string">
@@ -61,22 +45,22 @@
 		<!--- Savecontent --->
 		<cfsavecontent variable="therr"><cfdump var="#arguments.thestruct.cfcatch#" label="the error"><cfdump var="#arguments.thestruct#" label="the struct"></cfsavecontent>
 		<!--- For local --->
-		<cfif request.razuna.application.storage EQ "local">
+		<cfif arguments.thestruct.razuna.application.storage EQ "local">
 			<!--- Check if errors folder exists, else create it --->
-			<cfif not DirectoryExists("#arguments.thestruct.assetpath#/#request.razuna.session.hostid#/errors")>
-				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#request.razuna.session.hostid#/errors" mode="775">
+			<cfif not DirectoryExists("#arguments.thestruct.assetpath#/#arguments.thestruct.razuna.session.hostid#/errors")>
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#arguments.thestruct.razuna.session.hostid#/errors" mode="775">
 			</cfif>
 			<!--- Write the error file --->
-			<cffile action="write" file="#arguments.thestruct.assetpath#/#request.razuna.session.hostid#/errors/#err_file#" output="#therr#" mode="775">
+			<cffile action="write" file="#arguments.thestruct.assetpath#/#arguments.thestruct.razuna.session.hostid#/errors/#err_file#" output="#therr#" mode="775">
 		<!--- For Nirvanix --->
-		<cfelseif request.razuna.application.storage EQ "nirvanix">
+		<cfelseif arguments.thestruct.razuna.application.storage EQ "nirvanix">
 			<!--- Write the file to temp dir --->
-			
+
 			<!--- Upload file --->
-			
+
 			<!--- Set the uploaded file to public read --->
 		</cfif>
-		
+
 		<cfreturn />
 	</cffunction>
 

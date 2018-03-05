@@ -33,24 +33,24 @@
 		<!--- CREATE BACKUP STATUS DB --->
 		<cftry>
 			<cfquery datasource="#arguments.thestruct.dsn#">
-			CREATE TABLE backup_status 
+			CREATE TABLE backup_status
 			(
-				back_id		VARCHAR(100), 
+				back_id		VARCHAR(100),
 				back_date	timestamp,
 				host_id		BIGINT
-			) 
+			)
 			</cfquery>
 			<cfcatch type="database">
 			</cfcatch>
 		</cftry>
 		<!--- Look into the information schema and get all the tables --->
-		<cfquery datasource="#request.razuna.application.datasource#" name="raz_tables">
+		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="raz_tables">
 		SELECT table_name
 		FROM information_schema.tables
-		WHERE <cfif request.razuna.application.thedatabase EQ "h2">lower(table_catalog)<cfelse>lower(table_schema)</cfif> = <cfqueryparam cfsqltype="cf_sql_varchar" value="#request.razuna.application.theschema#">
+		WHERE <cfif arguments.thestruct.razuna.application.thedatabase EQ "h2">lower(table_catalog)<cfelse>lower(table_schema)</cfif> = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.razuna.application.theschema#">
 		AND lower(table_name) != 'bddata'
 		AND lower(table_name) != 'bdglobal'
-		<cfif request.razuna.application.thedatabase EQ "h2">
+		<cfif arguments.thestruct.razuna.application.thedatabase EQ "h2">
 			AND lower(table_type) = 'table'
 		</cfif>
 		</cfquery>
@@ -58,22 +58,22 @@
 		<cfloop query="raz_tables">
 			<cfset thetablename = table_name>
 			<!--- Query Columns --->
-			<cfif request.razuna.application.thedatabase EQ "db2">
-				<cfquery datasource="#request.razuna.application.datasource#" name="raz_columns">
+			<cfif arguments.thestruct.razuna.application.thedatabase EQ "db2">
+				<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="raz_columns">
 				SELECT colname as column_name, typename as data_type, character_maximum_length
 				FROM syscat.columns
 				WHERE tabname = <cfqueryparam cfsqltype="cf_sql_varchar" value="#thetablename#">
 				</cfquery>
-			<cfelse>			
-				<cfquery datasource="#request.razuna.application.datasource#" name="raz_columns">
-				SELECT column_name, <cfif request.razuna.application.thedatabase EQ "h2">type_name as data_type<cfelse>data_type</cfif>
+			<cfelse>
+				<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="raz_columns">
+				SELECT column_name, <cfif arguments.thestruct.razuna.application.thedatabase EQ "h2">type_name as data_type<cfelse>data_type</cfif>
 				, character_maximum_length
-				FROM <cfif request.razuna.application.thedatabase EQ "oracle">all_tab_columns<cfelse>information_schema.columns</cfif>
+				FROM <cfif arguments.thestruct.razuna.application.thedatabase EQ "oracle">all_tab_columns<cfelse>information_schema.columns</cfif>
 				WHERE table_name = <cfqueryparam cfsqltype="cf_sql_varchar" value="#thetablename#">
-				<cfif request.razuna.application.thedatabase EQ "h2">
+				<cfif arguments.thestruct.razuna.application.thedatabase EQ "h2">
 					AND lower(table_schema) = <cfqueryparam cfsqltype="cf_sql_varchar" value="public">
-				<cfelseif request.razuna.application.thedatabase EQ "mysql">
-					AND lower(table_schema) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#request.razuna.application.theschema#">
+				<cfelseif arguments.thestruct.razuna.application.thedatabase EQ "mysql">
+					AND lower(table_schema) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.razuna.application.theschema#">
 				</cfif>
 				</cfquery>
 			</cfif>
@@ -95,9 +95,9 @@
 			</cftry>
 		</cfloop>
 	</cffunction>
-		
+
 	<!--- OPENBD CONFIG INTERACTION --->
-	
+
 	<cffunction name="bdgetConfig" access="private" output="false" returntype="struct" >
 		<cfset var admin = "" />
 			<cflock scope="Server" type="readonly" timeout="5">
@@ -105,7 +105,7 @@
 			</cflock>
 		<cfreturn admin.server />
 	</cffunction>
-	
+
 	<cffunction name="bdsetConfig" access="private" output="false" returntype="void" >
 		<cfargument name="currentConfig" type="struct" required="true"  />
 			<!--- Initialize Var --->
@@ -118,7 +118,7 @@
 				<cfset success = createObject("java", "com.naryx.tagfusion.cfm.engine.cfEngine").writeXmlFile(xmlConfig) />
 			</cflock>
 	</cffunction>
-	
+
 	<cffunction name="bddatasourceExists" access="public" output="false" returntype="boolean" >
 		<cfargument name="dsn" type="string" required="true"  />
 		<cfset var dsnExists = true />
@@ -139,7 +139,7 @@
 		</cfif>
 		<cfreturn dsnExists />
 	</cffunction>
-	
+
 	<cffunction name="BDsetDatasource" access="public" output="false" returntype="void" >
 		<cfargument name="name" type="string" required="true"  />
 		<cfargument name="databasename" type="string" required="false" default=""  />
@@ -164,15 +164,15 @@
 		<cfargument name="action" type="string" required="false" default="create"  />
 		<cfargument name="existingDatasourceName" type="string" required="false" default=""  />
 		<cfargument name="verificationQuery" type="string" required="false" default=""  />
-		
+
 		<cfset var localConfig = bdgetConfig() />
 		<cfset var datasourceSettings = structNew() />
-		
+
 		<!--- make sure configuration structure exists, otherwise build it --->
 		<cfif (NOT StructKeyExists(localConfig, "cfquery")) OR (NOT StructKeyExists(localConfig.cfquery, "datasource"))>
 			<cfset localConfig.cfquery.datasource = ArrayNew(1) />
 		</cfif>
-		
+
 		<!--- if the datasource already exists and this isn't an update, throw an error --->
 		<cfif bddatasourceExists(arguments.name) EQ "false">
 			<!--- build up the universal datasource settings --->
@@ -203,5 +203,5 @@
 			</cfscript>
 		</cfif>
 	</cffunction>
-		
+
 </cfcomponent>

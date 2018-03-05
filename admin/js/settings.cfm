@@ -8,7 +8,7 @@ function aspectheight(inp,out){
 		}
 		var theaspect = document.getElementById('set2_vid_preview_width').value / document.getElementById('set2_vid_preview_heigth').value;
 		if (theaspect != 2){
-			alert('<cfoutput>#defaultsObj.trans("correct_video_aspect")#</cfoutput>');
+			alert('<cfoutput>#myFusebox.getApplicationData().defaults.trans("correct_video_aspect")#</cfoutput>');
 			var bytwo = inp.value / 2;
 			if (bytwo%2 == 1){
 			bytwo = bytwo - 1;
@@ -24,7 +24,7 @@ function aspectwidth(inp,out){
 		}
 		var theaspect = document.getElementById('set2_vid_preview_heigth').value / document.getElementById('set2_vid_preview_width').value;
 		if (theaspect != 2){
-			alert('<cfoutput>#defaultsObj.trans("correct_video_aspect")#</cfoutput>');
+			alert('<cfoutput>#myFusebox.getApplicationData().defaults.trans("correct_video_aspect")#</cfoutput>');
 			var bytwo = inp.value * 2;
 			if (bytwo%2 == 1){
 			bytwo = bytwo - 1;

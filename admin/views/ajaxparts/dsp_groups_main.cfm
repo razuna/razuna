@@ -28,19 +28,19 @@
 	<cfinclude template="dsp_host_chooser_include.cfm">
 	<div id="tabs_groups">
 		<ul>
-			<li><a href="##grpdam">#defaultsObj.trans("groups_link")# (DAM)</a></li>
-			<!--- <li><a href="##grpcms">#defaultsObj.trans("groups_link")# (Administration)</a></li> --->
+			<li><a href="##grpdam">#myFusebox.getApplicationData().defaults.trans("groups_link")# (DAM)</a></li>
+			<!--- <li><a href="##grpcms">#myFusebox.getApplicationData().defaults.trans("groups_link")# (Administration)</a></li> --->
 		</ul>
 		<!--- This is DAM Groups Tab --->
 		<div id="grpdam">
 			<form name="grpdamadd" id="grpdamadd">
 			<table width="600" border="0" cellspacing="0" cellpadding="0" class="grid">
 			<tr>
-				<th colspan="2">#defaultsObj.trans("groupnumber_header_new")#</th>
+				<th colspan="2">#myFusebox.getApplicationData().defaults.trans("groupnumber_header_new")#</th>
 			</tr>
 			<tr>
 				<td width="100%"><input type="text" size="40" name="damgrpnew" id="damgrpnew" /></td>
-				<td width="1%" nowrap="true"><input type="submit" name="Button" value="#defaultsObj.trans("add")#" class="button" /></td>
+				<td width="1%" nowrap="true"><input type="submit" name="Button" value="#myFusebox.getApplicationData().defaults.trans("add")#" class="button" /></td>
 			</tr>
 			</table>
 			</form>
@@ -53,11 +53,11 @@
 			<form name="grpadmadd" id="grpadmadd">
 			<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
 			<tr>
-				<th colspan="2">#defaultsObj.trans("groupnumber_header_new")#</th>
+				<th colspan="2">#myFusebox.getApplicationData().defaults.trans("groupnumber_header_new")#</th>
 			</tr>
 			<tr>
 				<td width="100%"><input type="text" size="40" name="admgrpnew" id="admgrpnew" /></td>
-				<td width="1%" nowrap="true"><input type="submit" name="Buttonadm" value="#defaultsObj.trans("add")#" class="button" /></td>
+				<td width="1%" nowrap="true"><input type="submit" name="Buttonadm" value="#myFusebox.getApplicationData().defaults.trans("add")#" class="button" /></td>
 			</tr>
 			</table>
 			</form>

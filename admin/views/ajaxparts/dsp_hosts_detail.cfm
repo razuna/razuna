@@ -32,12 +32,12 @@
 	<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
 		<!---
 		<tr>
-			<td>#defaultsObj.trans("how_many_lang")#</td>
+			<td>#myFusebox.getApplicationData().defaults.trans("how_many_lang")#</td>
 			<td><input type="text" name="thishost_lang" id="thishost_lang" size="10" class="text" value="#qry_hostsdetail.host_lang#"></td>
 		</tr>
 		--->
 		<tr>
-			<td nowrap="true" width="1%" nowrap="true"><cfif application.razuna.isp>Subdomain<cfelse>#defaultsObj.trans("hosts_name")#</cfif></td>
+			<td nowrap="true" width="1%" nowrap="true"><cfif application.razuna.isp>Subdomain<cfelse>#myFusebox.getApplicationData().defaults.trans("hosts_name")#</cfif></td>
 			<td width="100%"><input type="text" name="host_name" id="host_name" style="width:200px;" value="#qry_hostsdetail.host_name#"><cfif application.razuna.isp>.yourdomain.com</cfif></td>
 		</tr>
 		<cfif application.razuna.isp>
@@ -48,22 +48,22 @@
 		</cfif>
 		<cfif !application.razuna.isp>
 			<tr>
-				<td nowrap="true">#defaultsObj.trans("hosts_path")#</td>
+				<td nowrap="true">#myFusebox.getApplicationData().defaults.trans("hosts_path")#</td>
 				<td>#qry_hostsdetail.host_path#</td>
 			</tr>
 		</cfif>
 		<cfif application.razuna.storage NEQ "amazon">
 			<tr>
-				<td valign="top" nowrap="true">#defaultsObj.trans("hosts_size")#</td>
+				<td valign="top" nowrap="true">#myFusebox.getApplicationData().defaults.trans("hosts_size")#</td>
 				<td><span id='hostsize'><img src="images/loading.gif" border="0"></span><br><em>(If this tenant has a large asset pool this can take a long time!)</em></td>
 			</tr>
 		</cfif>
 		<!--- <tr>
-			<td nowrap="true">#defaultsObj.trans("db_prefix")#</td>
+			<td nowrap="true">#myFusebox.getApplicationData().defaults.trans("db_prefix")#</td>
 			<td>#qry_hostsdetail.host_db_prefix#</td>
 		</tr> --->
 		<tr>
-			<td colspan="2"><div id="feedback" style="display:none;font-weight:bold;color:green;float:left;"></div><div style="float:right;"><input type="submit" name="Submitform_hostedit" value="#defaultsObj.trans("save")#" class="button"></div></td>
+			<td colspan="2"><div id="feedback" style="display:none;font-weight:bold;color:green;float:left;"></div><div style="float:right;"><input type="submit" name="Submitform_hostedit" value="#myFusebox.getApplicationData().defaults.trans("save")#" class="button"></div></td>
 		</tr>
 
 	</table>
@@ -86,7 +86,7 @@
 			});
 			// Feedback
 			$("##feedback").css("display","");
-			$("##feedback").html('#defaultsObj.trans("success")#');
+			$("##feedback").html('#myFusebox.getApplicationData().defaults.trans("success")#');
 			loadcontent('hostslist', '#myself#c.hosts_list');
 			return false;
 		});

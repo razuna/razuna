@@ -26,7 +26,7 @@
 <cfoutput>
 	<table width="700" border="0" cellspacing="0" cellpadding="0" class="grid">
 		<tr class="list">
-			<td colspan="3">#defaultsObj.trans("global_db_desc")#</td>
+			<td colspan="3">#myFusebox.getApplicationData().defaults.trans("global_db_desc")#</td>
 		</tr>
 		<tr class="list">
 			<th class="textbold" colspan="2" style="padding-top:15px;padding-bottom:15px;">You are currently using the #ucase(gprefs.conf_database)# database.</th>

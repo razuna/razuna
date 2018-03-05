@@ -52,16 +52,16 @@
 		<cfset jschConfig.put("StrictHostKeyChecking","no")>
 		<cfset jschConfig.put("compression.s2c", "zlib,none")>
 		<cfset jschConfig.put("compression.c2s", "zlib,none")>
-		<cfset jschrequest.razuna.session.setConfig(jschConfig)>
-		<cfset jschrequest.razuna.session.setPort(FTPPORT)>
-		<cfset jschrequest.razuna.session.setPassword(FTPPW)>
+		<cfset jschSession.setConfig(jschConfig)>
+		<cfset jschSession.setPort(FTPPORT)>
+		<cfset jschSession.setPassword(FTPPW)>
 
 		<!--- Connect --->
-		<cfset jschrequest.razuna.session.connect()>
-		<cfset var jschChannel = jschrequest.razuna.session.openChannel("sftp")>
+		<cfset jschSession.connect()>
+		<cfset var jschChannel = jschSession.openChannel("sftp")>
 		<cfset jschChannel.connect()>
 
-		<cfset var connected = jschrequest.razuna.session.isConnected()>
+		<cfset var connected = jschSession.isConnected()>
 
 		<!--- The result --->
 		<cfset var _connection = structNew()>
@@ -88,7 +88,7 @@
 	<cffunction name="disconnect" access="public" output="false">
 		<!--- <cfset console("DISCONNECT", this.connection)> --->
 		<cfset this.connection.sftpChannel.disconnect()>
-		<cfset this.connection.sftprequest.razuna.session.disconnect()>
+		<cfset this.connection.sftpSession.disconnect()>
 		<cfset this.connection.connected = false>
 		<cfset this.connection.sftpChannel = "">
 		<cfset this.connection.sftpSession = "">

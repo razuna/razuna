@@ -6,9 +6,9 @@
 <circuit access="internal">
 
 	<fuseaction name="preprocess">
-		<set name="attributes.application" value="#application.razuna#" />
-		<set name="attributes.session" value="#session#" />
-		<set name="request.razuna" value="#attributes#" />
+		<set name="attributes.razuna" value="#structnew()#" />
+		<set name="attributes.razuna.application" value="#application.razuna#" />
+		<set name="attributes.razuna.session" value="#session#" />
 		<!-- <include template="t" /> -->
 	</fuseaction>
 

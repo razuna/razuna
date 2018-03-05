@@ -30,13 +30,13 @@
 				<th>Razuna Support</th>
 			</tr>
 			<tr>
-				<td>#defaultsObj.trans("support_desc")#</td>
+				<td>#myFusebox.getApplicationData().defaults.trans("support_desc")#</td>
 			</tr>
 			<tr>
 				<th>Online Support Tools</th>
 			</tr>
 			<tr>
-				<td><a href="http://wiki.razuna.com/">Razuna #defaultsObj.trans("online_help_link")#</a></td>
+				<td><a href="http://wiki.razuna.com/">Razuna #myFusebox.getApplicationData().defaults.trans("online_help_link")#</a></td>
 			</tr>
 			<tr>
 				<td><a href="https://help.razuna.com" target="_blank">Join our Customer Community</a></td>

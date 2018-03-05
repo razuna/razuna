@@ -29,11 +29,12 @@
 <cffunction  name="trans" output="false" access="public" returntype="string">
 	<cfargument name="trans_id" required="yes" type="string">
 	<cfargument name="lang" default="#Request.cl#" required="no" type="string">
+	<cfargument name="thestruct" type="struct" required="true" />
 	<!--- init local vars --->
 	<cfset var qTrans = 0>
-	<cfquery datasource="#request.razuna.application.datasource#" name="qTrans">
+	<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qTrans">
 		SELECT TRIM(trans_text) AS trans_text
-		FROM #request.razuna.session.hostdbprefix#translations
+		FROM #arguments.thestruct.razuna.session.hostdbprefix#translations
 		WHERE trans_id = <cfqueryparam value="#lcase(arguments.trans_id)#" cfsqltype="cf_sql_varchar">
 		and lang_id_r = <cfqueryparam value="#Arguments.lang#" cfsqltype="cf_sql_numeric">
 	</cfquery>

@@ -165,7 +165,7 @@
 																		<cfset args = structNew()>
 																		<cfset args.detail = qry_detail.detail>
 																		<cfset args.thefiletype = "doc">
-																		<cfinvoke component="global.cfc.plugins" method="getactions" theaction="show_in_direct_link" args="#args#" returnvariable="pl">
+																		<cfinvoke component="global.cfc.plugins" method="getactions" theaction="show_in_direct_link" args="#args#" thestruct="#attributes#" returnvariable="pl">
 																		<!--- Show plugin --->
 																		<cfif structKeyExists(pl,"pview")>
 																			<cfloop list="#pl.pview#" delimiters="," index="i">
@@ -295,11 +295,11 @@
 										</tr>
 										<tr>
 											<td nowrap="true">#myFusebox.getApplicationData().defaults.trans("date_created")#</td>
-											<td>#dateformat(qry_detail.detail.file_create_time, "#myFusebox.getApplicationData().defaults.getdateformat()#")#</td>
+											<td>#dateformat(qry_detail.detail.file_create_time, "#myFusebox.getApplicationData().defaults.getdateformat(thestruct=attributes)#")#</td>
 										</tr>
 										<tr>
 											<td nowrap="true" valign="top">#myFusebox.getApplicationData().defaults.trans("date_changed")#</td>
-											<td valign="top">#dateformat(qry_detail.detail.file_change_time, "#myFusebox.getApplicationData().defaults.getdateformat()#")#</td>
+											<td valign="top">#dateformat(qry_detail.detail.file_change_time, "#myFusebox.getApplicationData().defaults.getdateformat(thestruct=attributes)#")#</td>
 										</tr>
 										<tr>
 											<td nowrap="true" valign="top">#myFusebox.getApplicationData().defaults.trans("located_in")#</td>

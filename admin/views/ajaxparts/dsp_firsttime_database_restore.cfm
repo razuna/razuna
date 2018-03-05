@@ -26,14 +26,14 @@
 <cfoutput>
 	<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 		<tr>
-			<th colspan="2">#defaultsObj.trans("admin_maintenance_restore_desc")#</th>
+			<th colspan="2">#myFusebox.getApplicationData().defaults.trans("admin_maintenance_restore_desc")#</th>
 		</tr>
 		<tr>
 			<td colspan="2" style="background-color:yellow;font-weight:bold;padding:10px;">Once you start restoring it may appear as your browsing comes to a halt. Restoring can take some time, so please be patient and wait!</td>
 		</tr>
 		<tr>
-			<td colspan="2"><strong>#defaultsObj.trans("admin_maintenance_restore_file")#</strong><br />
-			#defaultsObj.trans("admin_maintenance_restore_file_desc")#</td>
+			<td colspan="2"><strong>#myFusebox.getApplicationData().defaults.trans("admin_maintenance_restore_file")#</strong><br />
+			#myFusebox.getApplicationData().defaults.trans("admin_maintenance_restore_file_desc")#</td>
 		</tr>
 		<tr>
 			<td><strong>Backup Date</strong></td>
@@ -51,7 +51,7 @@
 	</table>
 	<div>
 		<div style="float:left;padding:20px 0px 0px 0px;">
-			<input type="button" id="next" value="#defaultsObj.trans("back")#" onclick="loadcontent('load_steps','#myself#c.first_time_database_config&db=#session.firsttime.database#');" class="button">
+			<input type="button" id="next" value="#myFusebox.getApplicationData().defaults.trans("back")#" onclick="loadcontent('load_steps','#myself#c.first_time_database_config&db=#session.firsttime.database#');" class="button">
 		</div>
 	</div>
 	<div id="dummy_maintenance"></div>

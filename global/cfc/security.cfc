@@ -127,7 +127,7 @@ The permissions and the users access to them must not be requested again every t
 	<cfset var localquery = 0>
 	<cfset var returnstruct = StructNew()>
 	<!--- function body --->
-	<cfquery datasource="#request.razuna.application.datasource#" name="localquery">
+	<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="localquery">
 	SELECT m.mod_short, p.per_key,
 		CASE
 			WHEN EXISTS(
@@ -180,7 +180,7 @@ The permissions and the users access to them must not be requested again every t
 	<cfabort> --->
 	<cfset var localquery = 0>
 	<!--- function body --->
-	<cfquery datasource="#request.razuna.application.datasource#" name="localquery">
+	<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="localquery">
 		SELECT CASE
 					WHEN EXISTS(
 						SELECT groups.grp_id
@@ -197,9 +197,9 @@ The permissions and the users access to them must not be requested again every t
 					) THEN 1
 					ELSE 0
 				END AS isSystemAdmin
-		<cfif request.razuna.application.thedatabase EQ "db2">
+		<cfif arguments.thestruct.razuna.application.thedatabase EQ "db2">
 			FROM sysibm.sysdummy1
-		<cfelseif request.razuna.application.thedatabase NEQ "mssql">
+		<cfelseif arguments.thestruct.razuna.application.thedatabase NEQ "mssql">
 			FROM dual
 		</cfif>
 	</cfquery>
@@ -217,7 +217,7 @@ The permissions and the users access to them must not be requested again every t
 	<!--- function internal vars --->
 	<cfset var localquery = 0>
 	<!--- function body --->
-	<cfquery datasource="#request.razuna.application.datasource#" name="localquery">
+	<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="localquery">
 		SELECT grp_id
 		FROM groups
 		WHERE grp_host_id IS NULL
@@ -231,7 +231,7 @@ The permissions and the users access to them must not be requested again every t
 	<!--- function internal vars --->
 	<cfset var localquery = 0>
 	<!--- function body --->
-	<cfquery datasource="#request.razuna.application.datasource#" name="localquery">
+	<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="localquery">
 		SELECT 1
 		FROM users
 		WHERE user_id = <cfqueryparam value="#arguments.user_id#" cfsqltype="cf_sql_varchar">

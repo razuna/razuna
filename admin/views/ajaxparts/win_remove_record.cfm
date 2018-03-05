@@ -31,7 +31,7 @@
 	<table border="0" cellpadding="5" cellspacing="5" width="100%">
 		<tr>
 			<td style="padding-top:10px;">
-				#defaultsObj.trans("delete")#
+				#myFusebox.getApplicationData().defaults.trans("delete")#
 				<cfif what EQ "users">
 					<br /><br />
 					<strong style="color:red;">If you remove this user he is removed from ALL hosts! To remove a user from one host edit the user and de-select the host under the tenant/host tab!</strong>
@@ -39,7 +39,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td align="right" style="padding-top:10px;"><input type="button" name="remove" value="#defaultsObj.trans("remove")#" onclick="destroywindow(1);<cfif what EQ "hosts">loadinggif('#loaddiv#');</cfif>loadcontent('#loaddiv#','#myself#c.#what#_remove&id=#attributes.id#&kind=#attributes.kind#&loaddiv=#attributes.loaddiv#<cfif what EQ "hosts">&pathoneup=#JSStringFormat(pathoneup)#</cfif>');" class="button"></td>
+			<td align="right" style="padding-top:10px;"><input type="button" name="remove" value="#myFusebox.getApplicationData().defaults.trans("remove")#" onclick="destroywindow(1);<cfif what EQ "hosts">loadinggif('#loaddiv#');</cfif>loadcontent('#loaddiv#','#myself#c.#what#_remove&id=#attributes.id#&kind=#attributes.kind#&loaddiv=#attributes.loaddiv#<cfif what EQ "hosts">&pathoneup=#JSStringFormat(pathoneup)#</cfif>');" class="button"></td>
 		</tr>
 	</table>
 </cfoutput>

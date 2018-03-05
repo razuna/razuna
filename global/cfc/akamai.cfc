@@ -48,7 +48,7 @@
 		<!--- Path to executable --->
 		<cfset var exe = "#expandPath("../")#akamai/perl/">
 		<!--- Write Execute --->
-		<cfset var thef = "cd #exe# && #theperl# #exe#akam-edge-auth-url.pl #arguments.thestruct.thetype#/#arguments.thestruct.thefilename# uploadkey 10000 #request.razuna.application.akatoken#">
+		<cfset var thef = "cd #exe# && #theperl# #exe#akam-edge-auth-url.pl #arguments.thestruct.thetype#/#arguments.thestruct.thefilename# uploadkey 10000 #arguments.thestruct.razuna.application.akatoken#">
 		<!--- Write script --->
 		<cffile action="write" file="#getTempDirectory()##tid#" output="#thef#" mode="777" />
 		<!--- Execute --->

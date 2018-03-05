@@ -38,7 +38,7 @@
 		<!--- Loop over all found log records --->
 		<cfloop query="qry_log">
 			<tr class="list">
-				<td nowrap="true" valign="top">#dateformat(log_timestamp, "#myFusebox.getApplicationData().defaults.getdateformat()#")#</td>
+				<td nowrap="true" valign="top">#dateformat(log_timestamp, "#myFusebox.getApplicationData().defaults.getdateformat(thestruct=attributes)#")#</td>
 				<td nowrap="true" valign="top">#timeFormat(log_timestamp, 'HH:mm:ss')#</td>
 				<td valign="top">#log_desc#</td>
 				<td nowrap="true" align="center" valign="top">#log_action#</td>

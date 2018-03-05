@@ -27,11 +27,11 @@
 <cfif attributes.server_name NEQ "">
 	<cfhttp url="#attributes.server_name#" timeout="20" throwOnError="no" />
 		<cfif cfhttp.statuscode CONTAINS "200">
-			<span style="color:green;font-weight:bold;">#defaultsObj.trans("server_validated")#</span>
+			<span style="color:green;font-weight:bold;">#myFusebox.getApplicationData().defaults.trans("server_validated")#</span>
 		<cfelse>
-			<span style="color:red;font-weight:bold;">#defaultsObj.trans("server_problem")# #cfhttp.errordetail#</span>
+			<span style="color:red;font-weight:bold;">#myFusebox.getApplicationData().defaults.trans("server_problem")# #cfhttp.errordetail#</span>
 		</cfif>
 	<cfelse>
-		<span style="color:red;font-weight:bold;">#defaultsObj.trans("server_name_empty")#</span>
+		<span style="color:red;font-weight:bold;">#myFusebox.getApplicationData().defaults.trans("server_name_empty")#</span>
 	</cfif>
 </cfoutput>

@@ -33,11 +33,12 @@
 <cffunction name="getcachetoken" output="false" returntype="string">
 	<cfargument name="type" type="string" required="yes">
 	<cfargument name="hostid" type="numeric" required="yes">
+	<cfargument name="thestruct" type="struct" required="true" />
 	<!--- Param --->
 	<cfset var qry = queryNew("cache_token")>
 	<!--- Query --->
 	<cftry>
-		<cfquery dataSource="#request.razuna.application.datasource#" name="qry">
+		<cfquery dataSource="#arguments.thestruct.razuna.application.datasource#" name="qry">
 		SELECT cache_token
 		FROM cache
 		WHERE host_id = <cfqueryparam value="#arguments.hostid#" CFSQLType="CF_SQL_NUMERIC">
@@ -56,11 +57,12 @@
 	<cfargument name="type" type="string" required="yes">
 	<cfargument name="nohost" type="string" required="false" default="false">
 	<cfargument name="hostid" type="numeric" required="false" default="0">
+	<cfargument name="thestruct" type="struct" required="true" />
 	<!--- Create token --->
 	<cfset var t = createuuid('')>
 	<!--- Update DB --->
 	<cftry>
-		<cfquery dataSource="#request.razuna.application.datasource#">
+		<cfquery dataSource="#arguments.thestruct.razuna.application.datasource#">
 		UPDATE cache
 		SET cache_token = <cfqueryparam value="#t#" CFSQLType="CF_SQL_VARCHAR">
 		WHERE cache_type = <cfqueryparam value="#arguments.type#" CFSQLType="CF_SQL_VARCHAR">
@@ -76,11 +78,12 @@
 <!--- reset all --->
 <cffunction name="resetcachetokenall" output="false" returntype="void">
 	<cfargument name="hostid" type="numeric" required="yes">
+	<cfargument name="thestruct" type="struct" required="true" />
 	<!--- Create token --->
 	<cfset var t = createuuid('')>
 	<!--- Update DB --->
 	<cftry>
-		<cfquery dataSource="#request.razuna.application.datasource#">
+		<cfquery dataSource="#arguments.thestruct.razuna.application.datasource#">
 		UPDATE cache
 		SET cache_token = <cfqueryparam value="#t#" CFSQLType="CF_SQL_VARCHAR">
 		WHERE host_id = <cfqueryparam value="#arguments.hostid#" CFSQLType="CF_SQL_NUMERIC">
@@ -96,11 +99,12 @@
 	<cfargument name="foundtotal" type="Numeric" required="yes" />
 	<cfargument name="searchfrom" type="string" required="yes" />
 	<cfargument name="hostid" type="numeric" required="yes">
+	<cfargument name="thestruct" type="struct" required="true" />
 	<!--- get next id --->
 	<cfset var newlogid = createuuid()>
 	<!--- Insert --->
-	<cfquery datasource="#request.razuna.application.datasource#">
-	INSERT INTO #request.razuna.session.hostdbprefix#log_search
+	<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
+	INSERT INTO #arguments.thestruct.razuna.session.hostdbprefix#log_search
 	(LOG_ID,LOG_USER,LOG_DATE,LOG_TIME,LOG_SEARCH_FOR,LOG_FOUNDITEMS,LOG_SEARCH_FROM,LOG_TIMESTAMP, host_id)
 	VALUES(
 		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#newlogid#">,
@@ -115,7 +119,7 @@
 	)
 	</cfquery>
 	<!--- Flush Cache --->
-	<cfinvoke method="resetcachetoken" type="logs" hostid="#arguments.hostid#" />
+	<cfinvoke method="resetcachetoken" type="logs" hostid="#arguments.hostid#" thestruct="#arguments.thestruct#" />
 </cffunction>
 
 <!--- Log Assets --->
@@ -127,9 +131,10 @@
 	<cfargument name="assetid" type="string" required="false" />
 	<cfargument name="folderid" type="string" required="false" />
 	<cfargument name="hostid" type="numeric" required="yes">
+	<cfargument name="thestruct" type="struct" required="true" />
 	<cftry>
-		<cfquery datasource="#request.razuna.application.datasource#">
-		INSERT INTO #request.razuna.session.hostdbprefix#log_assets
+		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
+		INSERT INTO #arguments.thestruct.razuna.session.hostdbprefix#log_assets
 		(log_id,log_user,log_action,log_date,log_time,log_desc,log_file_type,log_timestamp, host_id, asset_id_r, folder_id)
 		VALUES(
 			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#createuuid()#">,
@@ -146,7 +151,7 @@
 		)
 		</cfquery>
 		<!--- Flush Cache --->
-		<cfinvoke method="resetcachetoken" type="logs" hostid="#arguments.hostid#" />
+		<cfinvoke method="resetcachetoken" type="logs" hostid="#arguments.hostid#" thestruct="#arguments.thestruct#" />
 		<cfcatch type="any">
 		</cfcatch>
 	</cftry>
@@ -158,10 +163,11 @@
 	<cfargument name="logaction" type="string" required="yes" />
 	<cfargument name="logdesc" type="string" required="yes" />
 	<cfargument name="hostid" type="numeric" required="yes">
+	<cfargument name="thestruct" type="struct" required="true" />
 	<!--- get next id --->
 	<cfset var newlogid = createuuid()>
-	<cfquery datasource="#request.razuna.application.datasource#">
-	INSERT INTO #request.razuna.session.hostdbprefix#log_folders
+	<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
+	INSERT INTO #arguments.thestruct.razuna.session.hostdbprefix#log_folders
 	(LOG_ID,LOG_USER,LOG_ACTION,LOG_DATE,LOG_TIME,LOG_DESC,LOG_TIMESTAMP, host_id)
 	VALUES(
 		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#newlogid#">,
@@ -175,7 +181,7 @@
 	)
 	</cfquery>
 	<!--- Flush Cache --->
-	<cfinvoke method="resetcachetoken" type="logs" hostid="#arguments.hostid#" />
+	<cfinvoke method="resetcachetoken" type="logs" hostid="#arguments.hostid#" thestruct="#arguments.thestruct#" />
 </cffunction>
 
 <!--- LOG USERS --->
@@ -185,10 +191,11 @@
 	<cfargument name="logdesc" type="string" required="yes" />
 	<cfargument name="logsection" type="string" required="yes" />
 	<cfargument name="hostid" type="numeric" required="yes">
+	<cfargument name="thestruct" type="struct" required="true" />
 	<!--- get next id --->
 	<cfset var newlogid = createuuid()>
-	<cfquery datasource="#request.razuna.application.datasource#">
-	INSERT INTO #request.razuna.session.hostdbprefix#log_users
+	<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
+	INSERT INTO #arguments.thestruct.razuna.session.hostdbprefix#log_users
 	(LOG_ID,LOG_USER,LOG_ACTION,LOG_DATE,LOG_TIME,LOG_DESC,LOG_TIMESTAMP,LOG_SECTION, host_id)
 	VALUES(
 		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#newlogid#">,
@@ -203,14 +210,15 @@
 	)
 	</cfquery>
 	<!--- Flush Cache --->
-	<cfinvoke method="resetcachetoken" type="logs" hostid="#arguments.hostid#" />
+	<cfinvoke method="resetcachetoken" type="logs" hostid="#arguments.hostid#" thestruct="#arguments.thestruct#" />
 </cffunction>
 
 <!--- Taskserver --->
 <cffunction name="getTaskServer" output="false" access="public" returntype="struct">
+	<cfargument name="thestruct" type="struct" required="true" />
 	<cfset var ts = "">
 	<!--- Query settings --->
-	<cfinvoke component="settings" method="prefs_taskserver" returnvariable="ts" />
+	<cfinvoke component="settings" method="prefs_taskserver" thestruct="#arguments.thestruct#" returnvariable="ts" />
 	<!--- Return --->
 	<cfreturn ts />
 </cffunction>

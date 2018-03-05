@@ -33,7 +33,7 @@ Ext.onReady(function(){
 	var introtab = new Ext.Panel({
         renderTo: 'tab_intro',
         defaults:{autoHeight: true, autoWidth: true},
-		title: '<cfoutput>#defaultsObj.trans("welcome_to_ecp")#</cfoutput>',
+		title: '<cfoutput>#myFusebox.getApplicationData().defaults.trans("welcome_to_ecp")#</cfoutput>',
         contentEl:'text_intro'
     });
 	
@@ -44,7 +44,7 @@ Ext.onReady(function(){
         plain:true,
         defaults:{autoHeight: true, autoWidth: true},
         items:[{
-				title: '<cfoutput>#defaultsObj.trans("installation_checklist")#</cfoutput>',
+				title: '<cfoutput>#myFusebox.getApplicationData().defaults.trans("installation_checklist")#</cfoutput>',
             	autoLoad: {url: '<cfoutput>#myself#</cfoutput>c.mainchecklist'}
 				},{
 				title: 'System Information',

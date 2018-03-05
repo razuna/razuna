@@ -25,13 +25,13 @@
 --->
 <table width="600" border="0" cellspacing="0" cellpadding="0" class="grid">
 	<tr>
-		<th colspan="3"><cfoutput>#defaultsObj.trans("searchresults_header")#</cfoutput></th>
+		<th colspan="3"><cfoutput>#myFusebox.getApplicationData().defaults.trans("searchresults_header")#</cfoutput></th>
 	</tr>
 	<cfoutput query="searchresults" group="trans_id">
 	<tr>
 		<td width="100%"><a href="##" onclick="showwindow('#myself#c.translation_detail&trans_id=#trans_id#','#trans_id#',600,1);return false">#trans_text#</a></td>
 		<td width="1%" nowrap valign="top"><a href="##" onclick="showwindow('#myself#c.translation_detail&trans_id=#trans_id#','#trans_id#',600,1);return false">#trans_id#</a></td>
-		<td width="1%" nowrap align="center" valign="top"><a href="##" onclick="showwindow('#myself#ajax.remove_record&what=translation&id=#trans_id#&loaddiv=tresults','#defaultsObj.trans("remove_selected")#',400,1);return false"><img src="images/trash.gif" width="16" height="16" border="0"></a></td>
+		<td width="1%" nowrap align="center" valign="top"><a href="##" onclick="showwindow('#myself#ajax.remove_record&what=translation&id=#trans_id#&loaddiv=tresults','#myFusebox.getApplicationData().defaults.trans("remove_selected")#',400,1);return false"><img src="images/trash.gif" width="16" height="16" border="0"></a></td>
 	</tr>
 	</cfoutput>
 </table>

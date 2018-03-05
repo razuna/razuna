@@ -64,9 +64,10 @@
 	<!--- FUNCTION: VALIDATE BUCKET --->
 	<cffunction name="validatebucket" returntype="string" access="public" output="true">
 		<cfargument name="awsbucket" type="string" required="true" />
+		<cfargument name="thestruct" type="struct" required="yes" />
 		<cftry>
 			<!--- Check to see if we can list the buckets --->
-			<cfset mydir = AmazonS3list(request.razuna.application.s3ds,"#lcase(arguments.awsbucket)#")>
+			<cfset mydir = AmazonS3list(arguments.thestruct.razuna.application.s3ds,"#lcase(arguments.awsbucket)#")>
 			<cfoutput>
 				<span style="color:green;font-weight:bold;">Success. The bucket can be read by Razuna!</span>
 			</cfoutput>
@@ -86,9 +87,10 @@
 		<cfargument name="theasset" type="string" required="true" />
 		<cfargument name="awsbucket" type="string" required="true" />
 		<cfargument name="contentType" type="string" required="no" default="">
-		<cfargument name="awskey" type="string" required="no" default="#request.razuna.application.awskey#">
-		<cfargument name="awssecretKey" type="string" required="no" default="#request.razuna.application.awskeysecret#">
-		<cfargument name="awslocation" type="string" required="no" default="#request.razuna.application.awslocation#">
+		<cfargument name="awskey" type="string" required="no" default="#arguments.thestruct.razuna.application.awskey#">
+		<cfargument name="awssecretKey" type="string" required="no" default="#arguments.thestruct.razuna.application.awskeysecret#">
+		<cfargument name="awslocation" type="string" required="no" default="#arguments.thestruct.razuna.application.awslocation#">
+		<cfargument name="thestruct" type="struct" required="yes" />
 		<!--- <cfset consoleoutput(true, true)>
 		<cfset console(arguments)> --->
 		<cfset var minsize = 5200000> <!--- min file size in bytes after which multipart upload is initiated. Must be >5.120 mb which is AWS minimum chunk size for multipart upload --->
@@ -102,7 +104,7 @@
 				<cfif arguments.contenttype EQ "">
 					<cfset var getcontenttype = "">
 					<cfset var fileext = listlast(arguments.key,'.')>
-					<cfquery datasource="#request.razuna.application.datasource#" name="getcontenttype">
+					<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="getcontenttype">
 						SELECT type_mimecontent, type_mimesubcontent FROM file_types WHERE type_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#fileext#">
 					</cfquery>
 					<cfif getcontenttype.recordcount EQ 1 AND getcontenttype.type_mimecontent NEQ "" AND getcontenttype.type_mimesubcontent NEQ "">
@@ -110,7 +112,7 @@
 					</cfif>
 				</cfif>
 			</cfif>
-			<cfinvoke component="global.cfc.global" method="getfilesize" filepath="#arguments.theasset#" returnvariable="theassetsize">
+			<cfinvoke component="global.cfc.global" method="getfilesize" filepath="#arguments.theasset#" thestruct="#arguments.thestruct#" returnvariable="theassetsize">
 
 			<!--- If we store all files in one bucket --->
 			<cfset arguments = tenantCheck(arguments)>
@@ -124,7 +126,7 @@
 				<cfset singleobj.putobject(bucketname='#arguments.awsbucket#', filekey='#arguments.key#', theasset='#arguments.theasset#', contenttype="#arguments.contenttype#", HTTPtimeout=_cacheControl, cacheControl=_cacheControl)>
 			<cfelse>
 				<cfset var multiobj = createObject("component","global.cfc.s3").init(accessKeyId=arguments.awskey,secretAccessKey=arguments.awssecretkey,storagelocation = arguments.awslocation)>
-				<cfset multiobj.putobjectmultipart(bucketname='#arguments.awsbucket#', filekey='#arguments.key#', theasset='#arguments.theasset#', theassetsize='#int(theassetsize/1000)#', contenttype='#arguments.contenttype#', HTTPtimeout=_cacheControl, cacheControl=_cacheControl)>
+				<cfset multiobj.putobjectmultipart(bucketname='#arguments.awsbucket#', filekey='#arguments.key#', theasset='#arguments.theasset#', theassetsize='#int(theassetsize/1000)#', contenttype='#arguments.contenttype#', HTTPtimeout=_cacheControl, cacheControl=_cacheControl, thestruct=arguments.thestruct)>
 			</cfif>
 			<cfcatch>
 				<cfset consoleoutput(true, true)>
@@ -140,11 +142,12 @@
 		<cfargument name="key" type="string" required="true" />
 		<cfargument name="theasset" type="string" required="true" />
 		<cfargument name="awsbucket" type="string" required="true" />
+		<cfargument name="thestruct" type="struct" required="yes" />
 		<!--- If we store all files in one bucket --->
 		<cfset arguments = tenantCheck(arguments)>
 		<!--- Download asset --->
 		<cfset AmazonS3read(
-			datasource=request.razuna.application.s3ds,
+			datasource=arguments.thestruct.razuna.application.s3ds,
 			bucket=arguments.awsbucket,
 			key=arguments.key,
 			file=arguments.theasset
@@ -159,10 +162,11 @@
 		<cfargument name="newBucketName" type="string" required="true" />
 		<cfargument name="oldFileKey" type="string" required="true" />
 		<cfargument name="newFileKey" type="string" required="true" />
+		<cfargument name="thestruct" type="struct" required="yes" />
 		<!--- If we store all files in one bucket --->
 		<cfset arguments = tenantCheck(arguments)>
 		<!--- Create object --->
-		<cfset var renobj = createObject("component","global.cfc.s3").init(accessKeyId=request.razuna.application.awskey,secretAccessKey=request.razuna.application.awskeysecret,storagelocation = request.razuna.application.awslocation)>
+		<cfset var renobj = createObject("component","global.cfc.s3").init(accessKeyId=arguments.thestruct.razuna.application.awskey,secretAccessKey=arguments.thestruct.razuna.application.awskeysecret,storagelocation = arguments.thestruct.razuna.application.awslocation)>
 		<!--- Rename --->
 		<cfset renobj.renameObject(oldBucketName='#arguments.oldBucketName#', newBucketName ="#arguments.newBucketName#", oldFileKey = "#arguments.oldFileKey#",  newFileKey = "#arguments.newFileKey#")>
 		<!--- Return --->
@@ -178,7 +182,8 @@
 		<cfargument name="key" type="string" required="true" />
 		<cfargument name="awsbucket" type="string" required="true" />
 		<cfargument name="minutesValid" type="string" required="false" default="5259600">
-		<!--- <cfset var aws = AmazonRegisterDataSource("up",request.razuna.application.awskey,request.razuna.application.awskeysecret,request.razuna.application.awslocation)> --->
+		<cfargument name="thestruct" type="struct" required="yes" />
+		<!--- <cfset var aws = AmazonRegisterDataSource("up",arguments.thestruct.razuna.application.awskey,arguments.thestruct.razuna.application.awskeysecret,arguments.thestruct.razuna.application.awslocation)> --->
 		<cfset var x = structnew()>
 		<!--- Add 10 years to expiration --->
 		<!--- <cfset var epoch = dateadd("yyyy", 10, now())> --->
@@ -187,10 +192,10 @@
 		<!--- If we store all files in one bucket --->
 		<cfset arguments = tenantCheck(arguments)>
 		<!--- Create the signed URL --->
-		<!--- <cfset x.theurl = AmazonS3geturl(datasource=request.razuna.application.s3ds, bucket=arguments.awsbucket, key=arguments.key, expiration=epoch)> --->
+		<!--- <cfset x.theurl = AmazonS3geturl(datasource=arguments.thestruct.razuna.application.s3ds, bucket=arguments.awsbucket, key=arguments.key, expiration=epoch)> --->
 
 		<!--- According to region we but URL together --->
-		<cfset x.theurl = _getAwsUrl(awsbucket=arguments.awsbucket, key=arguments.key)>
+		<cfset x.theurl = _getAwsUrl(awsbucket=arguments.awsbucket, key=arguments.key, thestruct=arguments.thestruct)>
 
 		<!--- Return --->
 		<cfreturn x />
@@ -200,6 +205,7 @@
 	<cffunction name="listkeys" access="public" output="false">
 		<cfargument name="folderpath" type="string" required="true" />
 		<cfargument name="awsbucket" type="string" required="true" />
+		<cfargument name="thestruct" type="struct" required="yes" />
 		<!--- Lenght of key and remove first / --->
 		<cfset var _folderpath = arguments.folderpath>
 		<cfset var f = left(_folderpath, 1)>
@@ -212,7 +218,7 @@
 		<cfset _folderpath = _folderpath & "/">
 		<!--- Get keys --->
 		<cfset var thekeys = AmazonS3list(
-			datasource=request.razuna.application.s3ds,
+			datasource=arguments.thestruct.razuna.application.s3ds,
 			bucket=arguments.awsbucket,
 			prefix=_folderpath
 		)>
@@ -232,11 +238,12 @@
 		<cfargument name="aws_prefix" type="string" required="false" default="" />
 		<cfargument name="s3ds" type="string" required="false" default="" />
 		<cfargument name="keys" type="array" required="false" />
+		<cfargument name="thestruct" type="struct" required="yes" />
 
 		<!--- If we store all files in one bucket --->
 		<cfif arguments.one>
 			<cfset arguments = tenantCheck(arguments)>
-			<cfset arguments.s3ds = getDataSource( from_cron=arguments.from_cron, conf_aws_access_key=arguments.config.conf_aws_access_key, conf_aws_secret_access_key=arguments.config.conf_aws_secret_access_key, conf_aws_location=arguments.config.conf_aws_location )>
+			<cfset arguments.s3ds = getDataSource( from_cron=arguments.from_cron, conf_aws_access_key=arguments.config.conf_aws_access_key, conf_aws_secret_access_key=arguments.config.conf_aws_secret_access_key, conf_aws_location=arguments.config.conf_aws_location, thestruct=arguments.thestruct )>
 			<!--- New array --->
 			<cfset arguments.keys = ArrayNew()>
 		</cfif>
@@ -274,6 +281,7 @@
 		<cfargument name="tenant_bucket" type="string" required="false" />
 		<cfargument name="config" type="query" required="false" />
 		<cfargument name="from_cron" type="string" required="false" default="false" />
+		<cfargument name="thestruct" type="struct" required="yes" />
 
 		<!--- If config does not exits --->
 		<cfif !structKeyExists(arguments, "config")>
@@ -283,12 +291,12 @@
 			</cfquery>
 		</cfif>
 
-		<cfset var _s3ds = getDataSource( from_cron=arguments.from_cron, conf_aws_access_key=arguments.config.conf_aws_access_key, conf_aws_secret_access_key=arguments.config.conf_aws_secret_access_key, conf_aws_location=arguments.config.conf_aws_location )>
+		<cfset var _s3ds = getDataSource( from_cron=arguments.from_cron, conf_aws_access_key=arguments.config.conf_aws_access_key, conf_aws_secret_access_key=arguments.config.conf_aws_secret_access_key, conf_aws_location=arguments.config.conf_aws_location, thestruct=arguments.thestruct )>
 
 		<!--- <cfif _from_cron>
 			<cfset var _s3ds = AmazonRegisterDataSource("aws","#arguments.config.conf_aws_access_key#","#arguments.config.conf_aws_secret_access_key#","#arguments.config.conf_aws_location#")>
 		<cfelse>
-			<cfset var _s3ds = request.razuna.application.s3ds>
+			<cfset var _s3ds = arguments.thestruct.razuna.application.s3ds>
 		</cfif> --->
 
 		<!--- If we store all files in one bucket --->
@@ -316,17 +324,17 @@
 		<cfset AmazonS3delete( datasource=_s3ds, bucket=arguments.awsbucket, key=arguments.folderpath )>
 
 
-		<!--- <cfset var singleobj = createObject("component","global.cfc.s3").init(accessKeyId=request.razuna.application.awskey,secretAccessKey=request.razuna.application.awskeysecret,storagelocation =request.razuna.application.awslocation)>
+		<!--- <cfset var singleobj = createObject("component","global.cfc.s3").init(accessKeyId=arguments.thestruct.razuna.application.awskey,secretAccessKey=arguments.thestruct.razuna.application.awskeysecret,storagelocation =arguments.thestruct.razuna.application.awslocation)>
 		<cfset var thekeys= singleobj.getbucket(arguments.awsbucket,arguments.folderpath)>
 		<cfset console('thekeys: #thekeys#')> --->
 
 		<!--- Loop over the keys and delete them --->
 		<!--- <cfloop array = "#thekeys#" index='struct'>
-			<cfset AmazonS3delete(request.razuna.application.s3ds,arguments.awsbucket,struct["key"])>
+			<cfset AmazonS3delete(arguments.thestruct.razuna.application.s3ds,arguments.awsbucket,struct["key"])>
 		</cfloop>
 
 		<!--- Finally remove folder which is empty now --->
-		<cfset AmazonS3delete(request.razuna.application.s3ds,arguments.awsbucket,arguments.folderpath)> --->
+		<cfset AmazonS3delete(arguments.thestruct.razuna.application.s3ds,arguments.awsbucket,arguments.folderpath)> --->
 		<!--- Return --->
 		<cfreturn />
 	</cffunction>
@@ -336,9 +344,10 @@
 		<cfargument name="folderpath" type="string" required="true" />
 		<cfargument name="folderpathdest" type="string" required="true" />
 		<cfargument name="awsbucket" type="string" required="true" />
-		<cfargument name="awskey" type="string" required="no" default="#request.razuna.application.awskey#">
-		<cfargument name="awssecretKey" type="string" required="no" default="#request.razuna.application.awskeysecret#">
-		<cfargument name="awslocation" type="string" required="no" default="#request.razuna.application.awslocation#">
+		<cfargument name="thestruct" type="struct" required="yes" />
+		<cfargument name="awskey" type="string" required="no" default="#arguments.thestruct.razuna.application.awskey#">
+		<cfargument name="awssecretKey" type="string" required="no" default="#arguments.thestruct.razuna.application.awskeysecret#">
+		<cfargument name="awslocation" type="string" required="no" default="#arguments.thestruct.razuna.application.awslocation#">
 		<!--- If we store all files in one bucket --->
 		<cfset arguments = tenantCheck(arguments)>
 		<!--- Get keys --->
@@ -358,9 +367,10 @@
 		<cfargument name="folderpath" type="string" required="true" />
 		<cfargument name="folderpathdest" type="string" required="true" />
 		<cfargument name="awsbucket" type="string" required="true" />
-		<cfargument name="awskey" type="string" required="no" default="#request.razuna.application.awskey#">
-		<cfargument name="awssecretKey" type="string" required="no" default="#request.razuna.application.awskeysecret#">
-		<cfargument name="awslocation" type="string" required="no" default="#request.razuna.application.awslocation#">
+		<cfargument name="thestruct" type="struct" required="yes" />
+		<cfargument name="awskey" type="string" required="no" default="#arguments.thestruct.razuna.application.awskey#">
+		<cfargument name="awssecretKey" type="string" required="no" default="#arguments.thestruct.razuna.application.awskeysecret#">
+		<cfargument name="awslocation" type="string" required="no" default="#arguments.thestruct.razuna.application.awslocation#">
 		<!--- If we store all files in one bucket --->
 		<cfset arguments = tenantCheck(arguments)>
 		<!--- Get keys --->
@@ -380,6 +390,7 @@
 		<cfargument name="path" required="false" default="">
 		<cfargument name="sf_id" required="true">
 		<cfargument name="root" required="false" default="false">
+		<cfargument name="thestruct" type="struct" required="yes" />
 			<!--- Param --->
 		<cfset var result = structNew()>
 		<!--- Check that we have a Amazon Datasource --->
@@ -393,8 +404,8 @@
 			<!--- Get keys --->
 			<cftry>
 				<cfset result.contents = AmazonS3list(
-					datasource=request.razuna.session.aws[arguments.sf_id].datasource,
-					bucket=request.razuna.session.aws[arguments.sf_id].bucket,
+					datasource=arguments.thestruct.razuna.session.aws[arguments.sf_id].datasource,
+					bucket=arguments.thestruct.razuna.session.aws[arguments.sf_id].bucket,
 					prefix=arguments.path
 				)>
 				<cfcatch>
@@ -415,30 +426,32 @@
 	<cffunction name="awssourcecheck" access="private" returntype="String">
 		<cfargument name="sf_id" required="true">
 		<cfargument name="root" required="false" default="false">
+		<cfargument name="thestruct" type="struct" required="yes" />
+
 		<!--- Param --->
 		<cfset var exists = false>
 		<cfset var qry = "">
 		<cfset var qry_aws_settings = "">
 
 		<!--- Check if a session with this smartfolder id exists --->
-		<cfif !structKeyExists(request.razuna.session,"aws") OR !structKeyExists(request.razuna.session.aws,arguments.sf_id) OR arguments.root>
+		<cfif !structKeyExists(arguments.thestruct.razuna.session,"aws") OR !structKeyExists(arguments.thestruct.razuna.session.aws,arguments.sf_id) OR arguments.root>
 			<cftry>
 				<!--- Query --->
-				<cfquery datasource="#request.razuna.application.datasource#" name="qry">
+				<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qry">
 				SELECT sf_prop_value
-				FROM #request.razuna.session.hostdbprefix#smart_folders_prop
+				FROM #arguments.thestruct.razuna.session.hostdbprefix#smart_folders_prop
 				WHERE sf_prop_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="bucket">
 				AND sf_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.sf_id#">
-				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 				</cfquery>
 				<!--- Get ID from bucket variable --->
 				<cfset var awsid = listLast(qry.sf_prop_value,"_")>
 				<!--- Get the AWS information with the selected bucket --->
-				<cfquery datasource="#request.razuna.application.datasource#" name="qry_aws_settings">
+				<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qry_aws_settings">
 				SELECT set_id, set_pref
-				FROM #request.razuna.session.hostdbprefix#settings
+				FROM #arguments.thestruct.razuna.session.hostdbprefix#settings
 				WHERE set_id LIKE 'aws_%_#awsid#'
-				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#request.razuna.session.hostid#">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 				</cfquery>
 				<!--- Set the Amazon datasource --->
 				<cfif qry_aws_settings.recordcount NEQ 0>
@@ -446,9 +459,9 @@
 						<cfset aws[set_id] = set_pref>
 					</cfloop>
 					<!--- Set source --->
-					<cfset request.razuna.session.aws[arguments.sf_id].datasource = AmazonRegisterDataSource(arguments.sf_id,evaluate("aws.aws_access_key_id_#awsid#"),evaluate("aws.aws_secret_access_key_#awsid#"),evaluate("aws.aws_bucket_location_#awsid#"))>
+					<cfset arguments.thestruct.razuna.session.aws[arguments.sf_id].datasource = AmazonRegisterDataSource(arguments.sf_id,evaluate("aws.aws_access_key_id_#awsid#"),evaluate("aws.aws_secret_access_key_#awsid#"),evaluate("aws.aws_bucket_location_#awsid#"))>
 					<!--- Set Bucket --->
-					<cfset request.razuna.session.aws[arguments.sf_id].bucket = evaluate("aws.aws_bucket_name_#awsid#")>
+					<cfset arguments.thestruct.razuna.session.aws[arguments.sf_id].bucket = evaluate("aws.aws_bucket_name_#awsid#")>
 					<!--- Set var to true --->
 					<cfset var exists = true>
 				<cfelse>
@@ -497,8 +510,8 @@
 			<!--- Now download file --->
 			<cftry>
 				<cfset AmazonS3read(
-				   datasource=request.razuna.session.aws[request.razuna.session.sf_id].datasource,
-				   bucket=request.razuna.session.aws[request.razuna.session.sf_id].bucket,
+				   datasource=arguments.thestruct.razuna.session.aws[arguments.thestruct.razuna.session.sf_id].datasource,
+				   bucket=arguments.thestruct.razuna.session.aws[arguments.thestruct.razuna.session.sf_id].bucket,
 				   key=f,
 				   file="#td#amazon/#listlast(f,"/")#"
 				)>
@@ -520,14 +533,15 @@
 	<cffunction name="media" access="public" returntype="void">
 		<cfargument name="path" required="false" default="/">
 		<cfargument name="download" required="false" default="false" />
+		<cfargument name="thestruct" type="struct" required="yes" />
 		<!--- Add 10 years to expiration --->
 		<cfset var epoch = dateadd("n", 10, now())>
 		<!--- Epoch seconds (convert local time to UTC) --->
 		<cfset var newepoch = dateDiff("s", "January 1 1970 00:00", dateConvert("Local2utc", epoch))>
 		<!--- Create the signed URL --->
 		<cfset var theurl = AmazonS3geturl(
-		   datasource=request.razuna.session.aws[request.razuna.session.sf_id].datasource,
-		   bucket=request.razuna.session.aws[request.razuna.session.sf_id].bucket,
+		   datasource=arguments.thestruct.razuna.session.aws[arguments.thestruct.razuna.session.sf_id].datasource,
+		   bucket=arguments.thestruct.razuna.session.aws[arguments.thestruct.razuna.session.sf_id].bucket,
 		   key=arguments.path,
 		   expiration=epoch
 		)>
@@ -540,6 +554,7 @@
 	<!--- Function to create key and bucket --->
 	<cffunction name="tenantCheck" access="public" returntype="struct">
 		<cfargument name="thestruct" required="true" type="struct">
+
 		<cfset consoleoutput(false)>
 
 		<cfset var _from_cron = false>
@@ -548,14 +563,14 @@
 		<cfif structkeyexists(arguments.thestruct, "from_cron")>
 			<cfset var _from_cron = arguments.thestruct.from_cron>
 		</cfif>
-		
+
 		<!--- <cfset console(arguments.thestruct)>
 		<cfset console(_from_cron)> --->
 		<!--- If application scope exists --->
 		<cfif ! _from_cron>
-			<cfset arguments.thestruct.tenant_enable = request.razuna.application.awstenaneonebucket>
-			<cfset arguments.thestruct.tenant_bucket = request.razuna.application.awstenaneonebucketname>
-			<cfset arguments.thestruct.host_id = request.razuna.session.hostid>
+			<cfset arguments.thestruct.tenant_enable = arguments.thestruct.thestruct.razuna.application.awstenaneonebucket>
+			<cfset arguments.thestruct.tenant_bucket = arguments.thestruct.thestruct.razuna.application.awstenaneonebucketname>
+			<cfset arguments.thestruct.host_id = arguments.thestruct.thestruct.razuna.session.hostid>
 		</cfif>
 		<!--- <cfset console(arguments.thestruct)> --->
 		<!--- If one bucket for all tenants --->
@@ -616,6 +631,7 @@
 		<cfargument name="conf_aws_access_key" required="true" type="string">
 		<cfargument name="conf_aws_secret_access_key" required="true" type="string">
 		<cfargument name="conf_aws_location" required="true" type="string">
+		<cfargument name="thestruct" type="struct" required="yes" />
 
 		<cfset var _from_cron = false>
 
@@ -627,7 +643,7 @@
 		<cfif _from_cron>
 			<cfset var _s3ds = AmazonRegisterDataSource("aws","#arguments.conf_aws_access_key#","#arguments.conf_aws_secret_access_key#","#arguments.conf_aws_location#")>
 		<cfelse>
-			<cfset var _s3ds = request.razuna.application.s3ds>
+			<cfset var _s3ds = arguments.thestruct.razuna.application.s3ds>
 		</cfif>
 
 		<cfreturn _s3ds />
@@ -637,10 +653,11 @@
 	<cffunction name="_getAwsUrl" access="public">
 		<cfargument name="awsbucket" required="true" type="string">
 		<cfargument name="key" required="true" type="string">
+		<cfargument name="thestruct" type="Struct">
 		<!--- Var --->
 		<cfset var _url = "">
 		<!--- Get Region --->
-		<cfswitch expression="#request.razuna.application.awslocation#">
+		<cfswitch expression="#arguments.thestruct.razuna.application.awslocation#">
 			<cfcase value="us-east">
 				<cfset _url = "https://s3.amazonaws.com">
 			</cfcase>

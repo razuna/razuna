@@ -26,21 +26,20 @@
 <cfoutput>
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
 	<tr>
-		<th colspan="6"><div align="left" style="float:left;">#defaultsObj.trans("searchresults_header")#</div><div align="right"><a href="##" onclick="loadcontent('rightside','#myself#c.users');return false;">#defaultsObj.trans("clear_search")#</a></div></th>
+		<th colspan="6"><div align="left" style="float:left;">#myFusebox.getApplicationData().defaults.trans("searchresults_header")#</div><div align="right"><a href="##" onclick="loadcontent('rightside','#myself#c.users');return false;">#myFusebox.getApplicationData().defaults.trans("clear_search")#</a></div></th>
 	</tr>
 	<tr>
 		<th></th>
-		<th>#defaultsObj.trans("username")#</th>
-		<th nowrap="true">#defaultsObj.trans("user_first_name")# #defaultsObj.trans("user_last_name")#</th>
-		<th>#defaultsObj.trans("user_company")#</th>
+		<th>#myFusebox.getApplicationData().defaults.trans("username")#</th>
+		<th nowrap="true">#myFusebox.getApplicationData().defaults.trans("user_first_name")# #myFusebox.getApplicationData().defaults.trans("user_last_name")#</th>
+		<th>#myFusebox.getApplicationData().defaults.trans("user_company")#</th>
 		<th>eMail</th>
-		<th nowrap="nowrap">#defaultsObj.trans("tenant_access")#</th>
+		<th nowrap="nowrap">#myFusebox.getApplicationData().defaults.trans("tenant_access")#</th>
 		<th colspan="2"></th>
 	</tr>
-	<cfset thestruct = structnew()>
 	<cfloop query="qry_users">
-		<cfset thestruct.user_id = user_id>
-		<cfinvoke component="global.cfc.users" method="userhosts"  thestruct="#thestruct#" returnvariable="hosts">
+		<cfset attributes.user_id = user_id>
+		<cfinvoke component="global.cfc.users" method="userhosts" thestruct="#attributes#" returnvariable="hosts">
 		<cfset host_list = valuelist(hosts.host_name)>
 		<tr>
 			<td valign="top" nowrap width="1%"><cfif qry_users.recordcount NEQ 1><input type="checkbox" name="theuserid" value="#user_id#" onclick="showhidedelete();" /></cfif></td>
@@ -50,7 +49,7 @@
 			<td valign="top" nowrap width="15%"><a href="##" onclick="showwindow('#myself#c.users_detail&user_id=#user_id#','#user_first_name# #user_last_name#',600,1);return false;">#user_email#</a></td>
 			<td valign="top" width="15%">#host_list#</td>
 			<td valign="top" nowrap width="1%"><cfif #user_active# EQ "T"><a href=""><img src="images/im-user.png" width="16" height="16" border="0" /></a><cfelse><a href=""><img src="images/im-user-busy.png" width="16" height="16" border="0" /></a></cfif></td>
-			<td align="center" valign="top" nowrap width="1%"><a href="##" onclick="showwindow('#myself#ajax.remove_record&what=users&id=#user_id#&loaddiv=rightside','#defaultsObj.trans("remove_selected")#',400,1);return false"><img src="images/trash.gif" width="16" height="16" border="0"></a></td>
+			<td align="center" valign="top" nowrap width="1%"><a href="##" onclick="showwindow('#myself#ajax.remove_record&what=users&id=#user_id#&loaddiv=rightside','#myFusebox.getApplicationData().defaults.trans("remove_selected")#',400,1);return false"><img src="images/trash.gif" width="16" height="16" border="0"></a></td>
 		</tr>
 	</cfloop>
 </table>

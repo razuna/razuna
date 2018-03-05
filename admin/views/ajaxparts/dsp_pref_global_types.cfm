@@ -27,14 +27,14 @@
 	<table width="700" border="0" cellspacing="0" cellpadding="0" class="grid">
 		<!--- File Types --->
 		<tr>
-			<th colspan="6" class="textbold">#defaultsObj.trans("pref_types_header")#</th>
+			<th colspan="6" class="textbold">#myFusebox.getApplicationData().defaults.trans("pref_types_header")#</th>
 		</tr>
 		<tr>
-			<td colspan="6">#defaultsObj.trans("pref_types_desc")#</td>
+			<td colspan="6">#myFusebox.getApplicationData().defaults.trans("pref_types_desc")#</td>
 		</tr>
 		<tr>
-			<th>#defaultsObj.trans("extension")#</th>
-			<th>#defaultsObj.trans("file_type")#</th>
+			<th>#myFusebox.getApplicationData().defaults.trans("extension")#</th>
+			<th>#myFusebox.getApplicationData().defaults.trans("file_type")#</th>
 			<th>Mime Content</th>
 			<th colspan="3">Mime Sub-Content</th>
 		</tr>
@@ -49,12 +49,12 @@
 				</select></td>
 				<td><input type="text" size="25" id="type_mimecontent_#type_id#" value="#type_mimecontent#"></td>
 				<td><input type="text" size="30" id="type_mimesubcontent_#type_id#" value="#type_mimesubcontent#"></td>
-				<td align="center"><a href="##" onclick="if (confirm('#defaultsObj.trans("delete")#'))  loadcontent('ptypes','#myself#c.prefs_types_del&type_id=' + document.getElementById('type_id_#type_id#').value);return false;"><img src="images/trash.gif" width="16" height="16" border="0"></a></td>
+				<td align="center"><a href="##" onclick="if (confirm('#myFusebox.getApplicationData().defaults.trans("delete")#'))  loadcontent('ptypes','#myself#c.prefs_types_del&type_id=' + document.getElementById('type_id_#type_id#').value);return false;"><img src="images/trash.gif" width="16" height="16" border="0"></a></td>
 				<td align="center"><a href="##" onclick="loadcontent('ptypes','#myself#c.prefs_types_up&type_id=' + $('##type_id_#type_id#').val() + '&type_type=' + $('##type_type_#type_id#').val() + '&type_mimecontent=' + $('##type_mimecontent_#type_id#').val() + '&type_mimesubcontent=' + $('##type_mimesubcontent_#type_id#').val());return false;"><img src="images/document-save-4.png" width="16" height="16" border="0"></a></td>
 			</tr>
 		</cfloop>
 		<tr>
-			<th colspan="6">#defaultsObj.trans("pref_types_header_add")#</th>
+			<th colspan="6">#myFusebox.getApplicationData().defaults.trans("pref_types_header_add")#</th>
 		</tr>
 		<tr>
 			<td><input type="text" size="10" id="new_type_id"></td>

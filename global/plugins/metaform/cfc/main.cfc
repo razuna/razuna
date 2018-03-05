@@ -8,10 +8,11 @@
 	adds all the actions of the plugin
 	--->
 	<cffunction name="load" returntype="void">
+		<cfargument name="thestruct" type="struct">
 		<!--- settings page --->
-		<cfset add_action(pid="#this.myID#", action="settings", comp="settings", func="getsettings")>
+		<cfset add_action(pid="#this.myID#", action="settings", comp="settings", func="getsettings", thestruct=arguments.thestruct)>
 		<!--- load on add --->
-		<cfset add_action(pid="#this.myID#", action="on_file_add_done", comp="settings", func="loadForm")>
+		<cfset add_action(pid="#this.myID#", action="on_file_add_done", comp="settings", func="loadForm", thestruct=arguments.thestruct)>
 	</cffunction>
 
 	<!--- 
