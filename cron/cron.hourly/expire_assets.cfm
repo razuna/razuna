@@ -144,29 +144,83 @@
 		<cfargument name="host_id" type="numeric" required="yes">
 
 		<cfset var getexpired_assets = "">
-		<cfquery datasource="#arguments.datasource#" name="getexpired_assets">
-		SELECT img_id id, host_id, 'img' type, 
+
+		<!--- <cfquery datasource="#arguments.datasource#" name="getexpired_assets">
+		SELECT img_id id, host_id, 'img' type,
 		(SELECT MAX(label_id) FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=#arguments.host_id# AND label_id_r = '0') as label_id
-		FROM raz1_images i 
+		FROM raz1_images
 		WHERE expiry_date < <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#">
 		AND NOT EXISTS (SELECT 1 FROM ct_labels WHERE ct_id_r=i.img_id AND ct_label_id IN (SELECT label_id FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=#arguments.host_id#  AND label_id_r = '0'))
-		UNION ALL		SELECT aud_id id, host_id, 'aud' type,
-		(SELECT MAX(label_id)  FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=#arguments.host_id# AND label_id_r = '0') as label_id  
-		FROM raz1_audios a 
-		WHERE expiry_date < <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#"> 
-		AND NOT EXISTS (SELECT 1 FROM ct_labels WHERE ct_id_r=a.aud_id AND ct_label_id IN (SELECT label_id FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=#arguments.host_id# AND label_id_r = '0'))
+		AND host_id = <cfqueryparam CFSQLType="cf_sql_numeric" value="#arguments.host_id#">
 		UNION ALL
-		SELECT vid_id id, host_id, 'vid' type, 
-		(SELECT MAX(label_id) FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=#arguments.host_id# AND label_id_r = '0') as label_id 
-		FROM raz1_videos v 
-		WHERE expiry_date < <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#"> 
+		SELECT aud_id id, host_id, 'aud' type,
+		(SELECT MAX(label_id)  FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=#arguments.host_id# AND label_id_r = '0') as label_id
+		FROM raz1_audios
+		WHERE expiry_date < <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#">
+		AND NOT EXISTS (SELECT 1 FROM ct_labels WHERE ct_id_r=a.aud_id AND ct_label_id IN (SELECT label_id FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=#arguments.host_id# AND label_id_r = '0'))
+		AND host_id = <cfqueryparam CFSQLType="cf_sql_numeric" value="#arguments.host_id#">
+		UNION ALL
+		SELECT vid_id id, host_id, 'vid' type,
+		(SELECT MAX(label_id) FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=#arguments.host_id# AND label_id_r = '0') as label_id
+		FROM raz1_videos
+		WHERE expiry_date < <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#">
 		AND NOT EXISTS (SELECT 1 FROM ct_labels WHERE ct_id_r=v.vid_id AND ct_label_id IN (SELECT label_id FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=#arguments.host_id# AND label_id_r = '0'))
+		AND host_id = <cfqueryparam CFSQLType="cf_sql_numeric" value="#arguments.host_id#">
 		UNION ALL
 		SELECT file_id id, host_id, 'doc' type,
-		(SELECT MAX(label_id)  FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=#arguments.host_id# AND label_id_r = '0') as label_id 
-		FROM raz1_files f 
-		WHERE expiry_date < <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#"> 
+		(SELECT MAX(label_id)  FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=#arguments.host_id# AND label_id_r = '0') as label_id
+		FROM raz1_files f
+		WHERE expiry_date < <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#">
 		AND NOT EXISTS (SELECT 1 FROM ct_labels WHERE ct_id_r=f.file_id AND ct_label_id IN (SELECT label_id FROM raz1_labels WHERE label_text ='Asset has expired'AND host_id=#arguments.host_id# AND label_id_r = '0'))
+		AND host_id = <cfqueryparam CFSQLType="cf_sql_numeric" value="#arguments.host_id#">
+		</cfquery> --->
+
+		<cfset var getexpired_assets = "">
+		<cfset var _img = "">
+		<cfset var _vid = "">
+		<cfset var _doc = "">
+		<cfset var _aud = "">
+		<cfquery datasource="#arguments.datasource#" name="_img">
+		SELECT img_id id, host_id, 'img' type,
+		(SELECT MAX(label_id) FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=#arguments.host_id# AND label_id_r = '0') as label_id
+		FROM raz1_images
+		WHERE expiry_date < <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#">
+		AND NOT EXISTS (SELECT 1 FROM ct_labels WHERE ct_id_r=i.img_id AND ct_label_id IN (SELECT label_id FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=#arguments.host_id#  AND label_id_r = '0'))
+		AND host_id = <cfqueryparam CFSQLType="cf_sql_numeric" value="#arguments.host_id#">
+		</cfquery>
+		<cfquery datasource="#arguments.datasource#" name="_aud">
+		SELECT aud_id id, host_id, 'aud' type,
+		(SELECT MAX(label_id)  FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=#arguments.host_id# AND label_id_r = '0') as label_id
+		FROM raz1_audios
+		WHERE expiry_date < <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#">
+		AND NOT EXISTS (SELECT 1 FROM ct_labels WHERE ct_id_r=a.aud_id AND ct_label_id IN (SELECT label_id FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=#arguments.host_id# AND label_id_r = '0'))
+		AND host_id = <cfqueryparam CFSQLType="cf_sql_numeric" value="#arguments.host_id#">
+		</cfquery>
+		<cfquery datasource="#arguments.datasource#" name="_vid">
+		SELECT vid_id id, host_id, 'vid' type,
+		(SELECT MAX(label_id) FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=#arguments.host_id# AND label_id_r = '0') as label_id
+		FROM raz1_videos
+		WHERE expiry_date < <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#">
+		AND NOT EXISTS (SELECT 1 FROM ct_labels WHERE ct_id_r=v.vid_id AND ct_label_id IN (SELECT label_id FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=#arguments.host_id# AND label_id_r = '0'))
+		AND host_id = <cfqueryparam CFSQLType="cf_sql_numeric" value="#arguments.host_id#">
+		</cfquery>
+		<cfquery datasource="#arguments.datasource#" name="_doc">
+		SELECT file_id id, host_id, 'doc' type,
+		(SELECT MAX(label_id)  FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=#arguments.host_id# AND label_id_r = '0') as label_id
+		FROM raz1_files
+		WHERE expiry_date < <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#">
+		AND NOT EXISTS (SELECT 1 FROM ct_labels WHERE ct_id_r=f.file_id AND ct_label_id IN (SELECT label_id FROM raz1_labels WHERE label_text ='Asset has expired'AND host_id=#arguments.host_id# AND label_id_r = '0'))
+		AND host_id = <cfqueryparam CFSQLType="cf_sql_numeric" value="#arguments.host_id#">
+		</cfquery>
+
+		<cfquery dbtype="query" name="getexpired_assets">
+		SELECT * FROM _img
+		UNION
+		SELECT * FROM _vid
+		UNION
+		SELECT * FROM _doc
+		UNION
+		SELECT * FROM _aud
 		</cfquery>
 
 		<cfreturn getexpired_assets />
@@ -182,51 +236,55 @@
 		<cfquery datasource="#arguments.datasource#" name="getusers2notify">
 		SELECT i.img_id id, i.img_filename name, f.folder_id, f.folder_name, u.user_email, u.user_Id, 'img' type, path_to_asset, thumb_extension thumb, cloud_url cloud_thumb
 		FROM raz1_images i, raz1_folders f,raz1_folders_groups fg, ct_groups_users cu, users u
-		WHERE i.host_id = #arguments.host_id#
+		WHERE i.host_id = <cfqueryparam CFSQLType="cf_sql_numeric" value="#arguments.host_id#">
 		AND i.folder_id_r = f.folder_id
 		AND f.folder_id = fg.folder_id_r
 		AND cu.ct_g_u_grp_id = fg.grp_id_r
 		AND cu.ct_g_u_user_id = u.user_id
-		AND fg.grp_id_r <>'0'
+		AND fg.grp_id_r <> <cfqueryparam CFSQLType="cf_sql_varchar" value="0">
 		AND fg.grp_permission in ('w','x') <!--- Only send notification to groups with write and full access permissions --->
-		AND expiry_date < <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#">
+		AND i.expiry_date < <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#">
 		AND NOT EXISTS (SELECT 1 FROM ct_labels WHERE ct_id_r=i.img_id AND ct_label_id IN (SELECT label_id FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=#arguments.host_id# AND label_id_r = '0'))
+		AND i.host_id = <cfqueryparam CFSQLType="cf_sql_numeric" value="#arguments.host_id#">
 		UNION ALL
 		SELECT a.aud_id id, a.aud_name name, f.folder_id, f.folder_name, u.user_email, u.user_Id, 'aud' type, path_to_asset, '' thumb, '' cloud_thumb
 		FROM raz1_audios a, raz1_folders f,raz1_folders_groups fg, ct_groups_users cu, users u
-		WHERE a.host_id = #arguments.host_id#
+		WHERE a.host_id = <cfqueryparam CFSQLType="cf_sql_numeric" value="#arguments.host_id#">
 		AND a.folder_id_r = f.folder_id
 		AND f.folder_id = fg.folder_id_r
 		AND cu.ct_g_u_grp_id = fg.grp_id_r
 		AND cu.ct_g_u_user_id = u.user_id
-		AND fg.grp_id_r <>'0'
+		AND fg.grp_id_r <> <cfqueryparam CFSQLType="cf_sql_varchar" value="0">
 		AND fg.grp_permission in ('w','x') <!--- Only send notification to groups with write and full access permissions --->
-		AND expiry_date < <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#">
+		AND a.expiry_date < <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#">
 		AND NOT EXISTS (SELECT 1 FROM ct_labels WHERE ct_id_r=a.aud_id AND ct_label_id IN (SELECT label_id FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=#arguments.host_id# AND label_id_r = '0'))
+		AND a.host_id = <cfqueryparam CFSQLType="cf_sql_numeric" value="#arguments.host_id#">
 		UNION ALL
 		SELECT v.vid_id id, v.vid_filename name, f.folder_id, f.folder_name, u.user_email, u.user_Id, 'vid' type, path_to_asset, vid_name_image thumb, cloud_url cloud_thumb
 		FROM raz1_videos v, raz1_folders f,raz1_folders_groups fg, ct_groups_users cu, users u
-		WHERE v.host_id = #arguments.host_id#
+		WHERE v.host_id = <cfqueryparam CFSQLType="cf_sql_numeric" value="#arguments.host_id#">
 		AND v.folder_id_r = f.folder_id
 		AND f.folder_id = fg.folder_id_r
 		AND cu.ct_g_u_grp_id = fg.grp_id_r
 		AND cu.ct_g_u_user_id = u.user_id
-		AND fg.grp_id_r <>'0'
+		AND fg.grp_id_r <> <cfqueryparam CFSQLType="cf_sql_varchar" value="0">
 		AND fg.grp_permission in ('w','x') <!--- Only send notification to groups with write and full access permissions --->
-		AND expiry_date < <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#">
+		AND v.expiry_date < <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#">
 		AND NOT EXISTS (SELECT 1 FROM ct_labels WHERE ct_id_r=v.vid_id AND ct_label_id IN (SELECT label_id FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=#arguments.host_id# AND label_id_r = '0'))
+		AND v.host_id = <cfqueryparam CFSQLType="cf_sql_numeric" value="#arguments.host_id#">
 		UNION ALL
 		SELECT fi.file_id id, fi.file_name name, f.folder_id, f.folder_name, u.user_email, u.user_Id, 'doc' type, path_to_asset, '' thumb, '' cloud_thumb
 		FROM raz1_files fi, raz1_folders f,raz1_folders_groups fg, ct_groups_users cu, users u
-		WHERE fi.host_id = #arguments.host_id#
+		WHERE fi.host_id = <cfqueryparam CFSQLType="cf_sql_numeric" value="#arguments.host_id#">
 		AND fi.folder_id_r = f.folder_id
 		AND f.folder_id = fg.folder_id_r
 		AND cu.ct_g_u_grp_id = fg.grp_id_r
 		AND cu.ct_g_u_user_id = u.user_id
-		AND fg.grp_id_r <>'0'
+		AND fg.grp_id_r <> <cfqueryparam CFSQLType="cf_sql_varchar" value="0">
 		AND fg.grp_permission in ('w','x') <!--- Only send notification to groups with write and full access permissions --->
-		AND expiry_date < <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#">
-		AND NOT EXISTS (SELECT 1 FROM ct_labels WHERE ct_id_r=fi.file_id AND ct_label_id IN (SELECT label_id FROM raz1_labels WHERE label_text ='Asset has expired'AND host_id=#arguments.host_id# AND label_id_r = '0'))
+		AND fi.expiry_date < <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#">
+		AND NOT EXISTS (SELECT 1 FROM ct_labels WHERE ct_id_r=fi.file_id AND ct_label_id IN (SELECT label_id FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=#arguments.host_id# AND label_id_r = '0'))
+		AND fi.host_id = <cfqueryparam CFSQLType="cf_sql_numeric" value="#arguments.host_id#">
 		</cfquery>
 
 		<cfreturn getusers2notify />
@@ -244,20 +302,36 @@
 		<cfset var _doc = "">
 		<cfset var _aud = "">
 		<cfquery datasource="#arguments.datasource#" name="_img">
-		SELECT i.img_id id, rec_uuid FROM ct_labels c, raz1_images i WHERE i.img_id=c.ct_id_r AND c.ct_label_id in (SELECT label_id FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=i.host_id AND label_id_r = '0')
-		AND (expiry_date IS NULL OR expiry_date >= <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#">)
+		SELECT i.img_id id, rec_uuid
+		FROM ct_labels c, raz1_images i
+		WHERE i.img_id=c.ct_id_r
+		AND c.ct_label_id in (SELECT label_id FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=i.host_id AND label_id_r = '0')
+		AND (i.expiry_date IS NULL OR expiry_date >= <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#">)
+		AND i.host_id = <cfqueryparam CFSQLType="cf_sql_numeric" value="#arguments.host_id#">
 		</cfquery>
 		<cfquery datasource="#arguments.datasource#" name="_aud">
-		SELECT a.aud_id id, rec_uuid FROM ct_labels c, raz1_audios a WHERE a.aud_id=c.ct_id_r AND c.ct_label_id in (SELECT label_id FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=a.host_id AND label_id_r = '0')
-		AND (expiry_date IS NULL OR expiry_date >= <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#">)
+		SELECT a.aud_id id, rec_uuid
+		FROM ct_labels c, raz1_audios a
+		WHERE a.aud_id=c.ct_id_r
+		AND c.ct_label_id in (SELECT label_id FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=a.host_id AND label_id_r = '0')
+		AND (a.expiry_date IS NULL OR expiry_date >= <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#">)
+		AND a.host_id = <cfqueryparam CFSQLType="cf_sql_numeric" value="#arguments.host_id#">
 		</cfquery>
 		<cfquery datasource="#arguments.datasource#" name="_vid">
-		SELECT v.vid_id id, rec_uuid FROM ct_labels c, raz1_videos v WHERE v.vid_id=c.ct_id_r AND c.ct_label_id in (SELECT label_id FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=v.host_id AND label_id_r = '0')
-		AND (expiry_date IS NULL OR expiry_date >= <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#">)
+		SELECT v.vid_id id, rec_uuid
+		FROM ct_labels c, raz1_videos v
+		WHERE v.vid_id=c.ct_id_r
+		AND c.ct_label_id in (SELECT label_id FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=v.host_id AND label_id_r = '0')
+		AND (v.expiry_date IS NULL OR expiry_date >= <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#">)
+		AND v.host_id = <cfqueryparam CFSQLType="cf_sql_numeric" value="#arguments.host_id#">
 		</cfquery>
 		<cfquery datasource="#arguments.datasource#" name="_doc">
-		SELECT f.file_id id, rec_uuid FROM ct_labels c, raz1_files f WHERE f.file_id=c.ct_id_r AND c.ct_label_id in (SELECT label_id FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=f.host_id AND label_id_r = '0')
-		AND (expiry_date IS NULL OR expiry_date >= <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#">)
+		SELECT f.file_id id, rec_uuid
+		FROM ct_labels c, raz1_files f
+		WHERE f.file_id=c.ct_id_r
+		AND c.ct_label_id in (SELECT label_id FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=f.host_id AND label_id_r = '0')
+		AND (f.expiry_date IS NULL OR expiry_date >= <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#">)
+		AND f.host_id = <cfqueryparam CFSQLType="cf_sql_numeric" value="#arguments.host_id#">
 		</cfquery>
 		<cfquery dbtype="query" name="getreset_assets">
 		SELECT * FROM _img
