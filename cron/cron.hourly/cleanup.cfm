@@ -23,14 +23,17 @@
 * along with Razuna. If not, see <http://www.razuna.com/licenses/>.
 *
 --->
-<cfabort>
 <cftry>
 
 	<cfset consoleoutput(true, true)>
-	<cfset console("#now()# --- Executing cron job expiring assets")>
+	<cfset console("#now()# ---------------- Starting to clean up incoming, outgoing, and tmp directories")>
 
 	<!--- Path --->
 	<cfset _path = expandPath("../..")>
+	<!--- Set time for remove --->
+	<cfset _removetime_incoming = DateAdd("h", -2, now())>
+	<cfset _removetime_outgoing = DateAdd("d", -4, now())>
+	<cfset _removetime_tmp = DateAdd("h", -2, now())>
 
 	<!--- Get database --->
 	<cfquery datasource="razuna_default" name="_config">
@@ -49,58 +52,18 @@
 	GROUP BY host_id, host_shard_group
 	</cfquery>
 
-	<cfinvoke component="global.cfc.global" method="_lockFile" qry="#_qry_hosts#" type="trash" returnvariable="_hosts" />
+	<cfinvoke component="global.cfc.global" method="_lockFile" qry="#_qry_hosts#" type="cleanup" returnvariable="_hosts" />
 
 	<!--- START --->
 
-
-
-	<!--- END --->
-
-	<cfinvoke component="global.cfc.global" method="_removeLockFile" qry_remove_lock="#_qry_hosts#" type="trash"/>
-
-	<cfset console("#now()# --- Finished cron job expiring assets")>
-
-	<cfcatch type="any">
-		<cfset console("#now()# ---------------------- Error expiring assets crong job")>
-		<cfset console(cfcatch)>
-	</cfcatch>
-</cftry>
-
-<cftry>
-
-	<cfset consoleoutput(true, true)>
-	<cfset console("#now()# ---------------- Starting to clean up incoming, outgoing, and tmp directories")>
-
-	<!--- Path --->
-	<cfset _path = expandPath("../..")>
-	<!--- Set time for remove --->
-	<cfset _removetime_incoming = DateAdd("h", -2, now())>
-	<cfset _removetime_outgoing = DateAdd("d", -4, now())>
-	<cfset _removetime_tmp = DateAdd("h", -2, now())>
-
-	<!--- Get database --->
-	<cfquery datasource="razuna_default" name="_config">
-	SELECT conf_datasource
-	FROM razuna_config
-	</cfquery>
-	<!--- Set DB --->
-	<cfset _db = _config.conf_datasource>
-
-	<!--- Get all the hosts --->
-	<cfquery datasource="#_db#" name="_qry_hosts">
-	SELECT host_shard_group
-	FROM hosts
-	GROUP BY host_shard_group
-	</cfquery>
-
-	<cfloop query="_qry_hosts">
+	<cfloop query="_hosts">
 		<!--- Clear assets dbs from records which have no path_to_asset --->
 		<cftransaction>
 			<cfquery datasource="#_db#">
 			DELETE FROM #host_shard_group#images
 			WHERE (path_to_asset IS NULL OR path_to_asset = '')
 			AND img_create_time < <cfqueryparam cfsqltype="cf_sql_timestamp" value="#_removetime_incoming#">
+			AND host_id = <cfqueryparam CFSQLType="cf_sql_numeric" value="#arguments.host_id#">
 			ORDER BY img_id
 			</cfquery>
 		</cftransaction>
@@ -109,6 +72,7 @@
 			DELETE FROM #host_shard_group#videos
 			WHERE (path_to_asset IS NULL OR path_to_asset = '')
 			AND vid_create_time < <cfqueryparam cfsqltype="cf_sql_timestamp" value="#_removetime_incoming#">
+			AND host_id = <cfqueryparam CFSQLType="cf_sql_numeric" value="#arguments.host_id#">
 			ORDER BY vid_id
 			</cfquery>
 		</cftransaction>
@@ -117,6 +81,7 @@
 			DELETE FROM #host_shard_group#files
 			WHERE (path_to_asset IS NULL OR path_to_asset = '')
 			AND file_create_time < <cfqueryparam cfsqltype="cf_sql_timestamp" value="#_removetime_incoming#">
+			AND host_id = <cfqueryparam CFSQLType="cf_sql_numeric" value="#arguments.host_id#">
 			ORDER BY file_id
 			</cfquery>
 		</cftransaction>
@@ -125,6 +90,7 @@
 			DELETE FROM #host_shard_group#audios
 			WHERE (path_to_asset IS NULL OR path_to_asset = '')
 			AND aud_create_time < <cfqueryparam cfsqltype="cf_sql_timestamp" value="#_removetime_incoming#">
+			AND host_id = <cfqueryparam CFSQLType="cf_sql_numeric" value="#arguments.host_id#">
 			ORDER BY aud_id
 			</cfquery>
 		</cftransaction>
@@ -134,6 +100,7 @@
 			SELECT path as temppath, tempid
 			FROM #host_shard_group#assets_temp
 			WHERE date_add < <cfqueryparam cfsqltype="cf_sql_timestamp" value="#_removetime_incoming#">
+			AND host_id = <cfqueryparam CFSQLType="cf_sql_numeric" value="#arguments.host_id#">
 			AND path LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="%dam/incoming%">
 			AND path IS NOT NULL
 			</cfquery>
@@ -160,7 +127,7 @@
 
 
 	<!--- Loop over hosts and dirs --->
-	<cfloop query="_qry_hosts">
+	<cfloop query="_hosts">
 		<!--- Remove the "_" from the host --->
 		<cfset _host = replacenocase(host_shard_group, "_", "", "ALL")>
 		<cfset _full_path_incoming = "#_path##_host#/dam/incoming">
@@ -222,6 +189,9 @@
 		</cfcatch>
 	</cftry>
 
+	<!--- Remove lock --->
+	<cfinvoke component="global.cfc.global" method="_removeLockFile" qry_remove_lock="#_qry_hosts#" type="cleanup"/>
+
 	<cfset console("#now()# ---------------- Finished clean up job!")>
 
 	<cfcatch type="any">
@@ -229,3 +199,4 @@
 		<cfset console(cfcatch)>
 	</cfcatch>
 </cftry>
+

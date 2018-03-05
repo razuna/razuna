@@ -23,8 +23,6 @@
 * along with Razuna. If not, see <http://www.razuna.com/licenses/>.
 *
 --->
-<cfabort>
-
 <cftry>
 
 	<cfset consoleoutput(true, true)>
