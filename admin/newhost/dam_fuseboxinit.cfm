@@ -67,13 +67,13 @@
 <cfset thename = cgi.http_host>
 <cfset thecount = findoneof(".",thename) - 1>
 <cfset thesubdomain = mid(cgi.HTTP_HOST,1,thecount)>
-<cfquery datasource="##request.razuna.application.datasource##" name="thehost" cachedwithin="##CreateTimeSpan(0,1,0,0)##">
+<cfquery datasource="##application.razuna.datasource##" name="thehost" cachedwithin="##CreateTimeSpan(0,1,0,0)##">
 SELECT /* ##thename## */ host_id, host_name, host_type, host_shard_group
 FROM hosts
 WHERE host_name_custom = <cfqueryparam cfsqltype="cf_sql_varchar" value="##thename##">
 </cfquery>
 <cfif thehost.recordcount EQ 0>
-<cfquery datasource="##request.razuna.application.datasource##" name="thehost" cachedwithin="##CreateTimeSpan(0,1,0,0)##">
+<cfquery datasource="##application.razuna.datasource##" name="thehost" cachedwithin="##CreateTimeSpan(0,1,0,0)##">
 SELECT /* ##thesubdomain## */ host_id, host_name, host_type, host_shard_group
 FROM hosts
 WHERE host_name = <cfqueryparam cfsqltype="cf_sql_varchar" value="##thesubdomain##">

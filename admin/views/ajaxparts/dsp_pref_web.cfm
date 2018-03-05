@@ -41,7 +41,7 @@
 	<tr>
 	<th colspan="2" class="textbold">#myFusebox.getApplicationData().defaults.trans("header_title_web")#</th>
 	</tr>
-	<cfloop from="1" to="#myFusebox.getApplicationData().defaults.howmanylang("#request.razuna.application.datasource#")#" index="langindex">
+	<cfloop from="1" to="#myFusebox.getApplicationData().defaults.howmanylang("#application.razuna.datasource#")#" index="langindex">
 	<tr>
 	<td nowrap>#myFusebox.getApplicationData().defaults.trans("title_in")# #myFusebox.getApplicationData().defaults.thislang("SET_LANG_#langindex#")#</td>
 	<td><input type="text" name="set_title_website_#langindex#" size="60" value="#myFusebox.getApplicationData().settings.thissetting("set_title_website_#langindex#", attributes)#"></td>

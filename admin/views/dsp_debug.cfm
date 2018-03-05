@@ -14,14 +14,14 @@
 <br/>
 <!--- Get List of schedules tasks in database--->
 <h3>SCHEDULED TASKS IN DATABASE</h3>
-<cfquery name="gettasks" datasource="#request.razuna.application.datasource#">
+<cfquery name="gettasks" datasource="#application.razuna.datasource#">
 	SELECT sched_id, sched_status, sched_method, host_id, sched_interval, sched_start_date, sched_start_time, sched_end_date, sched_end_time
 	FROM raz1_schedules
 </cfquery>
 <cfdump var="#gettasks#">
 <!--- Get counts of assets not indexed --->
 <h3>INDEXING STATUS</h3>
-<cfquery name="idxstats_img" datasource="#request.razuna.application.datasource#">
+<cfquery name="idxstats_img" datasource="#application.razuna.datasource#">
 	SELECT count(1) cnt FROM raz1_images i, hosts h 
 	WHERE is_indexed = 0 
 	AND i.host_id = h.host_id
@@ -29,7 +29,7 @@
 	AND host_type != 0
 	</cfif>
 </cfquery>
-<cfquery name="idxstats_vid" datasource="#request.razuna.application.datasource#">
+<cfquery name="idxstats_vid" datasource="#application.razuna.datasource#">
 	SELECT count(1) cnt FROM raz1_videos i, hosts h 
 	WHERE is_indexed = 0 
 	AND i.host_id = h.host_id
@@ -37,7 +37,7 @@
 	AND host_type != 0
 	</cfif>
 </cfquery>
-<cfquery name="idxstats_aud" datasource="#request.razuna.application.datasource#">
+<cfquery name="idxstats_aud" datasource="#application.razuna.datasource#">
 	SELECT count(1) cnt FROM raz1_audios i, hosts h 
 	WHERE is_indexed = 0 
 	AND i.host_id = h.host_id
@@ -45,7 +45,7 @@
 	AND host_type != 0
 	</cfif>
 </cfquery>
-<cfquery name="idxstats_fil" datasource="#request.razuna.application.datasource#">
+<cfquery name="idxstats_fil" datasource="#application.razuna.datasource#">
 	SELECT count(1) cnt FROM raz1_files i, hosts h 
 	WHERE is_indexed = 0 
 	AND i.host_id = h.host_id
