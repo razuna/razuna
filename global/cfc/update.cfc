@@ -252,6 +252,23 @@
 				</cfquery>
 				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch,thestruct=arguments.thestruct)></cfcatch>
 			</cftry>
+			<!--- Task Scripts --->
+			<cftry>
+				<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
+				CREATE TABLE raz1_scheduled_scripts (
+				id_name 		#thevarchar#(200) NOT NULL DEFAULT '',
+				value 			#thevarchar#(2000) DEFAULT NULL,
+				host_id 		#theint#,
+				date_added 		#thetimestamp#,
+				sched_id 		#thevarchar#(100) DEFAULT NULL,
+				KEY scripts_id (id_name),
+				KEY scripts_host_id (host_id),
+				KEY scripts_date_added (date_added),
+				KEY scripts_sched_id (sched_id)
+				) #tableoptions#
+				</cfquery>
+				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch,thestruct=arguments.thestruct)></cfcatch>
+			</cftry>
 		</cfif>
 
 		<!--- If less than 54 (1.9.5) --->
