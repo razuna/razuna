@@ -187,11 +187,11 @@
 				<small class="form-text text-muted">Where to store the files on the FTP site. Enter the whole path, e.g. /omnipix/files/</small>
 			</div>
 
-			<div class="float-right">
+			<!--- <div class="float-right">
 				<a href="##" onclick="scriptFtpConnection();">
 					<button type="button" class="btn btn-outline-info btn-sm">Validate FTP connection</button>
 				</a>
-			</div>
+			</div> --->
 
 			<p class="p-1"></p>
 			<div class="clearfix"></div>

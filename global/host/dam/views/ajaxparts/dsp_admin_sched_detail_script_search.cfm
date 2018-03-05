@@ -23,7 +23,7 @@
 * along with Razuna. If not, see <http://www.razuna.com/licenses/>.
 *
 --->
-<p class="lead">This preview is limited to 100 files</p>
+<h6>This preview is limited to 100 files and does not take the last changed date into consideration</h6>
 <cfoutput>
 	<table class="table table-striped">
 		<thead>
