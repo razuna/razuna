@@ -2804,7 +2804,7 @@
 		)
 		#this.tableoptions#
 		</cfquery>
-		
+
 		<!--- UPC --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#upc_template_val (
@@ -2819,6 +2819,24 @@
 		)
 		#this.tableoptions#
 		</cfquery>
+
+		<!--- task scripts --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#scheduled_scripts (
+  		id_name				varchar(200),
+  		value				varchar(2000),
+  		date_added			timestamp,
+  		sched_id			varchar(100),
+  		host_id				int,
+  		KEY #arguments.thestruct.host_db_prefix#scripts_id (id_name),
+  		KEY #arguments.thestruct.host_db_prefix#scripts_host_id (host_id),
+  		KEY #arguments.thestruct.host_db_prefix#scripts_date_added (date_added),
+  		KEY #arguments.thestruct.host_db_prefix#scripts_sched_id (sched_id)
+		)
+		#this.tableoptions#
+		</cfquery>
+
+
 
 	</cffunction>
 
