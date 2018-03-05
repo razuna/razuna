@@ -34,6 +34,9 @@ FROM razuna_config
 <!--- Set time for remove --->
 <cfset _removetime = DateAdd("d", -30, now())>
 
+<!--- Now --->
+<cfset _now = now()>
+
 <!--- Remove expired assets from cart --->
 <cftry>
 	<cfquery datasource="#_config.conf_datasource#">
@@ -43,10 +46,10 @@ FROM razuna_config
 			LEFT JOIN raz1_audios a ON c.cart_product_id = a.aud_id AND cart_file_type = 'aud' AND c.host_id = a.host_id
 			LEFT JOIN raz1_videos v ON c.cart_product_id = v.vid_id AND cart_file_type = 'vid' AND c.host_id = v.host_id
 			LEFT JOIN raz1_files f ON c.cart_product_id = f.file_id AND cart_file_type = 'doc' AND c.host_id = f.host_id
-			WHERE i.expiry_date < <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">
-			OR a.expiry_date < <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">
-			OR v.expiry_date < <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">
-			OR f.expiry_date < <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">
+			WHERE i.expiry_date < <cfqueryparam cfsqltype="cf_sql_date" value="#_now#">
+			OR a.expiry_date < <cfqueryparam cfsqltype="cf_sql_date" value="#_now#">
+			OR v.expiry_date < <cfqueryparam cfsqltype="cf_sql_date" value="#_now#">
+			OR f.expiry_date < <cfqueryparam cfsqltype="cf_sql_date" value="#_now#">
 			OR c.cart_change_time < <cfqueryparam cfsqltype="cf_sql_timestamp" value="#_removetime#">
 		<cfelse>
 			DELETE FROM raz1_cart c
@@ -56,13 +59,13 @@ FROM razuna_config
 				LEFT JOIN raz1_audios a ON cc.cart_product_id = a.aud_id AND cc.cart_file_type = 'aud' AND cc.host_id = a.host_id
 				LEFT JOIN raz1_videos v ON cc.cart_product_id = v.vid_id AND cc.cart_file_type = 'vid' AND cc.host_id = v.host_id
 				LEFT JOIN raz1_files f ON cc.cart_product_id = f.file_id AND cc.cart_file_type = 'doc' AND cc.host_id = f.host_id
-				WHERE c.cart_product_id=cc.cart_product_id
+				WHERE c.cart_product_id = cc.cart_product_id
 				AND
 				(
-					i.expiry_date < <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">
-					OR a.expiry_date < <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">
-					OR v.expiry_date < <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">
-					OR f.expiry_date < <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">
+					i.expiry_date < <cfqueryparam cfsqltype="cf_sql_date" value="#_now#">
+					OR a.expiry_date < <cfqueryparam cfsqltype="cf_sql_date" value="#_now#">
+					OR v.expiry_date < <cfqueryparam cfsqltype="cf_sql_date" value="#_now#">
+					OR f.expiry_date < <cfqueryparam cfsqltype="cf_sql_date" value="#_now#">
 					OR cc.cart_change_time < <cfqueryparam cfsqltype="cf_sql_timestamp" value="#_removetime#">
 				)
 			)
@@ -80,10 +83,10 @@ FROM razuna_config
 			LEFT JOIN raz2_audios a ON c.cart_product_id = a.aud_id AND cart_file_type = 'aud' AND c.host_id = a.host_id
 			LEFT JOIN raz2_videos v ON c.cart_product_id = v.vid_id AND cart_file_type = 'vid' AND c.host_id = v.host_id
 			LEFT JOIN raz2_files f ON c.cart_product_id = f.file_id AND cart_file_type = 'doc' AND c.host_id = f.host_id
-			WHERE i.expiry_date < <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">
-			OR a.expiry_date < <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">
-			OR v.expiry_date < <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">
-			OR f.expiry_date < <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">
+			WHERE i.expiry_date < <cfqueryparam cfsqltype="cf_sql_date" value="#_now#">
+			OR a.expiry_date < <cfqueryparam cfsqltype="cf_sql_date" value="#_now#">
+			OR v.expiry_date < <cfqueryparam cfsqltype="cf_sql_date" value="#_now#">
+			OR f.expiry_date < <cfqueryparam cfsqltype="cf_sql_date" value="#_now#">
 			OR c.cart_change_time < <cfqueryparam cfsqltype="cf_sql_timestamp" value="#_removetime#">
 		<cfelse>
 			DELETE FROM raz2_cart c
@@ -96,10 +99,10 @@ FROM razuna_config
 				WHERE c.cart_product_id=cc.cart_product_id
 				AND
 				(
-					i.expiry_date < <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">
-					OR a.expiry_date < <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">
-					OR v.expiry_date < <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">
-					OR f.expiry_date < <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">
+					i.expiry_date < <cfqueryparam cfsqltype="cf_sql_date" value="#_now#">
+					OR a.expiry_date < <cfqueryparam cfsqltype="cf_sql_date" value="#_now#">
+					OR v.expiry_date < <cfqueryparam cfsqltype="cf_sql_date" value="#_now#">
+					OR f.expiry_date < <cfqueryparam cfsqltype="cf_sql_date" value="#_now#">
 					OR cc.cart_change_time < <cfqueryparam cfsqltype="cf_sql_timestamp" value="#_removetime#">
 				)
 			)
