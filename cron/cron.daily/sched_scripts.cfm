@@ -36,7 +36,7 @@ TODO:
 
 <cftry>
 
-	<cfset _script_time = "1min">
+	<cfset _script_time = "daily">
 
 	<cfset console("#now()# --- Executing script cron job #_script_time#")>
 
