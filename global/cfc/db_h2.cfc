@@ -2064,7 +2064,7 @@
 		CREATE TABLE #arguments.thestruct.host_db_prefix#export_template (
 	  	exp_id				varchar(100),
 		exp_field			varchar(200),
-		exp_value			varchar(2000),
+		exp_value			CLOB,
 		exp_timestamp		timestamp, 
 		user_id				varchar(100),
 		host_id				bigint,

@@ -2659,7 +2659,7 @@
 		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#export_template (
 	  	exp_id				varchar(100),
 		exp_field			varchar(200),
-		exp_value			varchar(2000),
+		exp_value			text,
 		exp_timestamp		TIMESTAMP NULL,
 		user_id				varchar(100),
 		host_id				int,

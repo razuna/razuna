@@ -24,7 +24,7 @@
 *
 --->
 <cfcomponent output="false">
-	
+
 	<!--- Setup the DB if DB is not here --->
 	<cffunction name="setup" access="public" output="false">
 		<cfargument name="thestruct" type="Struct">
@@ -35,12 +35,12 @@
 		<!--- CREATE SEQUENCES --->
 		<!---
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		CREATE TABLE #arguments.thestruct.theschema#.sequences 
+		CREATE TABLE #arguments.thestruct.theschema#.sequences
 		(
-			theid varchar(100), 
-			thevalue INT NOT NULL, 
+			theid varchar(100),
+			thevalue INT NOT NULL,
 			PRIMARY KEY (theid)
-		) 
+		)
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		INSERT INTO #arguments.thestruct.theschema#.sequences
@@ -199,7 +199,7 @@
 		</cfquery>
 		--->
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		CREATE TABLE #arguments.thestruct.theschema#.cache 
+		CREATE TABLE #arguments.thestruct.theschema#.cache
 		(
 			cache_token varchar(100) DEFAULT NULL,
 			cache_type varchar(20) DEFAULT NULL,
@@ -208,52 +208,52 @@
 		</cfquery>
 		<!--- CREATE MODULES --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		CREATE TABLE #arguments.thestruct.theschema#.modules 
+		CREATE TABLE #arguments.thestruct.theschema#.modules
 		(
-			MOD_ID 			INT NOT NULL, 
-			MOD_NAME 		VARCHAR(50) NOT NULL, 
-			MOD_SHORT 		VARCHAR(3) NOT NULL, 
-			MOD_HOST_ID 	INT DEFAULT NULL, 
+			MOD_ID 			INT NOT NULL,
+			MOD_NAME 		VARCHAR(50) NOT NULL,
+			MOD_SHORT 		VARCHAR(3) NOT NULL,
+			MOD_HOST_ID 	INT DEFAULT NULL,
 			PRIMARY KEY (MOD_ID)
 		)
-		
+
 		</cfquery>
 		<!--- CREATE PERMISSION --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		CREATE TABLE #arguments.thestruct.theschema#.permissions 
+		CREATE TABLE #arguments.thestruct.theschema#.permissions
 		(
-			PER_ID 			INT NOT NULL, 
-			PER_KEY  		VARCHAR(50) NOT NULL, 
-			PER_HOST_ID 	INT DEFAULT NULL, 
-			PER_ACTIVE 		INT DEFAULT 1 NOT NULL, 
+			PER_ID 			INT NOT NULL,
+			PER_KEY  		VARCHAR(50) NOT NULL,
+			PER_HOST_ID 	INT DEFAULT NULL,
+			PER_ACTIVE 		INT DEFAULT 1 NOT NULL,
 			PER_MOD_ID 		INT NOT NULL,
 			PER_LEVEL		VARCHAR(10),
-			PRIMARY KEY (PER_ID), 
+			PRIMARY KEY (PER_ID),
 			FOREIGN KEY (PER_MOD_ID) REFERENCES #arguments.thestruct.theschema#.modules (MOD_ID) ON DELETE CASCADE
 		)
-		
+
 		</cfquery>
 		<!--- CREATE GROUPS --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.theschema#.groups
-		(	
-			GRP_ID 				VARCHAR(100) NOT NULL, 
-			GRP_NAME 			NVARCHAR(50), 
-			GRP_HOST_ID 		INT DEFAULT NULL, 
-			GRP_MOD_ID 			INT NOT NULL, 
-			GRP_TRANSLATION_KEY VARCHAR(50), 
+		(
+			GRP_ID 				VARCHAR(100) NOT NULL,
+			GRP_NAME 			NVARCHAR(50),
+			GRP_HOST_ID 		INT DEFAULT NULL,
+			GRP_MOD_ID 			INT NOT NULL,
+			GRP_TRANSLATION_KEY VARCHAR(50),
 			UPC_SIZE 			VARCHAR(2) DEFAULT NULL,
 			UPC_FOLDER_FORMAT	VARCHAR(5) DEFAULT 'false',
 			FOLDER_SUBSCRIBE	VARCHAR(5) DEFAULT 'false',
 			FOLDER_REDIRECT VARCHAR(100),
-			PRIMARY KEY (GRP_ID), 
+			PRIMARY KEY (GRP_ID),
 			FOREIGN KEY (GRP_MOD_ID) REFERENCES #arguments.thestruct.theschema#.modules (MOD_ID) ON DELETE CASCADE
 		)
-		
+
 		</cfquery>
 		<!--- CREATE HOSTS --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		CREATE TABLE #arguments.thestruct.theschema#.hosts 
+		CREATE TABLE #arguments.thestruct.theschema#.hosts
 		(
 		  HOST_ID           INT NOT NULL,
 		  HOST_NAME         NVARCHAR(100),
@@ -266,11 +266,11 @@
 		  HOST_NAME_CUSTOM  NVARCHAR(200),
 		  PRIMARY KEY (HOST_ID)
 		)
-		
+
 		</cfquery>
 		<!--- CREATE USERS --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		CREATE TABLE #arguments.thestruct.theschema#.users 
+		CREATE TABLE #arguments.thestruct.theschema#.users
 		(
 		  USER_ID              VARCHAR(100) NOT NULL,
 		  USER_LOGIN_NAME      NVARCHAR(50) NOT NULL,
@@ -304,55 +304,55 @@
 		  user_search_selection VARCHAR(100),
 		  PRIMARY KEY (USER_ID)
 		)
-		
+
 		</cfquery>
 		<!--- CREATE CT_GROUPS_USERS --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.theschema#.ct_groups_users
-		(	
-		CT_G_U_GRP_ID 		VARCHAR(100) NOT NULL, 
+		(
+		CT_G_U_GRP_ID 		VARCHAR(100) NOT NULL,
 		CT_G_U_USER_ID 		VARCHAR(100) NOT NULL,
 		rec_uuid			VARCHAR(100),
-		PRIMARY KEY (rec_uuid), 
+		PRIMARY KEY (rec_uuid),
 		FOREIGN KEY (CT_G_U_GRP_ID) REFERENCES #arguments.thestruct.theschema#.groups (GRP_ID) ON DELETE CASCADE
 		)
-		
+
 		</cfquery>
 		<!--- CREATE CT_GROUPS_PERMISSIONS (ON DELETE NO ACTION) --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.theschema#.ct_groups_permissions
-		(	
-		CT_G_P_PER_ID 		INT NOT NULL, 
-		CT_G_P_GRP_ID 		VARCHAR(100) NOT NULL, 
-		FOREIGN KEY (CT_G_P_PER_ID) REFERENCES #arguments.thestruct.theschema#.permissions (PER_ID) ON DELETE NO ACTION,  
+		(
+		CT_G_P_PER_ID 		INT NOT NULL,
+		CT_G_P_GRP_ID 		VARCHAR(100) NOT NULL,
+		FOREIGN KEY (CT_G_P_PER_ID) REFERENCES #arguments.thestruct.theschema#.permissions (PER_ID) ON DELETE NO ACTION,
 		FOREIGN KEY (CT_G_P_GRP_ID)	REFERENCES #arguments.thestruct.theschema#.groups (GRP_ID) ON DELETE CASCADE
 		)
-		
+
 		</cfquery>
 		<!--- CREATE LOG_ACTIONS --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		CREATE TABLE #arguments.thestruct.theschema#.log_actions 
+		CREATE TABLE #arguments.thestruct.theschema#.log_actions
 		(
 		  LOG_ACT_ID    INT,
 		  LOG_ACT_TEXT  NVARCHAR(200),
 		  PRIMARY KEY (LOG_ACT_ID)
 		)
-		
+
 		</cfquery>
 		<!--- CREATE CT_USERS_HOSTS --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		CREATE TABLE #arguments.thestruct.theschema#.ct_users_hosts 
+		CREATE TABLE #arguments.thestruct.theschema#.ct_users_hosts
 		(
 		  CT_U_H_USER_ID  VARCHAR(100),
 		  CT_U_H_HOST_ID  INT,
 		  rec_uuid		  VARCHAR(100),
 		  PRIMARY KEY (rec_uuid)
 		)
-		
+
 		</cfquery>
 		<!--- CREATE USERS_LOGIN --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		CREATE TABLE #arguments.thestruct.theschema#.users_login 
+		CREATE TABLE #arguments.thestruct.theschema#.users_login
 		(
 		  USER_LOGIN_ID         INT NOT NULL,
 		  USER_ID               VARCHAR(100),
@@ -362,18 +362,18 @@
 		  USER_LOGIN_SESSION    VARCHAR(200),
 		  USER_LOGIN_DATESTAMP  DATETIME
 		)
-		
+
 		</cfquery>
 		<!--- CREATE WISDOM --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		CREATE TABLE #arguments.thestruct.theschema#.wisdom 
+		CREATE TABLE #arguments.thestruct.theschema#.wisdom
 		(
 		  WIS_ID      INT,
 		  WIS_TEXT    NVARCHAR(max),
 		  WIS_AUTHOR  NVARCHAR(200),
 		  PRIMARY KEY (WIS_ID)
 		)
-		
+
 		</cfquery>
 		<!--- CREATE USERS_COMMENTS --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
@@ -387,7 +387,7 @@
 		  USER_COMMENT_TITLE  NVARCHAR(max),
 		  COMMENT_ID          INT
 		)
-		
+
 		</cfquery>
 		<!--- CREATE file_types --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
@@ -399,38 +399,38 @@
 		  TYPE_MIMESUBCONTENT  VARCHAR(50),
 		  PRIMARY KEY (TYPE_ID)
 		)
-		
+
 		</cfquery>
 		<!--- CREATE CT_USERS_REMOTEUSERS --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.theschema#.ct_users_remoteusers
 		(
-		   	CT_U_RU_ID                INT NOT NULL, 
-			CT_U_RU_USER_ID           VARCHAR(100) NOT NULL, 
-			CT_U_RU_REMOTE_URL        NVARCHAR(max) NOT NULL, 
-			CT_U_RU_REMOTE_USER_ID    VARCHAR(100) NOT NULL, 
-			CT_U_RU_REMOTE_USER_NAME  NVARCHAR(max) NOT NULL, 
-			CT_U_RU_REMOTE_USER_EMAIL NVARCHAR(max), 
-			CT_U_RU_REMOTE_CONFIRMED  INT DEFAULT 0 NOT NULL, 
-			CT_U_RU_UUID              NVARCHAR(max) NOT NULL, 
-			CT_U_RU_VALIDUNTIL        DATETIME, 
-			CT_U_RU_CONFIRMED         INT DEFAULT 0 NOT NULL, 
+		   	CT_U_RU_ID                INT NOT NULL,
+			CT_U_RU_USER_ID           VARCHAR(100) NOT NULL,
+			CT_U_RU_REMOTE_URL        NVARCHAR(max) NOT NULL,
+			CT_U_RU_REMOTE_USER_ID    VARCHAR(100) NOT NULL,
+			CT_U_RU_REMOTE_USER_NAME  NVARCHAR(max) NOT NULL,
+			CT_U_RU_REMOTE_USER_EMAIL NVARCHAR(max),
+			CT_U_RU_REMOTE_CONFIRMED  INT DEFAULT 0 NOT NULL,
+			CT_U_RU_UUID              NVARCHAR(max) NOT NULL,
+			CT_U_RU_VALIDUNTIL        DATETIME,
+			CT_U_RU_CONFIRMED         INT DEFAULT 0 NOT NULL,
 		PRIMARY KEY (CT_U_RU_ID),
 		FOREIGN KEY (CT_U_RU_USER_ID) REFERENCES #arguments.thestruct.theschema#.users (USER_ID) ON DELETE CASCADE
 		)
-		
+
 		</cfquery>
 		<!--- CREATE WEBSERVICES --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.theschema#.webservices
 		(
-			SESSIONTOKEN 	VARCHAR(100), 
+			SESSIONTOKEN 	VARCHAR(100),
 			TIMEOUT 		DATETIME,
 			GROUPOFUSER		VARCHAR(2000),
 			USERID			VARCHAR(100),
 			PRIMARY KEY (SESSIONTOKEN)
 		)
-		
+
 		</cfquery>
 		<!--- CREATE SEARCH REINDEX --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
@@ -441,7 +441,7 @@
 			thehostid		INT,
 			datetime		DATETIME
 		)
-		
+
 		</cfquery>
 		<!--- CREATE TOOLS --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
@@ -510,7 +510,7 @@
 			PRIMARY KEY (p_id)
 		)
 		</cfquery>
-		
+
 		<!--- plugins_actions --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.theschema#.plugins_actions
@@ -524,7 +524,7 @@
   			host_id 		int
 		)
 		</cfquery>
-		
+
 		<!--- options --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.theschema#.options
@@ -567,7 +567,7 @@
 		  CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#folder_subscribe_groups (
 		  folder_id 		varchar(100) DEFAULT NULL,
 		  group_id 			varchar(100) DEFAULT NULL
-		) 
+		)
 		</cfquery>
 
 		<!--- api_basket --->
@@ -576,20 +576,20 @@
 		basket_id 	varchar(100) DEFAULT NULL,
 		asset_id 	varchar(100) DEFAULT NULL,
 		date_added 	DATETIME,
-		asset_type 	varchar(10) DEFAULT 'org'	
+		asset_type 	varchar(10) DEFAULT 'org'
 		)
 		</cfquery>
 
 		<!--- Lucene --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		CREATE TABLE #arguments.thestruct.theschema#.lucene 
+		CREATE TABLE #arguments.thestruct.theschema#.lucene
 		(
 			id 				varchar(100) DEFAULT NULL,
 			type 			varchar(10) DEFAULT NULL,
 			host_id 		int DEFAULT NULL,
 			time_stamp 		datetime,
 			PRIMARY KEY (id)
-		) 
+		)
 		</cfquery>
 
 		<!---  --->
@@ -738,232 +738,232 @@
 		</cfquery>
 		<!--- WISDOM --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
-		2, 'In giving advice, seek to help, not please, your friend.', 'Solon') 
+		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
+		2, 'In giving advice, seek to help, not please, your friend.', 'Solon')
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 		3, 'A friend is one to whom you can pour out the contents of your heart, chaff and grain alike. Knowning that the gentlest of hands will take and sift it, keep what is worth keeping, and with a breath of kindness, blow the rest away.'
-		, 'Anonymous') 
+		, 'Anonymous')
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 		4, 'The most exciting phrase to hear in science, the one that heralds new discoveries, is not "Eureka" (I found it!) but "That''s funny ..."'
-		, 'Isaac Asimov') 
+		, 'Isaac Asimov')
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 		5, 'Everyone should carefully observe which way his heart draws him, and then choose that way with all his strength!'
-		, 'Hasidic saying') 
+		, 'Hasidic saying')
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 		6, 'Mend your speech a little, lest it may mar your fortunes.', 'Shakespeare, King Lear')
 		</cfquery>
-		<cfquery datasource="#arguments.thestruct.dsn#"> 
-		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 		7, 'In preparing for battle I have always found that plans are useless, but planning is indispensable.'
-		, 'Dwight D. Eisenhower') 
+		, 'Dwight D. Eisenhower')
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 		8, 'It''s all right to aim high if you have plenty of ammunition.', 'Hawley R. Everhart')
 		</cfquery>
-		<cfquery datasource="#arguments.thestruct.dsn#"> 
-		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 		10, 'A great civilization is not concurred from without until it has destroyed itself from within.'
-		, 'Will Durant') 
+		, 'Will Durant')
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 		11, 'Travel far enough away, my friend, and you''ll discover something of great beauty: your self'
-		, 'Cirque du Soleil') 
+		, 'Cirque du Soleil')
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 		1, 'There are Painters who transform the sun to a yellow spot, but there are others who with the help of their art and their intelligence, transform a yellow spot into the sun.'
-		, 'Pablo Picasso') 
+		, 'Pablo Picasso')
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 		9, 'The significant problems we have cannot be solved at the same level of thinking with which we created them.'
-		, 'Albert Einstein') 
+		, 'Albert Einstein')
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 		12, 'Acquaintance, n.: A person whom we know well enough to borrow from, but not well enough to lend to. '
-		, 'Ambrose Bierce') 
+		, 'Ambrose Bierce')
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 		13, 'The best investment is in the tools of one''s trade.', 'Benjamin Franklin')
 		</cfquery>
-		<cfquery datasource="#arguments.thestruct.dsn#"> 
-		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 		14, 'We all agree that your theory is crazy -- but is it crazy enough?', 'Niels Bohr')
 		</cfquery>
-		<cfquery datasource="#arguments.thestruct.dsn#"> 
-		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 		15, 'Genius without education is like silver in the mine.', 'Benjamin Franklin')
 		</cfquery>
-		<cfquery datasource="#arguments.thestruct.dsn#"> 
-		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
-		16, 'Anybody can sympathise with the sufferings of a friend, but it requires a very fine nature to sympathise with a friend''s success.', 'Oscar Wilde') 
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
+		16, 'Anybody can sympathise with the sufferings of a friend, but it requires a very fine nature to sympathise with a friend''s success.', 'Oscar Wilde')
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 		17, 'Absurdity, n.: A statement or belief manifestly incosistent with one''s own.', 'Ambrose Bierce')
 		</cfquery>
-		<cfquery datasource="#arguments.thestruct.dsn#"> 
-		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 		18, 'There''s no trick to being a humorist when you have the whole government working for you.', 'Will Rogers')
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
-		19, 'The real question is not whether machines think but whether men do. The mystery which surrounds a thinking machine already surrounds a thinking man.', 'B.F.Skinner') 
+		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
+		19, 'The real question is not whether machines think but whether men do. The mystery which surrounds a thinking machine already surrounds a thinking man.', 'B.F.Skinner')
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 		20, 'That we must all die, we always knew; I wish I had remembered it sooner.', 'Samuel Johnson')
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 		21, 'The key to living well is first to will that which is necessary and then to love that which is willed.', 'Irving Yalom')
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 		22, 'Always tell the truth. You will gratify some people and astonish the rest.', 'Mark Twain')
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 		23, 'See everything. Ignore a lot. Improve a little.', 'Pope John Paul II')
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 		24, 'Resentment is like taking poison and hoping the other person dies.', 'St. Augustine')
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 		25, 'Hope is definitely not the same thing as optimism. It is not the conviction that something will turn out well, but the certainty that something makes sense, regardless of how it turns out.', 'Vaclav Havel')
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 		26, 'We must never be ashamed of our tears, they are rain from heaven washing the dust from our hard hearts.', 'Charles Dickens')
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 		27, 'Our business in life is not to succeed, but to continue to fail in good spirits.', 'Robert Louis Stevenson')
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 		28, 'Be who you are and say what you feel because the people who mind don''t matter and the people who matter don''t mind.', 'Theodor Geisel')
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 		29, 'It is well to remember that the entire universe, with one trifling exception, is composed of others.', 'John Andrew Holmes')
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 		30, 'Fail to honor people, they fail to honor you.', 'Lao Tzu')
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 		31, 'You can leave anything out, as long as you know what it is.', 'Ernest Hemingway')
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 		32, 'The future is here. It''s just not evenly distributed yet.', 'William Gibson')
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 		33, 'The future always comes too fast and in the wrong order.', 'Alvin Toffler')
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 		34, 'There will always be people who are ahead of the curve, and people who are behind the curve. But knowledge moves the curve.', 'Bill James')
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 		35, 'History is a wave that moves through time slightly faster than we do.', 'Kim Stanley Robinson')
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 		36, 'Inspiration is for amateurs. I just get to work.', 'Chuck Close')
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 		37, 'The best and most beautiful things in the world cannot be seen or even touched. They must be felt with the heart.', 'Hellen Keller')
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 		38, 'Small opportunities are often the beginning of great enterprises.', 'Demosthenes')
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 		39, 'Simplicity is the utlimate sophistication.', 'Leonardo da Vinci')
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 		40, 'A journey of thousand miles begins with a single step.', 'Lao tzu')
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 		41, 'What we think, we become.', 'Buddha')
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 		42, 'Great minds discuss ideas. Average minds discuss events. Small minds discuss people.', 'Eleanor Roosevelt')
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		INSERT INTO #arguments.thestruct.theschema#.WISDOM ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+		INSERT INTO #arguments.thestruct.theschema#.WISDOM ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 		43, 'Forget the place you are trying to get and see the beauty in right now', 'Some wise person')
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 		44, 'All that we are, is the result of our thoughts.', 'Buddha')
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 		45, 'Logic will get you from A to B. Imagination will take you everywhere.', 'Albert Einstein')
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 		46, 'Do not dwell on who let you down, cherish those whoe hold you up.', 'Unknown')
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 		47, 'People are made to be loved and things are made to be used. The confusion in this world is that people are used and things are loved!', 'Unknown')
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 		48, 'Make peace with your past so it will not destroy your present.', 'Paulo Coelho')
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 		49, 'Obstacles are those frightful things you see when you take your eyes off your goal.', 'Henry Ford')
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 		50, 'I feel like I can not feel.', 'Salvador Dali')
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 		51, 'To avoid criticism, do nothing, say nothing, and be nothing.', 'Elbert Hubbard')
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 		52, 'I am not upset that you lied to me, I am upset that from now on I can not believe you anymore.', 'Friedrich Nietzsche')
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 		53, 'Successful and great people are ordinary people with extraordinary determination.', 'Robert Schuller')
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 		54, 'Everything has beauty, but not everyone sees it.', 'Confucius')
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+		INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 		55, 'Wanting to be someone else is a waste of the person you are.', 'Kurt Cobain')
 		</cfquery>
 		<!--- FILE TYPES --->
@@ -1295,7 +1295,7 @@
 		INSERT INTO #arguments.thestruct.theschema#.file_types VALUES ('svg', 'img', 'image', 'svg')
 		</cfquery>
 	</cffunction>
-	
+
 	<!--- Create Host Remote --->
 	<cffunction name="create_host_remote" access="remote" output="false">
 		<cfargument name="dsn" type="string" required="true">
@@ -1311,7 +1311,7 @@
 		<!--- CREATE THE INDEXES --->
 		<cfinvoke method="create_indexes" thestruct="#arguments.thestruct#">
 	</cffunction>
-	
+
 	<!--- Create Host --->
 	<cffunction name="create_host" access="public" output="false">
 		<cfargument name="thestruct" type="Struct">
@@ -1321,24 +1321,24 @@
 		<!---  CREATE THE INDEXES --->
 		<cfinvoke method="create_indexes" thestruct="#arguments.thestruct#">
 	</cffunction>
-	
+
 	<!--- Create Tables --->
 	<cffunction name="create_tables" access="public" output="false">
 		<cfargument name="thestruct" type="Struct">
-		
+
 		<!--- ASSETS_TEMP --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#assets_temp 
+		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#assets_temp
 		(
-			TEMPID 			VARCHAR(200), 
-			FILENAME 		NVARCHAR(255), 
-			EXTENSION 		VARCHAR(20), 
-			DATE_ADD 		DATETIME, 
-			FOLDER_ID		VARCHAR(100), 
-			WHO				VARCHAR(100), 
-			FILENAMENOEXT	NVARCHAR(255), 
-			PATH 			NVARCHAR(max), 
-			MIMETYPE		VARCHAR(255), 
+			TEMPID 			VARCHAR(200),
+			FILENAME 		NVARCHAR(255),
+			EXTENSION 		VARCHAR(20),
+			DATE_ADD 		DATETIME,
+			FOLDER_ID		VARCHAR(100),
+			WHO				VARCHAR(100),
+			FILENAMENOEXT	NVARCHAR(255),
+			PATH 			NVARCHAR(max),
+			MIMETYPE		VARCHAR(255),
 			THESIZE			VARCHAR(100),
 			GROUPID			VARCHAR(100),
 			SCHED_ACTION	INT,
@@ -1350,10 +1350,10 @@
 			PRIMARY KEY (TEMPID)
 		)
 		</cfquery>
-		
+
 		<!--- XMP --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#xmp 
+		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#xmp
 		(
 			id_r					VARCHAR(100),
 			asset_type				nvarchar(10),
@@ -1396,9 +1396,9 @@
 			yres					nvarchar(30),
 			resunit					nvarchar(20),
 			host_id					INT
-		)  
+		)
 		</cfquery>
-		
+
 		<!--- CART --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#cart
@@ -1414,7 +1414,7 @@
 		  CART_FILE_TYPE    	VARCHAR(5),
 		  cart_order_email 		varchar(150),
 		  cart_order_message 	nvarchar(2000),
-		  cart_order_done 		varchar(1), 
+		  cart_order_done 		varchar(1),
 		  cart_order_date 		DATETIME,
 		  cart_order_user_r 	VARCHAR(100),
 		  cart_order_artofimage	nvarchar(max),
@@ -1423,9 +1423,9 @@
 		  cart_order_artoffile	nvarchar(max),
 		  HOST_ID				INT
 		)
-		
+
 		</cfquery>
-		
+
 		<!--- FOLDERS (ON DELETE NO ACTION)--->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#folders
@@ -1463,9 +1463,9 @@
 		  PRIMARY KEY (FOLDER_ID),
 		  FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE
 		)
-		
+
 		</cfquery>
-		
+
 		<!--- FOLDERS DESC --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#folders_desc
@@ -1493,7 +1493,7 @@
 		FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE
 		)
 		</cfquery>
-		
+
 		<!--- FOLDERS GROUPS --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#folders_groups
@@ -1506,9 +1506,9 @@
 		  PRIMARY KEY (rec_uuid),
 		FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE
 		)
-		
+
 		</cfquery>
-		
+
 		<!--- FILES --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#files
@@ -1549,9 +1549,9 @@
 		  PRIMARY KEY (FILE_ID),
 		  FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE
 		)
-		
+
 		</cfquery>
-		
+
 		<!--- FILES DESC --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#files_desc
@@ -1564,9 +1564,9 @@
 		  HOST_ID		 INT,
 		PRIMARY KEY (ID_INC)
 		)
-		
+
 		</cfquery>
-		
+
 		<!--- IMAGES --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#images
@@ -1631,9 +1631,9 @@
 		PRIMARY KEY (IMG_ID),
 		FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE
 		)
-		
+
 		</cfquery>
-		
+
 		<!--- IMAGES TEXT --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#images_text
@@ -1646,70 +1646,70 @@
 		  HOST_ID		   INT,
 		PRIMARY KEY (ID_INC)
 		)
-		
+
 		</cfquery>
-		
+
 		<!--- LOG ASSETS --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#log_assets
 		(
-		  LOG_ID 			VARCHAR(100) NOT NULL, 
-		  LOG_USER 			VARCHAR(100), 
-		  LOG_ACTION 		VARCHAR(100), 
-		  LOG_DATE 			DATETIME, 
-		  LOG_TIME 			DATETIME, 
-		  LOG_DESC 			NVARCHAR(max), 
-		  LOG_FILE_TYPE 	VARCHAR(5), 
-		  LOG_BROWSER 		NVARCHAR(max), 
-		  LOG_IP 			VARCHAR(200), 
+		  LOG_ID 			VARCHAR(100) NOT NULL,
+		  LOG_USER 			VARCHAR(100),
+		  LOG_ACTION 		VARCHAR(100),
+		  LOG_DATE 			DATETIME,
+		  LOG_TIME 			DATETIME,
+		  LOG_DESC 			NVARCHAR(max),
+		  LOG_FILE_TYPE 	VARCHAR(5),
+		  LOG_BROWSER 		NVARCHAR(max),
+		  LOG_IP 			VARCHAR(200),
 		  LOG_TIMESTAMP 	DATETIME,
 		  HOST_ID 			INT,
 		  ASSET_ID_R		VARCHAR(100),
 		  FOLDER_ID			VARCHAR(100),
 		  PRIMARY KEY (LOG_ID)
 		)
-		
+
 		</cfquery>
-		
+
 		<!--- LOG FOLDERS --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#log_folders
 		(
-		  LOG_ID VARCHAR(100) NOT NULL, 
-		  LOG_USER VARCHAR(100), 
-		  LOG_ACTION VARCHAR(100), 
-		  LOG_DATE DATETIME, 
-		  LOG_TIME DATETIME, 
-		  LOG_DESC NVARCHAR(max), 
-		  LOG_BROWSER NVARCHAR(max), 
-		  LOG_IP VARCHAR(200), 
-		  LOG_TIMESTAMP DATETIME, 
+		  LOG_ID VARCHAR(100) NOT NULL,
+		  LOG_USER VARCHAR(100),
+		  LOG_ACTION VARCHAR(100),
+		  LOG_DATE DATETIME,
+		  LOG_TIME DATETIME,
+		  LOG_DESC NVARCHAR(max),
+		  LOG_BROWSER NVARCHAR(max),
+		  LOG_IP VARCHAR(200),
+		  LOG_TIMESTAMP DATETIME,
 		  HOST_ID				INT,
 		  PRIMARY KEY (LOG_ID)
 		)
-		
+
 		</cfquery>
-		
+
 		<!--- LOG USERS --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#log_users
 		(
-		  LOG_ID VARCHAR(100) NOT NULL, 
-		  LOG_USER VARCHAR(100), 
-		  LOG_ACTION VARCHAR(100), 
-		  LOG_DATE DATETIME, 
-		  LOG_TIME DATETIME, 
-		  LOG_DESC NVARCHAR(max), 
-		  LOG_BROWSER NVARCHAR(max), 
-		  LOG_IP VARCHAR(200), 
+		  LOG_ID VARCHAR(100) NOT NULL,
+		  LOG_USER VARCHAR(100),
+		  LOG_ACTION VARCHAR(100),
+		  LOG_DATE DATETIME,
+		  LOG_TIME DATETIME,
+		  LOG_DESC NVARCHAR(max),
+		  LOG_BROWSER NVARCHAR(max),
+		  LOG_IP VARCHAR(200),
 		  LOG_TIMESTAMP DATETIME,
 		  LOG_SECTION VARCHAR(10),
 		  HOST_ID				INT,
 		  PRIMARY KEY (LOG_ID)
 		)
-		
+
 		</cfquery>
-		
+
 		<!--- LOG SEARCH --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#log_search
@@ -1722,14 +1722,14 @@
 		  LOG_FOUNDITEMS  INT,
 		  LOG_SEARCH_FROM NVARCHAR(50),
 		  LOG_TIMESTAMP DATETIME,
-		  LOG_BROWSER NVARCHAR(max), 
-		  LOG_IP VARCHAR(200), 
+		  LOG_BROWSER NVARCHAR(max),
+		  LOG_IP VARCHAR(200),
 		  HOST_ID				INT,
 		PRIMARY KEY (LOG_ID)
 		)
-		
+
 		</cfquery>
-		
+
 		<!--- SETTINGS --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#settings
@@ -1741,9 +1741,9 @@
 		  PRIMARY KEY (rec_uuid),
 		FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE
 		)
-		
+
 		</cfquery>
-		
+
 		<!--- SETTINGS 2 --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#settings_2
@@ -1848,9 +1848,9 @@
 		  PRIMARY KEY (rec_uuid),
 		  FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE
 		)
-		
+
 		</cfquery>
-		
+
 		<!--- TEMP --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#temp
@@ -1860,7 +1860,7 @@
 		  HOST_ID				INT
 		)
 		</cfquery>
-		
+
 		<!--- COLLECTIONS --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#collections
@@ -1888,9 +1888,9 @@
 		PRIMARY KEY (COL_ID),
 		FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE
 		)
-		
+
 		</cfquery>
-		
+
 		<!--- COLLECTIONS TEXT --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#collections_text
@@ -1905,9 +1905,9 @@
 		  PRIMARY KEY (rec_uuid),
 		FOREIGN KEY (COL_ID_R) REFERENCES #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#collections (COL_ID) ON DELETE CASCADE
 		)
-		
+
 		</cfquery>
-		
+
 		<!--- COLLECTIONS FILES CROSS TABLE --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#collections_ct_files
@@ -1922,9 +1922,9 @@
 		  IN_TRASH		   	VARCHAR(2) DEFAULT 'F',
 		  PRIMARY KEY (rec_uuid)
 		)
-		
+
 		</cfquery>
-		
+
 		<!--- COLLECTIONS GROUPS --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#collections_groups
@@ -1937,9 +1937,9 @@
 		  PRIMARY KEY (rec_uuid),
 		FOREIGN KEY (COL_ID_R) REFERENCES #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#collections (COL_ID) ON DELETE CASCADE
 		)
-		
+
 		</cfquery>
-		
+
 		<!--- USER FAVORITES --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#users_favorites
@@ -1954,9 +1954,9 @@
 		  PRIMARY KEY (rec_uuid),
 		FOREIGN KEY (USER_ID_R) REFERENCES #arguments.thestruct.theschema#.users (USER_ID) ON DELETE SET NULL
 		)
-		
+
 		</cfquery>
-		
+
 		<!--- VIDEOS --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#videos
@@ -2017,9 +2017,9 @@
 		PRIMARY KEY (VID_ID),
 		FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE
 		)
-		
+
 		</cfquery>
-		
+
 		<!--- VIDEOS TEXT --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#videos_text
@@ -2033,9 +2033,9 @@
 		  HOST_ID		   INT,
 		PRIMARY KEY (ID_INC)
 		)
-		
+
 		</cfquery>
-				
+
 		<!--- SCHEDULES --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#schedules
@@ -2074,9 +2074,9 @@
 		FOREIGN KEY (SCHED_USER) REFERENCES #arguments.thestruct.theschema#.users (USER_ID) ON DELETE SET NULL,
 		FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE
 		)
-		
+
 		</cfquery>
-		
+
 		<!--- SCHEDULES_LOG --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#schedules_log
@@ -2093,17 +2093,17 @@
 		PRIMARY KEY (SCHED_LOG_ID),
 		FOREIGN KEY (SCHED_ID_R) REFERENCES #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#schedules (SCHED_ID) ON DELETE CASCADE
 		)
-		
+
 		</cfquery>
-		
+
 		<!--- CUSTOM FIELDS --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#custom_fields
 		(
-			cf_id 			VARCHAR(100), 
-			cf_type	 		VARCHAR(20), 
-			cf_order 		INT, 
-			cf_enabled 		VARCHAR(2), 
+			cf_id 			VARCHAR(100),
+			cf_type	 		VARCHAR(20),
+			cf_order 		INT,
+			cf_enabled 		VARCHAR(2),
 			cf_show			VARCHAR(10),
 			cf_group 		VARCHAR(100),
 			cf_select_list	nvarchar(max),
@@ -2117,30 +2117,30 @@
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#custom_fields_text
 		(
-			cf_id_r			VARCHAR(100), 
-			lang_id_r 		INT, 
+			cf_id_r			VARCHAR(100),
+			lang_id_r 		INT,
 			cf_text			nvarchar(max),
 			HOST_ID			INT,
 			rec_uuid		VARCHAR(100),
 			PRIMARY KEY (rec_uuid),
 			FOREIGN KEY (cf_id_r) REFERENCES #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#custom_fields (cf_id) ON DELETE CASCADE
 		)
-		
+
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#custom_fields_values
 		(
-			cf_id_r			VARCHAR(100), 
-			asset_id_r 		VARCHAR(100), 
+			cf_id_r			VARCHAR(100),
+			asset_id_r 		VARCHAR(100),
 			cf_value		nvarchar(max),
 			HOST_ID			INT,
 			rec_uuid		VARCHAR(100),
 			PRIMARY KEY (rec_uuid),
 			FOREIGN KEY (cf_id_r) REFERENCES #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#custom_fields (cf_id) ON DELETE CASCADE
 		)
-		
+
 		</cfquery>
-		
+
 		<!--- COMMENTS --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#comments
@@ -2154,9 +2154,9 @@
 			HOST_ID				INT,
 			PRIMARY KEY (COM_ID)
 		)
-		
+
 		</cfquery>
-		
+
 		<!--- Versions --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#versions
@@ -2188,9 +2188,9 @@
 			file_size			VARCHAR(100),
 			PRIMARY KEY (rec_uuid)
 		)
-		
+
 		</cfquery>
-		
+
 		<!--- Translations --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#languages
@@ -2255,7 +2255,7 @@
 			FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE
 		)
 		</cfquery>
-		
+
 		<!--- AUDIOS TEXT --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#audios_text
@@ -2269,7 +2269,7 @@
 			PRIMARY KEY (ID_INC)
 		)
 		</cfquery>
-		
+
 		<!--- SHARE OPTIONS --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#share_options
@@ -2287,7 +2287,7 @@
 			PRIMARY KEY (rec_uuid)
 		)
 		</cfquery>
-		
+
 		<!--- ERRORS --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#errors
@@ -2300,10 +2300,10 @@
 			PRIMARY KEY (id)
 		)
 		</cfquery>
-		
+
 		<!--- Upload Templates --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#upload_templates 
+		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#upload_templates
 		(
 		  	upl_temp_id			varchar(100) NOT NULL,
 		  	upl_date_create 	DATETIME,
@@ -2316,7 +2316,7 @@
 		  	PRIMARY KEY (upl_temp_id)
 		)
 		</cfquery>
-		
+
 		<!--- Upload Templates Values --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#upload_templates_val
@@ -2328,13 +2328,13 @@
 		  	upl_temp_format		varchar(10) DEFAULT NULL,
 		  	host_id				int DEFAULT NULL,
 		  	rec_uuid			VARCHAR(100),
-		  	PRIMARY KEY (rec_uuid)	
+		  	PRIMARY KEY (rec_uuid)
 		)
 		</cfquery>
-		
+
 		<!--- CREATE WIDGETS --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#widgets 
+		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#widgets
 		(
 		  widget_id				varchar(100),
 		  col_id_r				varchar(100),
@@ -2351,7 +2351,7 @@
 		  PRIMARY KEY (widget_id)
 		)
 		</cfquery>
-		
+
 		<!--- Additional Versions --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#additional_versions (
@@ -2371,7 +2371,7 @@
 		  PRIMARY KEY (av_id)
 		)
 		</cfquery>
-		
+
 		<!--- Files XMP --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#files_xmp (
@@ -2386,7 +2386,7 @@
 		  PRIMARY KEY (asset_id_r)
 		)
 		</cfquery>
-		
+
 		<!--- Labels --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#labels (
@@ -2400,7 +2400,7 @@
   		PRIMARY KEY (label_id)
 		)
 		</cfquery>
-		
+
 		<!--- Import Templates --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#import_templates (
@@ -2415,7 +2415,7 @@
   		PRIMARY KEY (imp_temp_id)
 		)
 		</cfquery>
-		
+
 		<!--- Import Templates Values --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#import_templates_val (
@@ -2437,20 +2437,20 @@
 		host_id				int
 		)
 		</cfquery>
-		
+
 		<!--- RAZ-2831 : Metadata export template --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#export_template (
 	  	exp_id				varchar(100),
 		exp_field			varchar(200),
-		exp_value			nvarchar(2000),
-		exp_timestamp		datetime, 
+		exp_value			NVARCHAR(max),
+		exp_timestamp		datetime,
 		user_id				varchar(100),
 		host_id				int,
 		PRIMARY KEY (exp_id)
 		)
 		</cfquery>
-		
+
 		<!--- Social accounts --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#users_accounts (
@@ -2496,7 +2496,7 @@
 
 		<!--- Smart Folders --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#smart_folders 
+		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#smart_folders
 		(
 			sf_id 			varchar(100),
 			sf_name 		varchar(500),
@@ -2522,7 +2522,7 @@
 			PRIMARY KEY (sf_id_r)
 		)
 		</cfquery>
-		
+
 		<!--- Folder subscribe --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#folder_subscribe
@@ -2539,9 +2539,9 @@
 			PRIMARY KEY (fs_id)
 		)
 		</cfquery>
-		
+
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#approval 
+		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#approval
 		(
 			approval_enabled		bit default '0',
 			approval_folders 		varchar(2000) default null,
@@ -2551,16 +2551,16 @@
 			approval_group_2_all 	boolean default '0',
 			host_id 				int default null,
 			approval_folders_all 	bit default '0'
-		) 
+		)
 		</cfquery>
 
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#approval_done 
+		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#approval_done
 		(
 			user_id 		varchar(100) default null,
 			approval_date 	datetime null default null,
 			file_id 		varchar(100) default null
-		) 
+		)
 		</cfquery>
 
 		<!--- UPC --->
@@ -2578,7 +2578,7 @@
 		)
 		#this.tableoptions#
 		</cfquery>
-		
+
 		<!--- UPC --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#upc_template_val (
@@ -2593,7 +2593,7 @@
 		</cfquery>
 
 	</cffunction>
-	
+
 	<!--- Create Indexes --->
 	<cffunction name="create_indexes" access="public" output="false">
 		<cfargument name="thestruct" type="Struct">
@@ -2737,7 +2737,7 @@
 		CREATE INDEX #arguments.thestruct.host_db_prefix#fg_hostid ON #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#folders_groups(HOST_ID)
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		CREATE INDEX #arguments.thestruct.host_db_prefix#fg_fidr ON #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#folders_groups(folder_id_r)		
+		CREATE INDEX #arguments.thestruct.host_db_prefix#fg_fidr ON #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#folders_groups(folder_id_r)
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE INDEX #arguments.thestruct.host_db_prefix#files_hostid ON #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#files(HOST_ID)
@@ -3083,7 +3083,7 @@
 		</cfquery>
 		<cfreturn />
 	</cffunction>
-	
+
 	<!--- Clear database completely --->
 	<cffunction name="clearall" access="public" output="false">
 		<!---Drop Constraints --->
@@ -3112,7 +3112,7 @@
 		<!--- Drop primary key constraints --->
 		<cfloop query="qryconst">
 			<cfif constraint_type EQ "primary key">
-				<cftry>	
+				<cftry>
 					<cfquery datasource="#session.firsttime.database#">
 					ALTER TABLE #session.firsttime.db_schema#.#table_name# DROP CONSTRAINT #constraint_name#
 					</cfquery>
@@ -3131,5 +3131,5 @@
 		</cfloop>
 		<cfreturn />
 	</cffunction>
-		
+
 </cfcomponent>
