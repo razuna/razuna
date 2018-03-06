@@ -33,9 +33,8 @@
 			<tr>
 				<!--- Thumbnail --->
 				<td width="65" align="center">
-					 <cfset args = structNew()>
-					 <cfset args.thumb_img_id= img_id>
-					 <cfinvoke component="global.cfc.global" method="get_share_options" thestruct="#args#" returnvariable="qry_share_options">
+					 <cfset attributes.thumb_img_id= img_id>
+					 <cfinvoke component="global.cfc.global" method="get_share_options" thestruct="#attributes#" returnvariable="qry_share_options">
 					 <cfif application.razuna.storage EQ 'local' AND qry_share_options.group_asset_id NEQ ''>
 					 	<a href="#session.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.si&f=#img_id#&v=o" target="_blank">
 					 		<img src="//#cgi.http_host##dynpath#/assets/#session.hostid#/#path_to_asset#/thumb_#qry_share_options.group_asset_id#.#qry_related.thumb_extension#?_v=#hashtag#" style="max-height:50px;max-width:100px;">

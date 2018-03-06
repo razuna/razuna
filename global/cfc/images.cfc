@@ -1423,7 +1423,7 @@
 			</cfif>
 			<!--- If there is a watermark being selected grab it here --->
 			<cfif "convert_wm_#theformat#" NEQ "">
-				<cfinvoke component="global" method="getWMtemplatedetail" wm_temp_id="#qry_wm.upl_temp_value#" returnvariable="thewm" />
+				<cfinvoke component="global" method="getWMtemplatedetail" wm_temp_id="#qry_wm.upl_temp_value#" thestruct="#arguments.thestruct#" returnvariable="thewm" />
 			</cfif>
 		<cfelse>
 			<!--- Set image width and height for API rendition --->
@@ -1434,7 +1434,7 @@
 				<cfif structKeyExists(arguments.thestruct,"convert_wm_#theformat#") AND #arguments.thestruct["convert_wm_" & #theformat#]# NEQ "">
 					<cfset "convert_wm_#theformat#" = #arguments.thestruct["convert_wm_" & #theformat#]#>
 					<cfset var wmid = #arguments.thestruct["convert_wm_" & #theformat#]#>
-					<cfinvoke component="global" method="getWMtemplatedetail" wm_temp_id="#wmid#" returnvariable="thewm" />
+					<cfinvoke component="global" method="getWMtemplatedetail" thestruct="#arguments.thestruct#" wm_temp_id="#wmid#" returnvariable="thewm" />
 				</cfif>
 			<cfelse>
 				<!--- Set image width and height --->
@@ -1448,7 +1448,7 @@
 				<!--- If there is a watermark being selected grab it here --->
 				<cfif "convert_wm_#theformat#" NEQ "">
 					<cfset var wmid = evaluate("convert_wm_#theformat#")>
-					<cfinvoke component="global" method="getWMtemplatedetail" wm_temp_id="#wmid#" returnvariable="thewm" />
+					<cfinvoke component="global" method="getWMtemplatedetail" thestruct="#arguments.thestruct#" wm_temp_id="#wmid#" returnvariable="thewm" />
 				</cfif>
 			</cfif>
 		</cfif>
@@ -1801,6 +1801,7 @@
 			<!--- Check if UPC criterion is satisfied and needs to be enabled--->
 			<cfinvoke component="global" method="isUPC" returnvariable="upcstruct">
 				<cfinvokeargument name="folder_id" value="#arguments.thestruct.qry_detail.folder_id_r#"/>
+				<cfinvokeargument name="thestruct" value="#arguments.thestruct#"/>
 			</cfinvoke>
 			<!--- If UPC is enabled then rename rendition according to UPC naming convention --->
 			 <cfif upcstruct.upcenabled>

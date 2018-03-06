@@ -890,7 +890,7 @@ Comment:<br>
 			<cfset arguments.thestruct.prefs = structnew()>
 		</cfif>
 
-		<cfset var upcstruct  = isupc(arguments.thestruct.folder_id)>
+		<cfset var upcstruct  = isupc(folder_id=arguments.thestruct.folder_id, thestruct=arguments.thestruct)>
 		<cfif upcstruct.upcenabled>
 			<!--- Get UPC number for asset  from database --->
 			<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="get_upc">

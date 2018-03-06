@@ -1850,6 +1850,7 @@
 					<!--- Check if UPC criterion is satisfied and needs to be enabled--->
 					<cfinvoke component="global" method="isUPC" returnvariable="upcstruct">
 						<cfinvokeargument name="folder_id" value="#arguments.thestruct.qrydetail.folder_id_r#"/>
+						<cfinvokeargument name="thestruct" value="#arguments.thestruct#"/>
 					</cfinvoke>
 					<!--- If UPC is enabled then rename rendition according to UPC naming convention --->
 					 <cfif upcstruct.upcenabled>
