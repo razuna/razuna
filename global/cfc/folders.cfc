@@ -1387,7 +1387,7 @@
 	<cfinvoke component="defaults" method="trans" transid="added" returnvariable="added" />
 	<cfset log_folders(theuserid=arguments.thestruct.razuna.session.theuserid,logaction='Add',logdesc='#added#: #arguments.thestruct.folder_name# (ID: #newfolderid#)', hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 	<!--- Flush Cache --->
-	<cfset variables.cachetoken = resetcachetoken(type="folders", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
+	<cfset resetcachetoken(type="folders", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 	<!--- Return --->
 	<cfreturn newfolderid />
 </cffunction>
@@ -1522,7 +1522,7 @@
 			<cfinvoke component="defaults" method="trans" transid="deleted" returnvariable="deleted" />
 			<cfset log_folders(theuserid=arguments.thestruct.razuna.session.theuserid,logaction='Delete',logdesc='#deleted#: #foldername.folder_name# (ID: #arguments.thestruct.folder_id#)', hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 			<!--- Flush Cache --->
-			<cfset variables.cachetoken = resetcachetoken(type="folders", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
+			<cfset resetcachetoken(type="folders", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 			<!--- The rest goes in a thread since it can run in the background --->
 			<cfthread intstruct="#arguments.thestruct#" priority="low">
 				<!--- Call to get the recursive folder ids --->
@@ -2529,7 +2529,7 @@
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 	</cfquery>
 	<!--- Flush Cache --->
-	<cfset variables.cachetoken = resetcachetoken(type="folders", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
+	<cfset resetcachetoken(type="folders", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 	<cfset resetcachetoken(type="videos", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 	<cfset resetcachetoken(type="audios", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 	<cfset resetcachetoken(type="files", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
@@ -2727,7 +2727,7 @@
 		<cfset resetcachetoken(type="audios", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 		<cfset resetcachetoken(type="videos", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 		<cfset resetcachetoken(type="files", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
-		<cfset variables.cachetoken = resetcachetoken(type="folders", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
+		<cfset resetcachetoken(type="folders", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 		<!--- Set the Action2 var --->
 		<cfset this.action2="done">
 		<cfreturn this.action2>
@@ -2843,7 +2843,7 @@
 			</cfif>
 		</cfif> --->
 		<!--- Flush Cache --->
-		<cfset variables.cachetoken = resetcachetoken(type="folders", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
+		<cfset resetcachetoken(type="folders", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 	<cfreturn />
 </cffunction>
 
@@ -4124,12 +4124,12 @@
 	<!--- Only get the labels if in the combinded view --->
 	<cfif arguments.thestruct.razuna.session.view EQ "combined">
 		<!--- Get the cachetoken for here --->
-		<cfset variables.cachetokenlabels = getcachetoken(type="labels", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
+		<cfset var cachetoken = getcachetoken(type="labels", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 		<!--- Loop over files and get labels and add to qry --->
 		<cfloop query="qry">
 			<!--- Query labels --->
 			<cfquery name="qry_l" datasource="#arguments.thestruct.razuna.application.datasource#" cachedwithin="1" region="razcache">
-			SELECT /* #variables.cachetokenlabels#getallassetslabels */ ct_label_id
+			SELECT /* #cachetoken#getallassetslabels */ ct_label_id
 			FROM ct_labels
 			WHERE ct_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#id#">
 			</cfquery>
@@ -4150,8 +4150,8 @@
 	<cfargument name="theqry" type="query" required="true">
 	<cfargument name="thestruct" type="struct" required="true" />
 	<!--- Get cachetokens --->
-	<cfset variables.cachetokensetting = getcachetoken(type="settings", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
-	<cfset variables.cachetokengeneral = getcachetoken(type="general", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
+	<cfset var cachetokensetting = getcachetoken(type="settings", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
+	<cfset var cachetokengeneral = getcachetoken(type="general", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 	<!--- Set var --->
 	<cfset var cf_list = "">
 	<cfset var qry_cf = "">
@@ -4161,25 +4161,25 @@
 	<cfset var qrycfdoc = "0">
 	<!--- Get which custom field ids the user wants to show --->
 	<cfquery name="qry_cf_img" datasource="#arguments.thestruct.razuna.application.datasource#" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetokensetting#qry_cf_img */ custom_value
+	SELECT /* #cachetokensetting#qry_cf_img */ custom_value
 	FROM #arguments.thestruct.razuna.session.hostdbprefix#custom
 	WHERE custom_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="cf_images_metadata">
 	AND host_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.razuna.session.hostid#">
 	</cfquery>
 	<cfquery name="qry_cf_vid" datasource="#arguments.thestruct.razuna.application.datasource#" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetokensetting#qry_cf_vid */ custom_value
+	SELECT /* #cachetokensetting#qry_cf_vid */ custom_value
 	FROM #arguments.thestruct.razuna.session.hostdbprefix#custom
 	WHERE custom_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="cf_videos_metadata">
 	AND host_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.razuna.session.hostid#">
 	</cfquery>
 	<cfquery name="qry_cf_aud" datasource="#arguments.thestruct.razuna.application.datasource#" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetokensetting#qry_cf_aud */ custom_value
+	SELECT /* #cachetokensetting#qry_cf_aud */ custom_value
 	FROM #arguments.thestruct.razuna.session.hostdbprefix#custom
 	WHERE custom_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="cf_audios_metadata">
 	AND host_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.razuna.session.hostid#">
 	</cfquery>
 	<cfquery name="qry_cf_doc" datasource="#arguments.thestruct.razuna.application.datasource#" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetokensetting#qry_cf_doc */ custom_value
+	SELECT /* #cachetokensetting#qry_cf_doc */ custom_value
 	FROM #arguments.thestruct.razuna.session.hostdbprefix#custom
 	WHERE custom_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="cf_files_metadata">
 	AND host_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.razuna.session.hostid#">
@@ -4199,7 +4199,7 @@
 
 	<cfloop query="arguments.theqry">
 		<cfquery name="qry_cf" datasource="#arguments.thestruct.razuna.application.datasource#" cachedwithin="1" region="razcache">
-		SELECT /* #variables.cachetokengeneral#folder_cf_fields */ CASE WHEN cfv.cf_value IS NULL OR  cfv.cf_value ='' THEN ' ' ELSE cfv.cf_value END as cf_value, cft.cf_text, cft.cf_id_r as cf_id
+		SELECT /* #cachetokengeneral#folder_cf_fields */ CASE WHEN cfv.cf_value IS NULL OR  cfv.cf_value ='' THEN ' ' ELSE cfv.cf_value END as cf_value, cft.cf_text, cft.cf_id_r as cf_id
 		FROM #arguments.thestruct.razuna.session.hostdbprefix#custom_fields_values cfv RIGHT JOIN #arguments.thestruct.razuna.session.hostdbprefix#custom_fields_text cft INNER JOIN #arguments.thestruct.razuna.session.hostdbprefix#custom_fields cf ON cf.cf_id = cft.cf_id_r
 		ON cft.cf_id_r = cfv.cf_id_r AND cfv.asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.theqry.id#">
 		<cfif kind EQ "img">

@@ -35,11 +35,11 @@
 	<cfargument name="xmppath" type="boolean" required="false" default="false">
 	<cfargument name="thestruct" type="struct" required="true" />
 	<!--- Get the cachetoken for here --->
-	<cfset variables.cachetoken = getcachetoken(type="general", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
+	<cfset var cachetoken = getcachetoken(type="general", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 	<cfset var qry = "">
 	<!--- Query --->
 	<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qry" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetoken#getcustomfields */ c.cf_id, c.cf_type, c.cf_order, c.cf_enabled, c.cf_show, ct.cf_text, c.cf_xmp_path
+	SELECT /* #cachetoken#getcustomfields */ c.cf_id, c.cf_type, c.cf_order, c.cf_enabled, c.cf_show, ct.cf_text, c.cf_xmp_path
 	FROM #arguments.thestruct.razuna.session.hostdbprefix#custom_fields c, #arguments.thestruct.razuna.session.hostdbprefix#custom_fields_text ct
 	WHERE c.cf_id = ct.cf_id_r
 		AND ct.lang_id_r = <cfqueryparam cfsqltype="cf_sql_numeric" value="1">
@@ -192,11 +192,11 @@
 <cffunction name="getfieldssearch" output="false" access="public">
 	<cfargument name="thestruct" type="struct">
 		<!--- Get the cachetoken for here --->
-		<cfset variables.cachetoken = getcachetoken(type="general", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
+		<cfset var cachetoken = getcachetoken(type="general", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 		<cfset var qry = "">
 		<!--- Query --->
 		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qry" cachedwithin="1" region="razcache">
-		SELECT /* #variables.cachetoken#getfieldssearch */ c.cf_id, c.cf_type, c.cf_order, c.cf_show, c.cf_select_list, ct.cf_text
+		SELECT /* #cachetoken#getfieldssearch */ c.cf_id, c.cf_type, c.cf_order, c.cf_show, c.cf_select_list, ct.cf_text
 		FROM #arguments.thestruct.razuna.session.hostdbprefix#custom_fields_text ct, #arguments.thestruct.razuna.session.hostdbprefix#custom_fields c 
 		WHERE c.cf_id = ct.cf_id_r
 		AND c.cf_enabled = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">
@@ -212,11 +212,11 @@
 <cffunction name="gettextvalues" output="false" access="public">
 	<cfargument name="thestruct" type="struct">
 		<!--- Get the cachetoken for here --->
-		<cfset variables.cachetoken = getcachetoken(type="general", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
+		<cfset var cachetoken = getcachetoken(type="general", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 		<cfset var qry = "">
 		<!--- Query --->
 		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qry" cachedwithin="1" region="razcache">
-		SELECT /* #variables.cachetoken#getfieldssearch */ cv.cf_value, ct.cf_text, ct.cf_id_r
+		SELECT /* #cachetoken#getfieldssearch */ cv.cf_value, ct.cf_text, ct.cf_id_r
 		FROM #arguments.thestruct.razuna.session.hostdbprefix#custom_fields_text ct, #arguments.thestruct.razuna.session.hostdbprefix#custom_fields c, #arguments.thestruct.razuna.session.hostdbprefix#custom_fields_values cv
 		WHERE cv.asset_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 		AND ct.cf_id_r = cv.cf_id_r
@@ -233,11 +233,11 @@
 <cffunction name="getdetail" output="false" access="public">
 	<cfargument name="thestruct" type="struct">
 		<!--- Get the cachetoken for here --->
-		<cfset variables.cachetoken = getcachetoken(type="general", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
+		<cfset var cachetoken = getcachetoken(type="general", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 		<cfset var qry = "">
 		<!--- Query --->
 		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qry" cachedwithin="1" region="razcache">
-		SELECT /* #variables.cachetoken#getdetailcustomfields */ c.cf_id, c.cf_type, c.cf_order, c.cf_show, c.cf_enabled, c.cf_group, 
+		SELECT /* #cachetoken#getdetailcustomfields */ c.cf_id, c.cf_type, c.cf_order, c.cf_show, c.cf_enabled, c.cf_group, 
 		c.cf_edit, c.cf_select_list, ct.cf_text, ct.lang_id_r, c.cf_in_form, c.cf_xmp_path
 		FROM #arguments.thestruct.razuna.session.hostdbprefix#custom_fields_text ct, #arguments.thestruct.razuna.session.hostdbprefix#custom_fields c
 		WHERE c.cf_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.cf_id#">
@@ -455,8 +455,6 @@
 <!--- Delete --->
 <cffunction name="delete" access="public" output="false" returntype="void">
 	<cfargument name="thestruct" type="struct">
-	<!--- Flush Cache --->
-	<cfset variables.cachetoken = resetcachetoken(type="general", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 	<!--- Rearrange the order --->
 	<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
 	UPDATE #arguments.thestruct.razuna.session.hostdbprefix#custom_fields

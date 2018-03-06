@@ -207,12 +207,12 @@
 	<!--- Only get the labels if in the combinded view --->
 	<cfif arguments.thestruct.razuna.session.view EQ "combined">
 		<!--- Get the cachetoken for here --->
-		<cfset variables.cachetokenlabels = getcachetoken(type="labels", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
+		<cfset var cachetoken = getcachetoken(type="labels", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 		<!--- Loop over files and get labels and add to qry --->
 		<cfloop query="qLocal">
 			<!--- Query labels --->
 			<cfquery name="qry_l" datasource="#arguments.thestruct.razuna.application.datasource#" cachedwithin="1" region="razcache">
-			SELECT /* #variables.cachetokenlabels#getallassetslabels */ ct_label_id
+			SELECT /* #cachetoken#getallassetslabels */ ct_label_id
 			FROM ct_labels
 			WHERE ct_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#aud_id#">
 			</cfquery>
@@ -1685,7 +1685,7 @@
 			</cfif>
 		</cfloop>
 		<!--- Flush Cache --->
-		<cfset variables.cachetoken = resetcachetoken(type="audios", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
+		<cfset resetcachetoken(type="audios", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 		<cfcatch type="any">
 			<cfset consoleoutput(true, true)>
 			<cfset console(cfcatch)>
@@ -1958,7 +1958,7 @@
 	<cfargument name="md5hash" type="string">
 	<cfargument name="checkinfolder" type="string" required="false" default="">
 	<cfargument name="thestruct" type="struct" required="true" />
-	<cfset variables.cachetoken = getcachetoken("audios")>
+	<cfset var cachetoken = getcachetoken("audios", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 	<cfset var qry = "">
 	<!--- Query --->
 	<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qry" cachedwithin="1" region="razcache">

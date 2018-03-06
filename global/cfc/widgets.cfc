@@ -51,7 +51,7 @@
 	<cffunction name="detail" output="true" access="public" returnType="query">
 		<cfargument name="thestruct" type="struct">
 		<!--- Get the cachetoken for here --->
-		<cfset variables.cachetoken = getcachetoken(type="general", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
+		<cfset var cachetoken = getcachetoken(type="general", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 		<!--- Params --->
 		<cfparam name="arguments.thestruct.external" default="f">
 		<cfset var qry = "">

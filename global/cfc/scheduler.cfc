@@ -311,7 +311,7 @@
 			<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 			)
 			</cfquery>
-			<cfset variables.cachetoken = resetcachetoken(type="logs", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
+			<cfset resetcachetoken(type="logs", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 			<cfcatch type="database">
 			</cfcatch>
 		</cftry>

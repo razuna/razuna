@@ -198,7 +198,7 @@
 	</cfquery>
 	<!--- The tool paths --->
 	<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qrypaths" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetoken#prefs_image_tools */ thetool, thepath
+	SELECT /* #cachetoken#prefs_image_tools */ thetool, thepath
 	FROM tools
 	</cfquery>
 	<!--- Get tools --->
@@ -228,7 +228,7 @@
 	</cfquery>
 	<!--- The tool paths --->
 	<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qrypaths" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetoken#prefs_image_tools */ thetool, thepath
+	SELECT /* #cachetoken#prefs_image_tools */ thetool, thepath
 	FROM tools
 	WHERE thetool = <cfqueryparam value="ffmpeg" cfsqltype="CF_SQL_VARCHAR">
 	</cfquery>
@@ -486,7 +486,7 @@
 	<cfset var cachetoken = getcachetoken(type="settings", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 	<!--- Query --->
 	<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qrypaths" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetoken#get_tools */ thetool, thepath
+	SELECT /* #cachetoken#get_tools */ thetool, thepath
 	FROM tools
 	</cfquery>
 	<!--- Put results into vars --->
@@ -672,7 +672,7 @@
 		</cfif>
 	</cfloop>
 	<!--- Reset cache --->
-	<cfset variables.cachetoken = resetcachetoken("settings")>
+	<cfset resetcachetoken("settings")>
 </cffunction>
 
 <!--- Save Settings --->

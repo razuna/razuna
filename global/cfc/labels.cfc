@@ -84,7 +84,7 @@
 		<cfinvoke component="global" method="update_dates" type="#arguments.thestruct.type#" fileid="#arguments.thestruct.id#" thestruct="#arguments.thestruct#" />
 		<!--- Flush --->
 		<cfset resetcachetoken(type="search", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
-		<cfset variables.cachetoken = resetcachetoken(type="labels", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
+		<cfset resetcachetoken(type="labels", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 		<!--- Return --->
 		<cfreturn />
 	</cffunction>
@@ -250,7 +250,7 @@
 		</cfquery>
 		<!--- Flush --->
 		<cfset resetcachetoken(type="search", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
-		<cfset variables.cachetoken = resetcachetoken(type="labels", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
+		<cfset resetcachetoken(type="labels", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 		<!--- Return --->
 		<cfreturn theid />
 	</cffunction>
@@ -277,7 +277,7 @@
 		<cfinvoke component="global" method="update_dates" type="#arguments.thestruct.type#" fileid="#arguments.thestruct.id#" thestruct="#arguments.thestruct#" />
 		<!--- Flush --->
 		<cfset resetcachetoken(type="search", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
-		<cfset variables.cachetoken = resetcachetoken(type="labels", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
+		<cfset resetcachetoken(type="labels", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 		<!--- Return --->
 		<cfreturn />
 	</cffunction>
@@ -396,7 +396,7 @@
 		</cfquery>
 		<!--- Flush --->
 		<cfset resetcachetoken(type="search", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
-		<cfset variables.cachetoken = resetcachetoken(type="labels", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
+		<cfset resetcachetoken(type="labels", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 		<!--- Return --->
 		<cfreturn />
 	</cffunction>
@@ -1218,7 +1218,7 @@
 		</cfquery>
 		<!--- Flush --->
 		<cfset resetcachetoken(type="search", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
-		<cfset variables.cachetoken = resetcachetoken(type="labels", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
+		<cfset resetcachetoken(type="labels", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 		<!--- Return --->
 		<cfreturn />
 	</cffunction>
@@ -1294,7 +1294,7 @@
 		<cfinvoke method="label_get_path_down" label_id="#arguments.thestruct.label_id#" thestruct="#arguments.thestruct#" llist="#labelpath#" />
 		<!--- Flush --->
 		<cfset resetcachetoken(type="search", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
-		<cfset variables.cachetoken = resetcachetoken(type="labels", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
+		<cfset resetcachetoken(type="labels", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 		<!--- Return --->
 		<cfreturn arguments.thestruct.label_id />
 	</cffunction>
@@ -1480,7 +1480,7 @@
 		<!--- Flush --->
 		<!--- <cfset resetcachetoken(thedb)> not sure, is it neccessary? --->
 		<cfset resetcachetoken(type="search", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
-		<cfset variables.cachetoken = resetcachetoken(type="labels", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
+		<cfset resetcachetoken(type="labels", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 		<!--- Return --->
 		<cfreturn />
 	</cffunction>
@@ -1559,7 +1559,7 @@
 		<cfset var qry = "">
 		<!--- Grab all files related to this labelid --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
-		SELECT /* #variables.cachetoken#store_values_labels */ <cfif application.razuna.thedatabase EQ "mssql">ct_id_r + '-' + ct_type<cfelse>concat(ct_id_r,'-', ct_type)</cfif> as id
+		SELECT /* #cachetoken#store_values_labels */ <cfif application.razuna.thedatabase EQ "mssql">ct_id_r + '-' + ct_type<cfelse>concat(ct_id_r,'-', ct_type)</cfif> as id
 		FROM ct_labels
 		WHERE ct_label_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.label_id#">
 		AND ct_type <cfif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam value="folder" cfsqltype="cf_sql_varchar" />

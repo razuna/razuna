@@ -34,10 +34,10 @@
 	<cfargument name="thestruct" type="struct" required="true" />
 	<cftry>
 		<!--- Get the cachetoken for here --->
-		<cfset variables.cachetoken = getcachetoken(type="settings", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
+		<cfset var cachetoken = getcachetoken(type="settings", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 		<!--- Query --->
 		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="thelangs" cachedwithin="1" region="razcache">
-		SELECT /* #variables.cachetoken#getlangs */ lang_id, lang_name
+		SELECT /* #cachetoken#getlangs */ lang_id, lang_name
 		FROM #arguments.thestruct.razuna.session.hostdbprefix#languages
 		WHERE lang_active = <cfqueryparam value="t" cfsqltype="cf_sql_varchar">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
@@ -47,7 +47,7 @@
 		<cfif thelangs.recordcount EQ 0>
 			<!--- Check if english is here or not --->
 			<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="thelangseng" cachedwithin="1" region="razcache">
-			SELECT /* #variables.cachetoken#getlangeng */ lang_id
+			SELECT /* #cachetoken#getlangeng */ lang_id
 			FROM #arguments.thestruct.razuna.session.hostdbprefix#languages
 			WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 			AND lang_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="1">
@@ -73,10 +73,10 @@
 				</cfquery>
 			</cfif>
 			<!--- Reset Cache --->
-			<cfset variables.cachetoken = resetcachetoken(type="general", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
+			<cfset var cachetoken = resetcachetoken(type="general", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 			<!--- Query again --->
 			<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="thelangs" cachedwithin="1" region="razcache">
-			SELECT /* #variables.cachetoken#getlangsagain */ lang_id, lang_name
+			SELECT /* #cachetoken#getlangsagain */ lang_id, lang_name
 			FROM #arguments.thestruct.razuna.session.hostdbprefix#languages
 			WHERE lang_active = <cfqueryparam value="t" cfsqltype="cf_sql_varchar">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">

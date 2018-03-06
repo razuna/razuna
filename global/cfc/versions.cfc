@@ -367,8 +367,7 @@
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 			</cfquery>
 			<!--- Flush Cache --->
-			<cfset variables.cachetoken = resetcachetoken(type="images", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
-
+			<cfset resetcachetoken(type="images", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 			<!--- Do not parse XMP for Amazon as the file will have to be re-downloaded  from Amazon in order to do this which would cause too much overhead --->
 			<cfif arguments.thestruct.razuna.application.storage NEQ 'Amazon'>
 				<!--- Parse keywords and description from XMP --->
@@ -456,7 +455,7 @@
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 			</cfquery>
 			<!--- Flush Cache --->
-			<cfset variables.cachetoken = resetcachetoken(type="videos", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
+			<cfset resetcachetoken(type="videos", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 		<!--- Audios --->
 		<cfelseif arguments.thestruct.type EQ "aud">
 			<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
@@ -475,7 +474,7 @@
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 			</cfquery>
 			<!--- Flush Cache --->
-			<cfset variables.cachetoken = resetcachetoken(type="audios", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
+			<cfset resetcachetoken(type="audios", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 		<!--- Documents --->
 		<cfelse>
 			<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
@@ -496,7 +495,7 @@
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 			</cfquery>
 			<!--- Flush Cache --->
-			<cfset variables.cachetoken = resetcachetoken(type="files", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
+			<cfset resetcachetoken(type="files", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 		</cfif>
 
 		<cfset arguments.thestruct.qrydetail.path_to_asset = qry.path_to_asset>
@@ -981,7 +980,7 @@
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 			</cfquery>
 			<!--- Flush Cache --->
-			<cfset variables.cachetoken = resetcachetoken(type="images", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
+			<cfset resetcachetoken(type="images", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 			<!--- Parse keywords and description from XMP --->
 			<cfinvoke component="xmp" method="xmpwritekeydesc" thestruct="#arguments.thestruct#" />
 			<!--- Parse the Metadata from the image --->
@@ -1074,7 +1073,7 @@
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 			</cfquery>
 			<!--- Flush Cache --->
-			<cfset variables.cachetoken = resetcachetoken(type="videos", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
+			<cfset resetcachetoken(type="videos", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 		<!--- Audios --->
 		<cfelseif arguments.thestruct.type EQ "aud">
 			<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
@@ -1100,7 +1099,7 @@
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 			</cfquery>
 			<!--- Flush Cache --->
-			<cfset variables.cachetoken = resetcachetoken(type="audios", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
+			<cfset resetcachetoken(type="audios", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 		<!--- Documents --->
 		<cfelse>
 			<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
@@ -1126,9 +1125,9 @@
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 			</cfquery>
 			<!--- Flush Cache --->
-			<cfset variables.cachetoken = resetcachetoken(type="files", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
+			<cfset resetcachetoken(type="files", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 			<!--- RAZ-2475 : Flush folders cache to get the latest thumbnail of PDF --->
-			<cfset variables.cachetoken = resetcachetoken(type="folders", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)> <!--- This will update folder view--->
+			<cfset resetcachetoken(type="folders", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)> <!--- This will update folder view--->
 			<!--- We need to update the information tab of the popup too. --->
 		</cfif>
 

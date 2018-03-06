@@ -57,7 +57,7 @@
 			</cfif>
 		</cfif>
 		<!--- Get the cachetoken for here --->
-		<cfset variables.cachetoken = getcachetoken(type="users", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
+		<cfset var cachetoken = getcachetoken(type="users", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 		<cfset var qryuser = "">
 		<!--- Check for the user --->
 		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qryuser">
@@ -617,7 +617,7 @@ Hello #qryuser.user_first_name# #qryuser.user_last_name#
 		<cfparam name="arguments.thestruct.from_share" default="F">
 		<cfparam name="arguments.thestruct.loginto" default="dam">
 		<!--- Get the cachetoken for here --->
-		<cfset variables.cachetoken = getcachetoken(type="users", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
+		<cfset var cachetoken = getcachetoken(type="users", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 		<!--- Strip out domain from username if present for AD users--->
 		<cfif arguments.thestruct.theemail contains "\">
 			<cfset var loginname = gettoken(arguments.thestruct.theemail,2,"\")>
@@ -627,7 +627,7 @@ Hello #qryuser.user_first_name# #qryuser.user_last_name#
 
 		<!--- Query --->
 		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="theuser" cachedwithin="1" region="razcache">
-		SELECT /* #variables.cachetoken#checkhost */ h.host_name, h.host_name_custom, h.host_id
+		SELECT /* #cachetoken#checkhost */ h.host_name, h.host_name_custom, h.host_id
 		FROM users u, ct_users_hosts ct, hosts h
 		WHERE (
 			u.user_login_name = <cfqueryparam value="#loginname#" cfsqltype="cf_sql_varchar">
@@ -665,7 +665,7 @@ Hello #qryuser.user_first_name# #qryuser.user_last_name#
 	<cffunction name="login_janrain" access="public">
 		<cfargument name="thestruct" required="yes" type="struct">
 		<!--- Get the cachetoken for here --->
-		<cfset variables.cachetoken = getcachetoken(type="users", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
+		<cfset var cachetoken = getcachetoken(type="users", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 		<!--- Param --->
 		<cfset var razgo = false>
 		<cfparam name="arguments.thestruct.shared" default="F">
@@ -701,7 +701,7 @@ Hello #qryuser.user_first_name# #qryuser.user_last_name#
 				<cfset var preferredUsername = auth_info_json.profile.preferredUsername>
 				<!--- Now check DB --->
 				<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qryaccount" cachedwithin="1" region="razcache">
-				SELECT /* #variables.cachetoken#login_janrain */ uc.jr_identifier, uc.user_id_r, u.user_first_name, u.user_last_name
+				SELECT /* #cachetoken#login_janrain */ uc.jr_identifier, uc.user_id_r, u.user_first_name, u.user_last_name
 				FROM #arguments.thestruct.razuna.session.hostdbprefix#users_accounts uc, users u
 				WHERE uc.jr_identifier = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#identifier#">
 				AND uc.host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#arguments.thestruct.razuna.session.hostid#">
@@ -710,7 +710,7 @@ Hello #qryuser.user_first_name# #qryuser.user_last_name#
 				<!--- If we don't have an identifier yet then compare by eMail or preferredUsername --->
 				<cfif qryaccount.recordcount EQ 0>
 					<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qryaccount" cachedwithin="1" region="razcache">
-					SELECT /* #variables.cachetoken#login_janrain2 */ uc.identifier, uc.user_id_r, u.user_first_name, u.user_last_name
+					SELECT /* #cachetoken#login_janrain2 */ uc.identifier, uc.user_id_r, u.user_first_name, u.user_last_name
 					FROM #arguments.thestruct.razuna.session.hostdbprefix#users_accounts uc, users u
 					WHERE (
 						uc.identifier = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#email#">
@@ -730,7 +730,7 @@ Hello #qryuser.user_first_name# #qryuser.user_last_name#
 						AND provider = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#providerName#">
 						</cfquery>
 						<!--- Flush Cache --->
-						<cfset variables.cachetoken = resetcachetoken(type="users", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
+						<cfset resetcachetoken(type="users", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 						<!--- and let him in --->
 						<cfset razgo = true>
 					</cfif>

@@ -25,8 +25,6 @@
 --->
 <cfcomponent output="false" extends="extQueryCaching">
 
-	<!--- <cfset variables.cachetoken = getcachetoken(type="settings", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)> --->
-
 	<cffunction name="init" returntype="plugins" access="public" output="false">
 		<cfreturn this />
 	</cffunction>
