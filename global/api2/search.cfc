@@ -90,7 +90,7 @@
 				<!--- for the UI --->
 				<cfset session.listimgid = valueList(qimg.id)>
 			</cfif>
-			<cfset consoleoutput(true)>
+			<cfset consoleoutput(true, true)>
 			<cfset console("--------------- Done in Images search")>
 			<!--- Videos --->
 			<cfif arguments.show EQ "ALL" OR arguments.show EQ "vid">

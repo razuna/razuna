@@ -27,18 +27,18 @@
 	<table width="700" border="0" cellspacing="0" cellpadding="0" class="grid">
 		<!--- Could Storage header --->
 		<!--- <tr>
-			<th class="textbold" colspan="2">Cloud Storage #defaultsObj.trans("settings")#</th>
+			<th class="textbold" colspan="2">Cloud Storage #myFusebox.getApplicationData().defaults.trans("settings")#</th>
 		</tr>
 		<tr>
-			<td colspan="2">#defaultsObj.trans("storage_desc")#</td>
+			<td colspan="2">#myFusebox.getApplicationData().defaults.trans("storage_desc")#</td>
 		</tr> --->
 		<!--- Nirvanix --->
 		<cfif application.razuna.storage EQ "nirvanix">
 			<tr>
-				<th class="textbold" colspan="2">Nirvanix #defaultsObj.trans("settings")#</th>
+				<th class="textbold" colspan="2">Nirvanix #myFusebox.getApplicationData().defaults.trans("settings")#</th>
 			</tr>
 			<tr>
-				<td colspan="2">#defaultsObj.trans("nirvanix_desc")#</td>
+				<td colspan="2">#myFusebox.getApplicationData().defaults.trans("nirvanix_desc")#</td>
 			</tr>
 			<tr>
 				<td nowrap="true" valign="top">Child Account Name</td>
@@ -49,7 +49,7 @@
 				<td><input type="password" name="set2_nirvanix_pass" id="set2_nirvanix_pass" size="40" value="#prefs.set2_nirvanix_pass#" /></td>
 			</tr>
 			<tr>
-				<td><input type="button" name="validate" value="#defaultsObj.trans("validate")#" class="button" onclick="loadcontent('divvalidate','#myself#c.prefs_nvx_validate&nvxname=' + escape(document.getElementById('set2_nirvanix_name').value) + '&nvxpass=' + escape(document.getElementById('set2_nirvanix_pass').value));" /></td>
+				<td><input type="button" name="validate" value="#myFusebox.getApplicationData().defaults.trans("validate")#" class="button" onclick="loadcontent('divvalidate','#myself#c.prefs_nvx_validate&nvxname=' + escape(document.getElementById('set2_nirvanix_name').value) + '&nvxpass=' + escape(document.getElementById('set2_nirvanix_pass').value));" /></td>
 				<td><div id="divvalidate"></div></td>
 			</tr>
 		<!--- Amazon --->
@@ -69,7 +69,7 @@
 			</tr>
 			<tr>
 				<td></td>
-				<td><input type="button" name="validate" value="#defaultsObj.trans("validate")#" class="button" onclick="loadcontent('divvalidateaws','#myself#c.prefs_aws_bucket_validate&awsbucket=' + escape($('##set2_aws_bucket').val()));" /><div id="divvalidateaws"></div>
+				<td><input type="button" name="validate" value="#myFusebox.getApplicationData().defaults.trans("validate")#" class="button" onclick="loadcontent('divvalidateaws','#myself#c.prefs_aws_bucket_validate&awsbucket=' + escape($('##set2_aws_bucket').val()));" /><div id="divvalidateaws"></div>
 				<br />
 				<div id="divvalidateaws"></div>
 				</td>

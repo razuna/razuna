@@ -478,7 +478,7 @@
 					<cfset querysetcell(thexml,"message","No records found")>
 				</cfif>
 				<cfcatch type="any">
-					<cfset consoleoutput(true)>
+					<cfset consoleoutput(true, true)>
 					<cfset console(cfcatch)>
 					<cfabort>
 				</cfcatch>

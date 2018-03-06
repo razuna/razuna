@@ -25,40 +25,40 @@
 --->
 <cfoutput>
 	<form id="form_account">
-		<span class="loginform_header">#defaultsObj.trans("header_first_time_account")#</span>
+		<span class="loginform_header">#myFusebox.getApplicationData().defaults.trans("header_first_time_account")#</span>
 		<br />
-		#defaultsObj.trans("header_first_time_account_desc")#
+		#myFusebox.getApplicationData().defaults.trans("header_first_time_account_desc")#
 		<br />
 		<br />
-		<strong>#defaultsObj.trans("username")#</strong> 
+		<strong>#myFusebox.getApplicationData().defaults.trans("username")#</strong> 
 		<br />
 		<input name="user_login_name" id="user_login_name" type="text" class="text" size="30" value="Administrator">
 		<br />
-		<strong>#defaultsObj.trans("user_first_name")#</strong>
+		<strong>#myFusebox.getApplicationData().defaults.trans("user_first_name")#</strong>
 		<br />
 		<input name="user_first_name" id="user_first_name" type="text" class="text" size="30">
 		<br />
-		<strong>#defaultsObj.trans("user_last_name")#</strong>
+		<strong>#myFusebox.getApplicationData().defaults.trans("user_last_name")#</strong>
 		<br />
 		<input name="user_last_name" id="user_last_name" type="text" class="text" size="30">
 		<br />
-		<strong>#defaultsObj.trans("email")#</strong>
+		<strong>#myFusebox.getApplicationData().defaults.trans("email")#</strong>
 		<br />
 		<input name="user_email" id="user_email" type="text" class="text" size="30">
 		<br />
 		<br />
-		<strong>#defaultsObj.trans("password")#</strong>
+		<strong>#myFusebox.getApplicationData().defaults.trans("password")#</strong>
 		<br />
 		<input name="user_pass" id="user_pass" type="password" size="30" class="text">
 		<br />
-		<strong>#defaultsObj.trans("password_confirm")#</strong>
+		<strong>#myFusebox.getApplicationData().defaults.trans("password_confirm")#</strong>
 		<br />
 		<input name="user_pass_confirm" id="user_pass_confirm" type="password" size="30" class="text">
 		<br />
 		<br />
 		<div>
 			<div style="float:left;padding:20px 0px 0px 0px;">
-				<input type="button" id="next" value="#defaultsObj.trans("back")#" onclick="loadcontent('load_steps','#myself#c.first_time_paths&db=#session.firsttime.database#&schema=#session.firsttime.db_schema#&type=#session.firsttime.type#')" class="button">
+				<input type="button" id="next" value="#myFusebox.getApplicationData().defaults.trans("back")#" onclick="loadcontent('load_steps','#myself#c.first_time_paths&db=#session.firsttime.database#&schema=#session.firsttime.db_schema#&type=#session.firsttime.type#')" class="button">
 			</div>
 			<div style="float:right;padding:20px 0px 0px 0px;">
 				<div id="firsttimestatus" style="color:green;font-weight:bold;float:left;padding:10px;" />

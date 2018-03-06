@@ -33,15 +33,15 @@
 			<!--- Storage --->
 			<li><a href="##gstorage" onclick="savesettings();loadcontent('gstorage','#myself#c.prefs_global_storage');">Storage</a></li>
 			<!--- Storage --->
-			<li><a href="##gdb" onclick="savesettings();loadcontent('gdb','#myself#c.prefs_global_db');">#defaultsObj.trans("database_settings")#</a></li>
+			<li><a href="##gdb" onclick="savesettings();loadcontent('gdb','#myself#c.prefs_global_db');">#myFusebox.getApplicationData().defaults.trans("database_settings")#</a></li>
 			<!--- File Types --->
-			<li><a href="##ptypes" onclick="savesettings();loadcontent('ptypes','#myself#c.prefs_types');">#defaultsObj.trans("pref_types_header")#</a></li>
+			<li><a href="##ptypes" onclick="savesettings();loadcontent('ptypes','#myself#c.prefs_types');">#myFusebox.getApplicationData().defaults.trans("pref_types_header")#</a></li>
 			<!--- Backup/Import --->
-			<li><a href="##backrest" onclick="savesettings();loadcontent('backrest','#myself#c.prefs_backup_restore');">#defaultsObj.trans("header_backup_restore")#</a></li>
+			<li><a href="##backrest" onclick="savesettings();loadcontent('backrest','#myself#c.prefs_backup_restore');">#myFusebox.getApplicationData().defaults.trans("header_backup_restore")#</a></li>
 			<!--- Tools --->
 			<li><a href="##tools" onclick="savesettings();loadcontent('tools','#myself#c.prefs_global_tools');">Tools</a></li>
 			<!--- Rendering Farm --->
-			<li><a href="##renf" onclick="savesettings();loadcontent('renf','#myself#c.prefs_renf');">#defaultsObj.trans("header_rf")#</a></li>
+			<li><a href="##renf" onclick="savesettings();loadcontent('renf','#myself#c.prefs_renf');">#myFusebox.getApplicationData().defaults.trans("header_rf")#</a></li>
 			<!--- Task Server --->
 			<li><a href="##taskserver" onclick="savesettings();">Indexing</a></li>
 			<!--- System Info --->
@@ -131,7 +131,7 @@
 				</tr>
 			</table>
 			<div style="text-align:right;padding-top:5px;padding-bottom:10px;float:right;">
-				<input type="submit" name="save" value="#defaultsObj.trans("save")#" class="button" /> 
+				<input type="submit" name="save" value="#myFusebox.getApplicationData().defaults.trans("save")#" class="button" /> 
 			</div>
 			<div style="clear:both;"></div>
 
@@ -143,31 +143,31 @@
 					<th colspan="2">Your Razuna Setup</th>
 				</tr>
 				<tr>
-					<td width="100%">#defaultsObj.trans("database_in_use")#</td>
+					<td width="100%">#myFusebox.getApplicationData().defaults.trans("database_in_use")#</td>
 					<td width="1%" nowrap>#application.razuna.thedatabase#</td>
 				</tr>
 				<tr>
-					<td width="100%">#defaultsObj.trans("storage_container")#</td>
+					<td width="100%">#myFusebox.getApplicationData().defaults.trans("storage_container")#</td>
 					<td width="1%" nowrap>#application.razuna.storage#</td>
 				</tr>
 				<tr>
-					<td width="100%">#defaultsObj.trans("server_platform")#</td>
+					<td width="100%">#myFusebox.getApplicationData().defaults.trans("server_platform")#</td>
 					<td width="1%" nowrap>#server.OS.Name#</td>
 				</tr>
 				<tr>
-					<td width="100%">#defaultsObj.trans("server_platform_version")#</td>
+					<td width="100%">#myFusebox.getApplicationData().defaults.trans("server_platform_version")#</td>
 					<td width="1%" nowrap>#server.os.version#</td>
 				</tr>
 				<tr>
-					<td width="100%">#defaultsObj.trans("coldfusion_product")#</td>
+					<td width="100%">#myFusebox.getApplicationData().defaults.trans("coldfusion_product")#</td>
 					<td width="1%" nowrap>#server.ColdFusion.ProductName#</td>
 				</tr>
 				<tr>
-					<td width="100%">#defaultsObj.trans("coldfusion_version")#</td>
+					<td width="100%">#myFusebox.getApplicationData().defaults.trans("coldfusion_version")#</td>
 					<td width="1%" nowrap><cfif server.ColdFusion.ProductName CONTAINS "bluedragon">#server.bluedragon.edition#<cfelse>#server.ColdFusion.ProductVersion#</cfif></td>
 				</tr>
 				<tr>
-					<td width="100%">#defaultsObj.trans("server_url")#</td>
+					<td width="100%">#myFusebox.getApplicationData().defaults.trans("server_url")#</td>
 					<td width="1%" nowrap>#cgi.HTTP_HOST#</td>
 				</tr>
 				<tr>
@@ -185,25 +185,25 @@
 				</tr>
 				<tr>
 					<td width="100%">Memory Total</td>
-					<td width="1%" nowrap>#int(defaultsObj.converttomb(variables.mem.total))# MB</td>
+					<td width="1%" nowrap>#int(myFusebox.getApplicationData().defaults.converttomb(variables.mem.total))# MB</td>
 				</tr>
 				<tr>
 					<td width="100%">Memory Free</td>
-					<td width="1%" nowrap>#int(defaultsObj.converttomb(variables.mem.free))# MB</td>
+					<td width="1%" nowrap>#int(myFusebox.getApplicationData().defaults.converttomb(variables.mem.free))# MB</td>
 				</tr>
 				<tr>
 					<td width="100%">Memory Max</td>
-					<td width="1%" nowrap>#int(defaultsObj.converttomb(variables.mem.max))# MB</td>
+					<td width="1%" nowrap>#int(myFusebox.getApplicationData().defaults.converttomb(variables.mem.max))# MB</td>
 				</tr>
 				<tr>
 					<td width="100%">Memory Used</td>
-					<td width="1%" nowrap>#int(defaultsObj.converttomb(variables.mem.used))# MB</td>
+					<td width="1%" nowrap>#int(myFusebox.getApplicationData().defaults.converttomb(variables.mem.used))# MB</td>
 				</tr>
 			</table>
 		</div>
 	</div>
 	<!--- <div style="text-align:right;padding-top:5px;padding-bottom:10px;float:right;">
-		<input type="submit" name="save" value="#defaultsObj.trans("save")#" class="button" /> 
+		<input type="submit" name="save" value="#myFusebox.getApplicationData().defaults.trans("save")#" class="button" /> 
 	</div> --->
 </form>
 
@@ -229,8 +229,8 @@
 		savesettings();
 		// Display saved message
 		$("##settingsfeedback").css("display","");
-		$("##settingsfeedback").html('#defaultsObj.trans("saved_changes")#');
-		$("##settingsfeedback").html('#defaultsObj.trans("saved_changes")#');
+		$("##settingsfeedback").html('#myFusebox.getApplicationData().defaults.trans("saved_changes")#');
+		$("##settingsfeedback").html('#myFusebox.getApplicationData().defaults.trans("saved_changes")#');
 		$("##settingsfeedback").animate({opacity: 1.0}, 3000).fadeTo("slow", 0, function() {
 			$("##settingsfeedback").css("display","none");
 		});

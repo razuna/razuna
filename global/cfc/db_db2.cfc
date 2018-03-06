@@ -1186,6 +1186,7 @@
 		<cfargument name="dsn" type="string" required="true">
 		<cfargument name="theschema" type="string" required="true">
 		<cfargument name="host_db_prefix" type="string" required="true">
+		<cfargument name="thestruct" type="struct" required="true" />
 		<!--- Params --->
 		<cfset arguments.thestruct = structnew()>
 		<cfset arguments.thestruct.dsn = arguments.dsn>
@@ -1200,7 +1201,7 @@
 	<!--- Create Host --->
 	<cffunction name="create_host" access="public" output="false">
 		<cfargument name="thestruct" type="Struct">
-		<cfset arguments.thestruct.theschema = application.razuna.theschema>
+		<cfset arguments.thestruct.theschema = arguments.thestruct.razuna.application.theschema>
 		<!--- Create Tables --->
 		<cfinvoke method="create_tables" thestruct="#arguments.thestruct#">
 		<!--- CREATE THE INDEXES --->
@@ -2887,16 +2888,17 @@
 	
 	<!--- Clear database completely --->
 	<cffunction name="clearall" access="public" output="false">
+		<cfargument name="thestruct" type="struct" required="true" />
 		<!--- Query Tables --->
-		<cfquery datasource="#session.firsttime.database#" name="qrytables">
+		<cfquery datasource="#arguments.thestruct.razuna.session.firsttime.database#" name="qrytables">
 		SELECT tabname
 		FROM syscat.tables
-		WHERE tabschema = '#ucase(session.firsttime.db_schema)#'
+		WHERE tabschema = '#ucase(arguments.thestruct.razuna.session.firsttime.db_schema)#'
 		</cfquery>
 		<!--- Loop and drop tables --->
 		<cfloop query="qrytables">
 			<cftry>
-				<cfquery datasource="#session.firsttime.database#">
+				<cfquery datasource="#arguments.thestruct.razuna.session.firsttime.database#">
 				DROP TABLE #tabname#
 				</cfquery>
 				<cfcatch type="any"></cfcatch>

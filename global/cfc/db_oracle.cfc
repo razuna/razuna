@@ -1183,7 +1183,7 @@
 	<!--- Create Host --->
 	<cffunction name="create_host" access="public" output="false">
 		<cfargument name="thestruct" type="Struct">
-		<cfset arguments.thestruct.theschema = application.razuna.theschema>
+		<cfset arguments.thestruct.theschema = arguments.thestruct.razuna.application.theschema>
 		<!--- Create Tables --->
 		<cfinvoke method="create_tables" thestruct="#arguments.thestruct#">
 		<!--- CREATE THE INDEXES --->
@@ -2834,7 +2834,7 @@ CONSTRAINT #arguments.thestruct.host_db_prefix#SCHEDULES_LOG_FK1 FOREIGN KEY (SC
 	<!--- Clear database completely --->
 	<cffunction name="clearall" access="public" output="false">
 		<!--- Query tables --->
-		<cfquery datasource="#session.firsttime.database#" name="qrytbl">
+		<cfquery datasource="#arguments.thestruct.razuna.session.firsttime.database#" name="qrytbl">
 		SELECT object_name
 		FROM user_objects 
 		WHERE object_type='TABLE'
@@ -2842,22 +2842,22 @@ CONSTRAINT #arguments.thestruct.host_db_prefix#SCHEDULES_LOG_FK1 FOREIGN KEY (SC
 		<!--- Loop and drop tables --->
 		<cfloop query="qrytbl">
 			<cftry>
-				<cfquery datasource="#session.firsttime.database#">
+				<cfquery datasource="#arguments.thestruct.razuna.session.firsttime.database#">
 				DROP TABLE #object_name# CASCADE CONSTRAINTS
 				</cfquery>
 				<cfcatch type="any"></cfcatch>
 			</cftry>
 		</cfloop>
 		<!--- Query Sequences --->
-		<cfquery datasource="#session.firsttime.database#" name="qryseq">
+		<cfquery datasource="#arguments.thestruct.razuna.session.firsttime.database#" name="qryseq">
 		SELECT sequence_name
 		FROM all_sequences
-		WHERE sequence_owner = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#ucase(application.razuna.theschema)#">
+		WHERE sequence_owner = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#ucase(arguments.thestruct.razuna.application.theschema)#">
 		</cfquery>
 		<!--- Loop over Sequences and remove them --->
 		<cfloop query="qryseq">
 			<cftry>
-				<cfquery datasource="#session.firsttime.database#">
+				<cfquery datasource="#arguments.thestruct.razuna.session.firsttime.database#">
 				DROP SEQUENCE #sequence_name#
 				</cfquery>
 				<cfcatch type="any"></cfcatch>

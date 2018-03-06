@@ -28,15 +28,15 @@
 <cfinput type="hidden" name="#theaction#" value="#xfa.submitform#">
 <cfoutput query="thesettings">
 <tr>
-<td width="1%" nowrap="true">#gobj.trans("date_format")#</td>
+<td width="1%" nowrap="true">#myFusebox.getApplicationData().defaults.trans("date_format")#</td>
 <td width="100%" nowrap="true"><select name="date_format" class="text">
-<option value="euro"<cfif #date_format# EQ "euro"> selected</cfif>>#gobj.trans("date_euro")#</option>
-<option value="us"<cfif #date_format# EQ "us"> selected</cfif>>#gobj.trans("date_us")#</option>
-<option value="sql"<cfif #date_format# EQ "sql"> selected</cfif>>#gobj.trans("date_sql")#</option>
+<option value="euro"<cfif #date_format# EQ "euro"> selected</cfif>>#myFusebox.getApplicationData().defaults.trans("date_euro")#</option>
+<option value="us"<cfif #date_format# EQ "us"> selected</cfif>>#myFusebox.getApplicationData().defaults.trans("date_us")#</option>
+<option value="sql"<cfif #date_format# EQ "sql"> selected</cfif>>#myFusebox.getApplicationData().defaults.trans("date_sql")#</option>
 </select></td>
 </tr>
 <tr>
-<td nowrap="true">#gobj.trans("date_format_del")#</td>
+<td nowrap="true">#myFusebox.getApplicationData().defaults.trans("date_format_del")#</td>
 <td><select name="date_format_del" class="text">
 <option value="/"<cfif #date_format_del# EQ "/"> selected</cfif>>/</option>
 <option value="."<cfif #date_format_del# EQ "."> selected</cfif>>.</option>
@@ -46,11 +46,11 @@
 </select></td>
 </tr>
 <tr>
-<td nowrap="true" valign="top">#gobj.trans("head_task_settings")#</td>
-<td><textarea cols="50" rows="7" name="task_categories">#task_categories#</textarea><br><i>#gobj.trans("help_delimiter_desc")#</i></td>
+<td nowrap="true" valign="top">#myFusebox.getApplicationData().defaults.trans("head_task_settings")#</td>
+<td><textarea cols="50" rows="7" name="task_categories">#task_categories#</textarea><br><i>#myFusebox.getApplicationData().defaults.trans("help_delimiter_desc")#</i></td>
 </tr>
 <tr>
-<td colspan="2" align="right"><cfinput type="submit" name="submit" value="#gobj.trans("but_save")#" class="button"></td>
+<td colspan="2" align="right"><cfinput type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans("but_save")#" class="button"></td>
 </tr>
 </cfoutput>
 </cfform>

@@ -23,17 +23,18 @@
 * along with Razuna. If not, see <http://www.razuna.com/licenses/>.
 *
 --->
-<cfcomponent hint="Translation table functionality" output="false" extends="extQueryCaching">
+<cfcomponent  output="false" extends="extQueryCaching">
 
 <!--- GET THE TRANSLATION --->
-<cffunction hint="Get the Translation" name="trans" output="false" access="public" returntype="string">
+<cffunction  name="trans" output="false" access="public" returntype="string">
 	<cfargument name="trans_id" required="yes" type="string">
 	<cfargument name="lang" default="#Request.cl#" required="no" type="string">
+	<cfargument name="thestruct" type="struct" required="true" />
 	<!--- init local vars --->
 	<cfset var qTrans = 0>
-	<cfquery datasource="#Variables.dsn#" name="qTrans">
+	<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qTrans">
 		SELECT TRIM(trans_text) AS trans_text
-		FROM #session.hostdbprefix#translations
+		FROM #arguments.thestruct.razuna.session.hostdbprefix#translations
 		WHERE trans_id = <cfqueryparam value="#lcase(arguments.trans_id)#" cfsqltype="cf_sql_varchar">
 		and lang_id_r = <cfqueryparam value="#Arguments.lang#" cfsqltype="cf_sql_numeric">
 	</cfquery>

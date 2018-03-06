@@ -25,11 +25,11 @@
 --->
 <cfoutput>
 	<!--- Show if Firebug is enabled --->
-	<div id="firebugalert" style="display:none;"></div>
+	<!--- <div id="firebugalert" style="display:none;"></div> --->
 	<div id="outer">
 		<div id="loginform">
 			<!--- News --->
-			<cfif attributes.qry_news.recordcount>
+			<cfif structKeyExists(attributes, "qry_news") AND attributes.qry_news.recordcount>
 				<div class="news_frontpage">
 					<h2>#attributes.qry_news.news_title#</h2>
 					<p>#attributes.qry_news.news_excerpt#

@@ -632,7 +632,7 @@
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		INSERT INTO #arguments.thestruct.theschema#.options
 		(opt_id, opt_value, rec_uuid)
-		VALUES ('conf_db_type', '#session.firsttime.database_type#', '#createuuid()#')
+		VALUES ('conf_db_type', '#arguments.thestruct.razuna.session.firsttime.database_type#', '#createuuid()#')
 		</cfquery>
 		<!--- USERS --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
@@ -1301,6 +1301,7 @@
 		<cfargument name="dsn" type="string" required="true">
 		<cfargument name="theschema" type="string" required="true">
 		<cfargument name="host_db_prefix" type="string" required="true">
+		<cfargument name="thestruct" type="struct" required="true" />
 		<!--- Params --->
 		<cfset arguments.thestruct = structnew()>
 		<cfset arguments.thestruct.dsn = arguments.dsn>
@@ -1315,7 +1316,7 @@
 	<!--- Create Host --->
 	<cffunction name="create_host" access="public" output="false">
 		<cfargument name="thestruct" type="Struct">
-		<cfset arguments.thestruct.theschema = application.razuna.theschema>
+		<cfset arguments.thestruct.theschema = arguments.thestruct.razuna.application.theschema>
 		<!--- Create Tables --->
 		<cfinvoke method="create_tables" thestruct="#arguments.thestruct#">
 		<!---  CREATE THE INDEXES --->
@@ -2576,7 +2577,6 @@
   		upc_description 	varchar(2000),
   		PRIMARY KEY (upc_temp_id)
 		)
-		#this.tableoptions#
 		</cfquery>
 
 		<!--- UPC --->
@@ -2587,9 +2587,22 @@
   		upc_field			varchar(200),
   		upc_is_original		boolean default '0',
   		host_id				int,
-  		PRIMARY KEY (upc_temp_id_r)
 		)
-		#this.tableoptions#
+		</cfquery>
+
+		<!--- task scripts --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#scheduled_scripts (
+  		id_name				varchar(200),
+  		value				varchar(2000),
+  		date_added			datetime,
+  		sched_id			varchar(100),
+  		host_id				int,
+  		KEY scripts_id (id_name),
+  		KEY scripts_host_id (host_id),
+  		KEY scripts_date_added (date_added),
+  		KEY scripts_sched_id (sched_id)
+		)
 		</cfquery>
 
 	</cffunction>
@@ -3086,24 +3099,25 @@
 
 	<!--- Clear database completely --->
 	<cffunction name="clearall" access="public" output="false">
+		<cfargument name="thestruct" type="struct" required="true" />
 		<!---Drop Constraints --->
-		<cfquery datasource="#session.firsttime.database#" name="qryconst">
+		<cfquery datasource="#arguments.thestruct.razuna.session.firsttime.database#" name="qryconst">
 		SELECT table_name, constraint_name, constraint_type
 		FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS
-		WHERE table_schema = '#session.firsttime.db_schema#'
+		WHERE table_schema = '#arguments.thestruct.razuna.session.firsttime.db_schema#'
 		</cfquery>
 		<!--- Query Tables --->
-		<cfquery datasource="#session.firsttime.database#" name="qrytables">
+		<cfquery datasource="#arguments.thestruct.razuna.session.firsttime.database#" name="qrytables">
 		SELECT table_name
 		FROM information_schema.tables
-		WHERE table_schema = '#session.firsttime.db_schema#'
+		WHERE table_schema = '#arguments.thestruct.razuna.session.firsttime.db_schema#'
 		</cfquery>
 		<!--- Drop foreign key constraints --->
 		<cfloop query="qryconst">
 			<cfif constraint_type EQ "foreign key">
 				<cftry>
-					<cfquery datasource="#session.firsttime.database#">
-					ALTER TABLE #session.firsttime.db_schema#.#table_name# DROP CONSTRAINT #constraint_name#
+					<cfquery datasource="#arguments.thestruct.razuna.session.firsttime.database#">
+					ALTER TABLE #arguments.thestruct.razuna.session.firsttime.db_schema#.#table_name# DROP CONSTRAINT #constraint_name#
 					</cfquery>
 					<cfcatch type="any"></cfcatch>
 				</cftry>
@@ -3113,8 +3127,8 @@
 		<cfloop query="qryconst">
 			<cfif constraint_type EQ "primary key">
 				<cftry>
-					<cfquery datasource="#session.firsttime.database#">
-					ALTER TABLE #session.firsttime.db_schema#.#table_name# DROP CONSTRAINT #constraint_name#
+					<cfquery datasource="#arguments.thestruct.razuna.session.firsttime.database#">
+					ALTER TABLE #arguments.thestruct.razuna.session.firsttime.db_schema#.#table_name# DROP CONSTRAINT #constraint_name#
 					</cfquery>
 					<cfcatch type="any"></cfcatch>
 				</cftry>
@@ -3123,8 +3137,8 @@
 		<!--- Drop tables --->
 		<cfloop query="qrytables">
 			<cftry>
-				<cfquery datasource="#session.firsttime.database#">
-				DROP TABLE #session.firsttime.db_schema#.#table_name#
+				<cfquery datasource="#arguments.thestruct.razuna.session.firsttime.database#">
+				DROP TABLE #arguments.thestruct.razuna.session.firsttime.db_schema#.#table_name#
 				</cfquery>
 				<cfcatch type="any"></cfcatch>
 			</cftry>

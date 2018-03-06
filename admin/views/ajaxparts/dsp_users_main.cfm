@@ -28,26 +28,26 @@
 	<cfinclude template="dsp_host_chooser_include.cfm">
 	<div id="tabs_users">
 		<ul>
-			<li><a href="##tsearch">#defaultsObj.trans("user_list")#</a></li>
-			<li><a href="##tsearch" onclick="showwindow('#myself#c.users_detail&add=T&user_id=0','#defaultsObj.trans("user_add")#',550,1);">#defaultsObj.trans("user_add")#</a></li>
+			<li><a href="##tsearch">#myFusebox.getApplicationData().defaults.trans("user_list")#</a></li>
+			<li><a href="##tsearch" onclick="showwindow('#myself#c.users_detail&add=T&user_id=0','#myFusebox.getApplicationData().defaults.trans("user_add")#',550,1);">#myFusebox.getApplicationData().defaults.trans("user_add")#</a></li>
 		</ul>
 		<!--- Search Panel --->
 		<div id="tsearch">
 			<form name="usearch" id="usearch" onsubmit="searchme();return false;">
 			<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
 			<tr>
-				<th colspan="4">#defaultsObj.trans("quicksearch")#</th>
+				<th colspan="4">#myFusebox.getApplicationData().defaults.trans("quicksearch")#</th>
 			</tr>
 			<tr>
-				<td>#defaultsObj.trans("username")#</td>
-				<td>#defaultsObj.trans("user_company")#</td>
+				<td>#myFusebox.getApplicationData().defaults.trans("username")#</td>
+				<td>#myFusebox.getApplicationData().defaults.trans("user_company")#</td>
 				<td colspan="2">eMail</td>
 			</tr>
 			<tr>
 				<td><input type="text" size="25" name="user_login_name" id="user_login_name2" /></td>
 				<td><input type="text" size="25" name="user_company" id="user_company2" /></td>
 				<td><input type="text" size="25" name="user_email" id="user_email2" /></td>
-				<td><input type="submit" name="Button" value="#defaultsObj.trans("user_search")#" class="button" /></td>
+				<td><input type="submit" name="Button" value="#myFusebox.getApplicationData().defaults.trans("user_search")#" class="button" /></td>
 			</tr>
 			</table>
 			</form>
@@ -66,17 +66,16 @@
 				<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
 					<tr>
 						<th></th>
-						<th nowrap="nowrap">#defaultsObj.trans("username")#</th>
-						<th nowrap="nowrap">#defaultsObj.trans("user_first_name")# #defaultsObj.trans("user_last_name")#</th>
-						<th nowrap="nowrap">#defaultsObj.trans("user_company")#</th>
+						<th nowrap="nowrap">#myFusebox.getApplicationData().defaults.trans("username")#</th>
+						<th nowrap="nowrap">#myFusebox.getApplicationData().defaults.trans("user_first_name")# #myFusebox.getApplicationData().defaults.trans("user_last_name")#</th>
+						<th nowrap="nowrap">#myFusebox.getApplicationData().defaults.trans("user_company")#</th>
 						<th nowrap="nowrap">eMail</th>
-						<th nowrap="nowrap">#defaultsObj.trans("tenant_access")#</th>
+						<th nowrap="nowrap">#myFusebox.getApplicationData().defaults.trans("tenant_access")#</th>
 						<th colspan="2"></th>
 					</tr>
-					<cfset thestruct = structnew()>
 					<cfoutput query="qry_users" group="user_id">
-						<cfset thestruct.user_id = user_id>
-						<cfinvoke component="global.cfc.users" method="userhosts"  thestruct="#thestruct#" returnvariable="hosts">
+						<cfset attributes.user_id = user_id>
+						<cfinvoke component="global.cfc.users" method="userhosts" thestruct="#attributes#" returnvariable="hosts">
 						<cfset host_list = valuelist(hosts.host_name)>
 						<tr>
 							<td valign="top" nowrap width="1%"><cfif qry_users.recordcount NEQ 1><input type="checkbox" name="theuserid" value="#user_id#" onclick="showhidedelete();" /></cfif></td>
@@ -87,7 +86,7 @@
 							<td valign="top" width="15%">#host_list#</td>
 							<td valign="top" nowrap width="1%"><cfif #user_active# EQ "T"><img src="images/im-user.png" width="16" height="16" border="0" /><cfelse><img src="images/im-user-busy.png" width="16" height="16" border="0" /></cfif></td>
 							<cfif qry_users.recordcount NEQ 1 AND !(listfind(ct_g_u_grp_id,"1") AND numsysadmin EQ '1')>
-								<td align="center" valign="top" nowrap width="1%"><a href="##" onclick="showwindow('#myself#ajax.remove_record&what=users&id=#user_id#&loaddiv=rightside','#defaultsObj.trans("remove_selected")#',400,1);return false"><img src="images/trash.gif" width="16" height="16" border="0"></a></td>
+								<td align="center" valign="top" nowrap width="1%"><a href="##" onclick="showwindow('#myself#ajax.remove_record&what=users&id=#user_id#&loaddiv=rightside','#myFusebox.getApplicationData().defaults.trans("remove_selected")#',400,1);return false"><img src="images/trash.gif" width="16" height="16" border="0"></a></td>
 							</cfif>
 						</tr>
 					</cfoutput>
@@ -103,12 +102,12 @@
 
 <!--- Div for hidden window for deleting --->
 <div id="dialog-confirm-delete" style="display:none;">
-	<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 100px 0;"></span>#defaultsObj.trans("user_delete_warning")#
+	<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 100px 0;"></span>#myFusebox.getApplicationData().defaults.trans("user_delete_warning")#
 	</p>
 </div>
 <!--- Div for hidden window for sending email --->
 <div id="dialog-confirm-send" style="display:none;">
-	<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 100px 0;"></span>#defaultsObj.trans("user_send_email_warning")#</p>
+	<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 100px 0;"></span>#myFusebox.getApplicationData().defaults.trans("user_send_email_warning")#</p>
 </div>
 <!--- Activate the Tabs --->
 <script type="text/javascript">
@@ -116,7 +115,7 @@
 	// Search
 	function searchme() {
 		if ($('##user_login_name2').val() == "" && $('##user_company2').val() == "" && $('##user_email2').val() == ""){
-			alert('<cfoutput>#defaultsObj.trans("one_field_fill")#</cfoutput>');
+			alert('<cfoutput>#myFusebox.getApplicationData().defaults.trans("one_field_fill")#</cfoutput>');
 			return false;
 		}
 		else {

@@ -26,32 +26,32 @@
 <cfoutput>
 <div id="ft">
 	<!--- First Time Header --->
-	<span class="loginform_header">#defaultsObj.trans("header_first_time")#</span>
+	<span class="loginform_header">#myFusebox.getApplicationData().defaults.trans("header_first_time")#</span>
 	<br />
-	#defaultsObj.trans("first_time")#
+	#myFusebox.getApplicationData().defaults.trans("first_time")#
 	<br />
 	<hr noshade="noshade" width="100%" size="1px">
 	<br />
 	<!--- Herein we load the steps --->
 	<div id="load_steps">
-		<span class="loginform_header">#defaultsObj.trans("header_first_time_choose_installation")#</span>
+		<span class="loginform_header">#myFusebox.getApplicationData().defaults.trans("header_first_time_choose_installation")#</span>
 		<br />
-		#defaultsObj.trans("header_first_time_choose_installation_desc")#
+		#myFusebox.getApplicationData().defaults.trans("header_first_time_choose_installation_desc")#
 		<br />
 		<br />
 		<a href="##" onclick="loadcontent('load_steps','#myself#c.first_time_paths&db=h2&schema=razuna&type=standard');" class="first_time_hoover">
-			<span class="loginform_header">#defaultsObj.trans("header_first_time_choose_installation_standard")#</span>
+			<span class="loginform_header">#myFusebox.getApplicationData().defaults.trans("header_first_time_choose_installation_standard")#</span>
 			<br />
-			#defaultsObj.trans("header_first_time_choose_installation_standard_desc")#
+			#myFusebox.getApplicationData().defaults.trans("header_first_time_choose_installation_standard_desc")#
 			<br />
-			<div style="float:right;padding:5px;"><input type="button" id="standard" value="#defaultsObj.trans("header_first_time_choose_installation_standard")#" class="button" style="width:150px;"></div>
+			<div style="float:right;padding:5px;"><input type="button" id="standard" value="#myFusebox.getApplicationData().defaults.trans("header_first_time_choose_installation_standard")#" class="button" style="width:150px;"></div>
 		</a>
 		<a href="##" onclick="loadcontent('load_steps','#myself#c.first_time_database');" class="first_time_hoover">
-			<span class="loginform_header">#defaultsObj.trans("header_first_time_choose_installation_custom")#</span>
+			<span class="loginform_header">#myFusebox.getApplicationData().defaults.trans("header_first_time_choose_installation_custom")#</span>
 			<br />
-			#defaultsObj.trans("header_first_time_choose_installation_custom_desc")#
+			#myFusebox.getApplicationData().defaults.trans("header_first_time_choose_installation_custom_desc")#
 			<br />
-			<div style="float:right;padding:5px;"><input type="button" id="standard" value="#defaultsObj.trans("header_first_time_choose_installation_custom")#" onclick="" class="button" style="width:150px;"></div>
+			<div style="float:right;padding:5px;"><input type="button" id="standard" value="#myFusebox.getApplicationData().defaults.trans("header_first_time_choose_installation_custom")#" onclick="" class="button" style="width:150px;"></div>
 			<br />
 			<br />
 		</a>
@@ -63,11 +63,11 @@
 	<!--- Oacle Settings --->
 	<cfif application.razuna.thedatabase EQ "oracle">
 		<tr>
-			<th colspan="2">#defaultsObj.trans("oracle_settings")#</th>
+			<th colspan="2">#myFusebox.getApplicationData().defaults.trans("oracle_settings")#</th>
 		</tr>
 		<tr>
-			<td valign="top">#defaultsObj.trans("oracle_schema")#*</td>
-			<td><input type="text" name="oracle_schema" size="40" class="text" value="#application.razuna.theschema#" required="true" message="#defaultsObj.trans("error_form")#"><br /><em>#defaultsObj.trans("oracle_schema_desc")#</em></td>
+			<td valign="top">#myFusebox.getApplicationData().defaults.trans("oracle_schema")#*</td>
+			<td><input type="text" name="oracle_schema" size="40" class="text" value="#application.razuna.theschema#" required="true" message="#myFusebox.getApplicationData().defaults.trans("error_form")#"><br /><em>#myFusebox.getApplicationData().defaults.trans("oracle_schema_desc")#</em></td>
 		</tr>
 	</cfif>
 

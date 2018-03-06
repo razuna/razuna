@@ -26,43 +26,43 @@
 <cfoutput>
 	<table width="700" border="0" cellspacing="0" cellpadding="0" class="grid">
 	<tr>
-	<th class="textbold">#defaultsObj.trans("header_title_meta_lang")#</th>
+	<th class="textbold">#myFusebox.getApplicationData().defaults.trans("header_title_meta_lang")#</th>
 	</tr>	
 	<!--- show meta tags for each language --->
 	<cfloop query="qry_langs">
 		<!--- IntraNet Titles --->
 		<tr>
-			<th colspan="2" class="textbold">#defaultsObj.trans("header_title_intra")#</th>
+			<th colspan="2" class="textbold">#myFusebox.getApplicationData().defaults.trans("header_title_intra")#</th>
 		</tr>
 		<tr>
-			<td nowrap>#defaultsObj.trans("title_in")# #lang_name#</td>
+			<td nowrap>#myFusebox.getApplicationData().defaults.trans("title_in")# #lang_name#</td>
 		</tr>
 		<tr>
-			<td><input type="text" name="set_title_intra_#lang_id#" size="80" value="#settingsObj.thissetting("set_title_intra_#lang_id#")#"></td>
+			<td><input type="text" name="set_title_intra_#lang_id#" size="80" value="#myFusebox.getApplicationData().settings.thissetting("set_title_intra_#lang_id#", attributes)#"></td>
 		</tr>	
 		<tr>
-			<td>#lang_name# - #defaultsObj.trans("meta_keywords")#</td>
+			<td>#lang_name# - #myFusebox.getApplicationData().defaults.trans("meta_keywords")#</td>
 		</tr>
 		<tr>
-			<td align="left"><textarea name="set_meta_keywords_#lang_id#" rows="5" cols="80" class="text">#settingsObj.thissetting("set_meta_keywords_#lang_id#")#</textarea></td>
+			<td align="left"><textarea name="set_meta_keywords_#lang_id#" rows="5" cols="80" class="text">#myFusebox.getApplicationData().settings.thissetting("set_meta_keywords_#lang_id#", attributes)#</textarea></td>
 		</tr>
 		<tr>
-			<td>#lang_name# - #defaultsObj.trans("desc")#</td>
+			<td>#lang_name# - #myFusebox.getApplicationData().defaults.trans("desc")#</td>
 		</tr>
 		<tr>
-			<td align="left"><textarea name="set_meta_description_#lang_id#" rows="3" cols="80" class="text">#settingsObj.thissetting("set_meta_description_#lang_id#")#</textarea></td>
+			<td align="left"><textarea name="set_meta_description_#lang_id#" rows="3" cols="80" class="text">#myFusebox.getApplicationData().settings.thissetting("set_meta_description_#lang_id#", attributes)#</textarea></td>
 		</tr>
 		<tr>
-			<td>#lang_name# - #defaultsObj.trans("meta_custom")#</td>
+			<td>#lang_name# - #myFusebox.getApplicationData().defaults.trans("meta_custom")#</td>
 		</tr>
 		<tr>
-			<td align="left"><textarea name="set_meta_custom_#lang_id#" rows="4" cols="80" class="text">#settingsObj.thissetting("set_meta_custom_#lang_id#")#</textarea><br />
-		<em>#defaultsObj.trans("code_meta")# (&lt;meta name=&quot;...&quot;&gt;)</em></td>
+			<td align="left"><textarea name="set_meta_custom_#lang_id#" rows="4" cols="80" class="text">#myFusebox.getApplicationData().settings.thissetting("set_meta_custom_#lang_id#", attributes)#</textarea><br />
+		<em>#myFusebox.getApplicationData().defaults.trans("code_meta")# (&lt;meta name=&quot;...&quot;&gt;)</em></td>
 		</tr>
 	</cfloop>
 	<!--- meta tags for all languages --->
 	<tr>
-	<th>#defaultsObj.trans("header_title_meta_general")#</th>
+	<th>#myFusebox.getApplicationData().defaults.trans("header_title_meta_general")#</th>
 	</tr>
 	<tr>
 	<td>Author <i>(meta name="author" content="ComputerOil.com")</i></td>

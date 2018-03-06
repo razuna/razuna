@@ -44,7 +44,7 @@
 					<cfset thehostpath = replaceNoCase(cgi.http_host,thesubdomain,"","one")>
 				</cfif>
 				<select name="gotodam" id="gotodam" onChange="javascript:gotodam_choose();" style="width:100px;">
-					<option id="gotodamselect" value="0" selected="true">#defaultsObj.trans("goto")#</option>
+					<option id="gotodamselect" value="0" selected="true">#myFusebox.getApplicationData().defaults.trans("goto")#</option>
 					<cfloop query="qry_allhosts">
 						<cfif application.razuna.isp>
 							<option value="http://#host_name##thehostpath#/">
@@ -57,8 +57,8 @@
 			</td>
 			<td nowrap="true" style="padding-left:5px;padding-right:30px;"><form name="f_lang">
 				<select name="app_lang" size=1 class="text" onChange="javascript:changelang('f_lang');">
-					<option value="javascript:void();" selected>#defaultsObj.trans("changelang")#</option>
-					<cfset thelangs = #defaultsObj.getlangsadmin(thispath)#>
+					<option value="javascript:void();" selected>#myFusebox.getApplicationData().defaults.trans("changelang")#</option>
+					<cfset thelangs = #myFusebox.getApplicationData().defaults.getlangsadmin(thispath)#>
 					<cfloop query="thelangs">
 					<cfset thislang = replacenocase("#name#", ".xml", "", "ALL")>
 					<option value="#myself##xfa.switchlang#&thelang=#thislang#">#ucase(left(thislang,1))##mid(thislang,2,20)#</option>
@@ -67,7 +67,7 @@
 			</td>
 			<td nowrap="true" style="padding-left:7px;"><a href="https://help.razuna.com" target="_blank">Feedback</a></td>
 			<td nowrap="true" style="padding-left:7px;"><a href="http://wiki.razuna.com" target="_blank">Documentation</a></td>
-			<td nowrap="true" style="padding-left:7px;"><a href="#myself#c.logoff">#defaultsObj.trans("logoff")#</a></td>
+			<td nowrap="true" style="padding-left:7px;"><a href="#myself#c.logoff">#myFusebox.getApplicationData().defaults.trans("logoff")#</a></td>
 		</tr>
 	</table>
 </div>

@@ -2,20 +2,22 @@
   "name": "Razuna",
   "description": "Razuna open source digital asset management",
   "version": "1.9.5",
-  "script_version": "201802201",
+  "script_version": "201803051",
   "vendor_version": "201801131",
   "private": true,
   "dependencies": {
+    "bootstrap": "^4.0.0",
     "grunt": "^1",
     "grunt-concat-css": "^0.3.2",
     "grunt-contrib-clean": "^1.1.0",
     "grunt-contrib-concat": "^1.0.1",
     "grunt-contrib-copy": "^1.0.0",
     "grunt-contrib-cssmin": "^2.2.0",
-    "grunt-contrib-uglify": "^3.1.0",
+    "grunt-contrib-uglify-es": "^3.3.0",
     "grunt-jsonminify": "^1.1.0",
     "grunt-rename-util": "^1.0.0",
     "grunt-text-replace": "^0.4.0",
+    "popper.js": "^1.12.9",
     "uglify-js": "^3.1.3"
   }
 }

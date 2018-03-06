@@ -52,7 +52,7 @@
 					<tbody>
 						<cfloop query="qry_logs">
 							<tr style="background-color:<cfif currentrow mod 2>##f5f5f5;<cfelse>white;</cfif>">
-								<td nowrap="nowrap">#dateformat(date_upload, "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeFormat(date_upload, 'HH:mm:ss')#</td>
+								<td nowrap="nowrap">#dateformat(date_upload, "#myFusebox.getApplicationData().defaults.getdateformat(thestruct=attributes)#")# #timeFormat(date_upload, 'HH:mm:ss')#</td>
 								<td nowrap="nowrap">#user_first_name# #user_last_name#</td>
 								<td nowrap="nowrap">#file_name#</td>
 								<cfif file_status EQ "success">

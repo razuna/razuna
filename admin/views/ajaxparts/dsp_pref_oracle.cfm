@@ -26,10 +26,10 @@
 <cfoutput>
 	<table width="700" border="0" cellspacing="0" cellpadding="0" class="grid">
 	<tr>
-	<th class="textbold" colspan="2">#defaultsObj.trans("header_url_app_server")#</th>
+	<th class="textbold" colspan="2">#myFusebox.getApplicationData().defaults.trans("header_url_app_server")#</th>
 	</tr>
 	<tr>
-	<td colspan="2">#defaultsObj.trans("header_url_app_server_desc")#</td>
+	<td colspan="2">#myFusebox.getApplicationData().defaults.trans("header_url_app_server_desc")#</td>
 	</tr>
 	<tr>
 	<td>URL</td>
@@ -40,33 +40,33 @@
 	<td><input type="text" name="set2_ora_path_internal" value="#prefs.set2_ora_path_internal#" size="40" class="text"></td>
 	</tr>
 	<tr>
-	<th class="textbold" colspan="2">#defaultsObj.trans("url_oracle_sp")#</th>
+	<th class="textbold" colspan="2">#myFusebox.getApplicationData().defaults.trans("url_oracle_sp")#</th>
 	</tr>
 	<tr>
-	<td colspan="2">#defaultsObj.trans("url_desc")#</td>
+	<td colspan="2">#myFusebox.getApplicationData().defaults.trans("url_desc")#</td>
 	</tr>
 	<tr>
-	<td>#defaultsObj.trans("url_sp_original")#</td>
+	<td>#myFusebox.getApplicationData().defaults.trans("url_sp_original")#</td>
 	<td><input type="text" name="set2_url_sp_original" value="#prefs.set2_url_sp_original#" size="60" class="text"></td>
 	</tr>
 	<tr>
-	<td>#defaultsObj.trans("url_sp_thumb")#</td>
+	<td>#myFusebox.getApplicationData().defaults.trans("url_sp_thumb")#</td>
 	<td><input type="text" name="set2_url_sp_thumb" value="#prefs.set2_url_sp_thumb#" size="60" class="text"></td>
 	</tr>
 	<tr>
-	<td>#defaultsObj.trans("url_sp_comp")#</td>
+	<td>#myFusebox.getApplicationData().defaults.trans("url_sp_comp")#</td>
 	<td><input type="text" name="set2_url_sp_comp" value="#prefs.set2_url_sp_comp#" size="60" class="text"></td>
 	</tr>
 	<tr>
-	<td nowrap>#defaultsObj.trans("url_sp_comp_uw")#</td>
+	<td nowrap>#myFusebox.getApplicationData().defaults.trans("url_sp_comp_uw")#</td>
 	<td><input type="text" name="set2_url_sp_comp_uw" value="#prefs.set2_url_sp_comp_uw#" size="60" class="text"></td>
 	</tr>
 	<tr>
-	<td>#defaultsObj.trans("url_sp_video")#</td>
+	<td>#myFusebox.getApplicationData().defaults.trans("url_sp_video")#</td>
 	<td><input type="text" name="set2_url_sp_video" value="#prefs.set2_url_sp_video#" size="60" class="text"></td>
 	</tr>
 	<tr>
-	<td nowrap>#defaultsObj.trans("url_sp_video_image")#</td>
+	<td nowrap>#myFusebox.getApplicationData().defaults.trans("url_sp_video_image")#</td>
 	<td><input type="text" name="set2_url_sp_video_preview" value="#prefs.set2_url_sp_video_preview#" size="60" class="text"></td>
 	</tr>
 	</table>

@@ -444,6 +444,14 @@
 	<fuseaction name="scheduler_detail">
   		<include template="dsp_admin_sched_detail" />
 	</fuseaction>
+	<!-- ADMIN: Scheduler Detail Script -->
+	<fuseaction name="scheduler_script_detail">
+  		<include template="dsp_admin_sched_detail_script" />
+	</fuseaction>
+	<!-- ADMIN: Scheduler Detail Script search previw -->
+	<fuseaction name="scheduler_script_preview_search">
+  		<include template="dsp_admin_sched_detail_script_search" />
+	</fuseaction>
 	<!-- ADMIN: Scheduler Status -->
 	<fuseaction name="scheduler_status">
   		<include template="dsp_admin_sched_status" />

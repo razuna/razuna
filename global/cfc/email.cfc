@@ -53,22 +53,24 @@
 </cffunction>
 
 <!--- GET THE MESSAGE FOR THE DETAIL VIEW --->
-<cffunction hint="get the message for the detail view" name="emailmessage" output="false">
+<cffunction  name="emailmessage" output="false">
 	<cfargument name="themessageid" default="" required="yes" type="numeric">
 	<cfargument name="thepathhere" default="" required="yes" type="string">
-	<cfpop action="getall" server="#session.email_server#" username="#session.email_address#" password="#session.email_pass#" name="qrymessage" messagenumber="#arguments.themessageid#" attachmentpath="#arguments.thepathhere#/incoming/emails" generateuniquefilenames="no" timeout="3600">
+	<cfargument name="thestruct" type="struct">
+	<cfpop action="getall" server="#arguments.thestruct.razuna.session.email_server#" username="#arguments.thestruct.razuna.session.email_address#" password="#arguments.thestruct.razuna.session.email_pass#" name="qrymessage" messagenumber="#arguments.themessageid#" attachmentpath="#arguments.thepathhere#/incoming/emails" generateuniquefilenames="no" timeout="3600">
 	<cfreturn qrymessage>
 </cffunction>
 
 <!--- REMOVE THE MESSAGE --->
-<cffunction hint="remove the message" name="removemessage" output="false">
+<cffunction  name="removemessage" output="false">
 	<cfargument name="themessageid" default="" required="yes" type="numeric">
-	<cfpop action="delete" server="#session.email_server#" username="#session.email_address#" password="#session.email_pass#" messagenumber="#arguments.themessageid#">
+	<cfargument name="thestruct" type="struct">
+	<cfpop action="delete" server="#arguments.thestruct.razuna.session.email_server#" username="#arguments.thestruct.razuna.session.email_address#" password="#arguments.thestruct.razuna.session.email_pass#" messagenumber="#arguments.themessageid#">
 	<cfreturn />
 </cffunction>
 
 <!--- GLOBAL SENDEMAIL --->
-<cffunction hint="global sendemail" name="send_email" output="false" access="remote" returnType="void">
+<cffunction  name="send_email" output="false" access="remote" returnType="void">
 	<cfargument name="to" default="" required="no" type="string">
 	<cfargument name="cc" default="" required="no" type="string">
 	<cfargument name="bcc" default="" required="no" type="string">
@@ -83,28 +85,29 @@
 	<cfargument name="userid" default="" required="no" type="string">
 	<cfargument name="hostid" default="" required="no" type="string">
 	<cfargument name="isbasket" default="F" required="no" type="string">
+	<cfargument name="thestruct" type="struct" required="true" />
 	<cftry>
 		<!--- Set data source since this call could also come from RFS --->
 		<cfif arguments.dsn EQ "">
-			<cfset var thedsn = application.razuna.datasource>
+			<cfset var thedsn = arguments.thestruct.razuna.application.datasource>
 		<cfelse>
 			<cfset var thedsn = arguments.dsn>
 		</cfif>
 		<!--- Set data source since this call could also come from RFS --->
 		<cfif arguments.hostdbprefix EQ "">
-			<cfset var thehostdbprefix = session.hostdbprefix>
+			<cfset var thehostdbprefix = arguments.thestruct.razuna.session.hostdbprefix>
 		<cfelse>
 			<cfset var thehostdbprefix = arguments.hostdbprefix>
 		</cfif>
 		<!--- Set data source since this call could also come from RFS --->
 		<cfif arguments.hostid EQ "">
-			<cfset var thehostid = session.hostid>
+			<cfset var thehostid = arguments.thestruct.razuna.session.hostid>
 		<cfelse>
 			<cfset var thehostid = arguments.hostid>
 		</cfif>
 		<!--- Set data source since this call could also come from RFS --->
 		<cfif arguments.userid EQ "">
-			<cfset var theuserid = session.theuserid>
+			<cfset var theuserid = arguments.thestruct.razuna.session.theuserid>
 		<cfelse>
 			<cfset var theuserid = arguments.userid>
 		</cfif>
@@ -118,13 +121,13 @@
 		<cfif isdefined("isdup")>
 			<!--- Find duplicate records found in the Razuna system and record it in the log --->
 			<!--- Images --->
-			<cfinvoke component="images" method="checkmd5" md5hash="#md5hash#" returnvariable="qryimg" />
+			<cfinvoke component="images" method="checkmd5" md5hash="#md5hash#" thestruct="#arguments.thestruct#" returnvariable="qryimg" />
 			<!--- videos --->
-			<cfinvoke component="videos" method="checkmd5" md5hash="#md5hash#" returnvariable="qryvid" />
+			<cfinvoke component="videos" method="checkmd5" md5hash="#md5hash#" thestruct="#arguments.thestruct#" returnvariable="qryvid" />
 			<!--- Files --->
-			<cfinvoke component="files" method="checkmd5" md5hash="#md5hash#" returnvariable="qrydoc" />
+			<cfinvoke component="files" method="checkmd5" md5hash="#md5hash#" thestruct="#arguments.thestruct#" returnvariable="qrydoc" />
 			<!--- Audios --->
-			<cfinvoke component="audios" method="checkmd5" md5hash="#md5hash#" returnvariable="qryaud" />
+			<cfinvoke component="audios" method="checkmd5" md5hash="#md5hash#" thestruct="#arguments.thestruct#" returnvariable="qryaud" />
 
 			<cfif qryimg.recordcount NEQ 0>
 				<cfset var dataqry = "qryimg">
@@ -144,7 +147,7 @@
 			<cfset var duplist = "">
 			<cfloop query="getdups">
 				<cfset var folders = "">
-				<cfinvoke component="folders" method="getbreadcrumb" folder_id_r="#getdups.folder_id_r#" returnvariable="crumbs" />
+				<cfinvoke component="folders" method="getbreadcrumb" folder_id_r="#getdups.folder_id_r#" thestruct="#arguments.thestruct#" returnvariable="crumbs" />
 				<cfloop list="#crumbs#" delimiters=";" index="i">
 					<cfset folders = folders & "/#ListGetAt(i,1,"|")#">
 				</cfloop>
@@ -204,10 +207,10 @@
 						</cfif>
 					</cfif>
 					<cfif arguments.isbasket EQ 'T'>
-						<cfinvoke component="defaults" method="trans" transid="basket_download_available_message" returnvariable="basket_download_available_msg" />
+						<cfinvoke component="defaults" method="trans" transid="basket_download_available_message" thestruct="#arguments.thestruct#" returnvariable="basket_download_available_msg" />
 						#basket_download_available_msg# <br/>
 						<cfset var sn = replacenocase(cgi.script_name,"/index.cfm","","one")>
-						 <a href='#session.thehttp##cgi.HTTP_HOST##sn#/outgoing/#arguments.attach#'>#session.thehttp##cgi.HTTP_HOST##sn#/outgoing/#arguments.attach#</a>
+						 <a href='#arguments.thestruct.razuna.session.thehttp##cgi.HTTP_HOST##sn#/outgoing/#arguments.attach#'>#arguments.thestruct.razuna.session.thehttp##cgi.HTTP_HOST##sn#/outgoing/#arguments.attach#</a>
 					 </cfif>
 				</cfmail>
 			<cfelse>
@@ -235,10 +238,10 @@
 						</cfif>
 					</cfif>
 					<cfif arguments.isbasket EQ 'T'>
-						<cfinvoke component="defaults" method="trans" transid="basket_download_available_message" returnvariable="basket_download_available_msg" />
+						<cfinvoke component="defaults" method="trans" transid="basket_download_available_message" thestruct="#arguments.thestruct#" returnvariable="basket_download_available_msg" />
 						#basket_download_available_msg# <br/>
 						<cfset var sn = replacenocase(cgi.script_name,"/index.cfm","","one")>
-						 <a href='#session.thehttp##cgi.HTTP_HOST##sn#/outgoing/#arguments.attach#'>#session.thehttp##cgi.HTTP_HOST##sn#/outgoing/#arguments.attach#</a>
+						 <a href='#arguments.thestruct.razuna.session.thehttp##cgi.HTTP_HOST##sn#/outgoing/#arguments.attach#'>#arguments.thestruct.razuna.session.thehttp##cgi.HTTP_HOST##sn#/outgoing/#arguments.attach#</a>
 					 </cfif>
 				</cfmail>
 			</cfif>
@@ -256,8 +259,8 @@
 <cffunction name="sendpassword">
 	<cfargument name="thestruct" type="Struct">
 	<!--- Get translations --->
-	<cfinvoke component="defaults" method="trans" transid="email_pass_subject" returnvariable="thesubject" />
-	<cfinvoke component="defaults" method="trans" transid="email_pass_body" returnvariable="thebody" />
+	<cfinvoke component="defaults" method="trans" transid="email_pass_subject" thestruct="#arguments.thestruct#" returnvariable="thesubject" />
+	<cfinvoke component="defaults" method="trans" transid="email_pass_body" thestruct="#arguments.thestruct#" returnvariable="thebody" />
 	<!--- Replace subject with values --->
 	<cfset thesubject = replacenocase(thesubject,"--url--","#arguments.thestruct.siteurl#","ALL")>
 	<!--- Replace the body tags with values --->
@@ -266,7 +269,7 @@
 	<cfset thebody = replacenocase(thebody,"--newpassword--","kab108zun","ALL")>
 	<cfset thebody = replacenocase(thebody,"--url--","#arguments.thestruct.siteurl#","ALL")>
 	<!--- Send the email --->
-	<cfinvoke method="send_email" to="#arguments.thestruct.qryuser.user_email#" subject="#thesubject#" themessage="#thebody#" />
+	<cfinvoke method="send_email" to="#arguments.thestruct.qryuser.user_email#" subject="#thesubject#" themessage="#thebody#" thestruct="#arguments.thestruct#" />
 </cffunction>
 
 </cfcomponent>

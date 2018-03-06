@@ -25,10 +25,10 @@
 --->
 <cfoutput>
 	<a href="##" onclick="location.href='#self#?v=#createuuid()#';" class="first_time_hoover">
-		<span class="loginform_header">#defaultsObj.trans("header_first_time_done")#</span>
+		<span class="loginform_header">#myFusebox.getApplicationData().defaults.trans("header_first_time_done")#</span>
 		<br>
-		#defaultsObj.trans("header_first_time_done_desc")#
+		#myFusebox.getApplicationData().defaults.trans("header_first_time_done_desc")#
 		<br>
-		<div style="float:right;"><input type="button" name="button" value="#defaultsObj.trans("headerlogin")#"></div>
+		<div style="float:right;"><input type="button" name="button" value="#myFusebox.getApplicationData().defaults.trans("headerlogin")#"></div>
 	</a>
 </cfoutput>

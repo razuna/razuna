@@ -25,9 +25,9 @@
 		<!-- CFC: Get wl -->
 		<if condition="application.razuna.whitelabel">
 			<true>
-				<invoke object="myFusebox.getApplicationData().settings" methodcall="get_options_one_host('wl_login_links_#session.hostid#')" returnvariable="wl" />
-				<invoke object="myFusebox.getApplicationData().settings" methodcall="get_options_one_host('wl_html_title_#session.hostid#')" returnvariable="wl_html_title" />
-				<invoke object="myFusebox.getApplicationData().settings" methodcall="get_options_one_host('wl_thecss_#session.hostid#')" returnvariable="wl_thecss" />
+				<invoke object="myFusebox.getApplicationData().settings" methodcall="get_options_one_host(thestruct=attributes, id='wl_login_links_#session.hostid#')" returnvariable="wl" />
+				<invoke object="myFusebox.getApplicationData().settings" methodcall="get_options_one_host(thestruct=attributes, id='wl_html_title_#session.hostid#')" returnvariable="wl_html_title" />
+				<invoke object="myFusebox.getApplicationData().settings" methodcall="get_options_one_host(thestruct=attributes, id='wl_thecss_#session.hostid#')" returnvariable="wl_thecss" />
   			</true>
   		</if>
   		<include template="lay_login" contentvariable="thecontent" />
@@ -48,26 +48,26 @@
 		<!-- CFC: Get config -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="getconfig('version')" returnvariable="version" />
 		<!-- CFC: Get customization -->
-		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization(thestruct=attributes)" returnvariable="cs" />
 		<!-- CFC: Check approval -->
-		<invoke object="myFusebox.getApplicationData().approval" methodcall="check_enabled('0')" returnvariable="qry_approval" />
-		<invoke object="myFusebox.getApplicationData().approval" methodcall="get_approval_users(true)" returnvariable="qry_approval_users" />
+		<invoke object="myFusebox.getApplicationData().approval" methodcall="check_enabled(thestruct=attributes, folder_id='0')" returnvariable="qry_approval" />
+		<invoke object="myFusebox.getApplicationData().approval" methodcall="get_approval_users(thestruct=attributes, all=true)" returnvariable="qry_approval_users" />
 		<!-- CFC: Get wl -->
 		<if condition="application.razuna.whitelabel">
 			<true>
-				<invoke object="myFusebox.getApplicationData().settings" methodcall="get_options_one_host('wl_razuna_tab_text_#session.hostid#')" returnvariable="wl_text" />
-				<invoke object="myFusebox.getApplicationData().settings" methodcall="get_options_one_host('wl_razuna_tab_content_#session.hostid#')" returnvariable="wl_content" />
-				<invoke object="myFusebox.getApplicationData().settings" methodcall="get_options_one_host('wl_html_title_#session.hostid#')" returnvariable="wl_html_title" />
-				<invoke object="myFusebox.getApplicationData().settings" methodcall="get_options_one_host('wl_feedback_#session.hostid#')" returnvariable="wl_feedback" />
-				<invoke object="myFusebox.getApplicationData().settings" methodcall="get_options_one_host('wl_link_search_#session.hostid#')" returnvariable="wl_link_search" />
-				<invoke object="myFusebox.getApplicationData().settings" methodcall="get_options_one_host('wl_link_support_#session.hostid#')" returnvariable="wl_link_support" />
-				<invoke object="myFusebox.getApplicationData().settings" methodcall="get_options_one_host('wl_link_doc_#session.hostid#')" returnvariable="wl_link_doc" />
-				<invoke object="myFusebox.getApplicationData().settings" methodcall="get_options_one_host('wl_thecss_#session.hostid#')" returnvariable="wl_thecss" />
+				<invoke object="myFusebox.getApplicationData().settings" methodcall="get_options_one_host(thestruct=attributes, id='wl_razuna_tab_text_#session.hostid#')" returnvariable="wl_text" />
+				<invoke object="myFusebox.getApplicationData().settings" methodcall="get_options_one_host(thestruct=attributes, id='wl_razuna_tab_content_#session.hostid#')" returnvariable="wl_content" />
+				<invoke object="myFusebox.getApplicationData().settings" methodcall="get_options_one_host(thestruct=attributes, id='wl_html_title_#session.hostid#')" returnvariable="wl_html_title" />
+				<invoke object="myFusebox.getApplicationData().settings" methodcall="get_options_one_host(thestruct=attributes, id='wl_feedback_#session.hostid#')" returnvariable="wl_feedback" />
+				<invoke object="myFusebox.getApplicationData().settings" methodcall="get_options_one_host(thestruct=attributes, id='wl_link_search_#session.hostid#')" returnvariable="wl_link_search" />
+				<invoke object="myFusebox.getApplicationData().settings" methodcall="get_options_one_host(thestruct=attributes, id='wl_link_support_#session.hostid#')" returnvariable="wl_link_support" />
+				<invoke object="myFusebox.getApplicationData().settings" methodcall="get_options_one_host(thestruct=attributes, id='wl_link_doc_#session.hostid#')" returnvariable="wl_link_doc" />
+				<invoke object="myFusebox.getApplicationData().settings" methodcall="get_options_one_host(thestruct=attributes, id='wl_thecss_#session.hostid#')" returnvariable="wl_thecss" />
   			</true>
   		</if>
   		<if condition="cs.search_selection">
   			<true>
-  				<invoke object="myFusebox.getApplicationData().folders" methodcall="getInSearchSelection()" returnvariable="qry_searchselection" />
+  				<invoke object="myFusebox.getApplicationData().folders" methodcall="getInSearchSelection(thestruct=attributes)" returnvariable="qry_searchselection" />
   			</true>
   		</if>
 		<include template="lay_header" contentvariable="headercontent" />
@@ -98,9 +98,9 @@
 		<!-- CFC: Get wl -->
 		<if condition="application.razuna.whitelabel">
 			<true>
-				<invoke object="myFusebox.getApplicationData().settings" methodcall="get_options_one_host('wl_login_links_#session.hostid#')" returnvariable="wl" />
-				<invoke object="myFusebox.getApplicationData().settings" methodcall="get_options_one_host('wl_html_title_#session.hostid#')" returnvariable="wl_html_title" />
-				<invoke object="myFusebox.getApplicationData().settings" methodcall="get_options_one_host('wl_thecss_#session.hostid#')" returnvariable="wl_thecss" />
+				<invoke object="myFusebox.getApplicationData().settings" methodcall="get_options_one_host(thestruct=attributes, id='wl_login_links_#session.hostid#')" returnvariable="wl" />
+				<invoke object="myFusebox.getApplicationData().settings" methodcall="get_options_one_host(thestruct=attributes, id='wl_html_title_#session.hostid#')" returnvariable="wl_html_title" />
+				<invoke object="myFusebox.getApplicationData().settings" methodcall="get_options_one_host(thestruct=attributes, id='wl_thecss_#session.hostid#')" returnvariable="wl_thecss" />
   			</true>
   		</if>
 		<include template="lay_header_share" contentvariable="headercontent" />

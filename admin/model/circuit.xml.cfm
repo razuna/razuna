@@ -5,13 +5,13 @@
 -->
 <circuit access="internal">
 
-	<!--
-		Example model fuseaction that just references an action fuse.
-		Model fuseactions should only reference actions and queries.
-
-	<fuseaction name="getTime">
-		<include template="act_get_time" />
-	</fuseaction>-->
+	<fuseaction name="preprocess">
+		<set name="attributes.razuna" value="#structnew()#" />
+		<set name="attributes.razuna.application" value="#application.razuna#" />
+		<set name="attributes.razuna.session" value="#session#" />
+		<!-- <set name="request.razuna" value="#attributes#" />
+		<include template="t" /> -->
+	</fuseaction>
 
 	<!--
 		This is executed at application startup (from <appinit>) and
@@ -19,58 +19,29 @@
 	-->
 	<fuseaction name="initialize">
 		<!-- Instantiate CFC's' -->
-		<instantiate class="login" object="myFusebox.getApplicationData().Login" arguments="application.razuna.datasource, application.razuna.thedatabase" overwrite="true" />
-		<instantiate class="groups" object="myFusebox.getApplicationData().Groups" arguments="application.razuna.datasource, application.razuna.thedatabase" overwrite="true" />
-		<instantiate class="groups_users" object="myFusebox.getApplicationData().Groups_Users" arguments="application.razuna.datasource, application.razuna.thedatabase" overwrite="true" />
-		<instantiate class="users" object="myFusebox.getApplicationData().Users" arguments="application.razuna.datasource, application.razuna.thedatabase" overwrite="true" />
-		<instantiate class="modules" object="myFusebox.getApplicationData().Modules" arguments="application.razuna.datasource, application.razuna.thedatabase" overwrite="true" />
-		<instantiate class="global" object="myFusebox.getApplicationData().Global" arguments="application.razuna.datasource, application.razuna.thedatabase" overwrite="true" />
-		<instantiate class="hosts" object="myFusebox.getApplicationData().Hosts" arguments="application.razuna.datasource, application.razuna.thedatabase" overwrite="true" />
+		<instantiate class="login" object="myFusebox.getApplicationData().Login" overwrite="true" />
+		<instantiate class="groups" object="myFusebox.getApplicationData().Groups" overwrite="true" />
+		<instantiate class="groups_users" object="myFusebox.getApplicationData().Groups_Users" overwrite="true" />
+		<instantiate class="users" object="myFusebox.getApplicationData().Users" overwrite="true" />
+		<instantiate class="modules" object="myFusebox.getApplicationData().Modules" overwrite="true" />
+		<instantiate class="global" object="myFusebox.getApplicationData().Global" overwrite="true" />
+		<instantiate class="hosts" object="myFusebox.getApplicationData().Hosts" overwrite="true" />
 		<!-- Settings -->
-		<instantiate class="settings" object="myFusebox.getApplicationData().Settings" overwrite="true">
-			<argument name="dsn" value="#application.razuna.datasource#" />
-			<argument name="database" value="#application.razuna.thedatabase#" />
-			<argument name="setid" value="#application.razuna.setid#" />
-		</instantiate>
+		<instantiate class="settings" object="myFusebox.getApplicationData().Settings" overwrite="true" />
 		<!-- folders -->
-		<instantiate class="folders" object="myFusebox.getApplicationData().Folders" overwrite="true">
-			<argument name="dsn" value="#application.razuna.datasource#" />
-			<argument name="database" value="#application.razuna.thedatabase#" />
-		</instantiate>
-		<!-- end : folder files -->
-		<!-- RSS -->
-		<instantiate class="rssparser" object="myFusebox.getApplicationData().rssparser" arguments="" overwrite="true" />
+		<instantiate class="folders" object="myFusebox.getApplicationData().Folders" overwrite="true" />
 		<!-- update -->
-		<instantiate class="update" object="myFusebox.getApplicationData().update" overwrite="true">
-			<argument name="dsn" value="#application.razuna.datasource#" />
-			<argument name="database" value="#application.razuna.thedatabase#" />
-		</instantiate>
-		<!-- Nirvanix -->
-		<!-- <instantiate class="nirvanix" object="myFusebox.getApplicationData().nirvanix" overwrite="true">
-			<argument name="appkey" value="#application.razuna.nvxappkey#" />
-		</instantiate> -->
+		<instantiate class="update" object="myFusebox.getApplicationData().update" overwrite="true" />
 		<!-- Amazon -->
-		<instantiate class="amazon" object="myFusebox.getApplicationData().amazon" overwrite="true">
-		</instantiate>
+		<instantiate class="amazon" object="myFusebox.getApplicationData().amazon" overwrite="true" />
 		<!-- Defaults -->
-		<instantiate class="defaults" object="myFusebox.getApplicationData().defaults" overwrite="true">
-			<argument name="dsn" value="#application.razuna.datasource#" />
-		</instantiate>
+		<instantiate class="defaults" object="myFusebox.getApplicationData().defaults" overwrite="true" />
 		<!-- Maintenance -->
-		<instantiate class="backuprestore" object="myFusebox.getApplicationData().backuprestore" overwrite="true">
-			<argument name="dsn" value="#application.razuna.datasource#" />
-			<argument name="database" value="#application.razuna.thedatabase#" />
-		</instantiate>
+		<instantiate class="backuprestore" object="myFusebox.getApplicationData().backuprestore" overwrite="true" />
 		<!-- RFS -->
-		<instantiate class="rfs" object="myFusebox.getApplicationData().rfs" overwrite="true">
-			<argument name="dsn" value="#application.razuna.datasource#" />
-			<argument name="database" value="#application.razuna.thedatabase#" />
-		</instantiate>
+		<instantiate class="rfs" object="myFusebox.getApplicationData().rfs" overwrite="true" />
 		<!-- Plugins -->
-		<instantiate class="plugins" object="myFusebox.getApplicationData().plugins" overwrite="true">
-			<argument name="dsn" value="#application.razuna.datasource#" />
-			<argument name="database" value="#application.razuna.thedatabase#" />
-		</instantiate>
+		<instantiate class="plugins" object="myFusebox.getApplicationData().plugins" overwrite="true" />
 		<!-- ResourceManager -->
 		<instantiate class="resourcemanager" object="application.razuna.trans" overwrite="true">
 			<argument name="resourcePackagePath" value="translations" />
@@ -78,16 +49,9 @@
 			<argument name="admin" value="admin" />
 		</instantiate>
 		<!-- Scheduler -->
-		<instantiate class="scheduler" object="myFusebox.getApplicationData().scheduler" overwrite="true">
-			<argument name="dsn" value="#application.razuna.datasource#" />
-			<argument name="database" value="#application.razuna.thedatabase#" />
-			<argument name="setid" value="#application.razuna.setid#" />
-		</instantiate>
+		<instantiate class="scheduler" object="myFusebox.getApplicationData().scheduler" overwrite="true" />
 		<!-- Lucene -->
-		<instantiate class="lucene" object="myFusebox.getApplicationData().lucene" overwrite="true">
-			<argument name="dsn" value="#application.razuna.datasource#" />
-			<argument name="database" value="#application.razuna.thedatabase#" />
-		</instantiate>
+		<instantiate class="lucene" object="myFusebox.getApplicationData().lucene" overwrite="true" />
 	</fuseaction>
 
 </circuit>

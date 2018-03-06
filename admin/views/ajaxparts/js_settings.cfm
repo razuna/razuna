@@ -9,7 +9,7 @@ function loadpref(){
         plain:true,
         defaults:{autoHeight: true, autoWidth: true},
         items:[{
-				title: '<cfoutput>#defaultsObj.trans("installation_checklist")#</cfoutput>',
+				title: '<cfoutput>#myFusebox.getApplicationData().defaults.trans("installation_checklist")#</cfoutput>',
             	autoLoad: {url: '<cfoutput>#myself#</cfoutput>ajax.mainsysteminfo'}
 				},{
 				title: 'System Information',

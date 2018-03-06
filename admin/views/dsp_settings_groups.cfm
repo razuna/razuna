@@ -34,11 +34,11 @@
 <cfoutput>
 <table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 <tr>
-	<th colspan="2">#gobj.trans("head_newgroup")#</th>
+	<th colspan="2">#myFusebox.getApplicationData().defaults.trans("head_newgroup")#</th>
 </tr>
 <tr>
 	<td width="100%"><input type="text" name="newgroup" id="newgroup" size="30"></td>
-	<td width="1%" nowrap="true"><input type="button" name="but" value="#gobj.trans("but_add")#" onclick="Javascript:ColdFusion.navigate('#myself##xfa.submitform#&newgroup='+ encodeURI(document.getElementById('newgroup').value), 'listgroups')" class="button"></td>
+	<td width="1%" nowrap="true"><input type="button" name="but" value="#myFusebox.getApplicationData().defaults.trans("but_add")#" onclick="Javascript:ColdFusion.navigate('#myself##xfa.submitform#&newgroup='+ encodeURI(document.getElementById('newgroup').value), 'listgroups')" class="button"></td>
 </tr>
 </table>
 </cfoutput>

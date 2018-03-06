@@ -27,23 +27,23 @@
 	<table width="700" border="0" cellspacing="0" cellpadding="0" class="grid">
 		<!--- Tools header --->
 		<tr>
-			<th class="textbold" colspan="2">Tools #defaultsObj.trans("settings")#</th>
+			<th class="textbold" colspan="2">Tools #myFusebox.getApplicationData().defaults.trans("settings")#</th>
 		</tr>
 		<tr>
-			<td colspan="2">#defaultsObj.trans("tools_desc")#</td>
+			<td colspan="2">#myFusebox.getApplicationData().defaults.trans("tools_desc")#</td>
 		</tr>
 		<tr>
 			<td class="list" colspan="2"></td>
 		</tr>
 		<!--- ImageMagick --->
 		<tr>
-			<th class="textbold" colspan="3">#defaultsObj.trans("header_imagemagick")#</th>
+			<th class="textbold" colspan="3">#myFusebox.getApplicationData().defaults.trans("header_imagemagick")#</th>
 		</tr>
 		<tr>
-			<td colspan="2">#defaultsObj.trans("header_imagemagick_desc")#</td>
+			<td colspan="2">#myFusebox.getApplicationData().defaults.trans("header_imagemagick_desc")#</td>
 		</tr>
 		<tr>
-			<td>#defaultsObj.trans("imagemagick_path")#</td>
+			<td>#myFusebox.getApplicationData().defaults.trans("imagemagick_path")#</td>
 			<td><input type="text" name="imagemagick" id="imagemagick" value="#thetools.imagemagick#" size="60" class="text" onkeyup="checkpath('imagemagick');">
 			<div id="checkimagemagick" style="display:none;"></div></td>
 		</tr>
@@ -52,13 +52,13 @@
 		</tr>
 		<!--- FFmpeg Paths --->
 		<tr>
-			<th class="textbold" colspan="2">#defaultsObj.trans("header_ffmpeg")#</th>
+			<th class="textbold" colspan="2">#myFusebox.getApplicationData().defaults.trans("header_ffmpeg")#</th>
 		</tr>
 		<tr>
-			<td colspan="2">#defaultsObj.trans("header_ffmpeg_desc")#</td>
+			<td colspan="2">#myFusebox.getApplicationData().defaults.trans("header_ffmpeg_desc")#</td>
 		</tr>
 		<tr>
-			<td nowrap="true">#defaultsObj.trans("header_ffmpeg")#</td>
+			<td nowrap="true">#myFusebox.getApplicationData().defaults.trans("header_ffmpeg")#</td>
 			<td><input type="text" name="ffmpeg" id="ffmpeg" value="#thetools.ffmpeg#" size="60" class="text" onkeyup="checkpath('ffmpeg');">
 			<div id="checkffmpeg" style="display:none;"></div></td>
 		</tr>
@@ -67,13 +67,13 @@
 		</tr>
 		<!--- Exiftool Path --->
 		<tr>
-			<th class="textbold" colspan="2">#defaultsObj.trans("header_exiftool")#</th>
+			<th class="textbold" colspan="2">#myFusebox.getApplicationData().defaults.trans("header_exiftool")#</th>
 		</tr>
 		<tr>
-			<td colspan="2">#defaultsObj.trans("header_exiftool_desc")#</td>
+			<td colspan="2">#myFusebox.getApplicationData().defaults.trans("header_exiftool_desc")#</td>
 		</tr>
 		<tr>
-			<td>#defaultsObj.trans("exiftool_path")#</td>
+			<td>#myFusebox.getApplicationData().defaults.trans("exiftool_path")#</td>
 			<td><input type="text" name="exiftool" id="exiftool" value="#thetools.exiftool#" size="60" class="text" onkeyup="checkpath('exiftool');">
 			<div id="checkexiftool" style="display:none;"></div></td>
 		</tr>
@@ -82,13 +82,13 @@
 		</tr>
 		<!--- DCRAW Paths --->
 		<tr>
-			<th class="textbold" colspan="2">#defaultsObj.trans("header_dcraw")# (#defaultsObj.trans("optional")#)</th>
+			<th class="textbold" colspan="2">#myFusebox.getApplicationData().defaults.trans("header_dcraw")# (#myFusebox.getApplicationData().defaults.trans("optional")#)</th>
 		</tr>
 		<tr>
-			<td colspan="2">#defaultsObj.trans("header_dcraw_desc")#</td>
+			<td colspan="2">#myFusebox.getApplicationData().defaults.trans("header_dcraw_desc")#</td>
 		</tr>
 		<tr>
-			<td nowrap="true">#defaultsObj.trans("header_dcraw")#</td>
+			<td nowrap="true">#myFusebox.getApplicationData().defaults.trans("header_dcraw")#</td>
 			<td><input type="text" name="dcraw" id="dcraw" value="#thetools.dcraw#" size="60" class="text" onkeyup="checkpath('dcraw');">
 			<div id="checkdcraw" style="display:none;"></div></td>
 		</tr>
@@ -97,13 +97,13 @@
 		</tr>
 		<!--- MP4Box Paths --->
 		<tr>
-			<th class="textbold" colspan="2">#defaultsObj.trans("header_mp4box")# (#defaultsObj.trans("optional")#)</th>
+			<th class="textbold" colspan="2">#myFusebox.getApplicationData().defaults.trans("header_mp4box")# (#myFusebox.getApplicationData().defaults.trans("optional")#)</th>
 		</tr>
 		<tr>
-			<td colspan="2">#defaultsObj.trans("header_mp4box_desc")#</td>
+			<td colspan="2">#myFusebox.getApplicationData().defaults.trans("header_mp4box_desc")#</td>
 		</tr>
 		<tr>
-			<td nowrap="true">#defaultsObj.trans("header_mp4box")#</td>
+			<td nowrap="true">#myFusebox.getApplicationData().defaults.trans("header_mp4box")#</td>
 			<td><input type="text" name="mp4box" id="MP4Box" value="#thetools.mp4box#" size="60" class="text" onkeyup="checkpath('MP4Box');">
 			<div id="checkMP4Box" style="display:none;"></div></td>
 		</tr>
@@ -111,19 +111,19 @@
 			<td class="list" colspan="2"></td>
 		</tr>
 		<tr>
-			<th class="textbold" colspan="2">#defaultsObj.trans("header_ghostscript")#</th>
+			<th class="textbold" colspan="2">#myFusebox.getApplicationData().defaults.trans("header_ghostscript")#</th>
 		</tr>
 		<tr>
-			<td colspan="2">#defaultsObj.trans("header_ghostscript_desc")#</td>
+			<td colspan="2">#myFusebox.getApplicationData().defaults.trans("header_ghostscript_desc")#</td>
 		</tr>
 		<tr>
-			<td>#defaultsObj.trans("header_ghostscript")# (#defaultsObj.trans("optional")#)</td>
+			<td>#myFusebox.getApplicationData().defaults.trans("header_ghostscript")# (#myFusebox.getApplicationData().defaults.trans("optional")#)</td>
 			<td><input type="text" name="ghostscript" id="ghostscript" value="#thetools.ghostscript#" size="60" class="text" onkeyup="checkpath('ghostscript');">
 			<div id="checkghostscript" style="display:none;"></div></td>
 		</tr>
 	</table>
 	<div style="text-align:right;padding-top:5px;padding-bottom:10px;float:right;">
-		<input type="submit" name="save" value="#defaultsObj.trans("save")#" class="button" /> 
+		<input type="submit" name="save" value="#myFusebox.getApplicationData().defaults.trans("save")#" class="button" /> 
 	</div>
 	<div style="clear:both;"></div>
 </cfoutput>

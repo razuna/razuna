@@ -26,8 +26,8 @@
 <cfoutput>
 	<div id="transtab" class="TabbedPanels">
 		<ul class="TabbedPanelsTabGroup">
-			<li class="TabbedPanelsTab">#defaultsObj.trans("translations_search")#</li>
-			<li class="TabbedPanelsTab" onclick="showwindow('#myself#ajax.translations_add','#defaultsObj.trans("translations_new")#',600,1);">#defaultsObj.trans("translations_new")#</li>
+			<li class="TabbedPanelsTab">#myFusebox.getApplicationData().defaults.trans("translations_search")#</li>
+			<li class="TabbedPanelsTab" onclick="showwindow('#myself#ajax.translations_add','#myFusebox.getApplicationData().defaults.trans("translations_new")#',600,1);">#myFusebox.getApplicationData().defaults.trans("translations_new")#</li>
 		</ul>
 		<div class="TabbedPanelsContentGroup">
 			<!--- Search Translations --->
@@ -39,12 +39,12 @@
 				<td colspan="2"><input type="text" name="trans_id" id="trans_id" class="text" size="40"></td>
 				</tr>
 				<tr>
-				<td valign="top">#defaultsObj.trans("translation")#</td>
+				<td valign="top">#myFusebox.getApplicationData().defaults.trans("translation")#</td>
 				<td colspan="2"><textarea rows="4" cols="60" class="text" name="trans_text" id="trans_text"></textarea></td>
 				</tr>
 				<tr>
 				<td></td>
-				<td colspan="2"><input type="button" name="Button" value="#defaultsObj.trans("user_search")#" class="button" onclick="javascript:transsearch();"></td>
+				<td colspan="2"><input type="button" name="Button" value="#myFusebox.getApplicationData().defaults.trans("user_search")#" class="button" onclick="javascript:transsearch();"></td>
 				</tr>
 				</table>
 				</form>

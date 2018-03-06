@@ -161,7 +161,7 @@
 						<cfset querysetcell(thexml, "type", x.type)>
 						<cfset querysetcell(thexml, "status", true)>
 						<cfcatch>
-							<cfset consoleoutput(true)>
+							<cfset consoleoutput(true, true)>
 							<cfset console(cfcatch)>
 							<!--- Add our own tags to the query --->
 							<cfset thexml = querynew("filename, type, status")>
@@ -223,7 +223,7 @@
 						<cfset querysetcell(thexml, "type", x.type)>
 						<cfset querysetcell(thexml, "status", true)>
 						<cfcatch>
-							<cfset consoleoutput(true)>
+							<cfset consoleoutput(true, true)>
 							<cfset console(cfcatch)>
 							<!--- Add our own tags to the query --->
 							<cfset thexml = querynew("asset_id, type, status")>

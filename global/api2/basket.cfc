@@ -283,7 +283,7 @@
 				<!--- Get file from storage --->
 			 <cfinvoke method="getFromStorage" api_key="#arguments.api_key#" pathtoasset="#qry.path_to_asset#" filenameorg="#qry.filenameorg#" filename="#qry.filename#" tmpdir="#arguments.tmpdir#" linkkind="#qry.link_kind#" linkpathurl="#qry.link_path_url#" />
 			 	<cfcatch type="any">
-			 		<cfset consoleoutput(true)>
+			 		<cfset consoleoutput(true, true)>
 					<cfset console(cfcatch)>
 				</cfcatch>
 			</cftry>
@@ -314,7 +314,7 @@
 				<!--- Get file from storage --->
 			 <cfinvoke method="getFromStorage" api_key="#arguments.api_key#" pathtoasset="#qry.path_to_asset#" filenameorg="#qry.filenameorg#" filename="#qry.filename#" tmpdir="#arguments.tmpdir#" linkkind="#qry.link_kind#" linkpathurl="#qry.link_path_url#" />
 			 	<cfcatch type="any">
-			 		<cfset consoleoutput(true)>
+			 		<cfset consoleoutput(true, true)>
 					<cfset console(cfcatch)>
 				</cfcatch>
 			</cftry>
@@ -344,7 +344,7 @@
 				<!--- Get file from storage --->
 			 <cfinvoke method="getFromStorage" api_key="#arguments.api_key#" pathtoasset="#qry.path_to_asset#" filenameorg="#qry.filenameorg#" filename="#qry.filename#" tmpdir="#arguments.tmpdir#" linkkind="#qry.link_kind#" linkpathurl="#qry.link_path_url#" />
 			 	<cfcatch type="any">
-			 		<cfset consoleoutput(true)>
+			 		<cfset consoleoutput(true, true)>
 					<cfset console(cfcatch)>
 				</cfcatch>
 			</cftry>
@@ -382,7 +382,7 @@
 				<!--- Get file from storage --->
 			 <cfinvoke method="getFromStorage" api_key="#arguments.api_key#" pathtoasset="#qry.path_to_asset#" filenameorg="#qry.filenameorg#" filename="#qry.filename#" tmpdir="#arguments.tmpdir#" linkkind="#qry.link_kind#" linkpathurl="#qry.link_path_url#" />
 			 	<cfcatch type="any">
-			 		<cfset consoleoutput(true)>
+			 		<cfset consoleoutput(true, true)>
 					<cfset console(cfcatch)>
 				</cfcatch>
 			</cftry>

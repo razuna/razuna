@@ -26,7 +26,7 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" >
 <head>
-<title>Roozani Information Manager</title>
+<title>Razuna</title>
 <meta http-equiv="content-type" content="text/html;charset=utf-8" />
 <!--- <cfheader name="Expires" value="#GetHttpTimeString(Now())#">
 <cfheader name="CACHE-CONTROL" value="NO-CACHE, no-store, must-revalidate">

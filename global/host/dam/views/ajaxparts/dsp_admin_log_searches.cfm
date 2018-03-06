@@ -38,7 +38,7 @@
 		<!--- Loop over all scheduled log entries in database table --->
 		<cfloop query="qry_log">
 			<tr class="list">
-				<td nowrap="true">#dateformat(log_date, "#myFusebox.getApplicationData().defaults.getdateformat()#")#</td>
+				<td nowrap="true">#dateformat(log_date, "#myFusebox.getApplicationData().defaults.getdateformat(thestruct=attributes)#")#</td>
 				<td nowrap="true">#TimeFormat(log_timestamp, 'HH:mm:ss')#</td>
 				<td>#log_search_for#</td>
 				<td nowrap="true" align="center">#log_founditems#</td>

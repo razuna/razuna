@@ -1,8 +1,33 @@
+<!---
+*
+* Copyright (C) 2005-2008 Razuna
+*
+* This file is part of Razuna - Enterprise Digital Asset Management.
+*
+* Razuna is free software: you can redistribute it and/or modify
+* it under the terms of the GNU Affero Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+*
+* Razuna is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU Affero Public License for more details.
+*
+* You should have received a copy of the GNU Affero Public License
+* along with Razuna. If not, see <http://www.gnu.org/licenses/>.
+*
+* You may restribute this Program with a special exception to the terms
+* and conditions of version 3.0 of the AGPL as described in Razuna's
+* FLOSS exception. You should have received a copy of the FLOSS exception
+* along with Razuna. If not, see <http://www.razuna.com/licenses/>.
+*
+--->
 <cfabort>
 
 <cftry>
 
-	<cfset consoleoutput(true)>
+	<cfset consoleoutput(true, true)>
 	<cfset console("#now()# --- Executing cron job to clean up S3")>
 
 	<!--- Path --->
@@ -12,7 +37,7 @@
 
 	<!--- Get database --->
 	<cfquery datasource="razuna_default" name="_config">
-	SELECT conf_datasource, conf_database, conf_datasource, conf_storage, conf_aws_access_key, conf_aws_secret_access_key, conf_aws_location, conf_aws_tenant_in_one_bucket_name, conf_aws_tenant_in_one_bucket_enable
+	SELECT conf_datasource, conf_database, conf_storage, conf_aws_access_key, conf_aws_secret_access_key, conf_aws_location, conf_aws_tenant_in_one_bucket_name, conf_aws_tenant_in_one_bucket_enable
 	FROM razuna_config
 	</cfquery>
 
@@ -115,7 +140,7 @@
 		<cfargument name="config" type="query">
 		<!--- Call Amazon function to list all files --->
 		<cfinvoke component="global.cfc.amazon" method="listFiles" host_id="#arguments.host_id#" awsbucket="#host_settings.set2_aws_bucket#" from_cron="true" tenant_enable="#_config.conf_aws_tenant_in_one_bucket_enable#" tenant_bucket="#_config.conf_aws_tenant_in_one_bucket_name#" config="#arguments.config#" one="true" returnvariable="awsFiles" />
-		<cfset consoleoutput(true)>
+		<cfset consoleoutput(true, true)>
 		<!--- <cfset console(awsFiles)> --->
 		<!--- Loop over array --->
 		<cfloop from="1" to="#ArrayLen(awsFiles)#" index="key">
@@ -138,7 +163,7 @@
 		<cfargument name="prefix" type="string">
 		<cfargument name="host_id" type="numeric">
 		<cfargument name="host_settings" type="query">
-		<cfset consoleoutput(true)>
+		<cfset consoleoutput(true, true)>
 		<cfset console(arguments.file_qry)>
 		<cfabort>
 	</cffunction>

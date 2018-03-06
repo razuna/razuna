@@ -237,11 +237,11 @@
 							</tr>
 							<tr>
 								<td width="1%" nowrap="true">#myFusebox.getApplicationData().defaults.trans("date_created")#</td>
-								<td width="1%" nowrap="true">#dateformat(qry_detail.detail.aud_create_time, "#myFusebox.getApplicationData().defaults.getdateformat()#")#</td>
+								<td width="1%" nowrap="true">#dateformat(qry_detail.detail.aud_create_time, "#myFusebox.getApplicationData().defaults.getdateformat(thestruct=attributes)#")#</td>
 							</tr>
 							<tr>
 								<td width="1%" nowrap="true" valign="top">#myFusebox.getApplicationData().defaults.trans("date_changed")#</td>
-								<td width="1%" nowrap="true" valign="top">#dateformat(qry_detail.detail.aud_change_time, "#myFusebox.getApplicationData().defaults.getdateformat()#")#</td>
+								<td width="1%" nowrap="true" valign="top">#dateformat(qry_detail.detail.aud_change_time, "#myFusebox.getApplicationData().defaults.getdateformat(thestruct=attributes)#")#</td>
 							</tr>
 							<tr>
 								<td width="1%" nowrap="true" valign="top">#myFusebox.getApplicationData().defaults.trans("located_in")#</td>

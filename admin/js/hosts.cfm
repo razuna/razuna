@@ -35,7 +35,7 @@
 		    return true;
 		}
 		if (isValid(thefield,valid) == false) {
-			alert('<cfoutput>#defaultsObj.trans("no_space_umlauts")#</cfoutput>');
+			alert('<cfoutput>#myFusebox.getApplicationData().defaults.trans("no_space_umlauts")#</cfoutput>');
 			document.thehost.host_path.focus();
 			return false;
 			}

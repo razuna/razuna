@@ -25,9 +25,6 @@
 --->
 <cfcomponent output="false" extends="extQueryCaching">
 
-<!--- Get the cachetoken for here --->
-<cfset variables.cachetoken = getcachetoken("general")>
-
 <!--- PUT FILE OR FOLDER INTO FAVORITES --->
 <cffunction name="tofavorites" output="false">
 	<cfargument name="thestruct" type="struct">
@@ -41,22 +38,22 @@
 			<cfset favkind = arguments.thestruct.favkind>
 		</cfif>
 		<!--- Add the favorites to the user table but first check that the same one does not exist --->
-		<cfquery datasource="#variables.dsn#" name="here">
+		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="here">
 		SELECT fav_id
-		FROM #session.hostdbprefix#users_favorites
+		FROM #arguments.thestruct.razuna.session.hostdbprefix#users_favorites
 		WHERE fav_id = <cfqueryparam value="#favid#" cfsqltype="CF_SQL_VARCHAR">
-		AND user_id_r = <cfqueryparam value="#session.theuserid#" cfsqltype="CF_SQL_VARCHAR">
+		AND user_id_r = <cfqueryparam value="#arguments.thestruct.razuna.session.theuserid#" cfsqltype="CF_SQL_VARCHAR">
 		AND fav_kind = <cfqueryparam value="#favkind#" cfsqltype="cf_sql_varchar">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 		</cfquery>
 		<!--- no record found insert the fav id --->
 		<cfif here.recordcount EQ 0>
 			<!--- get the highest order and add one --->
-			<cfquery datasource="#variables.dsn#" name="theorder">
+			<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="theorder">
 			SELECT max(fav_order) as fav_order 
-			FROM #session.hostdbprefix#users_favorites
-			WHERE user_id_r = <cfqueryparam value="#session.theuserid#" cfsqltype="CF_SQL_VARCHAR">
-			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			FROM #arguments.thestruct.razuna.session.hostdbprefix#users_favorites
+			WHERE user_id_r = <cfqueryparam value="#arguments.thestruct.razuna.session.theuserid#" cfsqltype="CF_SQL_VARCHAR">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 			</cfquery>
 			<cfif theorder.fav_order EQ "">
 				<cfset var neworder = 1>
@@ -64,31 +61,34 @@
 				<cfset var neworder = theorder.fav_order + 1>
 			</cfif>
 			<!--- do the insert --->
-			<cfquery datasource="#variables.dsn#">
-			INSERT INTO #session.hostdbprefix#users_favorites
+			<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
+			INSERT INTO #arguments.thestruct.razuna.session.hostdbprefix#users_favorites
 			(user_id_r, fav_type, fav_id, fav_kind, fav_order, host_id, rec_uuid)
 			VALUES(
-			<cfqueryparam value="#session.theuserid#" cfsqltype="CF_SQL_VARCHAR">,
+			<cfqueryparam value="#arguments.thestruct.razuna.session.theuserid#" cfsqltype="CF_SQL_VARCHAR">,
 			<cfqueryparam value="#arguments.thestruct.favtype#" cfsqltype="cf_sql_varchar">,
 			<cfqueryparam value="#favid#" cfsqltype="CF_SQL_VARCHAR">,
 			<cfqueryparam value="#favkind#" cfsqltype="cf_sql_varchar">,
 			<cfqueryparam value="#neworder#" cfsqltype="cf_sql_numeric">,
-			<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+			<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">,
 			<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 			)
 			</cfquery>
 		</cfif>
 	</cfloop>
 	<!--- Flush Cache --->
-	<cfset variables.cachetoken = resetcachetoken("general")>
+	<cfset resetcachetoken(type="general", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 	<cfreturn />
 </cffunction>
 
 <!--- LIST FAVORITES FOR THIS USER --->
 <cffunction name="readfavorites" output="false">
+	<cfargument name="thestruct" type="struct" required="true" />
+	<!--- Get the cachetoken for here --->
+	<cfset var cachetoken = getcachetoken(type="general", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 	<!--- select the favorites --->
-	<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetoken#readfavorites */ f.fav_id cart_product_id, f.fav_type, f.fav_kind, f.fav_order,
+	<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qry" cachedwithin="1" region="razcache">
+	SELECT /* #cachetoken#readfavorites */ f.fav_id cart_product_id, f.fav_type, f.fav_kind, f.fav_order,
 		CASE
 			WHEN f.fav_type = 'file'
 				THEN
@@ -96,38 +96,38 @@
 						WHEN f.fav_kind = 'doc' 
 							THEN (
 								SELECT file_name 
-								FROM #session.hostdbprefix#files 
+								FROM #arguments.thestruct.razuna.session.hostdbprefix#files 
 								WHERE file_id = f.fav_id
-								AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+								AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 								)
 						WHEN f.fav_kind = 'img'
 							THEN (
 								SELECT img_filename 
-								FROM #session.hostdbprefix#images 
+								FROM #arguments.thestruct.razuna.session.hostdbprefix#images 
 								WHERE img_id = f.fav_id
-								AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+								AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 								)
 						WHEN f.fav_kind = 'vid'
 							THEN (
 								SELECT vid_filename 
-								FROM #session.hostdbprefix#videos 
+								FROM #arguments.thestruct.razuna.session.hostdbprefix#videos 
 								WHERE vid_id = f.fav_id
-								AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+								AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 								)
 						WHEN f.fav_kind = 'aud'
 							THEN (
 								SELECT aud_name 
-								FROM #session.hostdbprefix#audios 
+								FROM #arguments.thestruct.razuna.session.hostdbprefix#audios 
 								WHERE aud_id = f.fav_id
-								AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+								AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 								)
 					END
 			WHEN f.fav_type = 'folder'
 				THEN (
 						SELECT folder_name
-						FROM #session.hostdbprefix#folders
+						FROM #arguments.thestruct.razuna.session.hostdbprefix#folders
 						WHERE folder_id = f.fav_id
-						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 					)
 		END as thename,
 		CASE
@@ -137,30 +137,30 @@
 						WHEN f.fav_kind = 'doc' 
 							THEN (
 								SELECT folder_id_r 
-								FROM #session.hostdbprefix#files 
+								FROM #arguments.thestruct.razuna.session.hostdbprefix#files 
 								WHERE file_id = f.fav_id
-								AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+								AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 								)
 						WHEN f.fav_kind = 'img'
 							THEN (
 								SELECT folder_id_r 
-								FROM #session.hostdbprefix#images 
+								FROM #arguments.thestruct.razuna.session.hostdbprefix#images 
 								WHERE img_id = f.fav_id
-								AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+								AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 								)
 						WHEN f.fav_kind = 'vid'
 							THEN (
 								SELECT folder_id_r 
-								FROM #session.hostdbprefix#videos 
+								FROM #arguments.thestruct.razuna.session.hostdbprefix#videos 
 								WHERE vid_id = f.fav_id
-								AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+								AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 								)
 						WHEN f.fav_kind = 'aud'
 							THEN (
 								SELECT folder_id_r 
-								FROM #session.hostdbprefix#audios 
+								FROM #arguments.thestruct.razuna.session.hostdbprefix#audios 
 								WHERE aud_id = f.fav_id
-								AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+								AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 								)
 					END
 			ELSE '0'
@@ -169,21 +169,21 @@
 			WHEN f.fav_kind = 'doc' 
 				THEN (
 					SELECT file_extension
-					FROM #session.hostdbprefix#files 
+					FROM #arguments.thestruct.razuna.session.hostdbprefix#files 
 					WHERE file_id = f.fav_id
-					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 					)
 			WHEN f.fav_kind = 'aud' 
 				THEN (
 					SELECT aud_extension
-					FROM #session.hostdbprefix#audios 
+					FROM #arguments.thestruct.razuna.session.hostdbprefix#audios 
 					WHERE aud_id = f.fav_id
-					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 					)
 		END as theextension
-	FROM #session.hostdbprefix#users_favorites f
-	WHERE f.user_id_r = <cfqueryparam value="#session.theuserid#" cfsqltype="CF_SQL_VARCHAR">
-	AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	FROM #arguments.thestruct.razuna.session.hostdbprefix#users_favorites f
+	WHERE f.user_id_r = <cfqueryparam value="#arguments.thestruct.razuna.session.theuserid#" cfsqltype="CF_SQL_VARCHAR">
+	AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 	ORDER BY f.fav_type DESC
 	</cfquery>
 	<cfreturn qry>
@@ -192,15 +192,16 @@
 <!--- REMOVE FAVORITE --->
 <cffunction name="removeitem" output="false">
 	<cfargument name="favid" default="" required="yes" type="string">
+	<cfargument name="thestruct" type="struct" required="true" />
 	<!--- Remove --->
-	<cfquery datasource="#application.razuna.datasource#">
-	DELETE FROM #session.hostdbprefix#users_favorites
-	WHERE user_id_r = <cfqueryparam value="#session.theuserid#" cfsqltype="CF_SQL_VARCHAR">
+	<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
+	DELETE FROM #arguments.thestruct.razuna.session.hostdbprefix#users_favorites
+	WHERE user_id_r = <cfqueryparam value="#arguments.thestruct.razuna.session.theuserid#" cfsqltype="CF_SQL_VARCHAR">
 	AND fav_id = <cfqueryparam value="#arguments.favid#" cfsqltype="CF_SQL_VARCHAR">
-	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 	</cfquery>
 	<!--- Flush Cache --->
-	<cfset variables.cachetoken = resetcachetoken("general")>
+	<cfset resetcachetoken(type="general", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 	<cfreturn />
 </cffunction>
 

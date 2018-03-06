@@ -23,4 +23,24 @@
 * along with Razuna. If not, see <http://www.razuna.com/licenses/>.
 *
 --->
-<!--- <cfinclude template="/global/host/dam/Application.cfc" /> --->
+<h6>This preview is limited to 100 files and does not take the last changed date into consideration</h6>
+<cfoutput>
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th scope="col">Filename</th>
+				<th scope="col">Folder</th>
+				<th scope="col">Labels</th>
+			</tr>
+		</thead>
+		<tbody>
+			<cfloop query="qry_search">
+				<tr>
+					<td>#filename#</td>
+					<td>#folder_name#</td>
+					<td>#label_path#</td>
+				</tr>
+			</cfloop>
+		</tbody>
+	</table>
+</cfoutput>

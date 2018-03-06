@@ -258,7 +258,7 @@
 							</cfquery>
 						</cfif>
 						<cfcatch type="database">
-							<cfset consoleoutput(true)>
+							<cfset consoleoutput(true, true)>
 							<cfset console(cfcatch)>
 						</cfcatch>
 					</cftry>

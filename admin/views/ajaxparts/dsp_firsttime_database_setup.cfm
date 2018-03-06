@@ -50,7 +50,7 @@
 <!---
 <div>
 	<div style="float:left;padding:20px 0px 0px 0px;">
-		<input type="button" id="next" value="#defaultsObj.trans("back")#" onclick="loadcontent('load_steps','#myself#c.first_time_database_config');" class="button">
+		<input type="button" id="next" value="#myFusebox.getApplicationData().defaults.trans("back")#" onclick="loadcontent('load_steps','#myself#c.first_time_database_config');" class="button">
 	</div>
 </div>
 --->

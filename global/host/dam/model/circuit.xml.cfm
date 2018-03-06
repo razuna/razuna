@@ -6,12 +6,11 @@
 <circuit access="internal">
 
 	<fuseaction name="preprocess">
-		<set name="attributes.application" value="#application.razuna#" />
-		<set name="attributes.session" value="#session#" />
-		<set name="request.razuna" value="#attributes#" />
+		<set name="attributes.razuna" value="#structnew()#" />
+		<set name="attributes.razuna.application" value="#application.razuna#" />
+		<set name="attributes.razuna.session" value="#session#" />
 		<!-- <include template="t" /> -->
 	</fuseaction>
-
 
 	<!--
 		This is executed at application startup (from <appinit>) and
@@ -117,10 +116,6 @@
 			<argument name="dsn" value="#application.razuna.datasource#" />
 			<argument name="database" value="#application.razuna.thedatabase#" />
 		</instantiate>
-		<!-- Nirvanix -->
-		<!-- <instantiate class="nirvanix" object="myFusebox.getApplicationData().nirvanix" overwrite="true">
-			<argument name="appkey" value="#application.razuna.nvxappkey#" />
-		</instantiate> -->
 		<!-- Amazon -->
 		<instantiate class="amazon" object="myFusebox.getApplicationData().amazon" overwrite="true">
 		</instantiate>

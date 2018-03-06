@@ -61,56 +61,56 @@
 </cfif>
 <cfoutput>
 	<form id="form_paths">
-		<span class="loginform_header">#defaultsObj.trans("application_paths")#</span>
+		<span class="loginform_header">#myFusebox.getApplicationData().defaults.trans("application_paths")#</span>
 		<br />
-		#defaultsObj.trans("application_paths_desc")#
+		#myFusebox.getApplicationData().defaults.trans("application_paths_desc")#
 		<br />
 		<br />
-		<span class="loginform_header">#defaultsObj.trans("header_imagemagick")#</span>
+		<span class="loginform_header">#myFusebox.getApplicationData().defaults.trans("header_imagemagick")#</span>
 		<br />
-		#defaultsObj.trans("header_imagemagick_desc_short")#
+		#myFusebox.getApplicationData().defaults.trans("header_imagemagick_desc_short")#
 		<br />
 		<input type="text" name="path_imagemagick" id="path_imagemagick" size="60" class="text" value="#im#" onkeyup="checkpath('imagemagick');">
 		<br />
 		<div id="checkimagemagick" style="display:none;"></div>
 		<br />
-		<span class="loginform_header">#defaultsObj.trans("header_ffmpeg")#</span>
+		<span class="loginform_header">#myFusebox.getApplicationData().defaults.trans("header_ffmpeg")#</span>
 		<br />
-		#defaultsObj.trans("header_ffmpeg_desc_short")#
+		#myFusebox.getApplicationData().defaults.trans("header_ffmpeg_desc_short")#
 		<br />
 		<input type="text" name="path_ffmpeg" id="path_ffmpeg" size="60" class="text" value="#ff#" onkeyup="checkpath('ffmpeg');">
 		<br />
 		<div id="checkffmpeg" style="display:none;"></div>
 		<br />
-		<span class="loginform_header">#defaultsObj.trans("header_exiftool")#</span>
+		<span class="loginform_header">#myFusebox.getApplicationData().defaults.trans("header_exiftool")#</span>
 		<br />
-		#defaultsObj.trans("header_exiftool_desc_short")#
+		#myFusebox.getApplicationData().defaults.trans("header_exiftool_desc_short")#
 		<br />
 		<input type="text" name="path_exiftool" id="path_exiftool" size="60" class="text" value="#ex#" onkeyup="checkpath('exiftool');">
 		<br />
 		<div id="checkexiftool" style="display:none;"></div>
 		<br />
-		<span class="loginform_header">#defaultsObj.trans("header_dcraw")# (#defaultsObj.trans("optional")#)</span>
+		<span class="loginform_header">#myFusebox.getApplicationData().defaults.trans("header_dcraw")# (#myFusebox.getApplicationData().defaults.trans("optional")#)</span>
 		<br />
-		#defaultsObj.trans("header_dcraw_desc")#
+		#myFusebox.getApplicationData().defaults.trans("header_dcraw_desc")#
 		<br />
 		<input type="text" name="path_dcraw" id="path_dcraw" size="60" class="text" value="#dc#" onkeyup="checkpath('dcraw');">
 		<br />
 		<div id="checkdcraw" style="display:none;"></div>
 		
 		<br />
-		<span class="loginform_header">#defaultsObj.trans("header_mp4box")# (#defaultsObj.trans("optional")#)</span>
+		<span class="loginform_header">#myFusebox.getApplicationData().defaults.trans("header_mp4box")# (#myFusebox.getApplicationData().defaults.trans("optional")#)</span>
 		<br />
-		#defaultsObj.trans("header_mp4box_desc")#
+		#myFusebox.getApplicationData().defaults.trans("header_mp4box_desc")#
 		<br />
 		<input type="text" name="path_mp4box" id="path_MP4Box" size="60" class="text" value="#mp#" onkeyup="checkpath('MP4Box');">
 		<br />
 		<div id="checkMP4Box" style="display:none;"></div>
 
 		<br />
-		<span class="loginform_header">#defaultsObj.trans("header_ghostscript")# (#defaultsObj.trans("optional")#)</span>
+		<span class="loginform_header">#myFusebox.getApplicationData().defaults.trans("header_ghostscript")# (#myFusebox.getApplicationData().defaults.trans("optional")#)</span>
 		<br />
-		#defaultsObj.trans("header_ghostscript_desc")#
+		#myFusebox.getApplicationData().defaults.trans("header_ghostscript_desc")#
 		<br />
 		<input type="text" name="path_ghostscript" id="path_ghostscript" size="60" class="text" value="#mp#" onkeyup="checkpath('ghostscript');">
 		<br />
@@ -119,10 +119,10 @@
 		<br />
 		<div>
 			<div style="float:left;padding:20px 0px 0px 0px;">
-				<input type="button" id="next" value="#defaultsObj.trans("back")#" onclick="location.href=('/');" class="button"> 
+				<input type="button" id="next" value="#myFusebox.getApplicationData().defaults.trans("back")#" onclick="location.href=('/');" class="button"> 
 			</div>
 			<div style="float:right;padding:20px 0px 0px 0px;">
-				<input type="button" id="next" value="#defaultsObj.trans("continue")#" class="button" onclick="checkform();">
+				<input type="button" id="next" value="#myFusebox.getApplicationData().defaults.trans("continue")#" class="button" onclick="checkform();">
 			</div>
 		</div>
 	</form>

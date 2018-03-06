@@ -37,7 +37,7 @@
 		<!--- Loop over all scheduled log entries in database table --->
 		<cfloop query="qry_sched_log">
 			<tr>
-				<td nowrap="true">#dateformat(sched_log_date, "#myFusebox.getApplicationData().defaults.getdateformat()#")#</td>
+				<td nowrap="true">#dateformat(sched_log_date, "#myFusebox.getApplicationData().defaults.getdateformat(thestruct=attributes)#")#</td>
 				<td nowrap="true">#LSTimeFormat(sched_log_time, 'HH:mm:ss')#</td>
 				<td>#sched_log_desc# <cfif user_login_name NEQ "">(User #user_login_name#)</cfif></td>
 				<td nowrap="true">#sched_log_action#</td>

@@ -24,20 +24,20 @@
 *
 --->
 <cfoutput>
-<span class="loginform_header">#defaultsObj.trans("headerretrievepassword")#</span>
+<span class="loginform_header">#myFusebox.getApplicationData().defaults.trans("headerretrievepassword")#</span>
 <br />
 <br />
 <form action="#self#" method="post" id="form_forgotpass" id="form_forgotpass">
 <input type="hidden" name="#theaction#" value="#xfa.submitform#">
 	<table width="100%" border="0" cellpadding="0" cellspacing="0">
 	    <tr>
-	        <td>#defaultsObj.trans("youremail")#</td>
+	        <td>#myFusebox.getApplicationData().defaults.trans("youremail")#</td>
 		</tr>
 		<tr>
 	      	 <td><label for="email" class="error" style="display:none;">Enter a valid eMail address!</label><div id="pf_email"><input type="text" name="email" id="email" size="40" /></div></td>
 	    </tr>
 	    <tr>
-	        <td align="right" style="padding:10px 0px 10px 0px;"><input type="button" name="cancel" value="#defaultsObj.trans("cancel")#" onclick="location.href='#myself##xfa.linkback#'" class="button" /> <input type="submit" name="submit" value="#defaultsObj.trans("buttonsendpassword")#" class="button" /></td>
+	        <td align="right" style="padding:10px 0px 10px 0px;"><input type="button" name="cancel" value="#myFusebox.getApplicationData().defaults.trans("cancel")#" onclick="location.href='#myself##xfa.linkback#'" class="button" /> <input type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans("buttonsendpassword")#" class="button" /></td>
 	    </tr>
 	</table>
 </form>

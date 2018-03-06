@@ -639,7 +639,7 @@
 			</cftry>
 		</cfloop>
 		<!--- HOST TABLES: Setup host tables --->
-		<cfinvoke component="db_mysql" method="create_host_remote" dsn="#arguments.thestruct.dsn_target#" theschema="razuna" />
+		<cfinvoke component="db_mysql" method="create_host_remote" dsn="#arguments.thestruct.dsn_target#" theschema="razuna" thestruct="#arguments.thestruct#" />
 		<!--- HOST TABLES: Put results into list --->
 		<cfset arguments.thestruct.thetables = valuelist(qry_tables.table_name)>
 		<!--- HOST TABLES: Now get values of tables and do an insert --->

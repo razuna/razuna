@@ -61,7 +61,7 @@
 						</cfif>
 					</cfloop>
 				</td>
-				<td valign="top" align="center">#dateformat(change_date, "#myFusebox.getApplicationData().defaults.getdateformat()#")#</td>
+				<td valign="top" align="center">#dateformat(change_date, "#myFusebox.getApplicationData().defaults.getdateformat(thestruct=attributes)#")#</td>
 				<cfif attributes.folderaccess NEQ "R">
 					<cfif cs.show_trash_icon AND (isadmin OR  cs.show_trash_icon_slct EQ "" OR listfind(cs.show_trash_icon_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.show_trash_icon_slct,session.thegroupofuser) NEQ "")>
 						<td align="center" width="1%" valign="top"><a href="##" onclick="showwindow('#myself#ajax.trash_record&id=#col_id#&what=col_move&loaddiv=content&folder_id=#folder_id#&released=#attributes.released#','#myFusebox.getApplicationData().defaults.trans("trash")#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a></td>

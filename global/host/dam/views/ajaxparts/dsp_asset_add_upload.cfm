@@ -35,7 +35,11 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 <cfparam name="attributes.file_id" default="0">
 <!-- Load Queue widget CSS and jQuery -->
+<!--- CSS --->
+<!--- <link rel="stylesheet" type="text/css" href="#dynpath#/global/dist/app_#attributes.cachetag#.min.css" /> --->
 <link rel="stylesheet" type="text/css" href="#dynpath#/global/dist/upload_#attributes.cachetag#.min.css" />
+<!--- JS --->
+<script type="text/javascript" src="#dynpath#/global/js/jquery-3.3.1.min.js"></script>
 <script type="text/javascript" src="#dynpath#/global/dist/upload_#attributes.cachetag#.min.js"></script>
 <style type="text/css">
 body {

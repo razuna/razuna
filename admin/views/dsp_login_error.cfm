@@ -27,11 +27,11 @@
 <cfparam default="" name="loginerror">
 <cfoutput><cfif loginerror EQ "T">
 	<tr>
-        <td class="alert">#gobj.trans("login_error")#</td>
+        <td class="alert">#myFusebox.getApplicationData().defaults.trans("login_error")#</td>
 	</tr>
 </cfif>
 <cfif attributes.passsend EQ "T">
 	<tr>
-        <td class="alert">#gobj.trans("passwordsent")#</td>
+        <td class="alert">#myFusebox.getApplicationData().defaults.trans("passwordsent")#</td>
 	</tr>
 </cfif></cfoutput>
