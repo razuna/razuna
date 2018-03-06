@@ -73,7 +73,7 @@
 				</cfquery>
 			</cfif>
 			<!--- Reset Cache --->
-			<cfset var cachetoken = resetcachetoken(type="general", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
+			<cfset resetcachetoken(type="general", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 			<!--- Query again --->
 			<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="thelangs" cachedwithin="1" region="razcache">
 			SELECT /* #cachetoken#getlangsagain */ lang_id, lang_name

@@ -672,7 +672,7 @@
 		</cfif>
 	</cfloop>
 	<!--- Reset cache --->
-	<cfset resetcachetoken("settings")>
+	<cfset resetcachetoken(type="settings", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 </cffunction>
 
 <!--- Save Settings --->
