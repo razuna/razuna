@@ -608,9 +608,9 @@
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 			</cfquery>
 		</cftransaction>
-		<!--- Flush Cache --->
-		<cfset resetcachetoken("images")>
-		<cfset resetcachetoken("search")>
+		<!--- Reset cache --->
+		<cfset resetcachetoken(type="images", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
+		<cfset resetcachetoken(type="search", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 	</cfloop>
 </cffunction>
 

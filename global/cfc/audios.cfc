@@ -1958,7 +1958,7 @@
 	<cfargument name="md5hash" type="string">
 	<cfargument name="checkinfolder" type="string" required="false" default="">
 	<cfargument name="thestruct" type="struct" required="true" />
-	<cfset var cachetoken = getcachetoken("audios", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
+	<cfset var cachetoken = getcachetoken(type="audios", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 	<cfset var qry = "">
 	<!--- Query --->
 	<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qry" cachedwithin="1" region="razcache">
