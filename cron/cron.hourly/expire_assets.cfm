@@ -181,7 +181,7 @@
 		<cfquery datasource="#arguments.datasource#" name="_img">
 		SELECT img_id id, host_id, 'img' type,
 		(SELECT MAX(label_id) FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=#arguments.host_id# AND label_id_r = '0') as label_id
-		FROM raz1_images
+		FROM raz1_images i
 		WHERE expiry_date < <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#">
 		AND NOT EXISTS (SELECT 1 FROM ct_labels WHERE ct_id_r=i.img_id AND ct_label_id IN (SELECT label_id FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=#arguments.host_id#  AND label_id_r = '0'))
 		AND host_id = <cfqueryparam CFSQLType="cf_sql_numeric" value="#arguments.host_id#">
@@ -189,7 +189,7 @@
 		<cfquery datasource="#arguments.datasource#" name="_aud">
 		SELECT aud_id id, host_id, 'aud' type,
 		(SELECT MAX(label_id)  FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=#arguments.host_id# AND label_id_r = '0') as label_id
-		FROM raz1_audios
+		FROM raz1_audios a
 		WHERE expiry_date < <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#">
 		AND NOT EXISTS (SELECT 1 FROM ct_labels WHERE ct_id_r=a.aud_id AND ct_label_id IN (SELECT label_id FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=#arguments.host_id# AND label_id_r = '0'))
 		AND host_id = <cfqueryparam CFSQLType="cf_sql_numeric" value="#arguments.host_id#">
@@ -197,7 +197,7 @@
 		<cfquery datasource="#arguments.datasource#" name="_vid">
 		SELECT vid_id id, host_id, 'vid' type,
 		(SELECT MAX(label_id) FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=#arguments.host_id# AND label_id_r = '0') as label_id
-		FROM raz1_videos
+		FROM raz1_videos v
 		WHERE expiry_date < <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#">
 		AND NOT EXISTS (SELECT 1 FROM ct_labels WHERE ct_id_r=v.vid_id AND ct_label_id IN (SELECT label_id FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=#arguments.host_id# AND label_id_r = '0'))
 		AND host_id = <cfqueryparam CFSQLType="cf_sql_numeric" value="#arguments.host_id#">
@@ -205,7 +205,7 @@
 		<cfquery datasource="#arguments.datasource#" name="_doc">
 		SELECT file_id id, host_id, 'doc' type,
 		(SELECT MAX(label_id)  FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=#arguments.host_id# AND label_id_r = '0') as label_id
-		FROM raz1_files
+		FROM raz1_files f
 		WHERE expiry_date < <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#">
 		AND NOT EXISTS (SELECT 1 FROM ct_labels WHERE ct_id_r=f.file_id AND ct_label_id IN (SELECT label_id FROM raz1_labels WHERE label_text ='Asset has expired'AND host_id=#arguments.host_id# AND label_id_r = '0'))
 		AND host_id = <cfqueryparam CFSQLType="cf_sql_numeric" value="#arguments.host_id#">

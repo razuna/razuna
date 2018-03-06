@@ -63,7 +63,7 @@
 			DELETE FROM #host_shard_group#images
 			WHERE (path_to_asset IS NULL OR path_to_asset = '')
 			AND img_create_time < <cfqueryparam cfsqltype="cf_sql_timestamp" value="#_removetime_incoming#">
-			AND host_id = <cfqueryparam CFSQLType="cf_sql_numeric" value="#arguments.host_id#">
+			AND host_id = <cfqueryparam CFSQLType="cf_sql_numeric" value="#host_id#">
 			ORDER BY img_id
 			</cfquery>
 		</cftransaction>
@@ -72,7 +72,7 @@
 			DELETE FROM #host_shard_group#videos
 			WHERE (path_to_asset IS NULL OR path_to_asset = '')
 			AND vid_create_time < <cfqueryparam cfsqltype="cf_sql_timestamp" value="#_removetime_incoming#">
-			AND host_id = <cfqueryparam CFSQLType="cf_sql_numeric" value="#arguments.host_id#">
+			AND host_id = <cfqueryparam CFSQLType="cf_sql_numeric" value="#host_id#">
 			ORDER BY vid_id
 			</cfquery>
 		</cftransaction>
@@ -81,7 +81,7 @@
 			DELETE FROM #host_shard_group#files
 			WHERE (path_to_asset IS NULL OR path_to_asset = '')
 			AND file_create_time < <cfqueryparam cfsqltype="cf_sql_timestamp" value="#_removetime_incoming#">
-			AND host_id = <cfqueryparam CFSQLType="cf_sql_numeric" value="#arguments.host_id#">
+			AND host_id = <cfqueryparam CFSQLType="cf_sql_numeric" value="#host_id#">
 			ORDER BY file_id
 			</cfquery>
 		</cftransaction>
@@ -90,7 +90,7 @@
 			DELETE FROM #host_shard_group#audios
 			WHERE (path_to_asset IS NULL OR path_to_asset = '')
 			AND aud_create_time < <cfqueryparam cfsqltype="cf_sql_timestamp" value="#_removetime_incoming#">
-			AND host_id = <cfqueryparam CFSQLType="cf_sql_numeric" value="#arguments.host_id#">
+			AND host_id = <cfqueryparam CFSQLType="cf_sql_numeric" value="#host_id#">
 			ORDER BY aud_id
 			</cfquery>
 		</cftransaction>
@@ -100,7 +100,7 @@
 			SELECT path as temppath, tempid
 			FROM #host_shard_group#assets_temp
 			WHERE date_add < <cfqueryparam cfsqltype="cf_sql_timestamp" value="#_removetime_incoming#">
-			AND host_id = <cfqueryparam CFSQLType="cf_sql_numeric" value="#arguments.host_id#">
+			AND host_id = <cfqueryparam CFSQLType="cf_sql_numeric" value="#host_id#">
 			AND path LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="%dam/incoming%">
 			AND path IS NOT NULL
 			</cfquery>
