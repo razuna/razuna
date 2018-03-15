@@ -30,7 +30,7 @@
 <cfset session.folder_redirect_id = "0">
 <!--- Check re-direct folders to ensure user has access to it and it's a valid folder. Find the first good match and set that as re-direct folder --->
 <cfloop list="#redirectfolders#" index="redirect_folder_id">
-	<cfif myFusebox.getApplicationData().folders.checkfolder(redirect_folder_id)>
+	<cfif myFusebox.getApplicationData().folders.checkfolder(folder_id=redirect_folder_id, thestruct=attributes)>
 		<cfset session.folder_redirect_id = redirect_folder_id>
 		<cfset session.do_folder_redirect = true>
 		<cfbreak>
