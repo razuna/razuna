@@ -38,7 +38,7 @@
 </cfloop>
 
 <!--- If group re-direction is not set but global re-direction is then make re-direct folder as the set global folder --->
-<cfif session.folder_redirect_id EQ "0" AND cs.folder_redirect NEQ "0" AND myFusebox.getApplicationData().folders.checkfolder(cs.folder_redirect)>
+<cfif session.folder_redirect_id EQ "0" AND cs.folder_redirect NEQ "0" AND myFusebox.getApplicationData().folders.checkfolder(folder_id=cs.folder_redirect, thestruct=attributes)>
 	<cfset session.do_folder_redirect = true>
 	<cfset session.folder_redirect_id = cs.folder_redirect>
 </cfif>

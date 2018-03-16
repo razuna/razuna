@@ -8729,7 +8729,7 @@
 	<cfset var fldr_perm = "">
 	<cfset var folder_check_pass = false>
 	<!--- Check to see if redirect folder exists and is not in trash and that user has access permissions for it --->
-	<cfinvoke component="global.cfc.folders" method="setaccess" thestruct="#arguments.thestruct#" folder_id="#arguments.folder_id#" returnvariable="fldr_perm" thestruct="#arguments.thestruct#">
+	<cfinvoke component="global.cfc.folders" method="setaccess" thestruct="#arguments.thestruct#" folder_id="#arguments.folder_id#" returnvariable="fldr_perm">
 	<cfquery dataSource="#arguments.thestruct.razuna.application.datasource#" name="folder_check">
 		SELECT 1 FROM #arguments.thestruct.razuna.session.hostdbprefix#folders
 		WHERE folder_id = <cfqueryparam value="#arguments.folder_id#" CFSQLType="CF_SQL_VARCHAR">
