@@ -45,9 +45,9 @@
 
 	<div id="tabs_footer">
 		<ul>
-			<li style="#basket_css#" ><a href="##thedropbasket" id="div_link_basket" onclick="tooglefooter('0');loadcontent('thedropbasket','#myself#c.basket');">#myFusebox.getApplicationData().defaults.trans("show_basket")#</a></li>
-			<li style="#favorites_css#"><a href="##thedropfav" id="div_link_fav" onclick="tooglefooter('1');loadcontent('thedropfav','#myself#c.favorites');">#myFusebox.getApplicationData().defaults.trans("show_favorites")#</a></li>
-			<li style="#orders_css#"><a href="##thedroporders" id="div_link_orders" onclick="tooglefooter('2');loadcontent('thedroporders','#myself#c.orders');">#myFusebox.getApplicationData().defaults.trans("show_orders")#</a></li>
+			<li style="#basket_css#" ><a href="##thedropbasket" id="div_link_basket" onclick="tooglefooter('0');loadcontent('thedropbasket','#myself#c.basket');" style="cursor:pointer;">#myFusebox.getApplicationData().defaults.trans("show_basket")#</a></li>
+			<li style="#favorites_css#"><a href="##thedropfav" id="div_link_fav" onclick="tooglefooter('1');loadcontent('thedropfav','#myself#c.favorites');" style="cursor:pointer;">#myFusebox.getApplicationData().defaults.trans("show_favorites")#</a></li>
+			<li style="#orders_css#"><a href="##thedroporders" id="div_link_orders" onclick="tooglefooter('2');loadcontent('thedroporders','#myself#c.orders');" style="cursor:pointer;">#myFusebox.getApplicationData().defaults.trans("show_orders")#</a></li>
 			<cfif !application.razuna.whitelabel>
 				<li style="float:right;"><a href="##raztab" onclick="tooglefooter('3');">#myFusebox.getApplicationData().defaults.trans("about")# Razuna</a></li>
 			<cfelseif application.razuna.whitelabel AND wl_text NEQ "">
@@ -79,15 +79,16 @@
 
 	<script type="text/javascript">
 	$("##tabs_footer").tabs();
-	function tooglefooter(what){
+	function tooglefooter(what) {
 		// which div to resize
 		var thefooterslider = $('##footer_drop');
 		// get selected tab
 		var selected = $('##tabs_footer').tabs( "option", "active" );
 		// Resize
-		if (thefooterslider.height() == '30'){
+		if ( thefooterslider.hasClass('footer_collapsed') ){
 			// Resize and show
 			thefooterslider.css('height','160px');
+			thefooterslider.removeClass('footer_collapsed');
 			if(what == 0){
 				$('##div_link_basket').html('#myFusebox.getApplicationData().defaults.trans("hide_basket")#');
 				//loadcontent('thedropbasket','#myself#c.basket');
@@ -103,13 +104,14 @@
 		}
 		else {
 			// Resize and Hide
-			if(selected == what){
+			if(selected == what) {
 				$('##div_link_basket').html('#myFusebox.getApplicationData().defaults.trans("show_basket")#');
 				$('##div_link_fav').html('#myFusebox.getApplicationData().defaults.trans("show_favorites")#');
 				$('##div_link_orders').html('#myFusebox.getApplicationData().defaults.trans("show_orders")#');
-				thefooterslider.css('height','30px');
+				thefooterslider.css('height','37px');
+				thefooterslider.addClass('footer_collapsed');
 			}
-		}	
+		}
 	}
 	$(function() {
 		$("##thedropbasket").droppable({
@@ -146,7 +148,7 @@
 				$('##div_forall').load('#myself#c.favorites_put&favtype=file&favid=' + thisid, function(){
 					$('##thedropfav').load('#myself#c.favorites');
 				});
-				
+
 			}
 		});
 	});
