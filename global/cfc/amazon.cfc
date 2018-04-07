@@ -302,7 +302,7 @@
 		<cfset arguments = tenantCheck(arguments)>
 
 		<!--- Get keys --->
-		<cfset var _keys = listkeys( awsbucket=arguments.awsbucket, folderpath=arguments.folderpath )>
+		<cfset var _keys = listkeys( awsbucket=arguments.awsbucket, folderpath=arguments.folderpath, thestruct=arguments.thestruct )>
 
 		<cfloop query="_keys">
 			<cfset AmazonS3delete( datasource=_s3ds, bucket=arguments.awsbucket, key=key )>
@@ -327,7 +327,7 @@
 		<!--- If we store all files in one bucket --->
 		<cfset arguments = tenantCheck(arguments)>
 		<!--- Get keys --->
-		<cfset thekeys = listkeys(folderpath=arguments.folderpath, awsbucket=arguments.awsbucket)>
+		<cfset thekeys = listkeys(folderpath=arguments.folderpath, awsbucket=arguments.awsbucket, thestruct=arguments.thestruct)>
 		<!--- Call the renameobject function which will copy and delete at the same time --->
 		<cfloop query="thekeys" >
 			<cfset thefile = listlast(key,"/")>
@@ -351,7 +351,7 @@
 		<!--- If we store all files in one bucket --->
 		<cfset arguments = tenantCheck(arguments)>
 		<!--- Get keys --->
-		<cfset thekeys = listkeys(folderpath=arguments.folderpath, awsbucket=arguments.awsbucket)>
+		<cfset thekeys = listkeys(folderpath=arguments.folderpath, awsbucket=arguments.awsbucket, thestruct=arguments.thestruct)>
 		<!--- Call the copyobject function --->
 		<cfloop query="thekeys" >
 			<cfset thefile = listlast(key,"/")>
