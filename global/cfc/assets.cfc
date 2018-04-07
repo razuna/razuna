@@ -2601,7 +2601,7 @@ This is the main function called directly by a single upload else from addassets
 				WHERE folder_id = <cfqueryparam value="#attributes.intstruct.qryfile.folder_id#" cfsqltype="CF_SQL_VARCHAR">
 				</cfquery>
 				<!--- Check the UPC rendition upload --->
-				<cfif arguments.thestruct.upcRenditionNum>
+				<cfif attributes.intstruct.upcRenditionNum>
 					 <!--- Add to shared options --->
 					<cfquery datasource="#attributes.intstruct.razuna.application.datasource#">
 					INSERT INTO #attributes.intstruct.razuna.session.hostdbprefix#share_options
@@ -2628,7 +2628,7 @@ This is the main function called directly by a single upload else from addassets
 				INSERT INTO #attributes.intstruct.razuna.session.hostdbprefix#share_options
 					(asset_id_r, host_id, group_asset_id, folder_id_r, asset_type, asset_format, asset_dl, asset_order, rec_uuid)
 					VALUES(
-					<cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">,
+				<cfqueryparam value="#attributes.intstruct.newid#" cfsqltype="CF_SQL_VARCHAR">,
 				<cfqueryparam value="#attributes.intstruct.hostid#" cfsqltype="cf_sql_numeric">,
 				<cfqueryparam value="#attributes.intstruct.newid#" cfsqltype="CF_SQL_VARCHAR">,
 				<cfqueryparam value="#attributes.intstruct.qryfile.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
@@ -3014,7 +3014,7 @@ This is the main function called directly by a single upload else from addassets
 			<cfthread name="uploadt#arguments.thestruct.newid#" intstruct="#arguments.thestruct#" action="run">
 				<cfif attributes.intstruct.qryfile.link_kind EQ "lan">
 					<cffile action="move" source="#attributes.intstruct.destinationraw#" destination="#attributes.intstruct.qrysettings.set2_path_to_assets#/#attributes.intstruct.razuna.session.hostid#/#attributes.intstruct.qryfile.folder_id#/img/#attributes.intstruct.newid#/thumb_#attributes.intstruct.newid#.#attributes.intstruct.qrysettings.set2_img_format#" mode="775">
-				<cfelseif !arguments.thestruct.razuna.application.rfs>
+				<cfelseif !attributes.intstruct.razuna.application.rfs>
 					<cffile action="move" source="#attributes.intstruct.destinationraw#" destination="#attributes.intstruct.qrysettings.set2_path_to_assets#/#attributes.intstruct.razuna.session.hostid#/#attributes.intstruct.qryfile.folder_id#/img/#attributes.intstruct.newid#/thumb_#attributes.intstruct.newid#.#attributes.intstruct.qrysettings.set2_img_format#" mode="775">
 				</cfif>
 			</cfthread>
