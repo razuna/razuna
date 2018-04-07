@@ -171,7 +171,7 @@
 		<cfset var renobj = createObject("component","global.cfc.s3").init(accessKeyId=arguments.thestruct.razuna.application.awskey,secretAccessKey=arguments.thestruct.razuna.application.awskeysecret,storagelocation = arguments.thestruct.razuna.application.awslocation)>
 		<!--- Rename --->
 		<cfset renobj.renameObject(oldBucketName='#arguments.oldBucketName#', newBucketName ="#arguments.newBucketName#", oldFileKey = "#arguments.oldFileKey#",  newFileKey = "#arguments.newFileKey#")>
-		<cfset _setAcl(bucket=arguments.awsbucket, key=arguments.newFileKey)>
+		<cfset _setAcl(bucket=arguments.newBucketName, key=arguments.newFileKey)>
 		<!--- Return --->
 		<cfreturn />
 	</cffunction>
