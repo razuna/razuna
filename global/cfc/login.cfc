@@ -339,10 +339,10 @@
 		<cfset arguments.cachetoken = getcachetoken(type="general", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 		<cfthread intstruct="#arguments#">
 			<!--- Query customization DB --->
-			<cfquery dataSource="#arguments.thestruct.razuna.application.datasource#" name="qry" cachedwithin="1" region="razcache">
+			<cfquery dataSource="#attributes.intstruct.thestruct.razuna.application.datasource#" name="qry" cachedwithin="1" region="razcache">
 			SELECT /* #attributes.intstruct.cachetoken#createmyfolder */ custom_id, custom_value
-			FROM #arguments.thestruct.razuna.session.hostdbprefix#custom
-			WHERE host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" CFSQLType="CF_SQL_NUMERIC">
+			FROM #attributes.intstruct.thestruct.razuna.session.hostdbprefix#custom
+			WHERE host_id = <cfqueryparam value="#attributes.intstruct.thestruct.razuna.session.hostid#" CFSQLType="CF_SQL_NUMERIC">
 			AND custom_id = <cfqueryparam value="myfolder_create" cfsqltype="cf_sql_varchar">
 			</cfquery>
 			<!--- Check if value is here --->
@@ -353,20 +353,20 @@
 			</cfif>
 			<!--- If myfolder is true then create or check for myfolder --->
 			<cfif myfolder_create>
-				<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="myfolder">
+				<cfquery datasource="#attributes.intstruct.thestruct.razuna.application.datasource#" name="myfolder">
 				SELECT folder_of_user
-				FROM #arguments.thestruct.razuna.session.hostdbprefix#folders
+				FROM #attributes.intstruct.thestruct.razuna.session.hostdbprefix#folders
 				WHERE folder_owner = <cfqueryparam value="#attributes.intstruct.userid#" cfsqltype="CF_SQL_VARCHAR">
 				AND folder_name = <cfqueryparam value="my folder" cfsqltype="cf_sql_varchar">
-				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#attributes.intstruct.thestruct.razuna.session.hostid#">
 				</cfquery>
 				<!--- Create the MY FOLDER for this user --->
 				<cfif myfolder.recordcount EQ 0>
 					<!--- New ID --->
 					<cfset newfolderid = createuuid("")>
 					<!--- Insert --->
-					<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
-					INSERT INTO #arguments.thestruct.razuna.session.hostdbprefix#folders
+					<cfquery datasource="#attributes.intstruct.thestruct.razuna.application.datasource#">
+					INSERT INTO #attributes.intstruct.thestruct.razuna.session.hostdbprefix#folders
 					(folder_id, folder_name, folder_level, folder_owner, folder_create_date, folder_change_date, folder_create_time, folder_change_time, folder_of_user, folder_id_r, folder_main_id_r, host_id)
 					values (
 					<cfqueryparam value="#newfolderid#" cfsqltype="CF_SQL_VARCHAR">,
@@ -380,18 +380,18 @@
 					<cfqueryparam value="t" cfsqltype="cf_sql_varchar">,
 					<cfqueryparam value="#newfolderid#" cfsqltype="CF_SQL_VARCHAR">,
 					<cfqueryparam value="#newfolderid#" cfsqltype="CF_SQL_VARCHAR">,
-					<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
+					<cfqueryparam cfsqltype="cf_sql_numeric" value="#attributes.intstruct.thestruct.razuna.session.hostid#">
 					)
 					</cfquery>
 					<!--- Insert the DESCRIPTION --->
-					<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
-					insert into #arguments.thestruct.razuna.session.hostdbprefix#folders_desc
+					<cfquery datasource="#attributes.intstruct.thestruct.razuna.application.datasource#">
+					insert into #attributes.intstruct.thestruct.razuna.session.hostdbprefix#folders_desc
 					(folder_id_r, lang_id_r, folder_desc, host_id, rec_uuid)
 					values(
 					<cfqueryparam value="#newfolderid#" cfsqltype="CF_SQL_VARCHAR">,
 					<cfqueryparam value="1" cfsqltype="cf_sql_numeric">,
 					<cfqueryparam value="This is your personal folder" cfsqltype="cf_sql_varchar">,
-					<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">,
+					<cfqueryparam cfsqltype="cf_sql_numeric" value="#attributes.intstruct.thestruct.razuna.session.hostid#">,
 					<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 					)
 					</cfquery>
