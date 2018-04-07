@@ -6862,8 +6862,11 @@ function CheckAll(myform,folderid,thediv,thekind) {
 	// Remove ui-selected class
 	$('.assetbox').removeClass('ui-selected');
 	// Decide if this is from the search
-	if(folderid != 'x'){
-		$('#div_forall').load('index.cfm?fa=c.store_file_all&folder_id=' + folderid + '&thekind=' + thekind );
+	if (folderid !== 'x' && thekind !== 'labels'){
+		$('#div_forall').load('index.cfm?fa=c.store_file_all&folder_id=' + folderid + '&thekind=' + thekind + '&label_id=' + folderid );
+	}
+	else if (thekind === 'labels'){
+		$('#div_forall').load('index.cfm?fa=c.store_file_all&folder_id=0&thekind=' + thekind + '&label_id=' + folderid );
 	}
 	else{
 		// Get the ids from the hidden field

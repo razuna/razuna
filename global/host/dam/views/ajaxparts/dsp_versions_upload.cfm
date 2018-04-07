@@ -31,7 +31,7 @@
 <cfparam name="attributes.type" default="">
 <cfoutput>
 <head>
-<link rel="stylesheet" href="#dynpath#/global/dist/main_#attributes.cachetag#.min.css" type="text/css" />
+<link rel="stylesheet" href="#dynpath#/global/dist/app_#attributes.cachetag#.min.css" type="text/css" />
 <script type="text/javascript" src="#dynpath#/global/js/jquery-1.12.4.min.js"></script>
 </head>
 <body>

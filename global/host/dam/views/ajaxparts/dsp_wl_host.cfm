@@ -107,7 +107,7 @@
 			</div>
 			<!--- CSS --->
 			<div id="wl_css">
-				#myFusebox.getApplicationData().defaults.trans("wl_css_desc")# <a href="#dynpath#/global/dist/main_#attributes.cachetag#.min.css" target="_blank">Razuna CSS</a>.
+				#myFusebox.getApplicationData().defaults.trans("wl_css_desc")# <a href="#dynpath#/global/dist/app_#attributes.cachetag#.min.css" target="_blank">Razuna CSS</a>.
 				<br /><br />
 				<textarea name="wl_thecss_#session.hostid#" style="width:700px;height:500px;">#qry_wl.wl_thecss#</textarea>
 				<br /><br />

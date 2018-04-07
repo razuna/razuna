@@ -47,7 +47,7 @@
 <!--- According to widget style we decide here what to load --->
 <cfif qry_widget.widget_style EQ "d">
 	<!--- CSS --->
-	<link rel="stylesheet" type="text/css" href="#dynpath#/global/dist/main_#attributes.cachetag#.min.css" />
+	<link rel="stylesheet" type="text/css" href="#dynpath#/global/dist/app_#attributes.cachetag#.min.css" />
 	<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/jquery-ui-1.12.1.custom/jquery-ui.theme.min.css?_v=#attributes.cachetag#" />
 	<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/widget/overlay.css?_v=#attributes.cachetag#"/>
 	<!--- JS --->
