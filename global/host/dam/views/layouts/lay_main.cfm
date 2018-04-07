@@ -162,7 +162,7 @@
 				</div>
 				<div id="apDiv3">#trim( leftcontent )#</div>
 				<div id="apDiv4">#trim( maincontent )#</div>
-				<div id="footer_drop">#trim( footerdrop )#</div>
+				<div id="footer_drop" class="footer_collapsed" style="height:37px;">#trim( footerdrop )#</div>
 			</cfif>
 		</div>
 
@@ -180,24 +180,47 @@
 		<cfif cgi.http_host CONTAINS "razuna.com">
 			<cfset _email = structKeyExists(session, "user_email") ? session.user_email : ''>
 			<script type="text/javascript">
-				var __lc = {};
-				__lc.license = 4481361;
-				__lc.group = 4;
-				__lc.params = [
-					{ name: 'livechat_note', value: 'Customer information' },
-					{ name: 'email', value: '#_email#' },
-					{ name: 'User', value: '#session.firstlastname#' },
-					{ name: 'User ID', value: '#session.theuserid#' },
-					{ name: 'Host ID', value: '#session.hostid#' },
-					{ name: 'Admin', value: '#session.is_administrator#' },
-					{ name: 'Host', value: '#session.hostname#' },
-					{ name: 'Type', value: '#session.hosttype#' },
-				];
-				(function() {
-						var lc = document.createElement('script'); lc.type = 'text/javascript'; lc.async = true;
-						lc.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'cdn.livechatinc.com/tracking.js';
-						var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(lc, s);
-				})();
+				// Chatra
+				window.ChatraIntegration = {
+					name: '#session.firstlastname#',
+					email: '#_email#',
+					UserID: '#session.theuserid#',
+					HostID: '#session.hostid#',
+					Admin: '#session.is_administrator#',
+					Host: '#session.hostname#.razuna.com',
+					Type: '#session.hosttype#'
+				};
+				ChatraGroupID = 'tzavuP2jhWCaE8Sw8';
+			    (function(d, w, c) {
+			        w.ChatraID = 'tCrmd7ef56u3QnZ78';
+			        var s = d.createElement('script');
+			        w[c] = w[c] || function() {
+			            (w[c].q = w[c].q || []).push(arguments);
+			        };
+			        s.async = true;
+			        s.src = (d.location.protocol === 'https:' ? 'https:': 'http:')
+			        + '//call.chatra.io/chatra.js';
+			        if (d.head) d.head.appendChild(s);
+			    })(document, window, 'Chatra');
+				// LiveChat
+				// var __lc = {};
+				// __lc.license = 4481361;
+				// __lc.group = 4;
+				// __lc.params = [
+				// 	{ name: 'livechat_note', value: 'Customer information' },
+				// 	{ name: 'email', value: '#_email#' },
+				// 	{ name: 'User', value: '#session.firstlastname#' },
+				// 	{ name: 'User ID', value: '#session.theuserid#' },
+				// 	{ name: 'Host ID', value: '#session.hostid#' },
+				// 	{ name: 'Admin', value: '#session.is_administrator#' },
+				// 	{ name: 'Host', value: '#session.hostname#' },
+				// 	{ name: 'Type', value: '#session.hosttype#' },
+				// ];
+				// (function() {
+				// 		var lc = document.createElement('script'); lc.type = 'text/javascript'; lc.async = true;
+				// 		lc.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'cdn.livechatinc.com/tracking.js';
+				// 		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(lc, s);
+				// })();
 				var _gaq = _gaq || [];
 				_gaq.push(['_setAccount', 'UA-27003876-1']);
 				_gaq.push(['_setDomainName', 'razuna.com']);
