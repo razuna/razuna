@@ -2629,7 +2629,7 @@ This is the main function called directly by a single upload else from addassets
 					(asset_id_r, host_id, group_asset_id, folder_id_r, asset_type, asset_format, asset_dl, asset_order, rec_uuid)
 					VALUES(
 				<cfqueryparam value="#attributes.intstruct.newid#" cfsqltype="CF_SQL_VARCHAR">,
-				<cfqueryparam value="#attributes.intstruct.hostid#" cfsqltype="cf_sql_numeric">,
+				<cfqueryparam value="#attributes.intstruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric">,
 				<cfqueryparam value="#attributes.intstruct.newid#" cfsqltype="CF_SQL_VARCHAR">,
 				<cfqueryparam value="#attributes.intstruct.qryfile.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
 				<cfqueryparam value="img" cfsqltype="cf_sql_varchar">,
@@ -3244,6 +3244,7 @@ This is the main function called directly by a single upload else from addassets
 <!--- RESIZE IMAGE ------------------------------------------------------------------------------->
 <cffunction name="resizeImagethread" returntype="void" access="public" output="false">
 	<cfargument name="thestruct" type="struct" required="true">
+
 	<cftry>
 		<!--- Go grab the platform --->
 		<cfinvoke component="assets" method="iswindows" returnvariable="arguments.thestruct.iswindows">
@@ -3295,12 +3296,16 @@ This is the main function called directly by a single upload else from addassets
 		<cfset arguments.thestruct.theshm = GetTempDirectory() & "/#reimtt#m.sh">
 		<cfset arguments.thestruct.theshht = GetTempDirectory() & "/#reimtt#ht.sh">
 		<cfset arguments.thestruct.theshwt = GetTempDirectory() & "/#reimtt#wt.sh">
+		<cfset arguments.thestruct.theshhto = GetTempDirectory() & "/#reimtt#hto.sh">
+		<cfset arguments.thestruct.theshwto = GetTempDirectory() & "/#reimtt#wto.sh">
 		<!--- On Windows a .bat --->
 		<cfif arguments.thestruct.iswindows>
 			<cfset arguments.thestruct.thesh = GetTempDirectory() & "/#reimtt#.bat">
 			<cfset arguments.thestruct.theshm = GetTempDirectory() & "/#reimtt#m.bat">
 			<cfset arguments.thestruct.theshht = GetTempDirectory() & "/#reimtt#ht.bat">
 			<cfset arguments.thestruct.theshwt = GetTempDirectory() & "/#reimtt#wt.bat">
+			<cfset arguments.thestruct.theshhto = GetTempDirectory() & "/#reimtt#hto.bat">
+			<cfset arguments.thestruct.theshwto = GetTempDirectory() & "/#reimtt#wto.bat">
 		</cfif>
 
 		<!--- Set correct width and height parameters --->
@@ -3368,28 +3373,44 @@ This is the main function called directly by a single upload else from addassets
 		<cfset var thumbwidth = trim(listlast(thumbwidth," "))>
 
 		<cftry>
-		<cfif arguments.thestruct.qryfile.extension EQ "cr2">
-			<cfset var orientation = "">
-			<!--- Check orientation for CR2 images and rotate it properly if it is not properly rotated for viewing--->
-			<cfexecute name="#arguments.thestruct.thexif#" arguments="-Orientation -n #arguments.thestruct.destination#" timeout="120" variable="orientation"/>
-			<cfif orientation NEQ "" AND orientation contains "8">
-				<cfexecute name="#arguments.thestruct.themogrify#" arguments="-rotate -90 #arguments.thestruct.destination#" timeout="120"/>
-			<cfelseif orientation NEQ "" AND orientation contains "6">
-				<cfexecute name="#arguments.thestruct.themogrify#" arguments="-rotate 90 #arguments.thestruct.destination#" timeout="120" />
+			<cfif arguments.thestruct.qryfile.extension EQ "cr2">
+				<cfset var orientation = "">
+				<!--- Check orientation for CR2 images and rotate it properly if it is not properly rotated for viewing--->
+				<cfexecute name="#arguments.thestruct.thexif#" arguments="-Orientation -n #arguments.thestruct.destination#" timeout="120" variable="orientation"/>
+				<cfif orientation NEQ "" AND orientation contains "8">
+					<cfexecute name="#arguments.thestruct.themogrify#" arguments="-rotate -90 #arguments.thestruct.destination#" timeout="120"/>
+				<cfelseif orientation NEQ "" AND orientation contains "6">
+					<cfexecute name="#arguments.thestruct.themogrify#" arguments="-rotate 90 #arguments.thestruct.destination#" timeout="120" />
+				</cfif>
 			</cfif>
-		</cfif>
-		<cfcatch></cfcatch>
+			<cfcatch></cfcatch>
 		</cftry>
+
+		<!--- Get org sizes --->
+		<cffile action="write" file="#arguments.thestruct.theshhto#" output="#arguments.thestruct.theexif# -fast -fast2 -S -s -ImageHeight #arguments.thestruct.thesource#" mode="777" charset="utf-8">
+		<cffile action="write" file="#arguments.thestruct.theshwto#" output="#arguments.thestruct.theexif# -fast -fast2 -S -s -ImageWidth #arguments.thestruct.thesource#" mode="777" charset="utf-8">
+		<!--- Get height and width --->
+		<cfexecute name="#arguments.thestruct.theshhto#" timeout="60" variable="orgheight" />
+		<cfexecute name="#arguments.thestruct.theshwto#" timeout="60" variable="orgwidth" />
+		<!--- Exiftool on windows return the whole path with the sizes thus trim and get last --->
+		<cfset arguments.thestruct.thexmp.orgheight = trim(listlast(thumbheight," "))>
+		<cfset arguments.thestruct.thexmp.orgwidth = trim(listlast(thumbwidth," "))>
+
+		<cfset arguments.thestruct.theheight = trim(listlast(thumbheight," "))>
+		<cfset arguments.thestruct.thewidth = trim(listlast(thumbwidth," "))>
 
 		<!--- Remove the temp file sh --->
 		<cffile action="delete" file="#arguments.thestruct.thesh#">
 		<cffile action="delete" file="#arguments.thestruct.theshm#">
 		<cffile action="delete" file="#arguments.thestruct.theshht#">
 		<cffile action="delete" file="#arguments.thestruct.theshwt#">
+		<cffile action="delete" file="#arguments.thestruct.theshhto#">
+		<cffile action="delete" file="#arguments.thestruct.theshwto#">
+		<!--- 
 		<!--- Sometimes identify does not get height and width thus we set it here --->
 		<cfif arguments.thestruct.thexmp.orgwidth EQ "" OR NOT isnumeric(arguments.thestruct.thexmp.orgwidth)>
 			<!--- Try to get width with identify --->
-			<cfexecute name="#arguments.thestruct.theidentify#" arguments="-format %w #arguments.thestruct.thesourceraw#" timeout="5" variable="identify_width" />
+			<cfexecute name="#arguments.thestruct.theidentify#" arguments="-format %w #arguments.thestruct.thesource#" timeout="5" variable="identify_width" />
 			<cfif identify_width>
 				<cfset arguments.thestruct.thexmp.orgwidth = identify_width>
 			<cfelse>
@@ -3398,7 +3419,7 @@ This is the main function called directly by a single upload else from addassets
 		</cfif>
 		<cfif arguments.thestruct.thexmp.orgheight EQ "" OR NOT isnumeric(arguments.thestruct.thexmp.orgheight)>
 			<!--- Try to get height with identify --->
-			<cfexecute name="#arguments.thestruct.theidentify#" arguments="-format %h #arguments.thestruct.thesourceraw#" timeout="5" variable="identify_height" />
+			<cfexecute name="#arguments.thestruct.theidentify#" arguments="-format %h #arguments.thestruct.thesource#" timeout="5" variable="identify_height" />
 			<cfif identify_height>
 				<cfset arguments.thestruct.thexmp.orgheight = identify_height>
 			<cfelse>
@@ -3410,19 +3431,19 @@ This is the main function called directly by a single upload else from addassets
 		</cfif>
 		<cfif thumbheight EQ "" OR NOT isnumeric(thumbheight)>
 			<cfset var thumbheight = 0>
-		</cfif>
+		</cfif> --->
 		<!--- Set original and thumbnail width and height --->
 		<cfif (!structKeyExists(arguments.thestruct,'av') OR arguments.thestruct.av NEQ 1) OR (!structKeyExists(arguments.thestruct,'extjs') OR arguments.thestruct.extjs NEQ 'T')>
 			<!--- Set original and thumbnail width and height --->
-		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
-		UPDATE #arguments.thestruct.razuna.session.hostdbprefix#images
-		SET
-		thumb_width = <cfqueryparam value="#thumbwidth#" cfsqltype="cf_sql_numeric">,
-		thumb_height = <cfqueryparam value="#thumbheight#" cfsqltype="cf_sql_numeric">,
-		img_width = <cfqueryparam value="#arguments.thestruct.thexmp.orgwidth#" cfsqltype="cf_sql_numeric">,
-		img_height = <cfqueryparam value="#arguments.thestruct.thexmp.orgheight#" cfsqltype="cf_sql_numeric">
-		WHERE img_id = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">
-		</cfquery>
+			<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
+			UPDATE #arguments.thestruct.razuna.session.hostdbprefix#images
+			SET
+			thumb_width = <cfqueryparam value="#thumbwidth#" cfsqltype="cf_sql_numeric">,
+			thumb_height = <cfqueryparam value="#thumbheight#" cfsqltype="cf_sql_numeric">,
+			img_width = <cfqueryparam value="#arguments.thestruct.thexmp.orgwidth#" cfsqltype="cf_sql_numeric">,
+			img_height = <cfqueryparam value="#arguments.thestruct.thexmp.orgheight#" cfsqltype="cf_sql_numeric">
+			WHERE img_id = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">
+			</cfquery>
 		</cfif>
 		<cfcatch type="any">
 			<cfset consoleoutput(true, true)>
