@@ -7541,7 +7541,7 @@ This is the main function called directly by a single upload else from addassets
 
 	<!--- Get UPC templates with extension --->
 	<cfset var qry_upc_template = "">
-	<cfinvoke component="settings" method="getUpcExtension" upc_extension="#lcase(_file_name_upc_extension)#" returnvariable="qry_upc_template" />
+	<cfinvoke component="settings" method="getUpcExtension" upc_extension="#lcase(_file_name_upc_extension)#" returnvariable="qry_upc_template" thestruct="#arguments.thestruct#" />
 	<cfset consoleoutput(true, true)>
 	<cfset console(qry_upc_template.upc_field)>
 	<cfset console("." & _file_extension)>
