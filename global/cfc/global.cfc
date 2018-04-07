@@ -890,21 +890,21 @@ Comment:<br>
 			<cfset arguments.thestruct.prefs = structnew()>
 		</cfif>
 
-		<cfset var upcstruct  = isupc(folder_id=arguments.thestruct.folder_id, thestruct=arguments.thestruct)>
+		<!--- <cfset var upcstruct  = isupc(folder_id=arguments.thestruct.folder_id, thestruct=arguments.thestruct)>
 		<cfif upcstruct.upcenabled>
 			<!--- Get UPC number for asset  from database --->
 			<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="get_upc">
-					SELECT img_upc_number as upcnumber FROM  #arguments.thestruct.razuna.session.hostdbprefix#images
-					WHERE img_id =<cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
-					UNION ALL
-					SELECT aud_upc_number as upcnumber FROM  #arguments.thestruct.razuna.session.hostdbprefix#audios
-					WHERE aud_id =<cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
-					UNION ALL
-					SELECT vid_upc_number as upcnumber FROM  #arguments.thestruct.razuna.session.hostdbprefix#videos
-					WHERE vid_id =<cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
-					UNION ALL
-					SELECT file_upc_number as upcnumber FROM  #arguments.thestruct.razuna.session.hostdbprefix#files
-					WHERE file_id =<cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
+			SELECT img_upc_number as upcnumber FROM  #arguments.thestruct.razuna.session.hostdbprefix#images
+			WHERE img_id =<cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
+			UNION ALL
+			SELECT aud_upc_number as upcnumber FROM  #arguments.thestruct.razuna.session.hostdbprefix#audios
+			WHERE aud_id =<cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
+			UNION ALL
+			SELECT vid_upc_number as upcnumber FROM  #arguments.thestruct.razuna.session.hostdbprefix#videos
+			WHERE vid_id =<cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
+			UNION ALL
+			SELECT file_upc_number as upcnumber FROM  #arguments.thestruct.razuna.session.hostdbprefix#files
+			WHERE file_id =<cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
 			</cfquery>
 
 			<cfinvoke component="global" method="ExtractUPCInfo" returnvariable="upcinfo">
@@ -932,7 +932,7 @@ Comment:<br>
 					<cfset arguments.thestruct.av_link_title = upcinfo.upcprodstr & fn_last_char>
 				</cfif>
 			</cfif>
-		</cfif>
+		</cfif> --->
 
 		<!--- Save --->
 		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
