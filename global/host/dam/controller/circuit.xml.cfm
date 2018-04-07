@@ -7222,6 +7222,7 @@
 		<invoke object="myFusebox.getApplicationData().groups" method="getall" returnvariable="qry_groups">
 			<argument name="mod_id" value="1" />
 			<argument name="thestruct" value="#attributes#" />
+			<argument name="host_id" value="#session.hostid#" />
 		</invoke>
 		<!-- CFC: Get users -->
 		<invoke object="myFusebox.getApplicationData().users" methodcall="getall(thestruct=attributes)" returnvariable="qry_users" />
@@ -7248,6 +7249,7 @@
 		<invoke object="myFusebox.getApplicationData().groups" method="getall" returnvariable="qry_groups">
 			<argument name="mod_id" value="1" />
 			<argument name="thestruct" value="#attributes#" />
+			<argument name="host_id" value="#session.hostid#" />
 		</invoke>
 		<!-- CFC: Get users -->
 		<invoke object="myFusebox.getApplicationData().users" methodcall="getall(thestruct=attributes)" returnvariable="qry_users" />
@@ -7345,6 +7347,7 @@
 		<invoke object="myFusebox.getApplicationData().groups" method="getall" returnvariable="qry_groups">
 			<argument name="mod_id" value="1" />
 			<argument name="thestruct" value="#attributes#" />
+			<argument name="host_id" value="#session.hostid#" />
 		</invoke>
 		<!-- CFC: Get users -->
 		<invoke object="myFusebox.getApplicationData().users" methodcall="getall(thestruct=attributes)" returnvariable="qry_users" />
@@ -10546,6 +10549,7 @@
 		<invoke object="myFusebox.getApplicationData().groups" method="getall" returnvariable="qry_groups">
 			<argument name="mod_id" value="1" />
 			<argument name="thestruct" value="#attributes#" />
+			<argument name="host_id" value="#session.hostid#" />
 		</invoke>
 		<!-- CFC: Get users -->
 		<invoke object="myFusebox.getApplicationData().users" methodcall="getall(thestruct=attributes)" returnvariable="qry_users" />
