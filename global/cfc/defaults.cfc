@@ -110,7 +110,7 @@
 <cffunction name="trans" access="public" output="false" returntype="string">
 	<cfargument name="transid" default="" required="yes" type="string">
 	<cfargument name="values" type="array" required="false" default="#arrayNew(1)#" />
-	<cfargument name="thelang" default="English" required="false" type="string">
+	<cfargument name="thelang" default="#session.thelang#" required="false" type="string">
 	<cfargument name="thetransfile" default="#arguments.thelang#" required="false" type="string">
 	<cfreturn application.razuna.trans.getString(resourceBundleName = 'HomePage', key = arguments.transid, locale = arguments.thetransfile, values = arguments.values)>
 </cffunction>

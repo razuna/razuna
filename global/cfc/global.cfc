@@ -52,11 +52,11 @@
 		<cfargument name="thelang" default="" required="yes" type="string">
 		<cfargument name="thestruct" type="struct" required="true" />
 		<!--- Set the session lang --->
-		<cfset arguments.thestruct.razuna.session.thelang = arguments.thelang>
+		<cfset session.thelang = arguments.thelang>
 		<!--- Get the lang id --->
 		<cfinvoke component="defaults" method="trans" transid="thisid" thetransfile="#arguments.thelang#" thestruct="#arguments.thestruct#" returnvariable="theid">
 		<!--- Set the session lang id --->
-		<cfset arguments.thestruct.razuna.session.thelangid = theid>
+		<cfset session.thelangid = theid>
 		<cfreturn />
 	</cffunction>
 
