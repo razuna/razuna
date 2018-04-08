@@ -2042,6 +2042,8 @@
 <!--- Export CSV --->
 <cffunction name="export_csv" output="false">
 	<cfargument name="thestruct" type="struct">
+	<!--- Params --->
+	<cfparam name="arguments.thestruct.from_cron" default="false" />
 	<!--- Create CSV --->
 	<cfset var csv = csvwrite(arguments.thestruct.tq)>
 	<cfif isdefined("arguments.thestruct.exportname")>
@@ -2070,6 +2072,8 @@
 <!--- Export XLS --->
 <cffunction name="export_xls" output="true">
 	<cfargument name="thestruct" type="struct">
+	<!--- Params --->
+	<cfparam name="arguments.thestruct.from_cron" default="false" />
 	<!--- Create Spreadsheet --->
 	<cfif arguments.thestruct.format EQ "xls">
 		<cfset var sxls = spreadsheetnew(false)>
@@ -2783,7 +2787,11 @@
 					<cfset arguments.thestruct.file_url = "#arguments.thestruct.razuna.session.thehttp##cgi.http_host##cgi.context_path#/assets/#arguments.thestruct.razuna.session.hostid##thefileurl#">
 				</cfif>
 			<cfelse>
-				<cfset arguments.thestruct.file_url = qry_image.cloud_url_org>
+				<cfif thefiletype EQ "rend">
+					<cfset arguments.thestruct.file_url = thefileurl>
+				<cfelse>
+					<cfset arguments.thestruct.file_url = qry_image.cloud_url_org>
+				</cfif>
 			</cfif>
 			<!--- Add Values to total query --->
 			<cfif (structKeyExists(arguments.thestruct,"img_columns") AND arguments.thestruct.img_columns NEQ "") OR (structKeyExists(arguments.thestruct,'export_template') AND arguments.thestruct.export_template.recordcount EQ 0)>
@@ -2816,7 +2824,11 @@
 					<cfset arguments.thestruct.file_url = "#arguments.thestruct.razuna.session.thehttp##cgi.http_host##cgi.context_path#/assets/#arguments.thestruct.razuna.session.hostid##thefileurl#">
 				</cfif>
 			<cfelse>
-				<cfset arguments.thestruct.file_url = qry_video.cloud_url_org>
+				<cfif thefiletype EQ "rend">
+					<cfset arguments.thestruct.file_url = thefileurl>
+				<cfelse>
+					<cfset arguments.thestruct.file_url = qry_video.cloud_url_org>
+				</cfif>
 			</cfif>
 			<!--- Add Values to total query --->
 			<cfif structKeyExists(arguments.thestruct,"vid_columns") AND arguments.thestruct.vid_columns NEQ "" OR (structKeyExists(arguments.thestruct,'export_template') AND arguments.thestruct.export_template.recordcount EQ 0)>
@@ -2861,7 +2873,11 @@
 					<cfset arguments.thestruct.file_url = "#arguments.thestruct.razuna.session.thehttp##cgi.http_host##cgi.context_path#/assets/#arguments.thestruct.razuna.session.hostid##thefileurl#">
 				</cfif>
 			<cfelse>
-				<cfset arguments.thestruct.file_url = qry_audio.detail.cloud_url_org>
+				<cfif thefiletype EQ "rend">
+					<cfset arguments.thestruct.file_url = thefileurl>
+				<cfelse>
+					<cfset arguments.thestruct.file_url = qry_audio.cloud_url_org>
+				</cfif>
 			</cfif>
 			<!--- Add Values to total query --->
 			<cfif structKeyExists(arguments.thestruct,"aud_columns") AND arguments.thestruct.aud_columns NEQ "" OR (structKeyExists(arguments.thestruct,'export_template') AND arguments.thestruct.export_template.recordcount EQ 0)>
