@@ -66,6 +66,11 @@
 <!--- Parse the subdomain name --->
 <cfset thename = cgi.http_host>
 <cfset thecount = findoneof(".",thename) - 1>
+<cfif thecount LT 0>
+	<cfoutput><h2>No host with this URL could be found!</h2></cfoutput>
+	<cfflush>
+	<cfabort>
+</cfif>
 <cfset thesubdomain = mid(cgi.HTTP_HOST,1,thecount)>
 <cfquery datasource="##application.razuna.datasource##" name="thehost" cachedwithin="##CreateTimeSpan(0,1,0,0)##">
 SELECT /* ##thename## */ host_id, host_name, host_type, host_shard_group
