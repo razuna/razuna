@@ -7648,13 +7648,19 @@ This is the main function called directly by a single upload else from addassets
 		<!--- Check if the file already exists in the database. If so, just update it --->
 		<cfset var upc_record_to_update = "">
 		<cfquery name="upc_record_to_update" datasource="#arguments.thestruct.razuna.application.datasource#">
-		SELECT #field_name# as id
+		SELECT #field_name# as id, 'rend' as type
 		FROM #table_name#
 		WHERE #col_file_name# = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.upc_name#">
 		AND #col_group# = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.qryGroupDetails.id#">
 		AND folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 		AND in_trash = <cfqueryparam value="F" cfsqltype="CF_SQL_VARCHAR">
+		UNION ALL
+		SELECT av_id as id, 'av' as type
+		FROM #arguments.thestruct.razuna.session.hostdbprefix#additional_versions
+		WHERE av_link_title = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.theoriginalfilename#">
+		AND folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 		</cfquery>
 		<!--- <cfset console("upc_record_to_update : ")>
 		<cfset console(upc_record_to_update)> --->
@@ -7664,12 +7670,20 @@ This is the main function called directly by a single upload else from addassets
 			<cfset arguments.thestruct.current_temp_id = arguments.thestruct.newid>
 			<!--- Store the id of the UPC record we need to update --->
 			<cfset arguments.thestruct.newid = upc_record_to_update.id>
-			<!--- Delete the record --->
-			<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
-			DELETE FROM #table_name#
-			WHERE #field_name# = <cfqueryparam value="#arguments.thestruct.current_temp_id#" cfsqltype="CF_SQL_VARCHAR">
-			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
-			</cfquery>
+			<!--- Delete the record according to type --->
+			<cfif upc_record_to_update.type EQ "rend">
+				<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
+				DELETE FROM #table_name#
+				WHERE #field_name# = <cfqueryparam value="#arguments.thestruct.current_temp_id#" cfsqltype="CF_SQL_VARCHAR">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
+				</cfquery>
+			<cfelse>
+				<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
+				DELETE FROM #arguments.thestruct.razuna.session.hostdbprefix#additional_versions
+				WHERE av_id = <cfqueryparam value="#upc_record_to_update.id#" cfsqltype="CF_SQL_VARCHAR">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
+				</cfquery>
+			</cfif>
 			<!--- return --->
 			<cfreturn arguments.thestruct.upc_name />
 		</cfif>
