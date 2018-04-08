@@ -224,6 +224,55 @@
 				</cfquery>
 				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch,thestruct=arguments.thestruct)></cfcatch>
 			</cftry>
+			<!--- Selection and order --->
+			<cftry>
+				<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
+				ALTER TABLE raz1_images add <cfif arguments.thestruct.razuna.application.thedatabase NEQ "mssql">COLUMN</cfif> selection #theboolean# DEFAULT '0'
+				</cfquery>
+				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch,thestruct=arguments.thestruct)></cfcatch>
+			</cftry>
+			<cftry>
+				<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
+				ALTER TABLE raz1_videos add <cfif arguments.thestruct.razuna.application.thedatabase NEQ "mssql">COLUMN</cfif> selection #theboolean# DEFAULT '0'
+				</cfquery>
+				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch,thestruct=arguments.thestruct)></cfcatch>
+			</cftry>
+			<cftry>
+				<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
+				ALTER TABLE raz1_audios add <cfif arguments.thestruct.razuna.application.thedatabase NEQ "mssql">COLUMN</cfif> selection #theboolean# DEFAULT '0'
+				</cfquery>
+				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch,thestruct=arguments.thestruct)></cfcatch>
+			</cftry>
+			<cftry>
+				<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
+				ALTER TABLE raz1_files add <cfif arguments.thestruct.razuna.application.thedatabase NEQ "mssql">COLUMN</cfif> selection #theboolean# DEFAULT '0'
+				</cfquery>
+				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch,thestruct=arguments.thestruct)></cfcatch>
+			</cftry>
+			<cftry>
+				<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
+				ALTER TABLE raz1_images add <cfif arguments.thestruct.razuna.application.thedatabase NEQ "mssql">COLUMN</cfif> theorder #theint# DEFAULT '0'
+				</cfquery>
+				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch,thestruct=arguments.thestruct)></cfcatch>
+			</cftry>
+			<cftry>
+				<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
+				ALTER TABLE raz1_videos add <cfif arguments.thestruct.razuna.application.thedatabase NEQ "mssql">COLUMN</cfif> theorder #theint# DEFAULT '0'
+				</cfquery>
+				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch,thestruct=arguments.thestruct)></cfcatch>
+			</cftry>
+			<cftry>
+				<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
+				ALTER TABLE raz1_audios add <cfif arguments.thestruct.razuna.application.thedatabase NEQ "mssql">COLUMN</cfif> theorder #theint# DEFAULT '0'
+				</cfquery>
+				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch,thestruct=arguments.thestruct)></cfcatch>
+			</cftry>
+			<cftry>
+				<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
+				ALTER TABLE raz1_files add <cfif arguments.thestruct.razuna.application.thedatabase NEQ "mssql">COLUMN</cfif> theorder #theint# DEFAULT '0'
+				</cfquery>
+				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch,thestruct=arguments.thestruct)></cfcatch>
+			</cftry>
 			<!--- UPC --->
 			<cftry>
 				<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
