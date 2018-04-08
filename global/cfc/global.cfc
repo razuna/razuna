@@ -283,23 +283,23 @@
 			<!--- Query to get the settings --->
 			<cfquery datasource="#attributes.intstruct.application.datasource#" name="qry_settings">
 			SELECT set2_img_format, set2_img_thumb_width, set2_img_thumb_heigth
-			FROM #arguments.thestruct.razuna.session.hostdbprefix#settings_2
+			FROM #attributes.intstruct.razuna.session.hostdbprefix#settings_2
 			WHERE set2_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="1">
-			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#attributes.intstruct.razuna.session.hostid#">
 			</cfquery>
 			<!--- Get tools --->
-			<cfinvoke component="settings" method="get_tools" thestruct="#arguments.thestruct#" returnVariable="arguments.thestruct.thetools" />
+			<cfinvoke component="settings" method="get_tools" thestruct="#attributes.intstruct#" returnVariable="attributes.intstruct.thetools" />
 			<!--- Check the platform and then decide on the different executables --->
 			<cfif isWindows()>
-				<cfset var theimconvert = """#arguments.thestruct.thetools.imagemagick#/convert.exe""">
-				<cfset var theimcomposite = """#arguments.thestruct.thetools.imagemagick#/composite.exe""">
-				<cfset var theidentify = """#arguments.thestruct.thetools.imagemagick#/identify.exe""">
-				<cfset var theffmpeg = """#arguments.thestruct.thetools.ffmpeg#/ffmpeg.exe""">
+				<cfset var theimconvert = """#attributes.intstruct.thetools.imagemagick#/convert.exe""">
+				<cfset var theimcomposite = """#attributes.intstruct.thetools.imagemagick#/composite.exe""">
+				<cfset var theidentify = """#attributes.intstruct.thetools.imagemagick#/identify.exe""">
+				<cfset var theffmpeg = """#attributes.intstruct.thetools.ffmpeg#/ffmpeg.exe""">
 			<cfelse>
-				<cfset var theimconvert = "#arguments.thestruct.thetools.imagemagick#/convert">
-				<cfset var theimcomposite = "#arguments.thestruct.thetools.imagemagick#/composite">
-				<cfset var theidentify = "#arguments.thestruct.thetools.imagemagick#/identify">
-				<cfset var theffmpeg = "#arguments.thestruct.thetools.ffmpeg#/ffmpeg">
+				<cfset var theimconvert = "#attributes.intstruct.thetools.imagemagick#/convert">
+				<cfset var theimcomposite = "#attributes.intstruct.thetools.imagemagick#/composite">
+				<cfset var theidentify = "#attributes.intstruct.thetools.imagemagick#/identify">
+				<cfset var theffmpeg = "#attributes.intstruct.thetools.ffmpeg#/ffmpeg">
 			</cfif>
 			<!--- Init Java Object --->
 			<cfset objruntime = createObject( "java", "java.lang.Runtime").getRuntime() >
@@ -850,23 +850,16 @@ Comment:<br>
 			<cfset idcol  = "asset_id_r">
 		</cfif>
 		<!--- Param --->
-		<cfset var qry = structnew()>
+		<cfset var qry = "">
 		<!--- Query links --->
-		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qry.links" cachedwithin="1" region="razcache">
-		SELECT /* #cachetoken#get_versions_link */ av_id, asset_id_r, av_link_title, av_link_url, folder_id_r, av_type, av_thumb_url
+		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qry" cachedwithin="1" region="razcache">
+		SELECT /* #cachetoken#get_versions_link */ av_id, asset_id_r, av_link_title, av_link_url, thesize, thewidth, theheight, av_type, hashtag, folder_id_r, av_thumb_url, selection, theorder, av_link as link
 		FROM #arguments.thestruct.razuna.session.hostdbprefix#additional_versions
 		WHERE #idcol# = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
-		AND av_link = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="1">
+		ORDER BY theorder DESC
 		</cfquery>
-		<!--- Query links --->
-		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qry.assets" cachedwithin="1" region="razcache">
-		SELECT /* #cachetoken#get_versions_link2 */ av_id, asset_id_r, av_link_title, av_link_url, thesize, thewidth, theheight, av_type, hashtag, folder_id_r, av_thumb_url
-		FROM #arguments.thestruct.razuna.session.hostdbprefix#additional_versions
-		WHERE #idcol# = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
-		AND av_link = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="0">
-		</cfquery>
+		<!--- Return --->
 		<cfreturn qry />
 	</cffunction>
 
@@ -1099,10 +1092,11 @@ Comment:<br>
 		<cfset var qry = "">
 		<!--- Query --->
 		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qry">
-		SELECT av_link_title, av_link_url, av_link
+		SELECT av_link_title, av_link_url, av_link, theorder
 		FROM #arguments.thestruct.razuna.session.hostdbprefix#additional_versions
 		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 		AND av_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.av_id#">
+		ORDER BY theorder
 		</cfquery>
 		<cfreturn qry />
 	</cffunction>

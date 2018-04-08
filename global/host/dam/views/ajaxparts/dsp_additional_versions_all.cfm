@@ -26,7 +26,7 @@
 <cfoutput>
 <cfif qry_av.assets.recordcount NEQ 0 OR qry_av.links.recordcount NEQ 0>
 	<table border="0" cellpadding="0" cellspacing="0" width="100%">
-		<cfloop query="qry_av.assets">
+		<cfloop query="qry_av">
 			<!--- Format size --->
 			<cfif isnumeric(thesize)><cfset thesize = numberformat(thesize,'_.__')></cfif>
 			<tr>

@@ -30,9 +30,10 @@
 
 	<!--- Application Settings --->
 	<cffunction name="onApplicationStart" returnType="boolean" output="false">
-		
+
 		<!--- Set where Lucene is located --->
-		<cfset application.razuna.api.lucene = "global.cfc.lucene">
+		<cfset application.razuna.lucene = "global.cfc.lucene">
+		<cfset application.razuna.trans = createObject("component","global.cfc.ResourceManager").init('translations')>
 
 		<!--- Check for config file --->
 		<cfif fileexists("#ExpandPath(".")#/config/config.cfm")>
@@ -40,35 +41,40 @@
 			<cfset loc = trim(getProfileString("#ExpandPath(".")#/config/config.cfm", "default", "location"))>
 			<!--- If value is empty then reset --->
 			<cfif loc NEQ "">
-				<cfset application.razuna.api.lucene = loc>
+				<cfset application.razuna.lucene = loc>
 			</cfif>
 		</cfif>
 
 		<!--- Set HTTP or HTTPS --->
 		<cfif cgi.https EQ "on" OR cgi.http_x_https EQ "on" OR cgi.http_x_forwarded_proto EQ "https">
-			<cfset application.razuna.api.thehttp = "https://">
+			<cfset application.razuna.thehttp = "https://">
 		<cfelse>
-			<cfset application.razuna.api.thehttp = "http://">
+			<cfset application.razuna.thehttp = "http://">
 		</cfif>
-		
+
 		<!--- Application vars --->
-		<cfset application.razuna.api.theurl = "#application.razuna.api.thehttp#" & cgi.http_host & "/assets/">
-		<cfset application.razuna.api.thispath = ExpandPath(".")>
-		
+		<cfset application.razuna.theurl = "#application.razuna.thehttp#" & cgi.http_host & "/assets/">
+		<cfset application.razuna.thispath = ExpandPath(".")>
+
 		<!--- Dynamic path --->
 		<cfif listfirst(cgi.SCRIPT_NAME,"/") EQ "razuna">
-			<cfset application.razuna.api.dynpath = "/razuna">
+			<cfset application.razuna.dynpath = "/razuna">
 		<cfelse>
-			<cfset application.razuna.api.dynpath = "">
+			<cfset application.razuna.dynpath = "">
 		</cfif>
-		
+
 		<!--- Get config values --->
 		<cfinvoke component="global.cfc.settings" method="getconfigdefaultapi" />
 		<!--- Return --->
 		<cfreturn true>
 	</cffunction>
-	
-	<!--- Nothing else below here for you to take care off! --->
+
+	<cffunction name="onRequestStart">
+		<!--- Make sure we return the content-type properly here --->
+		<cfheader name="Content-Type" value="application/json">
+		<!--- Return --->
+		<cfreturn true>
+	</cffunction>
 
 	<cffunction name="onSessionStart" output="false">
 		<!--- Session vars --->
@@ -80,6 +86,8 @@
 	<cffunction name="onError" returntype="string">
 	    <cfargument name="Exception" required="true">
 	    <cfargument type="String" name="EventName" required="true">
+	    <!--- Make sure we return the content-type properly here --->
+	    <cfheader name="Content-Type" value="application/json">
 	    <!--- Log all errors. --->
 	    <cflog file="api" type="error" text="Event Name: #Arguments.Eventname#" >
 	    <cflog file="api" type="error" text="Message: #Arguments.Exception.message#">

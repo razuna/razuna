@@ -202,7 +202,7 @@
 			<!--- Show basket link --->
 			<cfif cs.show_basket_part>
 				<div style="float:left;vertical-align:top">
-					<a href="##" onclick="tooglefooter('0');loadcontent('rightside','#myself#c.basket_full');$('##footer_drop').css('height','30px');">#myFusebox.getApplicationData().defaults.trans("show_basket")#</a>
+					<a href="##" onclick="tooglefooter('0');loadcontent('rightside','#myself#c.basket_full');$('##footer_drop').css('height','37px');">#myFusebox.getApplicationData().defaults.trans("show_basket")#</a>
 				</div>
 			</cfif>
 			<!--- Feedback --->

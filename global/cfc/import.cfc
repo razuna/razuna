@@ -80,6 +80,10 @@
 		<cfargument name="imp_temp_id" type="string" required="true">
 		<cfargument name="map" type="string" required="true">
 		<cfargument name="thestruct" type="struct" required="true" />
+		<!--- <cfset consoleoutput(true, true)> --->
+		<!--- <cfset console("arguments", arguments)> --->
+		<!--- Var --->
+		<cfset var q = "">
 		<!--- Query values --->
 		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="q">
 		SELECT imp_field
@@ -88,6 +92,8 @@
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 		AND imp_map = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.map#">
 		</cfquery>
+		<!--- <cfset console("q", q)> --->
+		<!--- Return --->
 		<cfreturn q.imp_field />
 	</cffunction>
 
@@ -388,11 +394,9 @@
 					<!--- If template --->
 					<cfif arguments.thestruct.impp_template NEQ "">
 						<cfset c_thelabels = gettemplatevalue(imp_temp_id=arguments.thestruct.impp_template,map="labels",thestruct=arguments.thestruct)>
-					</cfif>
-					<cfif c_thelabels NEQ "">
-						<cfset tlabel = evaluate(c_thelabels)>
+						<cfset tlabel = isdefined("#c_thelabels#") AND c_thelabels NEQ "" ? evaluate(c_thelabels) : "">
 					<cfelse>
-						<cfset tlabel = "">
+						<cfset tlabel = isdefined("#c_thelabels#") ? evaluate(c_thelabels) : "">
 					</cfif>
 					<!--- Import Labels --->
 					<cfinvoke method="doimportlabels" labels="#tlabel#" assetid="#found.img_id#" kind="img" thestruct="#arguments.thestruct#" />
@@ -401,12 +405,14 @@
 					<!--- If template --->
 					<cfif arguments.thestruct.impp_template NEQ "">
 						<cfset c_thefilename = gettemplatevalue(imp_temp_id=arguments.thestruct.impp_template,map="filename",thestruct=arguments.thestruct)>
+						<cfset c_thefilename = isdefined("#c_thefilename#") AND c_thefilename NEQ "" ? c_thefilename : "">
 					</cfif>
 					<cfif arguments.thestruct.impp_template NEQ "">
 						<cfset c_theupcnumber = gettemplatevalue(imp_temp_id=arguments.thestruct.impp_template,map="upc_number",thestruct=arguments.thestruct)>
+						<cfset c_theupcnumber = isdefined("#c_theupcnumber#") AND c_theupcnumber NEQ "" ? c_theupcnumber : "">
 					</cfif>
 					<!--- Images: main table --->
-					<cfif isdefined("#c_thefilename#") AND evaluate(c_thefilename) NEQ "">
+					<cfif c_thefilename NEQ "">
 						<cftransaction>
 							<cfquery dataSource="#arguments.thestruct.razuna.application.datasource#">
 							UPDATE #arguments.thestruct.razuna.session.hostdbprefix#images
@@ -420,7 +426,7 @@
 						</cftransaction>
 					</cfif>
 					<!--- UPC --->
-					<cfif isdefined("#c_theupcnumber#") AND evaluate(c_theupcnumber) NEQ "">
+					<cfif c_theupcnumber NEQ "">
 						<cftransaction>
 							<cfquery dataSource="#arguments.thestruct.razuna.application.datasource#">
 							UPDATE #arguments.thestruct.razuna.session.hostdbprefix#images
@@ -446,6 +452,8 @@
 					<cfif arguments.thestruct.impp_template NEQ "">
 						<cfset c_thekeywords = gettemplatevalue(imp_temp_id=arguments.thestruct.impp_template,map="keywords",thestruct=arguments.thestruct)>
 						<cfset c_thedescription = gettemplatevalue(imp_temp_id=arguments.thestruct.impp_template,map="description",thestruct=arguments.thestruct)>
+						<cfset c_thekeywords = isdefined("#c_thekeywords#") AND c_thekeywords NEQ "" ? c_thekeywords : "">
+						<cfset c_thedescription = isdefined("#c_thedescription#") AND c_thedescription NEQ "" ? c_thedescription : "">
 					</cfif>
 					<!--- record not found, so do an insert --->
 					<cfif khere.img_id_r EQ "">
@@ -554,106 +562,106 @@
 						<cfset c_thecopynotice = gettemplatevalue(imp_temp_id=arguments.thestruct.impp_template,map="copynotice",thestruct=arguments.thestruct)>
 					</cfif>
 					<!--- Write arguments for passing to XMP module --->
-					<cfif c_thetitle NEQ "">
+					<cfif c_thetitle NEQ "" AND isdefined("#c_thetitle#")>
 						<cfset arguments.thestruct.xmp_document_title = evaluate(c_thetitle)>
 					</cfif>
-					<cfif c_thecreator NEQ "">
+					<cfif c_thecreator NEQ "" AND isdefined("#c_thecreator#")>
 						<cfset arguments.thestruct.xmp_author = evaluate(c_thecreator)>
 					</cfif>
-					<cfif c_theauthorstitle NEQ "">
+					<cfif c_theauthorstitle NEQ "" AND isdefined("#c_theauthorstitle#")>
 						<cfset arguments.thestruct.xmp_author_title = evaluate(c_theauthorstitle)>
 					</cfif>
-					<cfif c_thedescription NEQ "">
+					<cfif c_thedescription NEQ "" AND isdefined("#c_thedescription#")>
 						<cfset arguments.thestruct.xmp_description = evaluate(c_thedescription)>
 					</cfif>
-					<cfif c_thedescwriter NEQ "">
+					<cfif c_thedescwriter NEQ "" AND isdefined("#c_thedescwriter#")>
 						<cfset arguments.thestruct.xmp_description_writer = evaluate(c_thedescwriter)>
 					</cfif>
-					<cfif c_thecopystatus NEQ "">
+					<cfif c_thecopystatus NEQ "" AND isdefined("#c_thecopystatus#")>
 						<cfset arguments.thestruct.xmp_copyright_status = evaluate(c_thecopystatus)>
 					</cfif>
-					<cfif c_theiptcinstructions NEQ "">
+					<cfif c_theiptcinstructions NEQ "" AND isdefined("#c_theiptcinstructions#")>
 						<cfset arguments.thestruct.xmp_copyright_notice = evaluate(c_theiptcinstructions)>
 					</cfif>
-					<cfif c_thecopyurl NEQ "">
+					<cfif c_thecopyurl NEQ "" AND isdefined("#c_thecopyurl#")>
 						<cfset arguments.thestruct.xmp_copyright_info_url = evaluate(c_thecopyurl)>
 					</cfif>
-					<cfif c_thecategory NEQ "">
+					<cfif c_thecategory NEQ "" AND isdefined("#c_thecategory#")>
 						<cfset arguments.thestruct.xmp_category = evaluate(c_thecategory)>
 					</cfif>
-					<cfif c_thecategorysub NEQ "">
+					<cfif c_thecategorysub NEQ "" AND isdefined("#c_thecategorysub#")>
 						<cfset arguments.thestruct.xmp_supplemental_categories = evaluate(c_thecategorysub)>
 					</cfif>
-					<cfif c_theiptcaddress NEQ "">
+					<cfif c_theiptcaddress NEQ "" AND isdefined("#c_theiptcaddress#")>
 						<cfset arguments.thestruct.iptc_contact_address = evaluate(c_theiptcaddress)>
 					</cfif>
-					<cfif c_theiptccity NEQ "">
+					<cfif c_theiptccity NEQ "" AND isdefined("#c_theiptccity#")>
 						<cfset arguments.thestruct.iptc_contact_city = evaluate(c_theiptccity)>
 					</cfif>
-					<cfif c_theiptclocation NEQ "">
+					<cfif c_theiptclocation NEQ "" AND isdefined("#c_theiptclocation#")>
 						<cfset arguments.thestruct.iptc_contact_state_province = evaluate(c_theiptclocation)>
 					</cfif>
-					<cfif c_theiptczip NEQ "">
+					<cfif c_theiptczip NEQ "" AND isdefined("#c_theiptczip#")>
 						<cfset arguments.thestruct.iptc_contact_postal_code = evaluate(c_theiptczip)>
 					</cfif>
-					<cfif c_theiptccountry NEQ "">
+					<cfif c_theiptccountry NEQ "" AND isdefined("#c_theiptccountry#")>
 						<cfset arguments.thestruct.iptc_contact_country = evaluate(c_theiptccountry)>
 					</cfif>
-					<cfif c_theiptcphone NEQ "">
+					<cfif c_theiptcphone NEQ "" AND isdefined("#c_theiptcphone#")>
 						<cfset arguments.thestruct.iptc_contact_phones = evaluate(c_theiptcphone)>
 					</cfif>
-					<cfif c_theiptcemail NEQ "">
+					<cfif c_theiptcemail NEQ "" AND isdefined("#c_theiptcemail#")>
 						<cfset arguments.thestruct.iptc_contact_emails = evaluate(c_theiptcemail)>
 					</cfif>
-					<cfif c_theiptcwebsite NEQ "">
+					<cfif c_theiptcwebsite NEQ "" AND isdefined("#c_theiptcwebsite#")>
 						<cfset arguments.thestruct.iptc_contact_websites = evaluate(c_theiptcwebsite)>
 					</cfif>
-					<cfif c_theiptcheadline NEQ "">
+					<cfif c_theiptcheadline NEQ "" AND isdefined("#c_theiptcheadline#")>
 						<cfset arguments.thestruct.iptc_content_headline = evaluate(c_theiptcheadline)>
 					</cfif>
-					<cfif c_theiptcsubjectcode NEQ "">
+					<cfif c_theiptcsubjectcode NEQ "" AND isdefined("#c_theiptcsubjectcode#")>
 						<cfset arguments.thestruct.iptc_content_subject_code = evaluate(c_theiptcsubjectcode)>
 					</cfif>
-					<cfif c_theiptcdatecreated NEQ "">
+					<cfif c_theiptcdatecreated NEQ "" AND isdefined("#c_theiptcdatecreated#")>
 						<cfset arguments.thestruct.iptc_date_created = evaluate(c_theiptcdatecreated)>
 					</cfif>
-					<cfif c_theiptcintelgenre NEQ "">
+					<cfif c_theiptcintelgenre NEQ "" AND isdefined("#c_theiptcintelgenre#")>
 						<cfset arguments.thestruct.iptc_intellectual_genre = evaluate(c_theiptcintelgenre)>
 					</cfif>
-					<cfif c_theiptcscene NEQ "">
+					<cfif c_theiptcscene NEQ "" AND isdefined("#c_theiptcscene#")>
 						<cfset arguments.thestruct.iptc_scene = evaluate(c_theiptcscene)>
 					</cfif>
-					<cfif c_theiptclocation NEQ "">
+					<cfif c_theiptclocation NEQ "" AND isdefined("#c_theiptclocation#")>
 						<cfset arguments.thestruct.iptc_image_location = evaluate(c_theiptclocation)>
 					</cfif>
-					<cfif c_theiptcimagecity NEQ "">
+					<cfif c_theiptcimagecity NEQ "" AND isdefined("#c_theiptcimagecity#")>
 						<cfset arguments.thestruct.iptc_image_city = evaluate(c_theiptcimagecity)>
 					</cfif>
-					<cfif c_theiptcimagecountrycode NEQ "">
+					<cfif c_theiptcimagecountrycode NEQ "" AND isdefined("#c_theiptcimagecountrycode#")>
 						<cfset arguments.thestruct.iptc_image_country = evaluate(c_theiptcimagecountrycode)>
 					</cfif>
-					<cfif c_theiptcimagestate NEQ "">
+					<cfif c_theiptcimagestate NEQ "" AND isdefined("#c_theiptcimagestate#")>
 						<cfset arguments.thestruct.iptc_image_state_province = evaluate(c_theiptcimagestate)>
 					</cfif>
-					<cfif c_theiptcimagecountry NEQ "">
+					<cfif c_theiptcimagecountry NEQ "" AND isdefined("#c_theiptcimagecountry#")>
 						<cfset arguments.thestruct.iptc_iso_country_code = evaluate(c_theiptcimagecountry)>
 					</cfif>
-					<cfif c_theiptccredit NEQ "">
+					<cfif c_theiptccredit NEQ "" AND isdefined("#c_theiptccredit#")>
 						<cfset arguments.thestruct.iptc_status_job_identifier = evaluate(c_theiptccredit)>
 					</cfif>
-					<cfif c_thecopynotice NEQ "">
+					<cfif c_thecopynotice NEQ "" AND isdefined("#c_thecopynotice#")>
 						<cfset arguments.thestruct.iptc_status_instruction = evaluate(c_thecopynotice)>
 					</cfif>
-					<cfif c_thecopystatus NEQ "">
+					<cfif c_thecopystatus NEQ "" AND isdefined("#c_thecopystatus#")>
 						<cfset arguments.thestruct.iptc_status_provider = evaluate(c_thecopystatus)>
 					</cfif>
-					<cfif c_theiptcsubjectcode NEQ "">
+					<cfif c_theiptcsubjectcode NEQ "" AND isdefined("#c_theiptcsubjectcode#")>
 						<cfset arguments.thestruct.iptc_status_source = evaluate(c_theiptcsubjectcode)>
 					</cfif>
-					<cfif c_theiptcinstructions NEQ "">
+					<cfif c_theiptcinstructions NEQ "" AND isdefined("#c_theiptcinstructions#")>
 						<cfset arguments.thestruct.iptc_status_rights_usage_terms = evaluate(c_theiptcinstructions)>
 					</cfif>
-					<cfif c_theurgency NEQ "">
+					<cfif c_theurgency NEQ "" AND isdefined("#c_theurgency#")>
 						<cfset arguments.thestruct.xmp_origin_urgency = evaluate(c_theurgency)>
 					</cfif>
 					<!--- if no record found in xmp table do an insert --->
@@ -692,10 +700,6 @@
 				</cfif>
 				<!--- Show if error --->
 				<cfcatch type="any">
-					<!--- <cfdump var="#arguments.thestruct#">
-					<cfdump var="#cfcatch#">
-					<cfflush>
-					<cfabort> --->
 					<!--- Feedback --->
 					<cfinvoke component="defaults" method="trans" transid="error_occurred" returnvariable="error_occurred" />
 					<cfoutput>
@@ -707,7 +711,7 @@
 							#cfcatch.detail#
 						</span>
 						<br />
-						In other words, the field was most likely not defined in your import file. The rest of the values have still imported successfully, but you might want to add the field to your import file the next time.
+						The values for this file were not imported!
 						<br><br>
 					</cfoutput>
 					<!--- <cfset cfcatch.custom_message = "Error in function import.doimportimages">
@@ -786,11 +790,9 @@
 					<!--- If template --->
 					<cfif arguments.thestruct.impp_template NEQ "">
 						<cfset c_thelabels = gettemplatevalue(imp_temp_id=arguments.thestruct.impp_template,map="labels",thestruct=arguments.thestruct)>
-					</cfif>
-					<cfif c_thelabels NEQ "">
-						<cfset tlabel = evaluate(c_thelabels)>
+						<cfset tlabel = isdefined("#c_thelabels#") AND c_thelabels NEQ "" ? evaluate(c_thelabels) : "">
 					<cfelse>
-						<cfset tlabel = "">
+						<cfset tlabel = isdefined("#c_thelabels#") ? evaluate(c_thelabels) : "">
 					</cfif>
 					<cfinvoke method="doimportlabels" labels="#tlabel#" assetid="#found.vid_id#" kind="vid" thestruct="#arguments.thestruct#" />
 					<!--- Import Custom Fields --->
@@ -798,9 +800,10 @@
 					<!--- If template --->
 					<cfif arguments.thestruct.impp_template NEQ "">
 						<cfset c_thefilename = gettemplatevalue(imp_temp_id=arguments.thestruct.impp_template,map="filename",thestruct=arguments.thestruct)>
+						<cfset c_thefilename = isdefined("#c_thefilename#") AND c_thefilename NEQ "" ? c_thefilename : "">
 					</cfif>
 					<!--- Images: main table --->
-					<cfif isdefined("#c_thefilename#") AND evaluate(c_thefilename) NEQ "">
+					<cfif c_thefilename NEQ "">
 						<cftransaction>
 							<cfquery dataSource="#arguments.thestruct.razuna.application.datasource#">
 							UPDATE #arguments.thestruct.razuna.session.hostdbprefix#videos
@@ -828,6 +831,8 @@
 					<cfif arguments.thestruct.impp_template NEQ "">
 						<cfset c_thekeywords = gettemplatevalue(imp_temp_id=arguments.thestruct.impp_template,map="keywords",thestruct=arguments.thestruct)>
 						<cfset c_thedescription = gettemplatevalue(imp_temp_id=arguments.thestruct.impp_template,map="description",thestruct=arguments.thestruct)>
+						<cfset c_thekeywords = isdefined("#c_thekeywords#") AND c_thekeywords NEQ "" ? c_thekeywords : "">
+						<cfset c_thedescription = isdefined("#c_thedescription#") AND c_thedescription NEQ "" ? c_thedescription : "">
 					</cfif>
 					<!--- record not found, so do an insert --->
 					<cfif khere.vid_id_r EQ "">
@@ -882,8 +887,8 @@
 							<cfquery dataSource="#arguments.thestruct.razuna.application.datasource#">
 							UPDATE #arguments.thestruct.razuna.session.hostdbprefix#videos_text
 							SET
-							vid_keywords = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#tkeywords#">,
-							vid_description = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#tdescription#">
+							vid_keywords = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#ltrim(tkeywords)#">,
+							vid_description = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#ltrim(tdescription)#">
 							WHERE vid_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#found.vid_id#">
 							AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#arguments.thestruct.razuna.session.hostid#">
 							</cfquery>
@@ -902,7 +907,7 @@
 								#cfcatch.detail#
 							</span>
 							<br />
-							In other words, the field was most likely not defined in your import file. The rest of the values have still imported successfully, but you might want to add the field to your import file the next time.
+							The values for this file were not imported!
 							<br><br>
 						</cfoutput>
 						<!--- <cfset cfcatch.custom_message = "Error in function import.doimportimages">
@@ -980,11 +985,9 @@
 					<!--- If template --->
 					<cfif arguments.thestruct.impp_template NEQ "">
 						<cfset c_thelabels = gettemplatevalue(imp_temp_id=arguments.thestruct.impp_template,map="labels",thestruct=arguments.thestruct)>
-					</cfif>
-					<cfif c_thelabels NEQ "">
-						<cfset tlabel = evaluate(c_thelabels)>
+						<cfset tlabel = isdefined("#c_thelabels#") AND c_thelabels NEQ "" ? evaluate(c_thelabels) : "">
 					<cfelse>
-						<cfset tlabel = "">
+						<cfset tlabel = isdefined("#c_thelabels#") ? evaluate(c_thelabels) : "">
 					</cfif>
 					<cfinvoke method="doimportlabels" labels="#tlabel#" assetid="#found.aud_id#" kind="aud" thestruct="#arguments.thestruct#" />
 					<!--- Import Custom Fields --->
@@ -992,9 +995,10 @@
 					<!--- If template --->
 					<cfif arguments.thestruct.impp_template NEQ "">
 						<cfset c_thefilename = gettemplatevalue(imp_temp_id=arguments.thestruct.impp_template,map="filename",thestruct=arguments.thestruct)>
+						<cfset c_thefilename = isdefined("#c_thefilename#") AND c_thefilename NEQ "" ? c_thefilename : "">
 					</cfif>
 					<!--- Images: main table --->
-					<cfif isdefined("#c_thefilename#") AND evaluate(c_thefilename) NEQ "">
+					<cfif c_thefilename NEQ "">
 						<cftransaction>
 							<cfquery dataSource="#arguments.thestruct.razuna.application.datasource#">
 							UPDATE #arguments.thestruct.razuna.session.hostdbprefix#audios
@@ -1022,6 +1026,8 @@
 					<cfif arguments.thestruct.impp_template NEQ "">
 						<cfset c_thekeywords = gettemplatevalue(imp_temp_id=arguments.thestruct.impp_template,map="keywords",thestruct=arguments.thestruct)>
 						<cfset c_thedescription = gettemplatevalue(imp_temp_id=arguments.thestruct.impp_template,map="description",thestruct=arguments.thestruct)>
+						<cfset c_thekeywords = isdefined("#c_thekeywords#") AND c_thekeywords NEQ "" ? c_thekeywords : "">
+						<cfset c_thedescription = isdefined("#c_thedescription#") AND c_thedescription NEQ "" ? c_thedescription : "">
 					</cfif>
 					<!--- record not found, so do an insert --->
 					<cfif khere.aud_id_r EQ "">
@@ -1076,8 +1082,8 @@
 							<cfquery dataSource="#arguments.thestruct.razuna.application.datasource#">
 							UPDATE #arguments.thestruct.razuna.session.hostdbprefix#audios_text
 							SET
-							aud_keywords = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#tkeywords#">,
-							aud_description = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#tdescription#">
+							aud_keywords = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#ltrim(tkeywords)#">,
+							aud_description = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#ltrim(tdescription)#">
 							WHERE aud_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#found.aud_id#">
 							AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#arguments.thestruct.razuna.session.hostid#">
 							</cfquery>
@@ -1096,7 +1102,7 @@
 								#cfcatch.detail#
 							</span>
 							<br />
-							In other words, the field was most likely not defined in your import file. The rest of the values have still imported successfully, but you might want to add the field to your import file the next time.
+							The values for this file were not imported!
 							<br><br>
 						</cfoutput>
 						<!--- <cfset cfcatch.custom_message = "Error in function import.doimportimages">
@@ -1181,11 +1187,9 @@
 					<!--- If template --->
 					<cfif arguments.thestruct.impp_template NEQ "">
 						<cfset c_thelabels = gettemplatevalue(imp_temp_id=arguments.thestruct.impp_template,map="labels",thestruct=arguments.thestruct)>
-					</cfif>
-					<cfif c_thelabels NEQ "">
-						<cfset tlabel = evaluate(c_thelabels)>
+						<cfset tlabel = isdefined("#c_thelabels#") AND c_thelabels NEQ "" ? evaluate(c_thelabels) : "">
 					<cfelse>
-						<cfset tlabel = "">
+						<cfset tlabel = isdefined("#c_thelabels#") ? evaluate(c_thelabels) : "">
 					</cfif>
 					<!--- Import Labels --->
 					<cfinvoke method="doimportlabels" labels="#tlabel#" assetid="#found.file_id#" kind="doc" thestruct="#arguments.thestruct#" />
@@ -1194,9 +1198,10 @@
 					<!--- If template --->
 					<cfif arguments.thestruct.impp_template NEQ "">
 						<cfset c_thefilename = gettemplatevalue(imp_temp_id=arguments.thestruct.impp_template,map="filename",thestruct=arguments.thestruct)>
+						<cfset c_thefilename = isdefined("#c_thefilename#") AND c_thefilename NEQ "" ? c_thefilename : "">
 					</cfif>
 					<!--- Images: main table --->
-					<cfif isdefined("#c_thefilename#") AND evaluate(c_thefilename) NEQ "">
+					<cfif c_thefilename NEQ "">
 						<cftransaction>
 							<cfquery dataSource="#arguments.thestruct.razuna.application.datasource#">
 							UPDATE #arguments.thestruct.razuna.session.hostdbprefix#files
@@ -1224,6 +1229,8 @@
 					<cfif arguments.thestruct.impp_template NEQ "">
 						<cfset c_thekeywords = gettemplatevalue(imp_temp_id=arguments.thestruct.impp_template,map="keywords",thestruct=arguments.thestruct)>
 						<cfset c_thedescription = gettemplatevalue(imp_temp_id=arguments.thestruct.impp_template,map="description",thestruct=arguments.thestruct)>
+						<cfset c_thekeywords = isdefined("#c_thekeywords#") AND c_thekeywords NEQ "" ? c_thekeywords : "">
+						<cfset c_thedescription = isdefined("#c_thedescription#") AND c_thedescription NEQ "" ? c_thedescription : "">
 					</cfif>
 					<!--- record not found, so do an insert --->
 					<cfif khere.file_id_r EQ "">
@@ -1278,8 +1285,8 @@
 							<cfquery dataSource="#arguments.thestruct.razuna.application.datasource#">
 							UPDATE #arguments.thestruct.razuna.session.hostdbprefix#files_desc
 							SET
-							file_keywords = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#tkeywords#">,
-							file_desc = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#tdescription#">
+							file_keywords = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#ltrim(tkeywords)#">,
+							file_desc = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#ltrim(tdescription)#">
 							WHERE file_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#found.file_id#">
 							AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#arguments.thestruct.razuna.session.hostid#">
 							</cfquery>
@@ -1310,32 +1317,32 @@
 							INSERT INTO #arguments.thestruct.razuna.session.hostdbprefix#files_xmp
 							(author, rights, authorsposition, captionwriter, webstatement, rightsmarked, asset_id_r, host_id)
 							VALUES(
-								<cfif c_thepdf_author NEQ "">
+								<cfif c_thepdf_author NEQ "" AND isdefined("#c_thepdf_author#")>
 									<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(c_thepdf_author)#">,
 								<cfelse>
 									<cfqueryparam cfsqltype="cf_sql_varchar" value="">,
 								</cfif>
-								<cfif c_thepdf_rights NEQ "">
+								<cfif c_thepdf_rights NEQ "" AND isdefined("#c_thepdf_rights#")>
 									<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(c_thepdf_rights)#">,
 								<cfelse>
 									<cfqueryparam cfsqltype="cf_sql_varchar" value="">,
 								</cfif>
-								<cfif c_thepdf_authorsposition NEQ "">
+								<cfif c_thepdf_authorsposition NEQ "" AND isdefined("#c_thepdf_authorsposition#")>
 									<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(c_thepdf_authorsposition)#">,
 								<cfelse>
 									<cfqueryparam cfsqltype="cf_sql_varchar" value="">,
 								</cfif>
-						  	  	<cfif c_thepdf_captionwriter NEQ "">
+						  	  	<cfif c_thepdf_captionwriter NEQ "" AND isdefined("#c_thepdf_captionwriter#")>
 									<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(c_thepdf_captionwriter)#">,
 								<cfelse>
 									<cfqueryparam cfsqltype="cf_sql_varchar" value="">,
 								</cfif>
-						  	  	<cfif c_thepdf_webstatement NEQ "">
+						  	  	<cfif c_thepdf_webstatement NEQ "" AND isdefined("#c_thepdf_webstatement#")>
 									<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(c_thepdf_webstatement)#">,
 								<cfelse>
 									<cfqueryparam cfsqltype="cf_sql_varchar" value="">,
 								</cfif>
-						  	  	<cfif c_thepdf_rightsmarked NEQ "">
+						  	  	<cfif c_thepdf_rightsmarked NEQ "" AND isdefined("#c_thepdf_rightsmarked#")>
 									<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(c_thepdf_rightsmarked)#">,
 								<cfelse>
 									<cfqueryparam cfsqltype="cf_sql_varchar" value="">,
@@ -1348,63 +1355,63 @@
 					<cfelse>
 						<!--- If append --->
 						<cfif arguments.thestruct.imp_write EQ "add">
-							<cfif c_thepdf_author NEQ "">
+							<cfif c_thepdf_author NEQ "" AND isdefined("#c_thepdf_author#")>
 								<cfset tpdf_author = xmphere.author & " " & evaluate(c_thepdf_author)>
 							<cfelse>
 								<cfset tpdf_author = xmphere.author>
 							</cfif>
-							<cfif c_thepdf_rights NEQ "">
+							<cfif c_thepdf_rights NEQ "" AND isdefined("#c_thepdf_rights#")>
 								<cfset tpdf_rights = xmphere.rights & " " & evaluate(c_thepdf_rights)>
 							<cfelse>
 								<cfset tpdf_rights = xmphere.rights>
 							</cfif>
-							<cfif c_thepdf_authorsposition NEQ "">
+							<cfif c_thepdf_authorsposition NEQ "" AND isdefined("#c_thepdf_authorsposition#")>
 								<cfset tpdf_authorsposition = xmphere.authorsposition & " " & evaluate(c_thepdf_authorsposition)>
 							<cfelse>
 								<cfset tpdf_authorsposition = xmphere.authorsposition>
 							</cfif>
-							<cfif c_thepdf_captionwriter NEQ "">
+							<cfif c_thepdf_captionwriter NEQ "" AND isdefined("#c_thepdf_captionwriter#")>
 								<cfset tpdf_captionwriter = xmphere.captionwriter & " " & evaluate(c_thepdf_captionwriter)>
 							<cfelse>
 								<cfset tpdf_captionwriter = xmphere.captionwriter>
 							</cfif>
-							<cfif c_thepdf_webstatement NEQ "">
+							<cfif c_thepdf_webstatement NEQ "" AND isdefined("#c_thepdf_webstatement#")>
 								<cfset tpdf_webstatement = xmphere.webstatement & " " & evaluate(c_thepdf_webstatement)>
 							<cfelse>
 								<cfset tpdf_webstatement = xmphere.webstatement>
 							</cfif>
-							<cfif c_thepdf_rightsmarked NEQ "">
+							<cfif c_thepdf_rightsmarked NEQ "" AND isdefined("#c_thepdf_rightsmarked#")>
 								<cfset tpdf_rightsmarked = xmphere.rightsmarked & " " & evaluate(c_thepdf_rightsmarked)>
 							<cfelse>
 								<cfset tpdf_rightsmarked = xmphere.rightsmarked>
 							</cfif>
 						<cfelse>
-							<cfif c_thepdf_author NEQ "">
+							<cfif c_thepdf_author NEQ "" AND isdefined("#c_thepdf_author#")>
 								<cfset tpdf_author = evaluate(c_thepdf_author)>
 							<cfelse>
 								<cfset tpdf_author = "">
 							</cfif>
-							<cfif c_thepdf_rights NEQ "">
+							<cfif c_thepdf_rights NEQ "" AND isdefined("#c_thepdf_rights#")>
 								<cfset tpdf_rights = evaluate(c_thepdf_rights)>
 							<cfelse>
 								<cfset tpdf_rights = "">
 							</cfif>
-							<cfif c_thepdf_authorsposition NEQ "">
+							<cfif c_thepdf_authorsposition NEQ "" AND isdefined("#c_thepdf_authorsposition#")>
 								<cfset tpdf_authorsposition = evaluate(c_thepdf_authorsposition)>
 							<cfelse>
 								<cfset tpdf_authorsposition = "">
 							</cfif>
-							<cfif c_thepdf_captionwriter NEQ "">
+							<cfif c_thepdf_captionwriter NEQ "" AND isdefined("#c_thepdf_captionwriter#")>
 								<cfset tpdf_captionwriter = evaluate(c_thepdf_captionwriter)>
 							<cfelse>
 								<cfset tpdf_captionwriter = "">
 							</cfif>
-							<cfif c_thepdf_webstatement NEQ "">
+							<cfif c_thepdf_webstatement NEQ "" AND isdefined("#c_thepdf_webstatement#")>
 								<cfset tpdf_webstatement = evaluate(c_thepdf_webstatement)>
 							<cfelse>
 								<cfset tpdf_webstatement = "">
 							</cfif>
-							<cfif c_thepdf_rightsmarked NEQ "">
+							<cfif c_thepdf_rightsmarked NEQ "" AND isdefined("#c_thepdf_rightsmarked#")>
 								<cfset tpdf_rightsmarked = evaluate(c_thepdf_rightsmarked)>
 							<cfelse>
 								<cfset tpdf_rightsmarked = "">
@@ -1438,7 +1445,7 @@
 								#cfcatch.detail#
 							</span>
 							<br />
-							In other words, the field was most likely not defined in your import file. The rest of the values have still imported successfully, but you might want to add the field to your import file the next time.
+							The values for this file were not imported!
 							<br><br>
 						</cfoutput>
 						<!--- <cfset cfcatch.custom_message = "Error in function import.doimportimages">

@@ -1022,7 +1022,7 @@
 	<cfargument name="thestruct" type="struct" required="true" />
 	<cfset var prefs="">
 	<!--- Get the record --->
-	<cfinvoke method="details" thestruct="#arguments#" returnvariable="qry_user" />
+	<cfinvoke method="details" thestruct="#arguments.thestruct#" returnvariable="qry_user" />
 	<!--- Get email settings --->
 	<cfinvoke component="settings" method="getsettingsfromdam" thestruct="#arguments.thestruct#" returnvariable="prefs">
 	<cfset var email_body = prefs. set2_new_user_email_body>

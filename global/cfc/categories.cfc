@@ -36,7 +36,7 @@
 	<cfargument name="ColumnList" required="false" type="string" default="c.cat_id, c.cat_order, c.cat_online, c.cat_level, c.cat_id_r, cn.cat_name">
 	<cfargument name="thestruct" type="struct" required="true" />
 	<!--- this function implements only the interface & uses getTreeBy...()  --->
-	<cfreturn getTreeByLang(id=Arguments.id, max_level_depth=Arguments.max_level_depth, ColumnList=Arguments.ColumnList, lang=1) />
+	<cfreturn getTreeByLang(id=Arguments.id, max_level_depth=Arguments.max_level_depth, ColumnList=Arguments.ColumnList, lang=1, thestruct=arguments.thestruct) />
 </cffunction>
 
 <!--- getTreeByLang : GET THE CATEGORIES AND SUBCATEGORIES OF THIS HOST --->

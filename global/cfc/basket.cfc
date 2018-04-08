@@ -46,7 +46,7 @@
 			<cfset console(attributes.intstruct.sessions)>
 			<cfset console(attributes.intstruct.razuna.session.search)> --->
 			<!--- As we have all get all IDS from this search --->
-			<cfinvoke component="search" method="getAllIdsMain" searchupc="#attributes.intstruct.razuna.session.search.searchupc#" searchtext="#attributes.intstruct.razuna.session.search.searchtext#" searchtype="#attributes.intstruct.razuna.session.search.searchtype#" searchrenditions="#attributes.intstruct.razuna.session.search.searchrenditions#" searchfolderid="#attributes.intstruct.razuna.session.search.searchfolderid#" hostid="#attributes.intstruct.razuna.session.hostid#" thestruct="#arguments.thestruct#" returnvariable="ids">
+			<cfinvoke component="search" method="getAllIdsMain" searchupc="#attributes.intstruct.razuna.session.search.searchupc#" searchtext="#attributes.intstruct.razuna.session.search.searchtext#" searchtype="#attributes.intstruct.razuna.session.search.searchtype#" searchrenditions="#attributes.intstruct.razuna.session.search.searchrenditions#" searchfolderid="#attributes.intstruct.razuna.session.search.searchfolderid#" hostid="#attributes.intstruct.razuna.session.hostid#" thestruct="#attributes.intstruct#" returnvariable="ids">
 				<!--- Set the fileid --->
 				<cfset attributes.intstruct.file_id = ids>
 		</cfif>
@@ -427,7 +427,7 @@
 <!--- Assets Additional Versions --->
 <cffunction name="additional_versions" output="false">
 	<cfargument name="thestruct" type="struct">
-	<cfset var getbasket = readbasket(arguments.thestruct)>
+	<cfset var getbasket = readbasket(thestruct=arguments.thestruct)>
 	<!--- param --->
 	<cfset var qry = structnew()>
 	<!--- check recordcount --->

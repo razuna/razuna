@@ -338,10 +338,6 @@
 		<cfargument name="offset" type="numeric" required="false" default="0">
 		<cfargument name="rowmaxpage" type="numeric" required="false" default="0">
 		<cfargument name="thestruct" type="struct" required="false" default="">
-		<!--- Set thestruct if not here --->
-		<cfif NOT isstruct(arguments.thestruct)>
-			<cfset arguments.thestruct = structnew()>
-		</cfif>
 		<cfreturn getFolderAssets(folder_id=arguments.folder_id, columnlist=arguments.columnlist, file_extension=arguments.file_extension, offset=arguments.thestruct.razuna.session.offset, rowmaxpage=arguments.thestruct.razuna.session.rowmaxpage, thestruct=arguments.thestruct)>
 	</cffunction>
 
@@ -1464,7 +1460,6 @@
 		<cfargument name="thestruct" type="struct">
 		<!--- Loop over files --->
 		<cfthread intstruct="#arguments.thestruct#">
-
 			<!--- If this is from search the file_id should be all --->
 			<cfif attributes.intstruct.file_id EQ "all">
 				<!--- As we have all get all IDS from this search --->

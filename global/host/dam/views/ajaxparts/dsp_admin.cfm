@@ -29,94 +29,98 @@
 	<cfset isadmin = false>
 </cfif>
 <cfoutput>
-	<div id="tab_admin">
-		<ul>
-			<cfif isadmin OR (structkeyexists(tabaccess_struct,"users_access") AND tabaccess_struct.users_access)>
-				<li><a href="##admin_users" onclick="loadcontent('admin_users','#myself#c.users');">#myFusebox.getApplicationData().defaults.trans("users")#</a></li>
-			</cfif>
-			<cfif isadmin OR (structkeyexists(tabaccess_struct,"groups_access") AND tabaccess_struct.groups_access)>
-				<li><a href="##admin_groups" onclick="loadcontent('admin_groups','#myself#c.groups_list&kind=ecp&loaddiv=admin_groups');">#myFusebox.getApplicationData().defaults.trans("groups")#</a></li>
-			</cfif>
-			<cfif isadmin OR (structkeyexists(tabaccess_struct,"customfields_access") AND tabaccess_struct.customfields_access)>
-				<li><a href="##custom_fields" onclick="loadcontent('custom_fields','#myself#c.custom_fields');">#myFusebox.getApplicationData().defaults.trans("custom_fields_header")#</a></li>
-			</cfif>
-			<cfif isadmin OR (structkeyexists(tabaccess_struct,"labels_access") AND tabaccess_struct.labels_access)>
-				<li><a href="##admin_labels" onclick="loadcontent('admin_labels','#myself#c.admin_labels');">#myFusebox.getApplicationData().defaults.trans("labels")#</a></li>
-			</cfif>
-			<cfif isadmin OR (structkeyexists(tabaccess_struct,"schedules_access") AND tabaccess_struct.schedules_access)>
-				<li><a href="##admin_schedules" onclick="loadcontent('admin_schedules','#myself#c.scheduler_list&offset_sched=0');">#myFusebox.getApplicationData().defaults.trans("scheduled_uploads")#</a></li>
-			</cfif>
-			<cfif isadmin OR (structkeyexists(tabaccess_struct,"renditiontemplates_access") AND tabaccess_struct.renditiontemplates_access)>
-				<li><a href="##admin_upl_templates" onclick="loadcontent('admin_upl_templates','#myself#c.upl_templates');">#myFusebox.getApplicationData().defaults.trans("admin_upload_templates")#</a></li>
-			</cfif>
-			<cfif isadmin OR (structkeyexists(tabaccess_struct,"importtemplates_access") AND tabaccess_struct.importtemplates_access)>
-				<li><a href="##admin_imp_templates" onclick="loadcontent('admin_imp_templates','#myself#c.imp_templates');">#myFusebox.getApplicationData().defaults.trans("import_templates")#</a></li>
-			</cfif>
-			<cfif isadmin OR (structkeyexists(tabaccess_struct,"exporttemplate_access") AND tabaccess_struct.exporttemplate_access)>
-				<li><a href="##admin_export_template" onclick="loadcontent('admin_export_template','#myself#c.admin_export_template');">#myFusebox.getApplicationData().defaults.trans("export_template")#</a></li>
-			</cfif>
-			<cfif isadmin OR (structkeyexists(tabaccess_struct,"watermarktemplates_access") AND tabaccess_struct.watermarktemplates_access)>
-				<li><a href="##admin_watermark_templates" onclick="loadcontent('admin_watermark_templates','#myself#c.admin_watermark_templates');">#myFusebox.getApplicationData().defaults.trans("watermark_templates")#</a></li>
-			</cfif>
-			<cfif isadmin OR (structkeyexists(tabaccess_struct,"logs_access") AND tabaccess_struct.logs_access)>
-				<li><a href="##admin_logs_all" onclick="loadcontent('log_show','#myself#c.log_assets&offset_log=0');">#myFusebox.getApplicationData().defaults.trans("log_search_header")#</a></li>
-				<!--- <li><a href="##admin_logs_users" onclick="loadcontent('log_users_show','#myself#c.log_users');">#myFusebox.getApplicationData().defaults.trans("log_users_header")#</a></li> --->
-			</cfif>
-			<cfif isadmin OR (structkeyexists(tabaccess_struct,"settings_access") AND tabaccess_struct.settings_access)>
-				<li><a href="##admin_settings" onclick="loadcontent('admin_settings','#myself#c.isp_settings');">#myFusebox.getApplicationData().defaults.trans("settings")#</a></li>
-			</cfif>
-			<cfif isadmin OR (structkeyexists(tabaccess_struct,"maintenance_access") AND tabaccess_struct.maintenance_access)>
-				<li><a href="##admin_maintenance" onclick="loadcontent('admin_maintenance','#myself#c.admin_maintenance');">#myFusebox.getApplicationData().defaults.trans("admin_maintenance")#</a></li>
-			</cfif>
-			<cfif isadmin OR (structkeyexists(tabaccess_struct,"customization_access") AND tabaccess_struct.customization_access)>
-				<li><a href="##admin_customization" onclick="loadcontent('admin_customization','#myself#c.admin_customization');">#myFusebox.getApplicationData().defaults.trans("header_customization")#</a></li>
-			</cfif>
-			<cfif isadmin OR (structkeyexists(tabaccess_struct,"emailsetup_access") AND tabaccess_struct.emailsetup_access)>
-				<li><a href="##admin_notification" onclick="loadcontent('admin_notification','#myself#c.admin_notification');">#myFusebox.getApplicationData().defaults.trans("header_notification")#</a></li>
-			</cfif>
-			<cfif isadmin OR (structkeyexists(tabaccess_struct,"serviceaccounts_access") AND tabaccess_struct.serviceaccounts_access)>
-				<li><a href="##admin_integration" onclick="loadcontent('admin_integration','#myself#c.admin_integration');">#myFusebox.getApplicationData().defaults.trans("header_integration")#</a></li>
-			</cfif>
-			<cfif isadmin OR (structkeyexists(tabaccess_struct,"cloud_access") AND tabaccess_struct.cloud_access)>
-				<cfif application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon">
-					<li><a href="##admin_maintenance_cloud" onclick="loadcontent('admin_maintenance_cloud','#myself#c.admin_maintenance_cloud');">Cloud #myFusebox.getApplicationData().defaults.trans("admin_maintenance")#</a></li>
+	<!--- If only one struct and then also false --->
+	<cfif ! session.is_system_admin AND ! session.is_administrator AND ( StructCount( tabaccess_struct ) EQ 1 AND structkeyexists(tabaccess_struct,"groups_access") AND ! tabaccess_struct.groups_access )>
+		<h2>You have no access to any administrative section</h2>
+	<cfelse>
+		<div id="tab_admin">
+			<ul>
+				<cfif isadmin OR (structkeyexists(tabaccess_struct,"users_access") AND tabaccess_struct.users_access)>
+					<li><a href="##admin_users" onclick="loadcontent('admin_users','#myself#c.users');">#myFusebox.getApplicationData().defaults.trans("users")#</a></li>
 				</cfif>
-			</cfif>
-			<!--- Only show the Access Control tab to admins --->
-			<cfif isadmin>
-				<li><a href="##admin_access" onclick="loadcontent('admin_access','#myself#c.admin_access');">#myFusebox.getApplicationData().defaults.trans("header_access")#</a></li>
-			</cfif>
-			<cfif isadmin OR (structkeyexists(tabaccess_struct,"plugins_access") AND tabaccess_struct.plugins_access)>
-				<!--- Plugins --->
-				<cfif qry_plugins.recordcount NEQ 0>
-					<li><a href="##admin_plugins">#myFusebox.getApplicationData().defaults.trans("plugins")#</a></li>
+				<cfif isadmin OR (structkeyexists(tabaccess_struct,"groups_access") AND tabaccess_struct.groups_access)>
+					<li><a href="##admin_groups" onclick="loadcontent('admin_groups','#myself#c.groups_list&kind=ecp&loaddiv=admin_groups');">#myFusebox.getApplicationData().defaults.trans("groups")#</a></li>
 				</cfif>
-			</cfif>
-			<!--- <cfif isadmin OR (structkeyexists(tabaccess_struct,"systeminformation_access") AND tabaccess_struct.systeminformation_access)>
-				<li><a href="##admin_system" onclick="loadcontent('admin_system','#myself#c.admin_system');">#myFusebox.getApplicationData().defaults.trans("system_information")#</a></li>
-			</cfif> --->
-			<!--- AD --->
-			<cfif isadmin OR (structkeyexists(tabaccess_struct,"adservices_access") AND tabaccess_struct.adservices_access)>
-				<li><a href="##ad_Services" onclick="loadcontent('ad_Services','#myself#c.ad_Services');">#myFusebox.getApplicationData().defaults.trans("ad_services")#</a></li>
-			</cfif>
-			<!--- While Label News --->
-			<cfif application.razuna.whitelabel>
-				<cfif isadmin OR (structkeyexists(tabaccess_struct,"whitelabelling_access") AND tabaccess_struct.whitelabelling_access)>
-					<li><a href="##wl" onclick="loadcontent('wl','#myself#c.wl_host');">#myFusebox.getApplicationData().defaults.trans("white_labelling")#</a></li>
+				<cfif isadmin OR (structkeyexists(tabaccess_struct,"customfields_access") AND tabaccess_struct.customfields_access)>
+					<li><a href="##custom_fields" onclick="loadcontent('custom_fields','#myself#c.custom_fields');">#myFusebox.getApplicationData().defaults.trans("custom_fields_header")#</a></li>
 				</cfif>
-			</cfif>
-			<cfif isadmin>
-				<li><a href="##indexing" onclick="loadcontent('indexing','#myself#c.indexing');">Indexing</a></li>
-			</cfif>
-			<!--- Approval --->
-			<cfif isadmin>
-				<li><a href="##approval" onclick="loadcontent('approval','#myself#c.admin_approval');">Approval</a></li>
-			</cfif>
-			<!--- UPC --->
-			<cfif isadmin>
-				<li><a href="##upc" onclick="loadcontent('upc','#myself#c.admin_upc');">UPC Settings</a></li>
-			</cfif>
-		</ul>
+				<cfif isadmin OR (structkeyexists(tabaccess_struct,"labels_access") AND tabaccess_struct.labels_access)>
+					<li><a href="##admin_labels" onclick="loadcontent('admin_labels','#myself#c.admin_labels');">#myFusebox.getApplicationData().defaults.trans("labels")#</a></li>
+				</cfif>
+				<cfif isadmin OR (structkeyexists(tabaccess_struct,"schedules_access") AND tabaccess_struct.schedules_access)>
+					<li><a href="##admin_schedules" onclick="loadcontent('admin_schedules','#myself#c.scheduler_list&offset_sched=0');">#myFusebox.getApplicationData().defaults.trans("scheduled_uploads")#</a></li>
+				</cfif>
+				<cfif isadmin OR (structkeyexists(tabaccess_struct,"renditiontemplates_access") AND tabaccess_struct.renditiontemplates_access)>
+					<li><a href="##admin_upl_templates" onclick="loadcontent('admin_upl_templates','#myself#c.upl_templates');">#myFusebox.getApplicationData().defaults.trans("admin_upload_templates")#</a></li>
+				</cfif>
+				<cfif isadmin OR (structkeyexists(tabaccess_struct,"importtemplates_access") AND tabaccess_struct.importtemplates_access)>
+					<li><a href="##admin_imp_templates" onclick="loadcontent('admin_imp_templates','#myself#c.imp_templates');">#myFusebox.getApplicationData().defaults.trans("import_templates")#</a></li>
+				</cfif>
+				<cfif isadmin OR (structkeyexists(tabaccess_struct,"exporttemplate_access") AND tabaccess_struct.exporttemplate_access)>
+					<li><a href="##admin_export_template" onclick="loadcontent('admin_export_template','#myself#c.admin_export_template');">#myFusebox.getApplicationData().defaults.trans("export_template")#</a></li>
+				</cfif>
+				<cfif isadmin OR (structkeyexists(tabaccess_struct,"watermarktemplates_access") AND tabaccess_struct.watermarktemplates_access)>
+					<li><a href="##admin_watermark_templates" onclick="loadcontent('admin_watermark_templates','#myself#c.admin_watermark_templates');">#myFusebox.getApplicationData().defaults.trans("watermark_templates")#</a></li>
+				</cfif>
+				<cfif isadmin OR (structkeyexists(tabaccess_struct,"logs_access") AND tabaccess_struct.logs_access)>
+					<li><a href="##admin_logs_all" onclick="loadcontent('log_show','#myself#c.log_assets&offset_log=0');">#myFusebox.getApplicationData().defaults.trans("log_search_header")#</a></li>
+					<!--- <li><a href="##admin_logs_users" onclick="loadcontent('log_users_show','#myself#c.log_users');">#myFusebox.getApplicationData().defaults.trans("log_users_header")#</a></li> --->
+				</cfif>
+				<cfif isadmin OR (structkeyexists(tabaccess_struct,"settings_access") AND tabaccess_struct.settings_access)>
+					<li><a href="##admin_settings" onclick="loadcontent('admin_settings','#myself#c.isp_settings');">#myFusebox.getApplicationData().defaults.trans("settings")#</a></li>
+				</cfif>
+				<cfif isadmin OR (structkeyexists(tabaccess_struct,"maintenance_access") AND tabaccess_struct.maintenance_access)>
+					<li><a href="##admin_maintenance" onclick="loadcontent('admin_maintenance','#myself#c.admin_maintenance');">#myFusebox.getApplicationData().defaults.trans("admin_maintenance")#</a></li>
+				</cfif>
+				<cfif isadmin OR (structkeyexists(tabaccess_struct,"customization_access") AND tabaccess_struct.customization_access)>
+					<li><a href="##admin_customization" onclick="loadcontent('admin_customization','#myself#c.admin_customization');">#myFusebox.getApplicationData().defaults.trans("header_customization")#</a></li>
+				</cfif>
+				<cfif isadmin OR (structkeyexists(tabaccess_struct,"emailsetup_access") AND tabaccess_struct.emailsetup_access)>
+					<li><a href="##admin_notification" onclick="loadcontent('admin_notification','#myself#c.admin_notification');">#myFusebox.getApplicationData().defaults.trans("header_notification")#</a></li>
+				</cfif>
+				<cfif isadmin OR (structkeyexists(tabaccess_struct,"serviceaccounts_access") AND tabaccess_struct.serviceaccounts_access)>
+					<li><a href="##admin_integration" onclick="loadcontent('admin_integration','#myself#c.admin_integration');">#myFusebox.getApplicationData().defaults.trans("header_integration")#</a></li>
+				</cfif>
+				<cfif isadmin OR (structkeyexists(tabaccess_struct,"cloud_access") AND tabaccess_struct.cloud_access)>
+					<cfif application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon">
+						<li><a href="##admin_maintenance_cloud" onclick="loadcontent('admin_maintenance_cloud','#myself#c.admin_maintenance_cloud');">Cloud #myFusebox.getApplicationData().defaults.trans("admin_maintenance")#</a></li>
+					</cfif>
+				</cfif>
+				<!--- Only show the Access Control tab to admins --->
+				<cfif isadmin>
+					<li><a href="##admin_access" onclick="loadcontent('admin_access','#myself#c.admin_access');">#myFusebox.getApplicationData().defaults.trans("header_access")#</a></li>
+				</cfif>
+				<cfif isadmin OR (structkeyexists(tabaccess_struct,"plugins_access") AND tabaccess_struct.plugins_access)>
+					<!--- Plugins --->
+					<cfif qry_plugins.recordcount NEQ 0>
+						<li><a href="##admin_plugins">#myFusebox.getApplicationData().defaults.trans("plugins")#</a></li>
+					</cfif>
+				</cfif>
+				<!--- <cfif isadmin OR (structkeyexists(tabaccess_struct,"systeminformation_access") AND tabaccess_struct.systeminformation_access)>
+					<li><a href="##admin_system" onclick="loadcontent('admin_system','#myself#c.admin_system');">#myFusebox.getApplicationData().defaults.trans("system_information")#</a></li>
+				</cfif> --->
+				<!--- AD --->
+				<cfif isadmin OR (structkeyexists(tabaccess_struct,"adservices_access") AND tabaccess_struct.adservices_access)>
+					<li><a href="##ad_Services" onclick="loadcontent('ad_Services','#myself#c.ad_Services');">#myFusebox.getApplicationData().defaults.trans("ad_services")#</a></li>
+				</cfif>
+				<!--- While Label News --->
+				<cfif application.razuna.whitelabel>
+					<cfif isadmin OR (structkeyexists(tabaccess_struct,"whitelabelling_access") AND tabaccess_struct.whitelabelling_access)>
+						<li><a href="##wl" onclick="loadcontent('wl','#myself#c.wl_host');">#myFusebox.getApplicationData().defaults.trans("white_labelling")#</a></li>
+					</cfif>
+				</cfif>
+				<cfif isadmin>
+					<li><a href="##indexing" onclick="loadcontent('indexing','#myself#c.indexing');">Indexing</a></li>
+				</cfif>
+				<!--- Approval --->
+				<cfif isadmin>
+					<li><a href="##approval" onclick="loadcontent('approval','#myself#c.admin_approval');">Approval</a></li>
+				</cfif>
+				<!--- UPC --->
+				<cfif isadmin>
+					<li><a href="##upc" onclick="loadcontent('upc','#myself#c.admin_upc');">UPC Settings</a></li>
+				</cfif>
+			</ul>
 
 		<!--- Users --->
 		<cfif isadmin OR (structkeyexists(tabaccess_struct,"users_access") AND tabaccess_struct.users_access)>
@@ -254,6 +258,7 @@
 			<div id="upc"></div>
 		</cfif>
 	</div>
+</cfif>
 	<!--- <div style="float:right;"><a href="##" onclick="destroywindow(1);return false;">#myFusebox.getApplicationData().defaults.trans("scheduler_close_cap")#</a></div> --->
 	<!--- Activate the Tabs --->
 	<script type="text/javascript">

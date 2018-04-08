@@ -177,7 +177,7 @@
 			</cfloop>
 		</cfif>
 		<!--- Additional versions --->
-		<cfloop query="qry_av.assets">
+		<cfloop query="qry_av">
 			<cfset avid = av_id>
 			<cfset av_link_url = av_link_url>
 			<cfset av_link_title = av_link_title>

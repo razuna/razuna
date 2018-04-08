@@ -207,7 +207,7 @@
 				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch,thestruct=arguments.thestruct)></cfcatch>
 			</cftry>
 			<cftry>
-				<cfquery datasource="razuna_default">
+				<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
 				ALTER TABLE lucene add <cfif arguments.thestruct.razuna.application.thedatabase NEQ "mssql">COLUMN</cfif> time_stamp #thetimestamp#
 				</cfquery>
 				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch,thestruct=arguments.thestruct)></cfcatch>

@@ -4737,7 +4737,7 @@
 	<!-- Remove item -->
 	<fuseaction name="favorites_remove">
 		<!-- CFC: Remove Item in Basket -->
-		<invoke object="myFusebox.getApplicationData().favorites" methodcall="removeitem(attributes.id)" />
+		<invoke object="myFusebox.getApplicationData().favorites" methodcall="removeitem(favid=attributes.id, thestruct=attributes)" />
 		<!-- Show -->
 		<do action="favorites" />
 	</fuseaction>
@@ -6392,7 +6392,7 @@
 	<!-- For saving AD Server customization -->
 	<fuseaction name="admin_ad_services_save">
 		<!-- CFC -->
-		<invoke object="myFusebox.getApplicationData().Settings" methodcall="set_ad_server(attributes.ad_server_name,attributes.ad_server_port,attributes.ad_server_username,attributes.ad_server_password,attributes.ad_server_secure,attributes.ad_server_filter,attributes.ad_server_start,attributes.ad_ldap, attributes.ad_domain, attributes.ldap_dn)" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="set_ad_server(attributes.ad_server_name,attributes.ad_server_port,attributes.ad_server_username,attributes.ad_server_password,attributes.ad_server_secure,attributes.ad_server_filter,attributes.ad_server_start,attributes.ad_ldap, attributes.ad_domain, attributes.ldap_dn, attributes)" />
 	</fuseaction>
 	<!-- Users Search -->
 	<fuseaction name="ad_server_users_list">
@@ -9909,7 +9909,7 @@
 						<!-- CFC: Get Additional versions -->
 						<invoke object="myFusebox.getApplicationData().global" methodcall="get_versions_link(thestruct=attributes)" returnvariable="qry_av" />
 						<!-- Set filename -->
-						<set name="attributes.filename" value="#qry_av.assets.av_link_title#" />
+						<set name="attributes.filename" value="#qry_av.av_link_title#" />
 					</true>
 					<false>
 						<!-- Set filename -->
@@ -9934,7 +9934,7 @@
 						<!-- CFC: Get Additional versions -->
 						<invoke object="myFusebox.getApplicationData().global" methodcall="get_versions_link(thestruct=attributes)" returnvariable="qry_av" />
 						<!-- Set filename -->
-						<set name="attributes.filename" value="#qry_av.assets.av_link_title#" />
+						<set name="attributes.filename" value="#qry_av.av_link_title#" />
 					</true>
 					<false>
 						<!-- Set filename -->
@@ -9958,7 +9958,7 @@
 						<!-- CFC: Get Additional versions -->
 						<invoke object="myFusebox.getApplicationData().global" methodcall="get_versions_link(thestruct=attributes)" returnvariable="qry_av" />
 						<!-- Set filename -->
-						<set name="attributes.filename" value="#qry_av.assets.av_link_title#" />
+						<set name="attributes.filename" value="#qry_av.av_link_title#" />
 					</true>
 					<false>
 						<!-- Set filename -->
@@ -9982,7 +9982,7 @@
 						<!-- CFC: Get Additional versions -->
 						<invoke object="myFusebox.getApplicationData().global" methodcall="get_versions_link(thestruct=attributes)" returnvariable="qry_av" />
 						<!-- Set filename -->
-						<set name="attributes.filename" value="#qry_av.assets.av_link_title#" />
+						<set name="attributes.filename" value="#qry_av.av_link_title#" />
 					</true>
 					<false>
 						<!-- Set filename -->

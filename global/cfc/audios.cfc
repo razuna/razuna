@@ -35,10 +35,6 @@
 	<cfargument name="offset" type="numeric" required="false" default="0">
 	<cfargument name="rowmaxpage" type="numeric" required="false" default="0">
 	<cfargument name="thestruct" type="struct" required="false" default="">
-	<!--- Set thestruct if not here --->
-	<cfif NOT isstruct(arguments.thestruct)>
-		<cfset arguments.thestruct = structnew()>
-	</cfif>
 	<!--- init local vars --->
 	<cfset var qLocal = 0>
 	<!--- Set pages var --->

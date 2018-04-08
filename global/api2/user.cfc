@@ -42,14 +42,14 @@
 			<!--- If user is in admin --->
 			<cfif listFind(session.thegroupofuser,"2",",") GT 0 OR listFind(session.thegroupofuser,"1",",") GT 0>
 				<!--- Check that we don't have the same user --->
-				<cfquery datasource="#application.razuna.api.dsn#" name="qry_sameuser">
+				<cfquery datasource="#application.razuna.datasource#" name="qry_sameuser">
 				SELECT users.user_email, users.user_login_name, user_id
 				FROM users, ct_users_hosts
 				WHERE (
 					users.user_email = <cfqueryparam value="#arguments.user_email#" cfsqltype="cf_sql_varchar">
 					OR users.user_login_name = <cfqueryparam value="#arguments.user_name#" cfsqltype="cf_sql_varchar">
 					)
-				AND ct_users_hosts.ct_u_h_host_id = #application.razuna.api.hostid["#arguments.api_key#"]#
+				AND ct_users_hosts.ct_u_h_host_id = #session.hostid#
 				</cfquery>
 				<!--- If user does not exist do the insert --->
 				<cfif qry_sameuser.recordcount EQ 0>
@@ -58,7 +58,7 @@
 					<!--- Hash Password --->
 					<cfset thepass = hash(arguments.user_pass, "MD5", "UTF-8")>
 					<!--- Insert the User into the DB --->
-					<cfquery datasource="#application.razuna.api.dsn#">
+					<cfquery datasource="#application.razuna.datasource#">
 					INSERT INTO users
 					(user_id, user_login_name, user_email, user_pass, user_first_name, user_last_name, user_in_admin,
 					user_create_date, user_active, user_in_dam)
@@ -76,19 +76,19 @@
 					)
 					</cfquery>
 					<!--- Insert the user to the user host cross table --->
-					<cfquery datasource="#application.razuna.api.dsn#">
+					<cfquery datasource="#application.razuna.datasource#">
 					INSERT INTO ct_users_hosts
 					(ct_u_h_user_id, ct_u_h_host_id, rec_uuid)
 					VALUES(
 					<cfqueryparam value="#newuserid#" cfsqltype="CF_SQL_VARCHAR">,
-					#application.razuna.api.hostid["#arguments.api_key#"]#,
+					#session.hostid#,
 					<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 					)
 					</cfquery>
 					<!--- Insert into group --->
 					<cfif arguments.groupid NEQ 0>
 						<cfif arguments.groupid NEQ 1>
-							<cfquery datasource="#application.razuna.api.dsn#">
+							<cfquery datasource="#application.razuna.datasource#">
 							INSERT INTO	ct_groups_users
 							(ct_g_u_grp_id, ct_g_u_user_id, rec_uuid)
 							VALUES(
@@ -98,12 +98,12 @@
 							)
 							</cfquery>
 							<!--- Check group folder_subscribe setting and add this user to receive folder notifications if set to true --->
-							<cfinvoke component="global.cfc.groups" method="add_grp_users2notify" group_id='#arguments.groupid#' user_id='#newuserid#'>
+							<cfset callFunction(comp="global.cfc.groups", func="add_grp_users2notify", group_id=arguments.groupid, user_id=newuserid)>
 						</cfif>
 						<!--- If the groupid is 2 --->
 						<cfif arguments.groupid EQ 2>
 							<cfset thexml.apikey = createuuid("")>
-							<cfquery datasource="#application.razuna.api.dsn#">
+							<cfquery datasource="#application.razuna.datasource#">
 							UPDATE users
 							SET user_api_key = <cfqueryparam value="#thexml.apikey#" cfsqltype="CF_SQL_VARCHAR">
 							WHERE user_id = <cfqueryparam value="#newuserid#" cfsqltype="CF_SQL_VARCHAR">
@@ -145,10 +145,10 @@
 			<!--- Get Cachetoken --->
 			<cfset var cachetoken = getcachetoken(arguments.api_key,"users")>
 			<!--- Query the user --->
-			<cfquery datasource="#application.razuna.api.dsn#" name="thexml" cachedwithin="1" region="razcache">
+			<cfquery datasource="#application.razuna.datasource#" name="thexml" cachedwithin="1" region="razcache">
 			SELECT /* #cachetoken#getuser */ user_id, user_login_name, user_email, user_first_name, user_last_name, user_api_key
 			FROM users
-			WHERE user_id = <cfqueryparam value="#application.razuna.api.userid["#arguments.api_key#"]#" cfsqltype="CF_SQL_VARCHAR">
+			WHERE user_id = <cfqueryparam value="#session.theuserid#" cfsqltype="CF_SQL_VARCHAR">
 			</cfquery>
 			<!--- If user does not exist do the insert --->
 			<cfif thexml.recordcount EQ 0>
@@ -164,7 +164,7 @@
 		<!--- Return --->
 		<cfreturn thexml>
 	</cffunction>
-	
+
 	<!--- Update user --->
 	<cffunction name="update" access="remote" output="false" returntype="struct" returnformat="json">
 		<cfargument name="api_key" required="true" type="string">
@@ -180,7 +180,7 @@
 			<!--- If user is in admin --->
 			<cfif listFind(session.thegroupofuser,"2",",") GT 0 OR listFind(session.thegroupofuser,"1",",") GT 0>
 				<!--- Query the user --->
-				<cfquery datasource="#application.razuna.api.dsn#" name="qry">
+				<cfquery datasource="#application.razuna.datasource#" name="qry">
 				SELECT user_id
 				FROM users
 				<cfif arguments.userid NEQ "">
@@ -203,7 +203,7 @@
 						<cfset l = l & "," & #thejson[x][1]#>
 						<!--- Just user fields --->
 						<cfif #thejson[x][1]# CONTAINS "user_">
-							<cfquery datasource="#application.razuna.api.dsn#">
+							<cfquery datasource="#application.razuna.datasource#">
 							UPDATE users
 							SET #thejson[x][1]# = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#thejson[x][2]#">
 							WHERE user_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#qry.user_id#">
@@ -214,7 +214,7 @@
 					<!--- Does a key exists --->
 					<cfif listcontains(l,"group_id") NEQ 0>
 						<!--- There is a group_id remove all existing groups --->
-						<cfquery datasource="#application.razuna.api.dsn#">
+						<cfquery datasource="#application.razuna.datasource#">
 						DELETE FROM ct_groups_users
 						WHERE ct_g_u_user_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#qry.user_id#">
 						</cfquery>
@@ -222,7 +222,7 @@
 						<cfloop index="x" from="1" to="#arrayLen(thejson)#">
 							<!--- Just user fields --->
 							<cfif #thejson[x][1]# CONTAINS "group_id">
-								<cfquery datasource="#application.razuna.api.dsn#">
+								<cfquery datasource="#application.razuna.datasource#">
 								INSERT INTO ct_groups_users
 								(ct_g_u_grp_id, ct_g_u_user_id, rec_uuid)
 								VALUES(
@@ -232,7 +232,7 @@
 								)
 								</cfquery>
 								<!--- Check group 'folder_subscribe' setting and add this user to receive folder notifications if set to true --->
-								<cfinvoke component="global.cfc.groups" method="add_grp_users2notify" group_id='#thejson[x][2]#' user_id='#qry.user_id#'>
+								<cfset callFunction(comp="global.cfc.groups", func="add_grp_users2notify", group_id=thejson[x][2], user_id=qry.user_id)>
 							</cfif>
 						</cfloop>
 					</cfif>
@@ -258,7 +258,7 @@
 		<!--- Return --->
 		<cfreturn thexml>
 	</cffunction>
-	
+
 	<!--- Delete user --->
 	<cffunction name="delete" access="remote" output="false" returntype="struct" returnformat="json">
 		<cfargument name="api_key" required="true" type="string">
@@ -273,7 +273,7 @@
 			<!--- If user is in admin --->
 			<cfif listFind(session.thegroupofuser,"2",",") GT 0 OR listFind(session.thegroupofuser,"1",",") GT 0>
 				<!--- Query the user --->
-				<cfquery datasource="#application.razuna.api.dsn#" name="qry">
+				<cfquery datasource="#application.razuna.datasource#" name="qry">
 				SELECT user_id
 				FROM users
 				<cfif arguments.userid NEQ "">
@@ -288,23 +288,23 @@
 				</cfquery>
 				<!--- User found --->
 				<cfif qry.recordcount EQ 1>
-					<cfquery datasource="#application.razuna.api.dsn#">
+					<cfquery datasource="#application.razuna.datasource#">
 					DELETE FROM ct_users_hosts
 					WHERE ct_u_h_user_id = <cfqueryparam value="#qry.user_id#" cfsqltype="CF_SQL_VARCHAR">
 					</cfquery>
 					<!--- Remove Intra/extranet carts  --->
-					<cfquery datasource="#application.razuna.api.dsn#">
-					DELETE FROM #application.razuna.api.prefix["#arguments.api_key#"]#cart
+					<cfquery datasource="#application.razuna.datasource#">
+					DELETE FROM #session.hostdbprefix#cart
 					WHERE user_id = <cfqueryparam value="#qry.user_id#" cfsqltype="CF_SQL_VARCHAR">
-					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
+					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 					</cfquery>
 					<!--- Remove user comments  --->
-					<cfquery datasource="#application.razuna.api.dsn#">
+					<cfquery datasource="#application.razuna.datasource#">
 					DELETE FROM users_comments
 					WHERE user_id_r = <cfqueryparam value="#qry.user_id#" cfsqltype="CF_SQL_VARCHAR">
 					</cfquery>
 					<!--- Remove from the User Table --->
-					<cfquery datasource="#application.razuna.api.dsn#">
+					<cfquery datasource="#application.razuna.datasource#">
 					DELETE FROM users
 					WHERE user_id = <cfqueryparam value="#qry.user_id#" cfsqltype="CF_SQL_VARCHAR">
 					</cfquery>
@@ -353,7 +353,7 @@
 				</cfif>
 				<!--- Parse XML --->
 				<cfset var xmlparsed = xmlparse(xmlresponse)>
-				<cfinvoke component="global.cfc.settings" method="getsettingsfromdam" returnvariable="prefs">
+				<cfset prefs = callFunction(comp="global.cfc.settings", func="getsettingsfromdam")>
 				<!--- Check xmlpath to email is entered, required field--->
 				<cfif prefs.set2_saml_xmlpath_email EQ ''>
 					<cfset thexml.responsecode = 1>
@@ -379,14 +379,14 @@
 			<!--- If user is in admin --->
 			<cfif listFind(session.thegroupofuser,"2",",") GT 0 OR listFind(session.thegroupofuser,"1",",") GT 0>
 				<!--- Query the user --->
-				<cfquery datasource="#application.razuna.api.dsn#" name="qry">
+				<cfquery datasource="#application.razuna.datasource#" name="qry">
 				SELECT u.user_email, u.user_login_name, u.user_id, u.user_pass
 				FROM users u, ct_users_hosts ct
 				WHERE (
 					u.user_email = <cfqueryparam value="#user_email#" cfsqltype="cf_sql_varchar">
 					OR u.user_login_name = <cfqueryparam value="#user_email#" cfsqltype="cf_sql_varchar">
 					)
-				AND ct.ct_u_h_host_id = #application.razuna.api.hostid["#arguments.api_key#"]#
+				AND ct.ct_u_h_host_id = #session.hostid#
 				AND ct.ct_u_h_user_id = u.user_id
 				<cfif isdefined("user_password")>
 					AND u.user_pass = <cfqueryparam value="#user_password#" cfsqltype="cf_sql_varchar">
@@ -395,7 +395,7 @@
 				<!--- User found --->
 				<cfif qry.recordcount NEQ 0>
 					<!--- Check if this is for hosted --->
-					<cfquery datasource="#application.razuna.api.dsn#" name="qry_isp">
+					<cfquery datasource="#application.razuna.datasource#" name="qry_isp">
 					SELECT opt_value
 					FROM options
 					WHERE opt_id = <cfqueryparam value="conf_isp" cfsqltype="cf_sql_varchar">
@@ -404,7 +404,7 @@
 					<cfif qry_isp.opt_value>
 						<cfset var the_url = "/index.cfm?fa=c.dologin&tl=true&pass=" & qry.user_pass & "&name=" & user_email & "&pass_hashed=true">
 					<cfelse>
-						<cfset var the_url = "/" & cgi.context_path & "/" & application.razuna.api.hostpath["#arguments.api_key#"] & "/dam/index.cfm?fa=c.dologin&tl=true&pass=" & qry.user_pass & "&name=" & user_email & "&pass_hashed=true">
+						<cfset var the_url = "/" & cgi.context_path & "/" & session.hostpath & "/dam/index.cfm?fa=c.dologin&tl=true&pass=" & qry.user_pass & "&name=" & user_email & "&pass_hashed=true">
 					</cfif>
 					<!--- For non hosted --->
 					<cflocation url="//#cgi.http_host#/#the_url#" addtoken="yes" />
@@ -429,5 +429,5 @@
 		<!--- Return --->
 		<cfreturn thexml>
 	</cffunction>
-		
+
 </cfcomponent>

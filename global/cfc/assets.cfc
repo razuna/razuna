@@ -80,9 +80,9 @@
 		<!--- If file does not exsist continue else send user an eMail --->
 		<cfif md5here EQ 0>
 			<!--- Add to temp db --->
-			<cfquery datasource="#attributes.intstruct.dsn#" name="qry">
+			<cfquery datasource="#attributes.intstruct.razuna.application.datasource#" name="qry">
 			INSERT INTO #attributes.intstruct.razuna.session.hostdbprefix#assets_temp
-			(tempid,filename,extension,date_add,folder_id,who,filenamenoext,path<!--- ,mimetype --->,thesize,file_id,host_id,md5hash)
+			(tempid,filename,extension,date_add,folder_id,who,filenamenoext,path,thesize,file_id,host_id,md5hash)
 			VALUES(
 			<cfqueryparam cfsqltype="cf_sql_varchar" value="#attributes.intstruct.tempid#">,
 			<cfqueryparam cfsqltype="cf_sql_varchar" value="#thefilename#">,
@@ -92,7 +92,6 @@
 			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#attributes.intstruct.user_id#">,
 			<cfqueryparam cfsqltype="cf_sql_varchar" value="#thefilenamenoext#">,
 			<cfqueryparam cfsqltype="cf_sql_varchar" value="#attributes.intstruct.theincomingtemppath#">,
-			<!--- <cfqueryparam cfsqltype="cf_sql_varchar" value="#attributes.intstruct.thefile.contentType#/#attributes.intstruct.thefile.contentSubType#">, --->
 			<cfqueryparam cfsqltype="cf_sql_varchar" value="#attributes.intstruct.thefile.filesize#">,
 			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#attributes.intstruct.file_id#">,
 			<cfqueryparam cfsqltype="cf_sql_numeric" value="#attributes.intstruct.razuna.session.hostid#">,
@@ -1230,7 +1229,7 @@
 				<!--- Grab file --->
 				<cfinvoke method="addassetsendmail" returnvariable="arguments.thestruct.qryfile" thestruct="#arguments.thestruct#">
 				<!--- Call the addasset function --->
-				<cfthread intstruct="#arguments.thestruct#" priority="high">
+				<cfthread name="addassetapi_#arguments.thestruct.tempid#" intstruct="#arguments.thestruct#">
 					<cfinvoke method="addasset" thestruct="#attributes.intstruct#">
 					<!--- <cfinvoke method="addasset" thestruct="#arguments.thestruct#"> --->
 				</cfthread>
@@ -1906,6 +1905,9 @@ This is the main function called directly by a single upload else from addassets
 		<cfset arguments.thestruct.folder_id = arguments.thestruct.qryfile.folder_id>
 		<cfset arguments.thestruct.folder_action = false>
 
+		<!--- Check for approval --->
+		<cfinvoke component="global.cfc.approval" method="check_enabled" returnvariable="qry_approval" folder_id="#arguments.thestruct.qryfile.folder_id#" thestruct="#arguments.thestruct#" />
+
 		<!--- If enabled do not execute plugins --->
 		<cfif qry_approval.approval_enabled>
 			<!--- Run approval --->
@@ -2091,7 +2093,7 @@ This is the main function called directly by a single upload else from addassets
 			<!--- Execute --->
 			<cfthread name="#ttpdf#" action="run" pdfintstruct="#arguments.thestruct#">
 				<cfexecute name="#attributes.pdfintstruct.thesh#" timeout="900" />
-				<cfif arguments.thestruct.razuna.application.storage NEQ "amazon">
+				<cfif attributes.pdfintstruct.razuna.application.storage NEQ "amazon">
 					<cfexecute name="#attributes.pdfintstruct.thesht#" timeout="900" />
 				</cfif>
 			</cfthread>
@@ -2626,8 +2628,8 @@ This is the main function called directly by a single upload else from addassets
 					<!--- Add to shared options --->
 				<cfquery datasource="#attributes.intstruct.razuna.application.datasource#">
 				INSERT INTO #attributes.intstruct.razuna.session.hostdbprefix#share_options
-					(asset_id_r, host_id, group_asset_id, folder_id_r, asset_type, asset_format, asset_dl, asset_order, rec_uuid)
-					VALUES(
+				(asset_id_r, host_id, group_asset_id, folder_id_r, asset_type, asset_format, asset_dl, asset_order, rec_uuid)
+				VALUES(
 				<cfqueryparam value="#attributes.intstruct.newid#" cfsqltype="CF_SQL_VARCHAR">,
 				<cfqueryparam value="#attributes.intstruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric">,
 				<cfqueryparam value="#attributes.intstruct.newid#" cfsqltype="CF_SQL_VARCHAR">,
@@ -3108,7 +3110,7 @@ This is the main function called directly by a single upload else from addassets
 				<cfthread name="uploadt#arguments.thestruct.newid#" intstruct="#arguments.thestruct#" action="run">
 					<cfif attributes.intstruct.qryfile.link_kind EQ "lan">
 						<cffile action="move" source="#attributes.intstruct.destinationraw#" destination="#attributes.intstruct.qrysettings.set2_path_to_assets#/#attributes.intstruct.razuna.session.hostid#/#attributes.intstruct.qryfile.folder_id#/img/#attributes.intstruct.newid#/thumb_#attributes.intstruct.newid#.#attributes.intstruct.qrysettings.set2_img_format#" mode="775">
-					<cfelseif !arguments.thestruct.razuna.application.rfs>
+					<cfelseif !attributes.intstruct.razuna.application.rfs>
 						<cffile action="move" source="#attributes.intstruct.destinationraw#" destination="#attributes.intstruct.qrysettings.set2_path_to_assets#/#attributes.intstruct.razuna.session.hostid#/#attributes.intstruct.qryfile.folder_id#/img/#attributes.intstruct.newid#/thumb_#attributes.intstruct.newid#.#attributes.intstruct.qrysettings.set2_img_format#" mode="775">
 					</cfif>
 				</cfthread>
@@ -3244,7 +3246,6 @@ This is the main function called directly by a single upload else from addassets
 <!--- RESIZE IMAGE ------------------------------------------------------------------------------->
 <cffunction name="resizeImagethread" returntype="void" access="public" output="false">
 	<cfargument name="thestruct" type="struct" required="true">
-
 	<cftry>
 		<!--- Go grab the platform --->
 		<cfinvoke component="assets" method="iswindows" returnvariable="arguments.thestruct.iswindows">
@@ -3373,17 +3374,17 @@ This is the main function called directly by a single upload else from addassets
 		<cfset var thumbwidth = trim(listlast(thumbwidth," "))>
 
 		<cftry>
-			<cfif arguments.thestruct.qryfile.extension EQ "cr2">
-				<cfset var orientation = "">
-				<!--- Check orientation for CR2 images and rotate it properly if it is not properly rotated for viewing--->
-				<cfexecute name="#arguments.thestruct.thexif#" arguments="-Orientation -n #arguments.thestruct.destination#" timeout="120" variable="orientation"/>
-				<cfif orientation NEQ "" AND orientation contains "8">
-					<cfexecute name="#arguments.thestruct.themogrify#" arguments="-rotate -90 #arguments.thestruct.destination#" timeout="120"/>
-				<cfelseif orientation NEQ "" AND orientation contains "6">
-					<cfexecute name="#arguments.thestruct.themogrify#" arguments="-rotate 90 #arguments.thestruct.destination#" timeout="120" />
-				</cfif>
+		<cfif arguments.thestruct.qryfile.extension EQ "cr2">
+			<cfset var orientation = "">
+			<!--- Check orientation for CR2 images and rotate it properly if it is not properly rotated for viewing--->
+			<cfexecute name="#arguments.thestruct.thexif#" arguments="-Orientation -n #arguments.thestruct.destination#" timeout="120" variable="orientation"/>
+			<cfif orientation NEQ "" AND orientation contains "8">
+				<cfexecute name="#arguments.thestruct.themogrify#" arguments="-rotate -90 #arguments.thestruct.destination#" timeout="120"/>
+			<cfelseif orientation NEQ "" AND orientation contains "6">
+				<cfexecute name="#arguments.thestruct.themogrify#" arguments="-rotate 90 #arguments.thestruct.destination#" timeout="120" />
 			</cfif>
-			<cfcatch></cfcatch>
+		</cfif>
+		<cfcatch></cfcatch>
 		</cftry>
 
 		<!--- Get org sizes --->
@@ -7380,7 +7381,7 @@ This is the main function called directly by a single upload else from addassets
 					<cfset transvalues[1] = "#arguments.thestruct.thefilename#">
 					<cfinvoke component="defaults" method="trans" transid="file_already_exist_subject" values="#transvalues#" thestruct="#arguments.thestruct#" returnvariable="file_already_exist_sub" />
 					<cfinvoke component="defaults" method="trans" transid="file_already_exist_message" values="#transvalues#" thestruct="#arguments.thestruct#" returnvariable="file_already_exist_msg" />
-					<cfinvoke component="email" method="send_email" subject="#file_already_exist_sub#" themessage="#file_already_exist_msg#"  isdup = "yes" filename="#arguments.thestruct.thefilename#" md5hash="#md5hash#">
+					<cfinvoke component="email" method="send_email" subject="#file_already_exist_sub#" themessage="#file_already_exist_msg#" isdup = "yes" filename="#arguments.thestruct.thefilename#" md5hash="#md5hash#" thestruct="#arguments.thestruct#">
 				</cfif>
 			</cfif>
 		</cfloop>
@@ -7465,9 +7466,7 @@ This is the main function called directly by a single upload else from addassets
 	<cfset resetcachetoken(type="files", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 	<cfset resetcachetoken(type="folders", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 	<cfset resetcachetoken(type="general", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
-
 </cffunction>
-
 
 <!--- UPC upload --->
 <cffunction name="uploadUpc" output="true" >

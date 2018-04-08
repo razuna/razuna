@@ -1119,20 +1119,20 @@
 	<!--- Get scripts --->
 	<cffunction name="getScripts" access="public" returntype="query">
 		<cfargument name="thestruct" type="struct" required="true" />
-		<cfset var qry = "">
+ 		<cfset var qry = "">
 		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qry">
-		SELECT value, date_added, sched_id, 
+		SELECT s.value, s.date_added, s.sched_id,
 			(
 				SELECT value
 				FROM #arguments.thestruct.razuna.session.hostdbprefix#scheduled_scripts
 				WHERE id_name = <cfqueryparam CFSQLType="cf_sql_varchar" value="sched_script_active">
-				AND host_id = <cfqueryparam CFSQLType="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
+				AND sched_id = s.sched_id
 			) as active
-		FROM #arguments.thestruct.razuna.session.hostdbprefix#scheduled_scripts
-		WHERE id_name = <cfqueryparam CFSQLType="cf_sql_varchar" value="sched_script_name">
-		AND host_id = <cfqueryparam CFSQLType="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
-		GROUP BY sched_id, date_added, value
-		ORDER BY date_added DESC
+		FROM #arguments.thestruct.razuna.session.hostdbprefix#scheduled_scripts s
+		WHERE s.id_name = <cfqueryparam CFSQLType="cf_sql_varchar" value="sched_script_name">
+		AND s.host_id = <cfqueryparam CFSQLType="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
+		GROUP BY s.sched_id, s.date_added, s.value
+		ORDER BY s.date_added DESC
 		</cfquery>
 		<cfreturn qry>
 	</cffunction>
@@ -1167,11 +1167,17 @@
 		<cfset _data.SCHED_SCRIPT_FTP_PASS = ''>
 		<cfset _data.SCHED_SCRIPT_FTP_PORT = '22'>
 		<cfset _data.SCHED_SCRIPT_FTP_FOLDER = ''>
+		<cfset _data.sched_script_ftp_folder_images = ''>
+		<cfset _data.sched_script_ftp_folder_videos = ''>
+		<cfset _data.sched_script_ftp_folder_audios = ''>
+		<cfset _data.sched_script_ftp_folder_documents = ''>
+		<cfset _data.sched_script_ftp_folder_metadata = ''>
 		<cfset _data.sched_script_img_canvas_width = ''>
 		<cfset _data.sched_script_img_canvas_heigth = ''>
 		<cfset _data.sched_script_img_dpi = '72'>
 		<cfset _data.sched_script_img_format = 'jpg'>
 		<cfset _data.sched_script_active = 'true'>
+		<cfset _data.sched_script_files_zip = 'false'>
 		<!--- Nothing found --->
 		<cfif ! qry.recordcount>
 			<cfset _data.new_record = true>
@@ -1231,6 +1237,19 @@
 		<cfreturn />
 	</cffunction>
 
+	<!--- Save scripts --->
+	<cffunction name="removeScript" access="public">
+		<cfargument name="thestruct" required="yes" type="struct">
+
+		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
+		DELETE FROM #arguments.thestruct.razuna.session.hostdbprefix#scheduled_scripts
+		WHERE sched_id = <cfqueryparam CFSQLType="cf_sql_varchar" value="#arguments.thestruct.id#">
+		</cfquery>
+
+		<!--- Return --->
+		<cfreturn />
+	</cffunction>
+
 	<!--- FTP connection --->
 	<cffunction name="scriptFtpConnection" access="public" output="true">
 		<cfargument name="thestruct" required="yes" type="struct">
@@ -1259,6 +1278,7 @@
 		<cfargument name="thestruct" required="yes" type="struct">
 		<cfargument name="files_since" required="false" type="string" default="">
 		<cfargument name="files_since_unit" required="false" type="string" default="">
+		<cfargument name="files_selected" required="false" type="boolean" default="false">
 
 		<cfset var qry = "">
 		<cfset var _img = "">
@@ -1304,7 +1324,7 @@
 
 		<!--- Images --->
 		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="_img">
-		SELECT i.img_filename as filename, i.path_to_asset, i.cloud_url, i.cloud_url_org, 'img' as type, f.folder_name,
+		SELECT i.img_filename as filename, i.path_to_asset, i.cloud_url, i.cloud_url_org, 'img' as type, i.host_id, f.folder_name,
 		<cfif arguments.thestruct.razuna.application.thedatabase EQ "mssql">img_id + '-img'<cfelse>concat(img_id,'-img')</cfif> as file_id
 		<cfif ListLen(_labels)>
 			, l.label_path
@@ -1328,6 +1348,9 @@
 		<cfif ListLen(_labels)>
 			AND ct.ct_label_id IN (<cfqueryparam CFSQLType="cf_sql_varchar" value="#_labels#" list="true">)
 		</cfif>
+		<cfif arguments.files_selected>
+			AND i.selection = <cfqueryparam CFSQLType="cf_sql_float" value="1">
+		</cfif>
 		<!--- Limit this if files_since is empty --->
 		<cfif arguments.files_since EQ "">
 			LIMIT 100
@@ -1338,7 +1361,7 @@
 
 		<!--- Videos --->
 		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="_vid">
-		SELECT i.vid_filename as filename, i.path_to_asset, i.cloud_url, i.cloud_url_org, 'vid' as type, f.folder_name,
+		SELECT i.vid_filename as filename, i.path_to_asset, i.cloud_url, i.cloud_url_org, 'vid' as type, i.host_id, f.folder_name,
 		<cfif arguments.thestruct.razuna.application.thedatabase EQ "mssql">vid_id + '-vid'<cfelse>concat(vid_id,'-vid')</cfif> as file_id
 		<cfif ListLen(_labels)>
 			, l.label_path
@@ -1362,6 +1385,9 @@
 		<cfif ListLen(_labels)>
 			AND ct.ct_label_id IN (<cfqueryparam CFSQLType="cf_sql_varchar" value="#_labels#" list="true">)
 		</cfif>
+		<cfif arguments.files_selected>
+			AND i.selection = <cfqueryparam CFSQLType="cf_sql_float" value="1">
+		</cfif>
 		<!--- Limit this if files_since is empty --->
 		<cfif arguments.files_since EQ "">
 			LIMIT 100
@@ -1372,7 +1398,7 @@
 
 		<!--- Audios --->
 		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="_aud">
-		SELECT i.aud_name as filename, i.path_to_asset, i.cloud_url, i.cloud_url_org, 'aud' as type, f.folder_name,
+		SELECT i.aud_name as filename, i.path_to_asset, i.cloud_url, i.cloud_url_org, 'aud' as type, i.host_id, f.folder_name,
 		<cfif arguments.thestruct.razuna.application.thedatabase EQ "mssql">aud_id + '-aud'<cfelse>concat(aud_id,'-aud')</cfif> as file_id
 		<cfif ListLen(_labels)>
 			, l.label_path
@@ -1396,6 +1422,9 @@
 		<cfif ListLen(_labels)>
 			AND ct.ct_label_id IN (<cfqueryparam CFSQLType="cf_sql_varchar" value="#_labels#" list="true">)
 		</cfif>
+		<cfif arguments.files_selected>
+			AND i.selection = <cfqueryparam CFSQLType="cf_sql_float" value="1">
+		</cfif>
 		<!--- Limit this if files_since is empty --->
 		<cfif arguments.files_since EQ "">
 			LIMIT 100
@@ -1406,7 +1435,7 @@
 
 		<!--- Files --->
 		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="_doc">
-		SELECT i.file_name as filename, i.path_to_asset, i.cloud_url, i.cloud_url_org, 'doc' as type, f.folder_name,
+		SELECT i.file_name as filename, i.path_to_asset, i.cloud_url, i.cloud_url_org, 'doc' as type, i.host_id, f.folder_name,
 		<cfif arguments.thestruct.razuna.application.thedatabase EQ "mssql">file_id + '-doc'<cfelse>concat(file_id,'-doc')</cfif> as file_id
 		<cfif ListLen(_labels)>
 			, l.label_path
@@ -1429,6 +1458,9 @@
 		</cfif>
 		<cfif ListLen(_labels)>
 			AND ct.ct_label_id IN (<cfqueryparam CFSQLType="cf_sql_varchar" value="#_labels#" list="true">)
+		</cfif>
+		<cfif arguments.files_selected>
+			AND i.selection = <cfqueryparam CFSQLType="cf_sql_float" value="1">
 		</cfif>
 		<!--- Limit this if files_since is empty --->
 		<cfif arguments.files_since EQ "">
@@ -1475,24 +1507,41 @@
 		<cfargument name="thestruct" required="yes" type="struct">
 		<!--- Create temp dir --->
 		<cfdirectory action="create" directory="#arguments.path_temp#" mode="775" />
+		<cfdirectory action="create" directory="#arguments.path_temp#/img" mode="775" />
+		<cfdirectory action="create" directory="#arguments.path_temp#/vid" mode="775" />
+		<cfdirectory action="create" directory="#arguments.path_temp#/aud" mode="775" />
+		<cfdirectory action="create" directory="#arguments.path_temp#/doc" mode="775" />
 		<!--- Name for thread --->
 		<cfset var _tn = createuuid('')>
 		<!--- LOCAL --->
 		<cfif arguments.thestruct.razuna.application.storage EQ "local">
-
+			<!--- Get asset path --->
+			<cfset var qry_path = "">
+			<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qry_path">
+			SELECT set2_path_to_assets
+			FROM raz1_settings_2
+			WHERE host_id = <cfqueryparam CFSQLType="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
+			</cfquery>
+			<!--- Copy files to the temp directory --->
+			<cfthread name="#_tn#" intstruct="#arguments#" qry_path="#qry_path#">
+				<cfloop query=attributes.intstruct.files>
+					<cfset FileCopy('#attributes.qry_path.set2_path_to_assets#/#host_id#/#path_to_asset#/thumb_#filename#', '#attributes.intstruct.path_temp#/thumb_#filename#')>
+					<cfset FileCopy('#attributes.qry_path.set2_path_to_assets#/#host_id#/#path_to_asset#/#filename#', '#attributes.intstruct.path_temp#/#filename#')>
+				</cfloop>
+			</cfthread>
 		<cfelseif arguments.thestruct.razuna.application.storage EQ "amazon">
 			<!--- Download files to temp diretory --->
 			<cfthread name="#_tn#" intstruct="#arguments#">
 				<cfloop query=attributes.intstruct.files>
-					<cfhttp url="#cloud_url#" file="thumb_#filename#" path="#attributes.intstruct.path_temp#" />
-					<cfhttp url="#cloud_url_org#" file="#filename#" path="#attributes.intstruct.path_temp#" />
+					<cfhttp url="#cloud_url#" file="thumb_#filename#" path="#attributes.intstruct.path_temp#/#type#" />
+					<cfhttp url="#cloud_url_org#" file="#filename#" path="#attributes.intstruct.path_temp#/#type#" />
 				</cfloop>
 			</cfthread>
 		</cfif>
 		<!--- Only release when thread is done --->
 		<cfthread action="join" name="#_tn#" />
 		<!--- We got all the files. List them in case some files could not be put in here --->
-		<cfdirectory action="list" directory="#arguments.path_temp#" type="file" listinfo="name" name="list_files" />
+		<cfdirectory action="list" directory="#arguments.path_temp#" type="file" listinfo="name" name="list_files" recurse="true" />
 		<!--- Return --->
 		<cfreturn list_files />
 	</cffunction>
@@ -1504,7 +1553,7 @@
 		<cfargument name="thestruct" required="yes" type="struct">
 
 		<!--- If img params not empty --->
-		<cfif arguments.script.SCHED_SCRIPT_IMG_CANVAS_WIDTH NEQ "" AND arguments.script.SCHED_SCRIPT_IMG_CANVAS_HEIGTH>
+		<cfif arguments.script.SCHED_SCRIPT_IMG_CANVAS_WIDTH NEQ "" AND arguments.script.SCHED_SCRIPT_IMG_CANVAS_HEIGTH NEQ "">
 
 			<cfset var qry_tools = "">
 
@@ -1572,7 +1621,7 @@
 			<cfthread name="#_tn#" intstruct="#arguments#">
 				<cfloop query=attributes.intstruct.files>
 					<!--- Path to file --->
-					<cfset _path_to_file = "#attributes.intstruct.path_temp#/#filename#">
+					<cfset _path_to_file = "#attributes.intstruct.path_temp#/#type#/#filename#">
 					<!--- Check type and exists --->
 					<cfif type EQ "img" AND FileExists( _path_to_file )>
 						<cfset _w = "">
@@ -1597,7 +1646,7 @@
 							<cfset _d = attributes.intstruct.script.SCHED_SCRIPT_IMG_DPI>
 						</cfif>
 						<!--- Create canvas with file --->
-						<cfexecute name="#attributes.intstruct.convert#" arguments="#_path_to_file# -scale #_w#x#_h# -gravity center -background white -extent #attributes.intstruct.script.SCHED_SCRIPT_IMG_CANVAS_WIDTH#x#attributes.intstruct.script.SCHED_SCRIPT_IMG_CANVAS_HEIGTH# -density #_d# #attributes.intstruct.path_temp#/#_filename_no_ext#_extended.jpg" timeout="120" />
+						<cfexecute name="#attributes.intstruct.convert#" arguments="#_path_to_file# -scale #_w#x#_h# -gravity center -background white -extent #attributes.intstruct.script.SCHED_SCRIPT_IMG_CANVAS_WIDTH#x#attributes.intstruct.script.SCHED_SCRIPT_IMG_CANVAS_HEIGTH# -density #_d# #attributes.intstruct.path_temp#/#type#/#_filename_no_ext#_extended.jpg" timeout="120" />
 					</cfif>
 				</cfloop>
 			</cfthread>
@@ -1616,13 +1665,16 @@
 		<cfargument name="path_temp" required="yes" type="string">
 		<cfargument name="thestruct" required="yes" type="struct">
 
+		<!--- Var --->
+		<cfset var _result = structnew()>
+
 		<!--- If metadata not empty --->
 		<cfif arguments.script.sched_script_files_include_metadata>
 
 			<cfset arguments.thestruct.folder_id = "">
 			<cfset arguments.thestruct.what = "">
 			<cfset arguments.thestruct.thepath = GetTempdirectory()>
-			<cfset arguments.thestruct.format = "xls">
+			<cfset arguments.thestruct.format = "csv">
 			<cfset arguments.thestruct.include_renditions = false>
 			<cfset arguments.thestruct.razuna.session.file_id = valueList(arguments.files.file_id)>
 
@@ -1630,15 +1682,120 @@
 
 			<cfinvoke component="global.cfc.xmp" method="meta_export" thestruct="#arguments.thestruct#" returnvariable="export" />
 
+			<!--- Name metadata file --->
+			<cfset _result.metadata_file_name = "metadata_#DateTimeformat( now(), 'YYYY-MM-d_HH-mm' )#.#arguments.thestruct.format#">
+			<!--- Store metadata path in results --->
+			<cfset _result.metadata_file_path = "#arguments.path_temp#/#_result.metadata_file_name#">
+
 			<!--- Export contains the full path to the exported file --->
-			<cffile action="move" source="#export#" destination="#arguments.path_temp#/metadata.xls" />
+			<cffile action="move" source="#export#" destination="#_result.metadata_file_path#" />
 
 		</cfif>
 
 		<!--- Return --->
-		<cfreturn />
+		<cfreturn _result />
 	</cffunction>
 
+	<!--- ZIP file --->
+	<cffunction name="getZipFile">
+		<cfargument name="script" required="yes" type="struct">
+		<cfargument name="path_temp" required="yes" type="string">
+		<cfargument name="thestruct" required="yes" type="struct">
 
+		<!--- Var --->
+		<cfset var _result = structnew()>
+
+		<!--- If metadata not empty --->
+		<cfif arguments.script.sched_script_files_zip>
+
+			<cfset _result.zip_file_name = "Omnipix.zip">
+			<cfset _result.zip_file = GetTempdirectory() & _zip_file_name>
+
+			<cfthread name="zip_tt" file="#_result.zip_file#" source="#arguments.path_temp#">
+				<cfzip action="create" zipfile="#attributes.file#" source="#attributes.source#" overwrite="true" />
+			</cfthread>
+			<!--- Only release when thread is done --->
+			<cfthread action="join" name="zip_tt" />
+
+		</cfif>
+
+		<!--- Return --->
+		<cfreturn _result />
+	</cffunction>
+
+	<!--- Ftp Transfer --->
+	<cffunction name="doFtpTransfer">
+		<cfargument name="files" required="yes" type="query">
+		<cfargument name="script" required="yes" type="struct">
+		<cfargument name="path_temp" required="yes" type="string">
+		<cfargument name="thestruct" required="yes" type="struct">
+		<cfargument name="zip_file" required="yes" type="struct">
+		<cfargument name="meta_file" required="yes" type="struct">
+
+		<!--- SFTP --->
+		<cfinvoke component="global.cfc.sftp" method="init" returnvariable="sftp">
+
+		<!--- For ZIP file --->
+		<cfif arguments.script.sched_script_files_zip>
+
+			<cfset var _connection = sftp.connect( host=arguments.script.SCHED_SCRIPT_FTP_HOST, port=arguments.script.SCHED_SCRIPT_FTP_PORT, user=arguments.script.SCHED_SCRIPT_FTP_USER, pass=arguments.script.SCHED_SCRIPT_FTP_PASS )>
+			<cfset var put = sftp.put(file_local=arguments.zip_file.zip_file, file_remote="#arguments.script.SCHED_SCRIPT_FTP_FOLDER##arguments.zip_file.zip_file_name#")>
+			<cfset sftp.disconnect()>
+
+			<!--- Check if file could be transfered --->
+			<cfset console("sFTP PUT STATUS : ", put)>
+
+			<!--- Delete temp dir and zip file --->
+			<cfset DirectoryDelete( arguments.path_temp, true )>
+			<cfset fileDelete( arguments.zip_file.zip_file )>
+
+		<!--- Not a ZIP. Transfer each file to FTP --->
+		<cfelse>
+
+			<cfset var _connection = sftp.connect( host=arguments.script.SCHED_SCRIPT_FTP_HOST, port=arguments.script.SCHED_SCRIPT_FTP_PORT, user=arguments.script.SCHED_SCRIPT_FTP_USER, pass=arguments.script.SCHED_SCRIPT_FTP_PASS )>
+
+			<!--- Transfer Metadata file --->
+			<cfif arguments.script.sched_script_files_include_metadata>
+				<cfset var put = sftp.put(file_local=arguments.meta_file.metadata_file_path, file_remote="#arguments.script.sched_script_ftp_folder_metadata##arguments.meta_file.metadata_file_name#")>
+				<!--- Delete the file --->
+				<cfset fileDelete( arguments.meta_file.metadata_file_path )>
+			</cfif>
+
+			<!--- Loop over all files and upload one by one --->
+
+			<!--- List all images --->
+			<cfset var _img = DirectoryList( path="#arguments.path_temp#/img", listinfo="query" )>
+			<!--- Loop --->
+			<cfloop query="_img">
+				<cfset var put = sftp.put(file_local="#directory#/#name#", file_remote="#arguments.script.sched_script_ftp_folder_images##name#")>
+			</cfloop>
+
+			<!--- List all videos --->
+			<cfset var _vid = DirectoryList( path="#arguments.path_temp#/vid", listinfo="query" )>
+			<!--- Loop --->
+			<cfloop query="_vid">
+				<cfset var put = sftp.put(file_local="#directory#/#name#", file_remote="#arguments.script.sched_script_ftp_folder_videos##name#")>
+			</cfloop>
+
+			<!--- List all audios --->
+			<cfset var _aud = DirectoryList( path="#arguments.path_temp#/aud", listinfo="query" )>
+			<!--- Loop --->
+			<cfloop query="_aud">
+				<cfset var put = sftp.put(file_local="#directory#/#name#", file_remote="#arguments.script.sched_script_ftp_folder_images##name#")>
+			</cfloop>
+
+			<!--- List all documents --->
+			<cfset var _doc = DirectoryList( path="#arguments.path_temp#/doc", listinfo="query" )>
+			<!--- Loop --->
+			<cfloop query="_doc">
+				<cfset var put = sftp.put(file_local="#directory#/#name#", file_remote="#arguments.script.sched_script_ftp_folder_images##name#")>
+			</cfloop>
+
+			<!--- Delete temp dir --->
+			<cfset DirectoryDelete( arguments.path_temp, true )>
+
+		</cfif>
+
+	</cffunction>
 
 </cfcomponent>

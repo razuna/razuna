@@ -194,7 +194,7 @@
 		<cfinvoke component="global.cfc.groups" method="add_grp_users2notify" group_id='#i#' user_id='#arguments.thestruct.newid#' thestruct="#arguments.thestruct#">
 	</cfloop>
 	<!--- Flush Cache --->
-	<cfset resetcachetoken(type="users", hostid=arguments.thestruct.razuna.session.hostid)>
+	<cfset resetcachetoken(type="users", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 	<cfreturn />
 </cffunction>
 

@@ -327,12 +327,19 @@
 		<!--- If we store all files in one bucket --->
 		<cfset arguments = tenantCheck(arguments)>
 		<!--- Get keys --->
-		<cfset thekeys = listkeys(folderpath=arguments.folderpath, awsbucket=arguments.awsbucket, thestruct=arguments.thestruct)>
+		<cfset thekeys = listkeys( folderpath=arguments.folderpath, awsbucket=arguments.awsbucket, thestruct=arguments.thestruct )>
+		<cfset consoleoutput(true, true)>
+		<cfset console("movefolder thekeys", thekeys)>
+		<!--- <cfset console("movefolder arguments", arguments)> --->
+		<!--- <cfabort> --->
 		<!--- Call the renameobject function which will copy and delete at the same time --->
 		<cfloop query="thekeys" >
 			<cfset thefile = listlast(key,"/")>
-			<cfset var moveobj = createObject("component","global.cfc.s3").init(accessKeyId=arguments.awskey,secretAccessKey=arguments.awssecretkey,storagelocation = arguments.awslocation)>
-			<cfset moveobj.renameObject(oldBucketName='#arguments.awsbucket#', newBucketName ="#arguments.awsbucket#", oldFileKey = "#key#",  newFileKey = "#arguments.folderpathdest#/#thefile#")>
+			<cfset console("movefolder thefile", thefile)>
+			<cfset console("movefolder oldFileKey", key)>
+			<cfset console("movefolder newFileKey", "#arguments.folderpathdest#/#thefile#")>
+			<cfset var moveobj = createObject("component","global.cfc.s3").init(accessKeyId=arguments.awskey, secretAccessKey=arguments.awssecretkey, storagelocation=arguments.awslocation)>
+			<cfset moveobj.renameObject(oldBucketName=arguments.awsbucket, newBucketName=arguments.awsbucket, oldFileKey=key, newFileKey="#arguments.folderpathdest#/#thefile#")>
 			<cfset _setAcl(bucket=arguments.awsbucket, key="#arguments.folderpathdest#/#thefile#")>
 		</cfloop>
 		<!--- Return --->
@@ -351,7 +358,7 @@
 		<!--- If we store all files in one bucket --->
 		<cfset arguments = tenantCheck(arguments)>
 		<!--- Get keys --->
-		<cfset thekeys = listkeys(folderpath=arguments.folderpath, awsbucket=arguments.awsbucket, thestruct=arguments.thestruct)>
+		<cfset thekeys = listkeys( folderpath=arguments.folderpath, awsbucket=arguments.awsbucket, thestruct=arguments.thestruct )>
 		<!--- Call the copyobject function --->
 		<cfloop query="thekeys" >
 			<cfset thefile = listlast(key,"/")>
@@ -704,7 +711,13 @@
 		<cfargument name="bucket" required="true" type="string">
 		<cfargument name="key" required="true" type="string">
 		<!--- ACL --->
-		<cfset AmazonS3setacl( datasource=application.razuna.s3ds, bucket=arguments.bucket, key=arguments.key, acl="public-read" )>
+		<cftry>
+			<cfset AmazonS3setacl( datasource=application.razuna.s3ds, bucket=arguments.bucket, key=arguments.key, acl="public-read" )>
+			<cfcatch>
+				<cfset consoleoutput(true, true)>
+				<cfset console("_setAcl error", cfcatch)>
+			</cfcatch>
+		</cftry>
 		<!--- Return --->
 		<cfreturn />
 	</cffunction>

@@ -68,8 +68,6 @@
 		<cfargument name="search_rendition" type="string">
 		<cfargument name="search_upc" type="boolean">
 		<cfargument name="thestruct" type="struct" required="true" />
-
-
 		<!--- Param --->
 		<cfset var _taskserver = "" />
 		<!--- Query settings --->
@@ -205,7 +203,7 @@
 		<cfhttp url="#_url#/api/collection.cfc" method="post" charset="utf-8">
 			<cfhttpparam name="method" value="rebuildCollection" type="formfield" />
 			<cfhttpparam name="secret" value="#_taskserver.taskserver_secret#" type="formfield" />
-			<cfhttpparam name="thestruct" value="#arguments.thestruct#" type="formfield" />
+			<!--- <cfhttpparam name="thestruct" value="#arguments.thestruct#" type="formfield" /> --->
 		</cfhttp>
 		<!--- Set records to non indexed --->
 		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">

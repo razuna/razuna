@@ -161,7 +161,7 @@
 	<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #cachetoken#prefs_dam */ set2_intranet_gen_download, set2_doc_download, set2_img_download_org, set2_intranet_reg_emails,
 	set2_intranet_reg_emails_sub, set2_ora_path_incoming, set2_ora_path_incoming_batch, set2_ora_path_outgoing,
-	set2_path_to_assets
+	set2_path_to_assets, set2_img_format
 	FROM #qry_host.host_shard_group#settings_2
 	WHERE set2_id = <cfqueryparam value="#arguments.thestruct.razuna.application.setid#" cfsqltype="cf_sql_numeric">
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
@@ -1449,32 +1449,24 @@
 	<cfset var qry = "">
 	<!--- Query --->
 	<cfquery datasource="razuna_default" name="qry">
-	SELECT conf_database, conf_datasource, conf_setid, conf_storage, conf_aws_access_key, conf_aws_secret_access_key, conf_aws_location, conf_aws_tenant_in_one_bucket_name, conf_aws_tenant_in_one_bucket_enable, conf_rendering_farm, conf_isp, conf_aka_token, conf_url_assets
+	SELECT conf_database, conf_schema, conf_datasource, conf_setid, conf_storage, conf_aws_access_key, conf_aws_secret_access_key, conf_aws_location, conf_aws_tenant_in_one_bucket_name, conf_aws_tenant_in_one_bucket_enable, conf_rendering_farm, conf_isp, conf_aka_token, conf_url_assets
 	FROM razuna_config
 	</cfquery>
 	<!--- Now put config values into application scope, but only if they differ or scope not exist --->
-	<cfset application.razuna.api.thedatabase = qry.conf_database>
-	<cfset application.razuna.api.dsn = qry.conf_datasource>
-	<cfset application.razuna.api.setid = qry.conf_setid>
-	<cfset application.razuna.api.storage = qry.conf_storage>
-	<cfset application.razuna.api.awskey = qry.conf_aws_access_key>
-	<cfset application.razuna.api.awskeysecret = qry.conf_aws_secret_access_key>
-	<cfset application.razuna.api.awslocation = qry.conf_aws_location>
+	<cfset application.razuna.thedatabase = qry.conf_database>
+	<cfset application.razuna.datasource = qry.conf_datasource>
+	<cfset application.razuna.theschema = qry.conf_schema>
+	<cfset application.razuna.setid = qry.conf_setid>
+	<cfset application.razuna.storage = qry.conf_storage>
+	<cfset application.razuna.awskey = qry.conf_aws_access_key>
+	<cfset application.razuna.awskeysecret = qry.conf_aws_secret_access_key>
+	<cfset application.razuna.awslocation = qry.conf_aws_location>
 	<cfset application.razuna.awstenaneonebucket = qry.conf_aws_tenant_in_one_bucket_enable>
 	<cfset application.razuna.awstenaneonebucketname = qry.conf_aws_tenant_in_one_bucket_name>
-	<cfset application.razuna.api.rfs = qry.conf_rendering_farm>
-	<cfset application.razuna.api.isp = qry.conf_isp>
-	<cfset application.razuna.api.akatoken = qry.conf_aka_token>
-	<cfif cgi.https EQ "on" OR cgi.http_x_https EQ "on" OR cgi.http_x_forwarded_proto EQ "https">
-		<cfset application.razuna.api.thehttp = "https://">
-	<cfelse>
-		<cfset application.razuna.api.thehttp = "http://">
-	</cfif>
-	<!--- Set razuna scopes also --->
-	<cfset application.razuna.storage = arguments.thestruct.razuna.application.api.storage>
-	<cfset application.razuna.datasource = arguments.thestruct.razuna.application.api.dsn>
-	<cfset application.razuna.thedatabase = arguments.thestruct.razuna.application.api.thedatabase>
-	<cfset application.razuna.setid = arguments.thestruct.razuna.application.api.setid>
+	<cfset application.razuna.rfs = qry.conf_rendering_farm>
+	<cfset application.razuna.isp = qry.conf_isp>
+	<cfset application.razuna.akatoken = qry.conf_aka_token>
+	<cfset application.razuna.s3ds = AmazonRegisterDataSource("aws",qry.conf_aws_access_key,qry.conf_aws_secret_access_key,qry.conf_aws_location)>
 </cffunction>
 
 <!--- ------------------------------------------------------------------------------------- --->
@@ -1503,13 +1495,11 @@
 	<cfset application.razuna.whitelabel = qry.conf_wl>
 	<cfset application.razuna.dynpath = cgi.context_path>
 	<cfset application.razuna.akatoken = qry.conf_aka_token>
-	<cfset application.razuna.dropbox.url_oauth = "https://www.dropbox.com/1">
-	<cfset application.razuna.dropbox.url_api = "https://api.dropbox.com/1">
-	<cfif cgi.https EQ "on" OR cgi.http_x_https EQ "on" OR cgi.http_x_forwarded_proto EQ "https">
-		<cfset application.razuna.api.thehttp = "https://">
+	<!--- <cfif cgi.https EQ "on" OR cgi.http_x_https EQ "on" OR cgi.http_x_forwarded_proto EQ "https">
+		<cfset application.razuna.thehttp = "https://">
 	<cfelse>
-		<cfset application.razuna.api.thehttp = "http://">
-	</cfif>
+		<cfset application.razuna.thehttp = "http://">
+	</cfif> --->
 	<!--- RAZ-2812 Most recently updated assets  --->
 	<!--- <cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qry_options">
 		SELECT opt_value FROM options
@@ -3629,17 +3619,17 @@
 <cffunction name="setaccesscontrol" returntype="void" >
 	<cfargument name="thestruct" type="Struct">
 	<cfquery dataSource="#arguments.thestruct.razuna.application.datasource#">
-		DELETE FROM options WHERE opt_id LIKE '%access'
+	DELETE FROM options WHERE opt_id LIKE '%access'
 	</cfquery>
 	<cfloop delimiters="," index="field" list="#arguments.thestruct.fieldnames#">
 		<cfif field NEQ 'FA'>
 			<cfif evaluate(field) NEQ ''>
 				<!--- Insert fields into database --->
 				<cfquery dataSource="#arguments.thestruct.razuna.application.datasource#">
-					INSERT INTO options (opt_id,opt_value,rec_uuid)
-					VALUES (<cfqueryparam cfsqltype="cf_sql_varchar" value="#field#">,
-						<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(field)#">,
-						<cfqueryparam cfsqltype="cf_sql_varchar" value="#createUUID()#">)
+				INSERT INTO options (opt_id,opt_value,rec_uuid)
+				VALUES (<cfqueryparam cfsqltype="cf_sql_varchar" value="#field#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(field)#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#createUUID()#">)
 				</cfquery>
 			</cfif>
 		</cfif>
@@ -3648,10 +3638,11 @@
 
 <cffunction name="getaccesscontrol" returntype="struct" >
 	<cfargument name="thestruct" type="struct" required="true" />
+	<cfset var accessdata = "">
 	<cfquery dataSource="#arguments.thestruct.razuna.application.datasource#" name="accessdata">
-		SELECT opt_id, opt_value
-		FROM options
-		WHERE opt_id LIKE '%access'
+	SELECT opt_id, opt_value
+	FROM options
+	WHERE opt_id LIKE '%access'
 	</cfquery>
 	<cfset var access_struct = structnew()>
 	<cfloop query="accessdata">
@@ -3666,20 +3657,22 @@
 	<cfset var grpperm = "">
 	<!--- If user has access to the admin tab or if he is in a group that has access then he can see the admin tab so set its access value to true else set to false --->
 	<cfloop collection="#arguments.access_struct#" item="field">
-		<cfif listfind (structfind(arguments.access_struct,field),arguments.thestruct.razuna.session.theuserid)>
-			<cfset structupdate(arguments.access_struct,field,true)>
-			<cfcontinue>
-		</cfif>
-		<cfinvoke component="global.cfc.global" method="comparelists" list1="#structfind(arguments.access_struct,field)#" list2="#arguments.thestruct.razuna.session.thegroupofuser#" returnvariable="grpperm">
-		<cfif grpperm NEQ "">
-			<cfset structupdate(arguments.access_struct,field,true)>
-		<cfelse>
-			<cfset structdelete(arguments.access_struct,field)>
+		<cfif structkeyexists(arguments.access_struct, field)>
+			<cfif listfind(structfind(arguments.access_struct,field), arguments.thestruct.razuna.session.theuserid)>
+				<cfset structupdate(arguments.access_struct,field,true)>
+				<cfcontinue>
+			</cfif>
+			<cfinvoke component="global.cfc.global" method="comparelists" list1="#structfind(arguments.access_struct,field)#" list2="#arguments.thestruct.razuna.session.thegroupofuser#" returnvariable="grpperm">
+			<cfif grpperm NEQ "">
+				<cfset structupdate(arguments.access_struct,field,true)>
+			<cfelse>
+				<cfset structdelete(arguments.access_struct,field)>
+			</cfif>
 		</cfif>
 	</cfloop>
 	<!--- if user has no access we need to set the access here --->
-	<cfif structkeyexists(arguments.access_struct, 'groups_access')>
-		<cfset arguments.access_struct.groups_access = true>
+	<cfif ! structkeyexists(arguments.access_struct, 'groups_access')>
+		<cfset arguments.access_struct.groups_access = false>
 	</cfif>
 	<cfreturn arguments.access_struct>
 </cffunction>

@@ -90,7 +90,7 @@
 	<cfinvoke component="defaults" method="trans" transid="deleted" returnvariable="deleted" />
 	<cfinvoke component="defaults" method="trans" transid="plugin_version" returnvariable="version" />
 	<!--- Add entry into log --->
-	<cfset log_assets(theuserid=arguments.thestruct.razuna.session.theuserid,logaction='Delete',logdesc='#deleted# #version#: #getinfo.ver_filename_org#',logfiletype='#arguments.thestruct.type#',assetid='#getinfo.asset_id_r#',folderid='#arguments.thestruct.folder_id#', hostid=arguments.thestruct.razuna.session.hostid)>
+	<cfset log_assets(theuserid=arguments.thestruct.razuna.session.theuserid,logaction='Delete',logdesc='#deleted# #version#: #getinfo.ver_filename_org#',logfiletype='#arguments.thestruct.type#',assetid='#getinfo.asset_id_r#',folderid='#arguments.thestruct.folder_id#', hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 	<!--- Return --->
 	<cfreturn />
 </cffunction>
@@ -503,7 +503,7 @@
 		<cfset arguments.thestruct.qrydetail.folder_id_r = qry.folder_id_r>
 		<cfset arguments.thestruct.filenameorg = qry.filenameorg>
 		<!--- Add entry into log --->
-		<cfset log_assets(theuserid=arguments.thestruct.razuna.session.theuserid,logaction='Update',logdesc='Playback of Version: #qrycurrentversion.ver_filename_org#',logfiletype='#qrycurrentversion.ver_type#',assetid='#arguments.thestruct.file_id#',folderid='#arguments.thestruct.folder_id#', hostid=arguments.thestruct.razuna.session.hostid)>
+		<cfset log_assets(theuserid=arguments.thestruct.razuna.session.theuserid,logaction='Update',logdesc='Playback of Version: #qrycurrentversion.ver_filename_org#',logfiletype='#qrycurrentversion.ver_type#',assetid='#arguments.thestruct.file_id#',folderid='#arguments.thestruct.folder_id#', hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 		<cfcatch type="any">
 			<cfdump var="#cfcatch#">
 		</cfcatch>
@@ -555,7 +555,7 @@
 			<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="arguments.thestruct.qryfilelocal">
 			SELECT
 			img_id, folder_id_r, img_filename_org file_name_org, thumb_width, thumb_height, hashtag,
-			img_width, img_height, img_size, thumb_size, img_extension orgext, path_to_asset, cloud_url, cloud_url_org, img_meta as metadata, thumb_extension thumbext
+			img_width, img_height, img_size, thumb_size, img_extension AS orgext, path_to_asset, cloud_url, cloud_url_org, img_meta as metadata, thumb_extension thumbext
 			FROM #arguments.thestruct.razuna.session.hostdbprefix#images
 			WHERE img_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.qryfile.file_id#">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
@@ -827,7 +827,7 @@
 			<cfthread name="#mtt#" intstruct="#arguments.thestruct#">
 				<!--- Move --->
 				<cfinvoke component="amazon" method="movefolder">
-					<cfinvokeargument name="folderpath" value="/#attributes.intstruct.qryfilelocal.path_to_asset#">
+					<cfinvokeargument name="folderpath" value="#attributes.intstruct.qryfilelocal.path_to_asset#">
 					<cfinvokeargument name="folderpathdest" value="versions/#attributes.intstruct.type#/#attributes.intstruct.qryfile.file_id#/#attributes.intstruct.newversion#">
 					<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
 					<cfinvokeargument name="thestruct" value="#attributes.intstruct#">
@@ -1111,8 +1111,8 @@
 			file_change_time = <cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">,
 			file_size = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.qryfile.thesize#">,
 			path_to_asset = <cfqueryparam value="#arguments.thestruct.qryfilelocal.path_to_asset#" cfsqltype="cf_sql_varchar">,
-			cloud_url_org = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#cloud_url_org.theurl#">,<cfinvoke component="defaults" method="trans" transid="ftp_read_error" returnvariable="ftp_read_error" />
-			<cfif cloud_url.theurl NEQ ''>cloud_url = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#cloud_url.theurl#">,</cfif>
+			cloud_url_org = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#cloud_url_org.theurl#">,
+			cloud_url = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#cloud_url.theurl#">,
 			cloud_url_exp = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#cloud_url_org.newepoch#">,
 			hashtag = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#md5hash#">,
 			file_meta = <cfqueryparam value="#ver_file_meta#" cfsqltype="cf_sql_varchar">,
@@ -1126,10 +1126,11 @@
 			</cfquery>
 			<!--- Flush Cache --->
 			<cfset resetcachetoken(type="files", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
-			<!--- RAZ-2475 : Flush folders cache to get the latest thumbnail of PDF --->
-			<cfset resetcachetoken(type="folders", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)> <!--- This will update folder view--->
-			<!--- We need to update the information tab of the popup too. --->
 		</cfif>
+
+		<!--- Flush Cache --->
+		<cfset resetcachetoken(type="folders", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
+		<cfset resetcachetoken(type="search", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 
 		<cfset arguments.thestruct.qrydetail.path_to_asset = arguments.thestruct.qryfilelocal.path_to_asset>
 		<cfset arguments.thestruct.qrydetail.filenameorg = arguments.thestruct.qryfilelocal.file_name_org>
@@ -1137,15 +1138,11 @@
 		<!--- Add entry into log --->
 		<cfinvoke component="defaults" method="trans" transid="added" returnvariable="added_txt" />
 		<cfinvoke component="defaults" method="trans" transid="new_version" returnvariable="new_version" />
-		<cfset log_assets(theuserid=arguments.thestruct.razuna.session.theuserid,logaction='Add',logdesc='#added_txt# #new_version#: #arguments.thestruct.qryfilelocal.file_name_org#',logfiletype='#arguments.thestruct.type#',assetid='#arguments.thestruct.qryfile.file_id#',folderid='#arguments.thestruct.folder_id#', hostid=arguments.thestruct.razuna.session.hostid)>
+		<cfset log_assets(theuserid=arguments.thestruct.razuna.session.theuserid,logaction='Add',logdesc='#added_txt# #new_version#: #arguments.thestruct.qryfilelocal.file_name_org#',logfiletype='#arguments.thestruct.type#',assetid='#arguments.thestruct.qryfile.file_id#',folderid='#arguments.thestruct.folder_id#', hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 		<cfcatch type="any">
 			<cfdump var="#cfcatch#">
 		</cfcatch>
 	</cftry>
-	<cfset consoleoutput(true, true)>
-	<cfset console('VERSIOING DONE')>
-
-
 	<!--- Reset folders cachetoken so preview images update --->
 	<cfset resetcachetoken(type="folders", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 	<!--- Return --->
@@ -1569,7 +1566,7 @@
 		</cfif>
 		)
 		</cfquery>
-		<cfset log_assets(theuserid=arguments.thestruct.razuna.session.theuserid,logaction='Add',logdesc='Added Old Version: #arguments.thestruct.filename_org#',logfiletype='#arguments.thestruct.type#',assetid='#arguments.thestruct.qryfile.file_id#',folderid='#arguments.thestruct.folder_id#', hostid=arguments.thestruct.razuna.session.hostid)>
+		<cfset log_assets(theuserid=arguments.thestruct.razuna.session.theuserid,logaction='Add',logdesc='Added Old Version: #arguments.thestruct.filename_org#',logfiletype='#arguments.thestruct.type#',assetid='#arguments.thestruct.qryfile.file_id#',folderid='#arguments.thestruct.folder_id#', hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 		<cfcatch type="any">
 		</cfcatch>
 	</cftry>

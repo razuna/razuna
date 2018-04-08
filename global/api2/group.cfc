@@ -37,11 +37,11 @@
 			<!--- If user is in admin --->
 			<cfif listFind(session.thegroupofuser,"2",",") GT 0 OR listFind(session.thegroupofuser,"1",",") GT 0>
 				<!--- Query the group --->
-				<cfquery datasource="#application.razuna.api.dsn#" name="thexml">
+				<cfquery datasource="#application.razuna.datasource#" name="thexml">
 				SELECT grp_id, grp_name
 				FROM groups
 				WHERE grp_id = <cfqueryparam value="#arguments.grp_id#" cfsqltype="CF_SQL_VARCHAR">
-				AND grp_host_id = <cfqueryparam value="#application.razuna.api.hostid["#arguments.api_key#"]#" cfsqltype="cf_sql_numeric">
+				AND grp_host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric">
 				</cfquery>
 				<!--- If group does not exist do the insert --->
 				<cfif thexml.recordcount EQ 0>
@@ -73,10 +73,10 @@
 			<!--- If user is in admin --->
 			<cfif listFind(session.thegroupofuser,"2",",") GT 0 OR listFind(session.thegroupofuser,"1",",") GT 0>
 				<!--- Query the group --->
-				<cfquery datasource="#application.razuna.api.dsn#" name="thexml">
+				<cfquery datasource="#application.razuna.datasource#" name="thexml">
 				SELECT grp_id, grp_name
 				FROM groups
-				WHERE grp_host_id = <cfqueryparam value="#application.razuna.api.hostid["#arguments.api_key#"]#" cfsqltype="cf_sql_numeric">
+				WHERE grp_host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric">
 				</cfquery>
 				<!--- If group does not exist do the insert --->
 				<cfif thexml.recordcount EQ 0>
@@ -109,20 +109,20 @@
 			<!--- If user is in admin --->
 			<cfif listFind(session.thegroupofuser,"2",",") GT 0 OR listFind(session.thegroupofuser,"1",",") GT 0>
 				<!--- Query the group --->
-				<cfquery datasource="#application.razuna.api.dsn#" name="thexml">
+				<cfquery datasource="#application.razuna.datasource#" name="thexml">
 				SELECT u.user_id, u.user_first_name, u.user_last_name, u.user_email
 				FROM users u, ct_users_hosts ct
 				WHERE EXISTS(
 					SELECT ctg.ct_g_u_user_id
 					FROM ct_groups_users ctg INNER JOIN groups g ON ctg.ct_g_u_grp_id = g.grp_id
 					WHERE(
-						g.grp_host_id = <cfqueryparam value="#application.razuna.api.hostid["#arguments.api_key#"]#" cfsqltype="cf_sql_numeric">
+						g.grp_host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric">
 						OR g.grp_host_id IS NULL
 					)
 					AND g.grp_id IN (<cfqueryparam value="#arguments.grp_id#" cfsqltype="CF_SQL_VARCHAR" list="true">)
 					AND ctg.ct_g_u_user_id = u.user_id
 				)
-				AND ct.ct_u_h_host_id = <cfqueryparam value="#application.razuna.api.hostid["#arguments.api_key#"]#" cfsqltype="cf_sql_numeric">
+				AND ct.ct_u_h_host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric">
 				AND u.user_id = ct.ct_u_h_user_id
 				</cfquery>
 				<!--- If user does not exist do the insert --->
@@ -155,24 +155,24 @@
 			<!--- If user is in admin --->
 			<cfif listFind(session.thegroupofuser,"2",",") GT 0 OR listFind(session.thegroupofuser,"1",",") GT 0>
 				<!--- Check that we don't have the same grou name already --->
-				<cfquery datasource="#application.razuna.api.dsn#" name="qry_samegrp">
+				<cfquery datasource="#application.razuna.datasource#" name="qry_samegrp">
 				SELECT grp_id
 				FROM groups
 				WHERE grp_name = <cfqueryparam value="#arguments.grp_name#" cfsqltype="CF_SQL_VARCHAR">
-				AND grp_host_id = <cfqueryparam value="#application.razuna.api.hostid["#arguments.api_key#"]#" cfsqltype="cf_sql_numeric">
+				AND grp_host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric">
 				</cfquery>
 				<!--- If group does not exist do the insert --->
 				<cfif qry_samegrp.recordcount EQ 0>
 					<!--- Create new ID --->
 					<cfset newgrpid = createuuid()>
 					<!--- Insert the group into the DB --->
-					<cfquery datasource="#application.razuna.api.dsn#">
+					<cfquery datasource="#application.razuna.datasource#">
 					INSERT INTO	groups
 					(grp_id, grp_name, grp_host_id, grp_mod_id)
 					VALUES(
 					<cfqueryparam value="#newgrpid#" cfsqltype="CF_SQL_VARCHAR">,
 					<cfqueryparam value="#arguments.grp_name#" cfsqltype="cf_sql_varchar">,
-					<cfqueryparam value="#application.razuna.api.hostid["#arguments.api_key#"]#" cfsqltype="cf_sql_numeric">,
+					<cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric">,
 					<cfqueryparam value="1" cfsqltype="cf_sql_numeric">
 					)
 					</cfquery>
@@ -211,19 +211,19 @@
 			<!--- If user is in admin --->
 			<cfif listFind(session.thegroupofuser,"2",",") GT 0 OR listFind(session.thegroupofuser,"1",",") GT 0>
 				<!--- Query the group --->
-				<cfquery datasource="#application.razuna.api.dsn#" name="qry">
+				<cfquery datasource="#application.razuna.datasource#" name="qry">
 				SELECT grp_id
 				FROM groups
 				WHERE grp_id = <cfqueryparam value="#arguments.grp_id#" cfsqltype="CF_SQL_VARCHAR">
-				AND grp_host_id = <cfqueryparam value="#application.razuna.api.hostid["#arguments.api_key#"]#" cfsqltype="cf_sql_numeric">
+				AND grp_host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric">
 				</cfquery>
 				<!--- group found --->
 				<cfif qry.recordcount EQ 1>
-					<cfquery datasource="#application.razuna.api.dsn#">
+					<cfquery datasource="#application.razuna.datasource#">
 					UPDATE groups
 					SET grp_name = <cfqueryparam value="#arguments.grp_name#" cfsqltype="CF_SQL_VARCHAR">
 					WHERE grp_id = <cfqueryparam value="#arguments.grp_id#" cfsqltype="CF_SQL_VARCHAR">
-					AND grp_host_id = <cfqueryparam value="#application.razuna.api.hostid["#arguments.api_key#"]#" cfsqltype="cf_sql_numeric">
+					AND grp_host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric">
 					</cfquery>
 					<!--- Response --->
 					<cfset thexml.responsecode = 0>
@@ -257,19 +257,19 @@
 		<cfif thesession>
 			<!--- If user is in admin --->
 			<cfif listFind(session.thegroupofuser,"2",",") GT 0 OR listFind(session.thegroupofuser,"1",",") GT 0>
-				<cfquery datasource="#application.razuna.api.dsn#" name="qry">
+				<cfquery datasource="#application.razuna.datasource#" name="qry">
 				SELECT grp_id
 				FROM groups
 				WHERE grp_id = <cfqueryparam value="#arguments.grp_id#" cfsqltype="CF_SQL_VARCHAR">
-				AND grp_host_id = <cfqueryparam value="#application.razuna.api.hostid["#arguments.api_key#"]#" cfsqltype="cf_sql_numeric">
-				AND (grp_id <cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam value="1" cfsqltype="CF_SQL_VARCHAR"> OR grp_id <cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam value="2" cfsqltype="CF_SQL_VARCHAR">)
+				AND grp_host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric">
+				AND (grp_id <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam value="1" cfsqltype="CF_SQL_VARCHAR"> OR grp_id <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam value="2" cfsqltype="CF_SQL_VARCHAR">)
 				</cfquery>
 				<!--- group found --->
 				<cfif qry.recordcount EQ 1>
-					<cfquery datasource="#application.razuna.api.dsn#">
+					<cfquery datasource="#application.razuna.datasource#">
 					DELETE FROM groups
 					WHERE grp_id = <cfqueryparam value="#arguments.grp_id#" cfsqltype="CF_SQL_VARCHAR">
-					AND grp_host_id = <cfqueryparam value="#application.razuna.api.hostid["#arguments.api_key#"]#" cfsqltype="cf_sql_numeric">
+					AND grp_host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric">
 					</cfquery>
 					<!--- Response --->
 					<cfset thexml.responsecode = 0>

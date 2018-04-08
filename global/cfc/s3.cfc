@@ -13,7 +13,9 @@ Thanks to Jerad Sloan for the Cache Control headers.
 
 Version 1.8 - Released: July 27, 2010
 
-Modified from original by Razuna to add suport for multipart uploads and getting aws URL based on regional endpoints
+- Modified from original by Razuna to add suport for multipart uploads and getting aws URL based on regional endpoints
+- Modified from original by Razuna with proper date format
+
 --->
 	<cffunction name="init" access="public" returnType="s3" output="false" >
 		<cfargument name="accessKeyId" type="string" required="true" >
@@ -90,7 +92,7 @@ Modified from original by Razuna to add suport for multipart uploads and getting
 		<cfset var buckets = "">
 		<cfset var thisBucket = "">
 		<cfset var allBuckets = "">
-		<cfset var dateTimeString = GetHTTPTimeString(Now())>
+		<cfset var dateTimeString = DateTimeFormat( now(), 'E, d MMM yyyy HH:mm:ss z')>
 
 		<!--- Create a canonical string to send --->
 		<cfset var cs = "GET\n\n\n#dateTimeString#\n/">
@@ -127,7 +129,7 @@ Modified from original by Razuna to add suport for multipart uploads and getting
 		<cfargument name="awskey" type="string" required="true">
 
 		<cfset var strXML = "">
-		<cfset var dateTimeString = GetHTTPTimeString(Now())>
+		<cfset var dateTimeString = DateTimeFormat( now(), 'E, d MMM yyyy HH:mm:ss z')>
 
 		<!--- Create a canonical string to send based on operation requested --->
 		<cfset var cs = "PUT\n\ntext/html\n#dateTimeString#\nx-amz-acl:#arguments.acl#\n/#arguments.bucketName#">
@@ -181,7 +183,7 @@ Modified from original by Razuna to add suport for multipart uploads and getting
 		<cfset var allContents = "">
 		<cfset var thisVersion = "">
 		<cfset var allVersions = "">
-		<cfset var dateTimeString = GetHTTPTimeString(Now())>
+		<cfset var dateTimeString = DateTimeFormat( now(), 'E, d MMM yyyy HH:mm:ss z')>
 
 		<!--- add proper versioning call if requested --->
 		<cfif arguments.showVersions>
@@ -271,7 +273,7 @@ Modified from original by Razuna to add suport for multipart uploads and getting
 		<cfargument name="awskey" type="string" required="yes">
 		<cfargument name="endpoint" type="string" required="yes">
 
-		<cfset var dateTimeString = GetHTTPTimeString(Now())>
+		<cfset var dateTimeString = DateTimeFormat( now(), 'E, d MMM yyyy HH:mm:ss z')>
 
 		<!--- Create a canonical string to send based on operation requested --->
 		<cfset var cs = "DELETE\n\n\n#dateTimeString#\n/#arguments.bucketName#">
@@ -298,7 +300,7 @@ Modified from original by Razuna to add suport for multipart uploads and getting
 		<cfargument name="acl" type="string" required="no" default="public-read">
 		<cfargument name="storageClass" type="string" required="no" default="STANDARD">
 
-		<cfset var dateTimeString = GetHTTPTimeString(Now())>
+		<cfset var dateTimeString = DateTimeFormat( now(), 'E, d MMM yyyy HH:mm:ss z')>
 		<!--- Encode filename --->
 		<cfset arguments.fileKey = urlEncodedFormat(arguments.fileKey,'utf-8')>
 		<!--- If content type not defined then find content type --->
@@ -347,7 +349,7 @@ Modified from original by Razuna to add suport for multipart uploads and getting
 
 		<cfset var versionID = "">
 		<cfset var binaryFileData = "">
-		<cfset var dateTimeString = GetHTTPTimeString(Now())>
+		<cfset var dateTimeString = DateTimeFormat( now(), 'E, d MMM yyyy HH:mm:ss z')>
 		<cfset var filename = listlast(arguments.filekey,'\/')>
 
 		<!--- Encode filename --->
@@ -447,7 +449,7 @@ Modified from original by Razuna to add suport for multipart uploads and getting
 			<cfset retries = retries + 1>
 			<!--- ************* Upload the file parts  ******************* --->
 			<cfloop query="dirqry">
-				<cfset dateTimeString = GetHTTPTimeString(Now())>
+				<cfset dateTimeString = DateTimeFormat( now(), 'E, d MMM yyyy HH:mm:ss z')>
 				<cfset var partnum = int(listlast(dirqry.name,'.'))>
 				<cffile action="readbinary" file="#assetdir#/#dirqry.name#" variable="binaryFileData">
 				<!--- Generate the MD5 hash for the Content-MD5 header. --->
@@ -497,7 +499,7 @@ Modified from original by Razuna to add suport for multipart uploads and getting
 			<cfloop query="dirqry">
 				<cffile action="delete" file="#assetdir#/#dirqry.name#">
 			</cfloop>
-			<cfset dateTimeString = GetHTTPTimeString(Now())>
+			<cfset dateTimeString = DateTimeFormat( now(), 'E, d MMM yyyy HH:mm:ss z')>
 			<!--- Abort multipart upload --->
 			<cfset var cs = "DELETE\n\n\n#dateTimeString#\n/#arguments.bucketName##arguments.fileKey#?uploadId=#uploadID#">
 			<!--- Create a proper signature --->
@@ -621,7 +623,7 @@ Modified from original by Razuna to add suport for multipart uploads and getting
 		<cfargument name="bucketName" type="string" required="yes">
 		<cfargument name="fileKey" type="string" required="yes">
 
-		<cfset var dateTimeString = GetHTTPTimeString(Now())>
+		<cfset var dateTimeString = DateTimeFormat( now(), 'E, d MMM yyyy HH:mm:ss z')>
 
 		<!--- Create a canonical string to send based on operation requested --->
 		<cfset var cs = "DELETE\n\n\n#dateTimeString#\n/#arguments.bucketName##arguments.fileKey#">
@@ -646,7 +648,7 @@ Modified from original by Razuna to add suport for multipart uploads and getting
 		<cfargument name="newBucketName" type="string" required="yes">
 		<cfargument name="newFileKey" type="string" required="yes">
 
-		<cfset var dateTimeString = GetHTTPTimeString(Now())>
+		<cfset var dateTimeString = DateTimeFormat( now(), 'E, d MMM yyyy HH:mm:ss z')>
 
 		<!--- Create a canonical string to send based on operation requested --->
 		<cfset var cs = "PUT\n\n\n#dateTimeString#\nx-amz-copy-source:/#arguments.oldBucketName#/#arguments.oldFileKey#\n/#arguments.newBucketName#/#arguments.newFileKey#">
@@ -671,8 +673,7 @@ Modified from original by Razuna to add suport for multipart uploads and getting
 		</cfif>
 	</cffunction>
 
-	<cffunction name="renameObject" access="public" output="false" returntype="boolean"
-				description="Renames an object by copying then deleting original.">
+	<cffunction name="renameObject" access="public" output="false" returntype="boolean" description="Renames an object by copying then deleting original.">
 		<cfargument name="oldBucketName" type="string" required="yes">
 		<cfargument name="oldFileKey" type="string" required="yes">
 		<cfargument name="newBucketName" type="string" required="yes">
@@ -694,7 +695,7 @@ Modified from original by Razuna to add suport for multipart uploads and getting
 
 		<cfset var data = "">
 		<cfset var result = "">
-		<cfset var dateTimeString = GetHTTPTimeString(Now())>
+		<cfset var dateTimeString = DateTimeFormat( now(), 'E, d MMM yyyy HH:mm:ss z')>
 
 		<!--- Create a canonical string to send --->
 		<cfset var cs = "GET\n\n\n#dateTimeString#\n/#arguments.bucketName#?versioning">
@@ -723,7 +724,7 @@ Modified from original by Razuna to add suport for multipart uploads and getting
 		<cfargument name="versioning" type="string" required="false" default="Enabled">
 
 		<cfset var strXML = "">
-		<cfset var dateTimeString = GetHTTPTimeString(Now())>
+		<cfset var dateTimeString = DateTimeFormat( now(), 'E, d MMM yyyy HH:mm:ss z')>
 
 		<!--- Create a canonical string to send based on operation requested --->
 		<cfset var cs = "PUT\n\ntext/html\n#dateTimeString#\n/#arguments.bucketName#?versioning">

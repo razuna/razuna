@@ -255,10 +255,6 @@
 	<cfargument name="offset" type="numeric" required="true" default="0">
 	<cfargument name="rowmaxpage" type="numeric" required="true" default="50">
 	<cfargument name="thestruct" type="struct" required="false" default="">
-	<!--- Set thestruct if not here --->
-	<cfif NOT isstruct(arguments.thestruct)>
-		<cfset arguments.thestruct = structnew()>
-	</cfif>
 	<cfreturn getFolderAssets(folder_id=Arguments.folder_id, ColumnList=Arguments.ColumnList, file_extension=Arguments.file_extension, offset=arguments.thestruct.razuna.session.offset, rowmaxpage=arguments.thestruct.razuna.session.rowmaxpage, thestruct=arguments.thestruct)>
 </cffunction>
 
@@ -902,7 +898,7 @@
 	i.img_alignment, i.img_license, i.img_dominant_color, i.img_color_mode, img_image_type, i.img_category_one,
 	i.img_remarks, i.img_extension, i.shared,i.img_upc_number, i.expiry_date, s.set2_img_download_org, i.link_kind, i.link_path_url, i.img_meta,
 	s.set2_intranet_gen_download, s.set2_url_website,s.set2_custom_file_ext, u.user_first_name, u.user_last_name, fo.folder_name,
-	'' as perm
+	'' as perm, selection
 	FROM #arguments.thestruct.razuna.session.hostdbprefix#images i
 	LEFT JOIN #arguments.thestruct.razuna.session.hostdbprefix#settings_2 s ON s.set2_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.application.setid#"> AND s.host_id = i.host_id
 	LEFT JOIN users u ON u.user_id = i.img_owner
@@ -1973,7 +1969,6 @@
 
 	</cfloop>
 
-
 	<!--- Return renditioned file id for API rendition --->
 	<cfset var newid = arguments.thestruct.newid>
 	<!--- Flush Cache --->
@@ -1992,12 +1987,12 @@
 	<!--- Query --->
 	<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #cachetoken#relatedimagesimg */ i.img_id, i.img_group, i.img_publisher, i.img_filename, i.folder_id_r, i.img_custom_id, i.img_online, i.img_owner, i.img_filename_org, i.img_meta, i.img_create_date, i.img_create_time, i.img_change_date, i.img_change_time, i.img_width orgwidth, i.img_height orgheight, i.img_extension orgformat, i.thumb_width thumbwidth, i.thumb_height thumbheight, i.img_size ilength,	i.thumb_size thumblength,
-	i.img_ranking rank, i.img_single_sale, i. img_is_new, i.img_selection, i.img_in_progress, i.img_alignment, i.img_license, i.img_dominant_color, i.img_color_mode, img_image_type, i.img_category_one, i.img_remarks, i.img_extension, i.path_to_asset, i.cloud_url, i.cloud_url_org, i.thumb_extension, i.hashtag
+	i.img_ranking rank, i.img_single_sale, i. img_is_new, i.img_selection, i.img_in_progress, i.img_alignment, i.img_license, i.img_dominant_color, i.img_color_mode, img_image_type, i.img_category_one, i.img_remarks, i.img_extension, i.path_to_asset, i.cloud_url, i.cloud_url_org, i.thumb_extension, i.hashtag, i.selection, i.theorder
 	FROM #arguments.thestruct.razuna.session.hostdbprefix#images i
 	WHERE i.img_group = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 	AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 	AND i.is_available = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">
-	ORDER BY img_filename, img_create_time DESC
+	ORDER BY theorder, img_filename, img_create_time DESC
 	</cfquery>
 	<!--- Return --->
 	<cfreturn qry>
@@ -2185,9 +2180,6 @@
 
 		<!--- If this is from search the file_id should be all --->
 		<cfif attributes.intstruct.file_id EQ "all">
-			<!--- <cfset consoleoutput(true, true)>
-			<cfset console(attributes.intstruct.sessions)>
-			<cfset console(attributes.intstruct.sessions.search)> --->
 			<!--- As we have all get all IDS from this search --->
 			<cfinvoke component="search" method="getAllIdsMain" thestruct="#arguments.thestruct#" searchupc="#attributes.intstruct.sessions.search.searchupc#" searchtext="#attributes.intstruct.sessions.search.searchtext#" searchtype="img" searchrenditions="#attributes.intstruct.sessions.search.searchrenditions#" searchfolderid="#attributes.intstruct.sessions.search.searchfolderid#" hostid="#attributes.intstruct.sessions.hostid#" returnvariable="ids">
 				<!--- Set the fileid --->
@@ -2229,7 +2221,7 @@
 		<!--- Ignore if the folder id is the same --->
 		<cfif arguments.thestruct.qryimg.recordcount NEQ 0 AND arguments.thestruct.folder_id NEQ arguments.thestruct.qryimg.folder_id_r>
 			<!--- Check for approval --->
-			<cfinvoke component="global.cfc.approval" method="check_enabled" returnvariable="qry_approval" folder_id="#arguments.thestruct.folder_id#" />
+			<cfinvoke component="global.cfc.approval" method="check_enabled" returnvariable="qry_approval" folder_id="#arguments.thestruct.folder_id#" thestruct="#arguments.thestruct#" />
 			<!--- Update DB --->
 			<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
 			UPDATE #arguments.thestruct.razuna.session.hostdbprefix#images

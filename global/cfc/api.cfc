@@ -78,7 +78,7 @@
 		<cfargument name="comp" type="string" required="false" default="" />
 		<cfargument name="func" type="string" required="false" default="" />
 		<cfargument name="args" type="string" required="false" default="" />
-		<cfargument name="thestruct" type="struct">
+		<cfargument name="thestruct" type="struct" required="true">
 		<!--- DB --->
 		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
 		DELETE FROM plugins_actions
@@ -265,7 +265,8 @@
 	<!--- Get Name of Folder --->
 	<cffunction name="getFolderName" access="public" returntype="string">
 		<cfargument name="folderid" type="string" required="true" />
-		<cfinvoke component="folders" method="getfoldername" folder_id="#arguments.folderid#" returnvariable="fn" />
+		<cfset var _s = getStruct()>
+		<cfinvoke component="folders" method="getfoldername" folder_id="#arguments.folderid#" thestruct="#s#" returnvariable="fn" />
 		<cfreturn fn />
 	</cffunction>
 
@@ -274,11 +275,13 @@
 		<cfargument name="labelids" type="string" required="true" />
 		<cfargument name="fileid" type="string" required="true" />
 		<cfargument name="type" type="string" required="true" />
+		<cfset var _s = getStruct()>
 		<!--- Params --->
-		<cfset arguments.labels = arguments.labelids>
-		<cfset arguments.thetype = arguments.type>
+		<cfset _s.labels = arguments.labelids>
+		<cfset _s.thetype = arguments.type>
+		<cfset _s.fileid = arguments.fileid>
 		<!--- Call function --->
-		<cfinvoke component="labels" method="label_add_all" thestruct="#arguments#" />
+		<cfinvoke component="labels" method="label_add_all" thestruct="#_s#" />
 	</cffunction>
 
 	<!--- Execute upload Template --->
@@ -287,13 +290,14 @@
 		<cfargument name="fileid" type="string" required="true" />
 		<cfargument name="type" type="string" required="true" />
 		<cfargument name="args" type="struct" required="true" />
+		<cfset var _s = getStruct()>
 		<!--- Params --->
-		<cfset arguments.upl_template = arguments.utid>
-		<cfset arguments.file_id = arguments.fileid>
-		<cfset arguments.upltemptype = arguments.type>
-		<cfset StructAppend(arguments,arguments.args,"false")>
+		<cfset _s.upl_template = arguments.utid>
+		<cfset _s.file_id = arguments.fileid>
+		<cfset _s.upltemptype = arguments.type>
+		<cfset StructAppend(_s,arguments.args,"false")>
 		<!--- Call function --->
-		<cfinvoke component="assets" method="process_upl_template" thestruct="#arguments#">
+		<cfinvoke component="assets" method="process_upl_template" thestruct="#_s#">
 	</cffunction>
 
 	<!--- Move File --->
@@ -301,32 +305,33 @@
 		<cfargument name="folderid" type="string" required="true" />
 		<cfargument name="fileid" type="string" required="true" />
 		<cfargument name="type" type="string" required="true" />
+		<cfset var _s = getStruct()>
 		<!--- Params --->
-		<cfset arguments.folder_id = arguments.folderid>
+		<cfset _s.folder_id = arguments.folderid>
 		<!--- Images --->
 		<cfif arguments.type EQ "img">
 			<!--- Params --->
-			<cfset arguments.img_id = arguments.fileid>
+			<cfset _s.img_id = arguments.fileid>
 			<!--- Call function --->
-			<cfinvoke component="images" method="move" thestruct="#arguments#">
+			<cfinvoke component="images" method="move" thestruct="#_s#">
 		<!--- Videos --->
 		<cfelseif arguments.type EQ "vid">
 			<!--- Params --->
-			<cfset arguments.vid_id = arguments.fileid>
+			<cfset _s.vid_id = arguments.fileid>
 			<!--- Call function --->
-			<cfinvoke component="videos" method="move" thestruct="#arguments#">
+			<cfinvoke component="videos" method="move" thestruct="#_s#">
 		<!--- Audios --->
 		<cfelseif arguments.type EQ "aud">
 			<!--- Params --->
-			<cfset arguments.aud_id = arguments.fileid>
+			<cfset _s.aud_id = arguments.fileid>
 			<!--- Call function --->
-			<cfinvoke component="audios" method="move" thestruct="#arguments#">
+			<cfinvoke component="audios" method="move" thestruct="#_s#">
 		<!--- Docs --->
 		<cfelseif arguments.type EQ "doc">
 			<!--- Params --->
-			<cfset arguments.doc_id = arguments.fileid>
+			<cfset _s.doc_id = arguments.fileid>
 			<!--- Call function --->
-			<cfinvoke component="files" method="move" thestruct="#arguments#">
+			<cfinvoke component="files" method="move" thestruct="#_s#">
 		</cfif>
 	</cffunction>
 
@@ -335,8 +340,9 @@
 		<cfargument name="fileid" type="string" required="true" />
 		<cfargument name="type" type="string" required="true" />
 		<cfargument name="metadata" type="string" required="true" />
+		<cfset var _s = getStruct()>
 		<!--- Call function --->
-		<cfinvoke component="xmp" method="setMetadata" fileid="#arguments.fileid#" type="#arguments.type#" metadata="#arguments.metadata#">
+		<cfinvoke component="xmp" method="setMetadata" fileid="#arguments.fileid#" type="#arguments.type#" metadata="#arguments.metadata#" thestruct="#_s#">
 	</cffunction>
 
 	<!--- Set Custom Metadata --->
@@ -344,8 +350,9 @@
 		<cfargument name="fileid" type="string" required="true" />
 		<cfargument name="type" type="string" required="true" />
 		<cfargument name="metadata" type="string" required="true" />
+		<cfset var _s = getStruct()>
 		<!--- Call function --->
-		<cfinvoke component="xmp" method="setMetadataCustom" fileid="#arguments.fileid#" type="#arguments.type#" metadata="#arguments.metadata#">
+		<cfinvoke component="xmp" method="setMetadataCustom" fileid="#arguments.fileid#" type="#arguments.type#" metadata="#arguments.metadata#" thestruct="#_s#">
 	</cffunction>
 
 	<!--- Get Description, keywords and raw metadata --->
@@ -353,8 +360,8 @@
 		<cfargument name="fileid" type="string" required="true" />
 		<cfargument name="type" type="string" required="true" />
 		<!--- Params --->
-		<cfset var s = structNew()>
-		<cfset s.file_id = arguments.fileid>
+		<cfset var _s = getStruct()>
+		<cfset _s.file_id = arguments.fileid>
 		<cfset var qry = queryNew("id")>
 		<cfset queryAddRow(qry)>
 		<cfset querySetCell(qry, "id", arguments.fileid)>
@@ -362,25 +369,25 @@
 		<!--- Images --->
 		<cfif arguments.type EQ "img">
 			<!--- Call function --->
-			<cfinvoke component="images" method="gettext" qry="#qry#" returnvariable="r.metadata">
-			<cfinvoke component="images" method="getrawmetadata" qry="#qry#" returnvariable="r.rawmetadata">
-			<cfinvoke component="xmp" method="readxmpdb" thestruct="#s#" returnvariable="r.xmpmetadata">
+			<cfinvoke component="images" method="gettext" qry="#qry#" thestruct="#_s#" returnvariable="r.metadata">
+			<cfinvoke component="images" method="getrawmetadata" qry="#qry#" thestruct="#_s#" returnvariable="r.rawmetadata">
+			<cfinvoke component="xmp" method="readxmpdb" thestruct="#s#" thestruct="#_s#" returnvariable="r.xmpmetadata">
 		<!--- Videos --->
 		<cfelseif arguments.type EQ "vid">
 			<!--- Call function --->
-			<cfinvoke component="videos" method="gettext" qry="#qry#" returnvariable="r.metadata">
-			<cfinvoke component="videos" method="getrawmetadata" qry="#qry#" returnvariable="r.rawmetadata">
+			<cfinvoke component="videos" method="gettext" qry="#qry#" thestruct="#_s#" returnvariable="r.metadata">
+			<cfinvoke component="videos" method="getrawmetadata" qry="#qry#" thestruct="#_s#" returnvariable="r.rawmetadata">
 		<!--- Audios --->
 		<cfelseif arguments.type EQ "aud">
 			<!--- Call function --->
-			<cfinvoke component="audios" method="gettext" qry="#qry#" returnvariable="r.metadata">
-			<cfinvoke component="audios" method="getrawmetadata" qry="#qry#" returnvariable="r.rawmetadata">
+			<cfinvoke component="audios" method="gettext" qry="#qry#" thestruct="#_s#" returnvariable="r.metadata">
+			<cfinvoke component="audios" method="getrawmetadata" qry="#qry#" thestruct="#_s#" returnvariable="r.rawmetadata">
 		<!--- Docs --->
 		<cfelseif arguments.type EQ "doc">
 			<!--- Call function --->
-			<cfinvoke component="files" method="gettext" qry="#qry#" returnvariable="r.metadata">
-			<cfinvoke component="files" method="getrawmetadata" qry="#qry#" returnvariable="r.rawmetadata">
-			<cfinvoke component="files" method="getpdfxmp" thestruct="#s#" returnvariable="r.xmpmetadata">
+			<cfinvoke component="files" method="gettext" qry="#qry#" thestruct="#_s#" returnvariable="r.metadata">
+			<cfinvoke component="files" method="getrawmetadata" qry="#qry#" thestruct="#_s#" returnvariable="r.rawmetadata">
+			<cfinvoke component="files" method="getpdfxmp" thestruct="#s#" thestruct="#_s#" returnvariable="r.xmpmetadata">
 		</cfif>
 		<!--- Return --->
 		<cfreturn r />
@@ -392,7 +399,7 @@
 		<!--- Param --->
 		<cfset var qry = "">
 		<!--- Query --->
-		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qry">
+		<cfquery datasource="#application.razuna.datasource#" name="qry">
 		SELECT 
 		t.tempid AS id,
 		t.filename,
@@ -403,7 +410,7 @@
 		END AS type
 		FROM #getHostPrefix()#assets_temp t LEFT JOIN file_types f ON f.type_id = t.extension
 		WHERE t.tempid IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.fileid#" list="true">)
-		AND t.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
+		AND t.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>
 		<!--- Return --->
 		<cfreturn qry />
@@ -415,7 +422,7 @@
 		<!--- Param --->
 		<cfset var qry = "">
 		<!--- Query --->
-		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qry">
+		<cfquery datasource="#application.razuna.datasource#" name="qry">
 		SELECT
 		'img' as type,
 		i.img_id id, 
@@ -436,7 +443,7 @@
 		i.hashtag AS md5hash
 		FROM #getHostPrefix()#images i LEFT JOIN #getHostPrefix()#xmp x ON x.id_r = i.img_id
 		WHERE i.img_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.fileid#" list="true">)
-		AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
+		AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		UNION ALL
 		SELECT
 		'vid' as type,
@@ -458,7 +465,7 @@
 		v.hashtag AS md5hash
 		FROM #getHostPrefix()#videos v 
 		WHERE v.vid_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.fileid#" list="true">)
-		AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
+		AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		UNION ALL
 		SELECT
 		'aud' as type,
@@ -480,7 +487,7 @@
 		a.hashtag AS md5hash
 		FROM #getHostPrefix()#audios a
 		WHERE a.aud_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.fileid#" list="true">)
-		AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
+		AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		UNION ALL
 		SELECT
 		'doc' as type,
@@ -502,7 +509,7 @@
 		f.hashtag AS md5hash
 		FROM #getHostPrefix()#files f 
 		WHERE f.file_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.fileid#" list="true">)
-		AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
+		AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>
 		<!--- Return --->
 		<cfreturn qry />
@@ -534,8 +541,9 @@
 	<cffunction name="updateDate" access="public" returntype="void">
 		<cfargument name="fileid" type="string" required="true" />
 		<cfargument name="type" type="string" required="true" />
+		<cfset var _s = getStruct()>
 		<!--- Call function --->
-		<cfinvoke component="global" method="update_dates" fileid="#arguments.fileid#" type="#arguments.type#" />
+		<cfinvoke component="global" method="update_dates" fileid="#arguments.fileid#" type="#arguments.type#" thestruct="#_s#" />
 	</cffunction>
 
 </cfcomponent>

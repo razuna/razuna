@@ -460,20 +460,20 @@
 			<!--- If we store on the file system we create the folder here --->
 
 			<cfif arguments.thestruct.razuna.application.storage EQ "local" OR arguments.thestruct.razuna.application.storage EQ "akamai">
-				<cfif !directoryexists("#attributes.intstruct.assetpath#/#arguments.thestruct.razuna.session.hostid#/#attributes.intstruct.newfolderid#")>
-						<cfdirectory action="create" directory="#attributes.intstruct.assetpath#/#arguments.thestruct.razuna.session.hostid#/#attributes.intstruct.newfolderid#" mode="775">
+				<cfif !directoryexists("#attributes.intstruct.assetpath#/#attributes.intstruct.razuna.session.hostid#/#attributes.intstruct.newfolderid#")>
+						<cfdirectory action="create" directory="#attributes.intstruct.assetpath#/#attributes.intstruct.razuna.session.hostid#/#attributes.intstruct.newfolderid#" mode="775">
 				</cfif>
-				<cfif !directoryexists("#attributes.intstruct.assetpath#/#arguments.thestruct.razuna.session.hostid#/#attributes.intstruct.newfolderid#/img")>
-					<cfdirectory action="create" directory="#attributes.intstruct.assetpath#/#arguments.thestruct.razuna.session.hostid#/#attributes.intstruct.newfolderid#/img" mode="775">
+				<cfif !directoryexists("#attributes.intstruct.assetpath#/#attributes.intstruct.razuna.session.hostid#/#attributes.intstruct.newfolderid#/img")>
+					<cfdirectory action="create" directory="#attributes.intstruct.assetpath#/#attributes.intstruct.razuna.session.hostid#/#attributes.intstruct.newfolderid#/img" mode="775">
 				</cfif>
-				<cfif !directoryexists("#attributes.intstruct.assetpath#/#arguments.thestruct.razuna.session.hostid#/#attributes.intstruct.newfolderid#/vid")>
-					<cfdirectory action="create" directory="#attributes.intstruct.assetpath#/#arguments.thestruct.razuna.session.hostid#/#attributes.intstruct.newfolderid#/vid" mode="775">
+				<cfif !directoryexists("#attributes.intstruct.assetpath#/#attributes.intstruct.razuna.session.hostid#/#attributes.intstruct.newfolderid#/vid")>
+					<cfdirectory action="create" directory="#attributes.intstruct.assetpath#/#attributes.intstruct.razuna.session.hostid#/#attributes.intstruct.newfolderid#/vid" mode="775">
 				</cfif>
-				<cfif !directoryexists("#attributes.intstruct.assetpath#/#arguments.thestruct.razuna.session.hostid#/#attributes.intstruct.newfolderid#/doc")>
-					<cfdirectory action="create" directory="#attributes.intstruct.assetpath#/#arguments.thestruct.razuna.session.hostid#/#attributes.intstruct.newfolderid#/doc" mode="775">
+				<cfif !directoryexists("#attributes.intstruct.assetpath#/#attributes.intstruct.razuna.session.hostid#/#attributes.intstruct.newfolderid#/doc")>
+					<cfdirectory action="create" directory="#attributes.intstruct.assetpath#/#attributes.intstruct.razuna.session.hostid#/#attributes.intstruct.newfolderid#/doc" mode="775">
 				</cfif>
-				<cfif !directoryexists("#attributes.intstruct.assetpath#/#arguments.thestruct.razuna.session.hostid#/#attributes.intstruct.newfolderid#/aud")>
-					<cfdirectory action="create" directory="#attributes.intstruct.assetpath#/#arguments.thestruct.razuna.session.hostid#/#attributes.intstruct.newfolderid#/aud" mode="775">
+				<cfif !directoryexists("#attributes.intstruct.assetpath#/#attributes.intstruct.razuna.session.hostid#/#attributes.intstruct.newfolderid#/aud")>
+					<cfdirectory action="create" directory="#attributes.intstruct.assetpath#/#attributes.intstruct.razuna.session.hostid#/#attributes.intstruct.newfolderid#/aud" mode="775">
 				</cfif>
 			</cfif>
 			<!--- Now add all assets of this folder --->
@@ -1398,14 +1398,11 @@
 	<cfargument name="folder_id" type="string">
 	<cfargument name="thestruct" type="struct" required="true" />
 	<!--- Param --->
-	<cfset var s = structNew()>
-	<cfset s.thestruct = arguments.thestruct>
-	<cfset s.theid = arguments.folder_id>
-	<cfset s.folder_shared = "F">
-	<cfset s.share_dl_org = "F">
-	<cfset s.share_dl_thumb = "F">
-	<cfset s.share_comments = "F">
-	<cfset s.share_upload = "F">
+	<cfset arguments.thestruct.folder_shared = "F">
+	<cfset arguments.thestruct.share_dl_org = "F">
+	<cfset arguments.thestruct.share_dl_thumb = "F">
+	<cfset arguments.thestruct.share_comments = "F">
+	<cfset arguments.thestruct.share_upload = "F">
 
 	<!--- Check parent folder settings and if share settings is set to inherit then get settings from parent folder else get settings from customization --->
 	<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="getparentsharesettings">
@@ -1418,36 +1415,38 @@
 	</cfquery>
 	<!--- Check if parent folder setting is set to inherit to subfolders --->
 	<cfif getparentsharesettings.recordcount NEQ 0 AND getparentsharesettings.share_inherit EQ 't'>
-		<cfset s.folder_shared = getparentsharesettings.folder_shared>
-		<cfset s.share_dl_org= getparentsharesettings.share_dl_org>
-		<cfset s.share_dl_thumb= getparentsharesettings.share_dl_thumb>
-		<cfset s.share_inherit= getparentsharesettings.share_inherit>
-		<cfset s.share_comments= getparentsharesettings.share_comments>
-		<cfset s.share_upload= getparentsharesettings.share_upload>
-		<cfset s.share_order= getparentsharesettings.share_order>
-		<cfset s.share_order_user= getparentsharesettings.share_order_user>
+		<cfset arguments.thestruct.folder_shared = getparentsharesettings.folder_shared>
+		<cfset arguments.thestruct.share_dl_org= getparentsharesettings.share_dl_org>
+		<cfset arguments.thestruct.share_dl_thumb= getparentsharesettings.share_dl_thumb>
+		<cfset arguments.thestruct.share_inherit= getparentsharesettings.share_inherit>
+		<cfset arguments.thestruct.share_comments= getparentsharesettings.share_comments>
+		<cfset arguments.thestruct.share_upload= getparentsharesettings.share_upload>
+		<cfset arguments.thestruct.share_order= getparentsharesettings.share_order>
+		<cfset arguments.thestruct.share_order_user= getparentsharesettings.share_order_user>
 	<cfelse><!--- Get custom settings --->
 		<cfinvoke component="settings" method="get_customization" thestruct="#arguments.thestruct#" returnvariable="cs" />
 		<!--- Set settings according to settings --->
 		<cfif cs.share_folder>
-			<cfset s.folder_shared = "T">
+			<cfset arguments.thestruct.folder_shared = "T">
 		</cfif>
 		<cfif cs.share_download_thumb>
-			<cfset s.share_dl_thumb = "T">
+			<cfset arguments.thestruct.share_dl_thumb = "T">
 		</cfif>
 		<cfif cs.share_download_original>
-			<cfset s.share_dl_org = "T">
+			<cfset arguments.thestruct.share_dl_org = "T">
 		</cfif>
 		<cfif cs.share_comments>
-			<cfset s.share_comments = "T">
+			<cfset arguments.thestruct.share_comments = "T">
 		</cfif>
 		<cfif cs.share_uploading>
-			<cfset s.share_upload = "T">
+			<cfset arguments.thestruct.share_upload = "T">
 		</cfif>
 	</cfif>
 
+	<cfset arguments.thestruct.theid = arguments.folder_id>
+
 	<!--- Call internal function to update shared settings --->
-	<cfinvoke method="update_sharing" thestruct="#s#" />
+	<cfinvoke method="update_sharing" thestruct="#arguments.thestruct#" />
 	<!--- Return --->
 	<cfreturn />
 </cffunction>
@@ -1531,25 +1530,25 @@
 					<cfinvokeargument name="thestruct" value="#attributes.intstruct#">
 				</cfinvoke>
 				<!--- MSSQL: Drop all constraints --->
-				<cfif arguments.thestruct.razuna.application.thedatabase EQ "mssql">
-					<!--- <cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
-					ALTER TABLE #arguments.thestruct.razuna.application.theschema#.#arguments.thestruct.razuna.session.hostdbprefix#folders DROP CONSTRAINT
+				<cfif attributes.intstruct.razuna.application.thedatabase EQ "mssql">
+					<!--- <cfquery datasource="#attributes.intstruct.razuna.application.datasource#">
+					ALTER TABLE #attributes.intstruct.razuna.application.theschema#.#attributes.intstruct.razuna.session.hostdbprefix#folders DROP CONSTRAINT
 					</cfquery> --->
 				<!--- MySQL --->
-				<cfelseif arguments.thestruct.razuna.application.thedatabase EQ "mysql">
-					<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
+				<cfelseif attributes.intstruct.razuna.application.thedatabase EQ "mysql">
+					<cfquery datasource="#attributes.intstruct.razuna.application.datasource#">
 					SET foreign_key_checks = 0
 					</cfquery>
 				<!--- H2 --->
-				<cfelseif arguments.thestruct.razuna.application.thedatabase EQ "h2">
-					<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
-					ALTER TABLE #arguments.thestruct.razuna.session.hostdbprefix#folders SET REFERENTIAL_INTEGRITY false
+				<cfelseif attributes.intstruct.razuna.application.thedatabase EQ "h2">
+					<cfquery datasource="#attributes.intstruct.razuna.application.datasource#">
+					ALTER TABLE #attributes.intstruct.razuna.session.hostdbprefix#folders SET REFERENTIAL_INTEGRITY false
 					</cfquery>
 				</cfif>
 				<!--- Delete Subscribe --->
-				<cfinvoke method="removesubscribefolder" folderid="#folderids#" thestruct="#arguments.thestruct#" />
+				<cfinvoke method="removesubscribefolder" folderid="#folderids#" thestruct="#attributes.intstruct#" />
 				<!--- Delete labels --->
-				<cfinvoke component="labels" method="label_ct_remove" id="#attributes.intstruct.folder_id#" thestruct="#arguments.thestruct#" />
+				<cfinvoke component="labels" method="label_ct_remove" id="#attributes.intstruct.folder_id#" thestruct="#attributes.intstruct#" />
 				<!--- Delete files in this folder --->
 				<cfinvoke method="deleteassetsinfolder" thefolderid="#attributes.intstruct.folder_id#" thestruct="#attributes.intstruct#" />
 				<!--- Loop to remove folder --->
@@ -1558,23 +1557,23 @@
 						<!--- Set folderid into arguments struct for other methods --->
 						<cfset attributes.intstruct.folder_id = thefolderid>
 						<!--- Get the Folder Name for the Log --->
-						<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="foldernamesub">
+						<cfquery datasource="#attributes.intstruct.razuna.application.datasource#" name="foldernamesub">
 						SELECT folder_name
-						FROM #arguments.thestruct.razuna.session.hostdbprefix#folders
+						FROM #attributes.intstruct.razuna.session.hostdbprefix#folders
 						WHERE folder_id = <cfqueryparam value="#thefolderid#" cfsqltype="CF_SQL_VARCHAR">
-						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
+						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#attributes.intstruct.razuna.session.hostid#">
 						</cfquery>
 						<!--- Log --->
 						<cfinvoke component="defaults" method="trans" transid="deleted" returnvariable="deleted" />
-						<cfinvoke component="extQueryCaching" method="log_folders" theuserid="#arguments.thestruct.razuna.session.theuserid#" logaction="Delete" logdesc="#deleted#: #foldernamesub.folder_name# (ID: #thefolderid#)" hostid="#arguments.thestruct.razuna.session.hostid#" thestruct="#arguments.thestruct#" />
+						<cfinvoke component="extQueryCaching" method="log_folders" theuserid="#attributes.intstruct.razuna.session.theuserid#" logaction="Delete" logdesc="#deleted#: #foldernamesub.folder_name# (ID: #thefolderid#)" hostid="#attributes.intstruct.razuna.session.hostid#" thestruct="#attributes.intstruct#" />
 						<!--- Delete folder in DB --->
-						<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
-						DELETE FROM	#arguments.thestruct.razuna.session.hostdbprefix#folders
+						<cfquery datasource="#attributes.intstruct.razuna.application.datasource#">
+						DELETE FROM	#attributes.intstruct.razuna.session.hostdbprefix#folders
 						WHERE folder_id = <cfqueryparam value="#thefolderid#" cfsqltype="CF_SQL_VARCHAR">
-						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
+						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#attributes.intstruct.razuna.session.hostid#">
 						</cfquery>
 						<!--- Delete labels --->
-						<cfinvoke component="labels" method="label_ct_remove" id="#thefolderid#" thestruct="#arguments.thestruct#" />
+						<cfinvoke component="labels" method="label_ct_remove" id="#thefolderid#" thestruct="#attributes.intstruct#" />
 						<!--- Delete all files which have the same folder_id_r, meaning they have not been moved --->
 						<cfinvoke method="deleteassetsinfolder" thefolderid="#thefolderid#" thestruct="#attributes.intstruct#" />
 					</cfif>
@@ -1617,11 +1616,11 @@
 		<cfinvokeargument name="thestruct" value="#arguments.thestruct#">
 	</cfinvoke>
 	<!--- Set the in_trash for folders --->
-	<cfset _updateFolderInTrash(folder_ids=_folderids)>
+	<cfset _updateFolderInTrash(folder_ids=_folderids, thestruct=arguments.thestruct)>
 	<!--- Get all files in the folders --->
-	<cfset var _qry_files = _getFilesInFolder(folder_ids=_folderids)>
+	<cfset var _qry_files = _getFilesInFolder(folder_ids=_folderids, thestruct=arguments.thestruct)>
 	<!--- Set the in_trash for files --->
-	<cfset _updateFilesInTrash(qry_files=_qry_files, in_trash='T', is_indexed='1')>
+	<cfset _updateFilesInTrash(qry_files=_qry_files, in_trash='T', is_indexed='1', thestruct=arguments.thestruct)>
 	<!--- Return --->
 	<cfreturn parent_folder_id_r />
 </cffunction>
@@ -1921,22 +1920,22 @@
 	<cfargument name="qry_all" type="Query">
 	<cfargument name="thestruct" type="struct">
 	<!--- Thread --->
-	<cfthread instruct="#arguments#">
+	<cfthread intstruct="#arguments#">
 		<!--- Loop over the query --->
-		<cfloop query="attributes.instruct.qry_all">
+		<cfloop query="attributes.intstruct.qry_all">
 			<!--- Check that users has NOT only read access --->
 			<cfif permfolder NEQ "R">
 				<!--- Change db to have another in_trash flag --->
-				<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
-					UPDATE #arguments.thestruct.razuna.session.hostdbprefix#folders
+				<cfquery datasource="#attributes.intstruct.razuna.application.datasource#">
+					UPDATE #attributes.intstruct.razuna.session.hostdbprefix#folders
 					SET in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="X">
 					WHERE folder_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#id#">
-					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
+					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#attributes.intstruct.razuna.session.hostid#">
 				</cfquery>
 				<!--- Flush cache --->
-				<cfset attributes.instruct.thestruct.folder_id = id>
+				<cfset attributes.intstruct.thestruct.folder_id = id>
 				<!--- Call remove function --->
-				<cfinvoke method="remove" thestruct="#attributes.instruct.thestruct#" />
+				<cfinvoke method="remove" thestruct="#attributes.intstruct.thestruct#" />
 			</cfif>
 		</cfloop>
 	</cfthread>
@@ -2381,7 +2380,7 @@
 	<!--- Get all files in the folders --->
 	<cfset var _qry_files = _getFilesInFolder(folder_ids=folderids)>
 	<!--- Set the in_trash for files --->
-	<cfset _updateFilesInTrash(qry_files=_qry_files, in_trash='F', is_indexed='0')>
+	<cfset _updateFilesInTrash(qry_files=_qry_files, in_trash='F', is_indexed='0', thestruct=arguments.thestruct)>
 	<!--- Flush Cache --->
 	<cfset resetcachetoken(type="folders", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 	<cfset resetcachetoken(type="labels", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
@@ -2863,7 +2862,6 @@
 	<cfargument name="thestruct" type="struct" required="true" />
 	<!--- Set struct --->
 	<cfset var totaltypes = structnew()>
-	<cfset arguments.thestruct = structnew()>
 	<cfset arguments.thestruct.folder_id = arguments.folder_id>
 	<!--- Call function for IMG --->
 	<cfset arguments.thestruct.kind = "img">
@@ -3040,7 +3038,7 @@
 	<cfparam name="arguments.thestruct.razuna.session.showsubfolders" default="F">
 	<cfparam name="arguments.thestruct.razuna.session.customfileid" default="">
 	<cfparam name="arguments.thestruct.folderaccess" default="">
-	<cfset var thefolderlist = "">
+	<cfset var thefolderlist = "0">
 	<!--- Show assets from subfolders or not --->
 	<cfif arguments.thestruct.folder_id NEQ "">
 		<cfif arguments.thestruct.razuna.session.showsubfolders EQ "T">
@@ -5101,10 +5099,10 @@
 	<!--- Query --->
 	<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #cachetoken#getfoldername */ f.folder_name, fn.folder_name as lang_folder_name
-	FROM #arguments.thestruct.razuna.session.hostdbprefix#folders f LEFT JOIN #arguments.thestruct.razuna.session.hostdbprefix#folders_name fn ON f.folder_id = fn.folder_id_r
+	FROM #arguments.thestruct.razuna.session.hostdbprefix#folders f 
+	LEFT JOIN #arguments.thestruct.razuna.session.hostdbprefix#folders_name fn ON f.folder_id = fn.folder_id_r AND fn.lang_id_r = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.thelangid#">
 	WHERE f.folder_id = <cfqueryparam value="#arguments.folder_id#" cfsqltype="CF_SQL_VARCHAR">
 	AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
-	AND fn.lang_id_r = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.thelangid#">
 	</cfquery>
 	<!--- Set folder name --->
 	<cfset var _name = qry.folder_name>
@@ -5500,7 +5498,7 @@
 	<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #cachetoken#getsubfolders */ f.folder_id, f.folder_id_r, f.folder_of_user, f.folder_owner, f.folder_level, <cfif arguments.thestruct.razuna.application.thedatabase EQ "oracle" OR arguments.thestruct.razuna.application.thedatabase EQ "h2" OR arguments.thestruct.razuna.application.thedatabase EQ "db2">NVL<cfelseif arguments.thestruct.razuna.application.thedatabase EQ "mysql">ifnull<cfelseif arguments.thestruct.razuna.application.thedatabase EQ "mssql">isnull</cfif>(u.user_login_name,'Obsolete') as username,
 	<!--- Permission follow but not for sysadmin and admin --->
-	<cfif ( not session.is_system_admin and not session.is_administrator ) AND NOT structkeyexists(arguments,"external")>
+	<cfif session.is_system_admin OR session.is_administrator>
 		'unlocked' AS perm
 	<cfelse>
 		CASE
@@ -5536,7 +5534,7 @@
 	if ( (select fn.folder_name as folder_name FROM raz1_folders_name fn WHERE fn.folder_id_r = f.folder_id AND fn.lang_id_r = #arguments.thestruct.razuna.session.thelangid#) != '',  (select fn.folder_name as folder_name FROM raz1_folders_name fn WHERE fn.folder_id_r = f.folder_id AND fn.lang_id_r = #arguments.thestruct.razuna.session.thelangid#), f.folder_name ) as folder_name
 	FROM #arguments.thestruct.razuna.session.hostdbprefix#folders f
 	LEFT JOIN users u ON u.user_id = f.folder_owner
-	LEFT JOIN #arguments.thestruct.razuna.session.hostdbprefix#folders_name fn ON f.folder_id = fn.folder_id_r
+	LEFT JOIN #arguments.thestruct.razuna.session.hostdbprefix#folders_name fn ON f.folder_id = fn.folder_id_r AND fn.lang_id_r = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.thelangid#">
 	WHERE
 	<cfif arguments.folder_id gt 0>
 		f.folder_id <cfif arguments.thestruct.razuna.application.thedatabase EQ "oracle" OR arguments.thestruct.razuna.application.thedatabase EQ "db2"><><cfelse>!=</cfif> f.folder_id_r
@@ -5559,7 +5557,6 @@
 	<cfif structkeyexists(arguments,"folder_name") AND arguments.folder_name NEQ ''>
    	 	AND f.folder_name LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.folder_name#%">
 	</cfif>
-	AND fn.lang_id_r = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.thelangid#">
 	GROUP BY f.folder_id
 	ORDER BY fn.folder_name, f.folder_name
 	</cfquery>

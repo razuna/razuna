@@ -93,9 +93,9 @@
 						<cfhttpparam type="url" name="path" value="#arrcontent.path#"/>
 						<cfhttpparam type="url" name="oauth_version" value="1.0"/>
 						<cfhttpparam type="url" name="oauth_signature_method" value="PLAINTEXT"/>
-						<cfhttpparam type="url" name="oauth_consumer_key" value="#arguments.thestruct.razuna.session.dropbox.appkey#"/>
-						<cfhttpparam type="url" name="oauth_token" value="#arguments.thestruct.razuna.session.dropbox.oauth_token#"/>
-						<cfhttpparam type="url" name="oauth_signature" value="#arguments.thestruct.razuna.session.dropbox.appsecret#&#arguments.thestruct.razuna.session.dropbox.oauth_token_secret#"/>
+						<cfhttpparam type="url" name="oauth_consumer_key" value="#attributes.intstruct.razuna.session.dropbox.appkey#"/>
+						<cfhttpparam type="url" name="oauth_token" value="#attributes.intstruct.razuna.session.dropbox.oauth_token#"/>
+						<cfhttpparam type="url" name="oauth_signature" value="#attributes.intstruct.razuna.session.dropbox.appsecret#&#attributes.intstruct.razuna.session.dropbox.oauth_token_secret#"/>
 					</cfhttp>
 					<cfcatch type="any">
 					</cfcatch>

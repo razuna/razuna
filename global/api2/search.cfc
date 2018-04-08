@@ -77,7 +77,7 @@
 			<cfset session.sortby = sortby>
 			<!--- Get all the folders the user is allowed to access but not if folderid has records --->
 			<cfif arguments.folderid EQ "0" AND ( listfind(session.thegroupofuser, '1') EQ 0 AND listfind(session.thegroupofuser, '2') EQ 0 )>
-				<cfinvoke component="global.cfc.users" method="getAllFolderOfUser" user_id="#session.theuserid#" host_id="#session.hostid#" returnvariable="arguments.folderid">
+				<cfset arguments.folderid = callFunction(comp="global.cfc.users", func="getAllFolderOfUser", user_id=session.theuserid, host_id=session.hostid)>
 			</cfif>
 			<!--- If startrow is 0 set it to 1 --->
 			<cfif arguments.startrow EQ "0">
@@ -227,7 +227,7 @@
 				<cfset thesearchfor = "#thesearchfor# #_add_and# change_time:[#replace(arguments.istruct.datechangerange, "-", "", "ALL")#]">
 			</cfif>
 			<!--- Search in Lucene --->
-			<cfset var qryluceneimg = search(criteria=thesearchfor, category="img", hostid="#application.razuna.api.hostid["#arguments.istruct.api_key#"]#", startrow=arguments.istruct.startrow, maxrows=arguments.istruct.maxrows, folderid=arguments.istruct.folderid, showrenditions=arguments.istruct.showrenditions, search_upc=arguments.istruct.search_upc)>
+			<cfset var qryluceneimg = search(criteria=thesearchfor, category="img", hostid=session.hostid, startrow=arguments.istruct.startrow, maxrows=arguments.istruct.maxrows, folderid=arguments.istruct.folderid, showrenditions=arguments.istruct.showrenditions, search_upc=arguments.istruct.search_upc, search_type="")>
 			<!--- If lucene returns no records --->
 			<cfif qryluceneimg.recordcount NEQ 0>
 				<!--- Sometimes it can happen that the category tree is empty thus we filter them with a QoQ here --->
@@ -248,8 +248,8 @@
 		<!--- Get cache --->
 		<cfset var cachetoken = getcachetoken(arguments.istruct.api_key,"search")>
 		<!--- Query --->
-		<cfquery datasource="#application.razuna.api.dsn#" name="qry_img" cachedwithin="1" region="razcache">
-			SELECT /* #cachetoken#search_images_api */ <cfif application.razuna.api.thedatabase EQ "oracle">to_char(NVL(i.img_id, 0))<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">cast(ifnull(i.img_id, 0) AS char)<cfelseif application.razuna.api.thedatabase EQ "mssql">isnull(cast(i.img_id as varchar(100)), '0')</cfif> id,
+		<cfquery datasource="#application.razuna.datasource#" name="qry_img" cachedwithin="1" region="razcache">
+			SELECT /* #cachetoken#search_images_api */ <cfif application.razuna.thedatabase EQ "oracle">to_char(NVL(i.img_id, 0))<cfelseif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">cast(ifnull(i.img_id, 0) AS char)<cfelseif application.razuna.thedatabase EQ "mssql">isnull(cast(i.img_id as varchar(100)), '0')</cfif> id,
 			i.img_filename filename,
 			i.folder_id_r folder_id,
 			fo.folder_name,
@@ -261,7 +261,7 @@
 			i.path_to_asset,
 			i.cloud_url,
 			i.cloud_url_org,
-			<cfif application.razuna.api.thedatabase EQ "oracle">to_char(NVL(i.img_size, 0))<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">cast(ifnull(i.img_size, 0) AS char)<cfelseif application.razuna.api.thedatabase EQ "mssql">isnull(cast(i.img_size as varchar(100)), '0')</cfif> AS size, cast(i.img_size as decimal(12,0))  AS size_num,
+			<cfif application.razuna.thedatabase EQ "oracle">to_char(NVL(i.img_size, 0))<cfelseif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">cast(ifnull(i.img_size, 0) AS char)<cfelseif application.razuna.thedatabase EQ "mssql">isnull(cast(i.img_size as varchar(100)), '0')</cfif> AS size, cast(i.img_size as decimal(12,0))  AS size_num,
 			i.img_width AS width,
 			i.img_height AS height,
 			'0' AS isalias,
@@ -269,46 +269,46 @@
 			it.img_keywords keywords,
 			i.img_create_time dateadd,
 			i.img_change_time datechange,
-			CASE WHEN NOT (i.img_group is null OR i.img_group='') THEN (SELECT expiry_date FROM #application.razuna.api.prefix["#arguments.istruct.api_key#"]#images WHERE img_id=i.img_group) ELSE i.expiry_date END  expiry_date_actual,
-	        <cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
-			    concat('#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.istruct.api_key#"]#/',i.path_to_asset,'/',i.img_filename_org) AS local_url_org,
+			CASE WHEN NOT (i.img_group is null OR i.img_group='') THEN (SELECT expiry_date FROM #session.hostdbprefix#images WHERE img_id=i.img_group) ELSE i.expiry_date END  expiry_date_actual,
+	        <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">
+			    concat('#application.razuna.thehttp##cgi.HTTP_HOST#/#application.razuna.dynpath#/assets/#session.hostid#/',i.path_to_asset,'/',i.img_filename_org) AS local_url_org,
 			    CASE WHEN (i.img_group is null OR i.img_group='')
 			    	THEN
-						concat('#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.istruct.api_key#"]#/',i.path_to_asset,'/','thumb_',i.img_id,'.',i.thumb_extension)
+						concat('#application.razuna.thehttp##cgi.HTTP_HOST#/#application.razuna.dynpath#/assets/#session.hostid#/',i.path_to_asset,'/','thumb_',i.img_id,'.',i.thumb_extension)
 					ELSE
-						concat('#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.istruct.api_key#"]#/',i.path_to_asset,'/','thumb_',i.img_group,'.',i.thumb_extension)
+						concat('#application.razuna.thehttp##cgi.HTTP_HOST#/#application.razuna.dynpath#/assets/#session.hostid#/',i.path_to_asset,'/','thumb_',i.img_group,'.',i.thumb_extension)
 				END as local_url_thumb,
-	        <cfelseif application.razuna.api.thedatabase EQ "mssql">
-	            '#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.istruct.api_key#"]#/' + i.path_to_asset + '/'  + i.img_filename_org AS local_url_org,
+	        <cfelseif application.razuna.thedatabase EQ "mssql">
+	            '#application.razuna.thehttp##cgi.HTTP_HOST#/#application.razuna.dynpath#/assets/#session.hostid#/' + i.path_to_asset + '/'  + i.img_filename_org AS local_url_org,
 	            CASE WHEN (i.img_group is null OR i.img_group='')
 			    	THEN
-						'#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.istruct.api_key#"]#/' + i.path_to_asset + '/' + 'thumb_' + i.img_id + '.' + i.thumb_extension
+						'#application.razuna.thehttp##cgi.HTTP_HOST#/#application.razuna.dynpath#/assets/#session.hostid#/' + i.path_to_asset + '/' + 'thumb_' + i.img_id + '.' + i.thumb_extension
 					ELSE
-						'#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.istruct.api_key#"]#/' + i.path_to_asset + '/' + 'thumb_' + i.img_group + '.' + i.thumb_extension
+						'#application.razuna.thehttp##cgi.HTTP_HOST#/#application.razuna.dynpath#/assets/#session.hostid#/' + i.path_to_asset + '/' + 'thumb_' + i.img_group + '.' + i.thumb_extension
 				END as local_url_thumb,
 	        </cfif>
-	    	<cfif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
+	    	<cfif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">
 	    		(
 	    			SELECT GROUP_CONCAT(DISTINCT ic.col_id_r ORDER BY ic.col_id_r SEPARATOR ',') AS col_id
-	    			FROM #application.razuna.api.prefix["#arguments.istruct.api_key#"]#collections_ct_files ic
+	    			FROM #session.hostdbprefix#collections_ct_files ic
 	    			WHERE ic.file_id_r = i.img_id
 	    			AND ic.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 	    		) AS colid
-	    	<cfelseif application.razuna.api.thedatabase EQ "mssql">
+	    	<cfelseif application.razuna.thedatabase EQ "mssql">
 	    		STUFF(
 	    			(
 	    				SELECT ', ' + ic.col_id_r
-	    				FROM #application.razuna.api.prefix["#arguments.istruct.api_key#"]#collections_ct_files ic
+	    				FROM #session.hostdbprefix#collections_ct_files ic
 	    	         	WHERE ic.file_id_r = i.img_id
 	    	         	AND ic.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 	    	          	FOR XML PATH ('')
 	              	)
 	              	, 1, 1, ''
 	    		) AS colid
-	    	<cfelseif application.razuna.api.thedatabase EQ "oracle">
+	    	<cfelseif application.razuna.thedatabase EQ "oracle">
 	    		(
 	    			SELECT wmsys.wm_concat(ic.col_id_r) AS col_id
-	    			FROM #application.razuna.api.prefix["#arguments.istruct.api_key#"]#collections_ct_files ic
+	    			FROM #session.hostdbprefix#collections_ct_files ic
 	    			WHERE ic.file_id_r = i.img_id
 	    			AND ic.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 	    		) AS colid
@@ -341,7 +341,7 @@
 				i.hashtag,
 				'' as labels,
 				'#session.customaccess#' as permfolder,
-				<cfif application.razuna.api.thedatabase EQ "mssql">i.img_id + '-img'<cfelse>concat(i.img_id,'-img')</cfif> as listid
+				<cfif application.razuna.thedatabase EQ "mssql">i.img_id + '-img'<cfelse>concat(i.img_id,'-img')</cfif> as listid
 				<cfif arguments.istruct.cs.images_metadata NEQ "">
 					<cfloop list="#arguments.istruct.cs.images_metadata#" index="m" delimiters=",">
 						,<cfif m CONTAINS "keywords" OR m CONTAINS "description">it
@@ -366,11 +366,11 @@
 					</cfloop>
 				</cfif>
 			</cfif>
-			FROM #application.razuna.api.prefix["#arguments.istruct.api_key#"]#images i
-			LEFT JOIN #application.razuna.api.prefix["#arguments.istruct.api_key#"]#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = 1
-			LEFT JOIN #application.razuna.api.prefix["#arguments.istruct.api_key#"]#xmp x ON x.id_r = i.img_id
-			LEFT JOIN #application.razuna.api.prefix["#arguments.istruct.api_key#"]#folders fo ON fo.folder_id = i.folder_id_r AND fo.host_id = i.host_id
-			WHERE i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.istruct.api_key#"]#">
+			FROM #session.hostdbprefix#images i
+			LEFT JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = 1
+			LEFT JOIN #session.hostdbprefix#xmp x ON x.id_r = i.img_id
+			LEFT JOIN #session.hostdbprefix#folders fo ON fo.folder_id = i.folder_id_r AND fo.host_id = i.host_id
+			WHERE i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			<cfif !arguments.istruct.dbdirect>
 				AND	i.img_id IN (<cfif qryluceneimg.recordcount EQ 0>'0'<cfelse>'0'<cfloop query="cattreeimg">,'#categorytree#'</cfloop></cfif>)
 			<cfelse>
@@ -386,7 +386,7 @@
 				<!--- Check permission on this folder --->
 				WHEN EXISTS(
 					SELECT fg.folder_id_r
-					FROM #application.razuna.api.prefix["#arguments.istruct.api_key#"]#folders_groups fg
+					FROM #session.hostdbprefix#folders_groups fg
 					WHERE fg.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 					AND fg.folder_id_r = i.folder_id_r
 					AND fg.grp_permission IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
@@ -395,7 +395,7 @@
 				<!--- When folder is shared for everyone --->
 				WHEN EXISTS(
 					SELECT fg2.folder_id_r
-					FROM #application.razuna.api.prefix["#arguments.istruct.api_key#"]#folders_groups fg2
+					FROM #session.hostdbprefix#folders_groups fg2
 					WHERE fg2.grp_id_r = '0'
 					AND fg2.folder_id_r = i.folder_id_r
 					AND fg2.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -408,7 +408,7 @@
 			<!--- Only if we have dates --->
 			<cfif arguments.istruct.dbdirect>
 				<cfif arguments.istruct.datecreate NEQ "">
-					<cfif application.razuna.api.thedatabase EQ "mssql">
+					<cfif application.razuna.thedatabase EQ "mssql">
 						AND (DATEPART(yy, i.img_create_time) = idate.the_create_year
 						AND DATEPART(mm, i.img_create_time) = idate.the_create_month
 						AND DATEPART(dd, i.img_create_time) = idate.the_create_day)
@@ -417,7 +417,7 @@
 					</cfif>
 				</cfif>
 				<cfif arguments.istruct.datechange NEQ "">
-					<cfif application.razuna.api.thedatabase EQ "mssql">
+					<cfif application.razuna.thedatabase EQ "mssql">
 						AND (DATEPART(yy, i.img_change_time) = idate.the_change_year
 						AND DATEPART(mm, i.img_change_time) = idate.the_change_month
 						AND DATEPART(dd, i.img_change_time) = idate.the_change_day)
@@ -446,7 +446,7 @@
 			<cfif arguments.istruct.ui>, i.is_available, i.link_kind, i.link_path_url</cfif>
 			UNION ALL
 			<!--- Get Aliases --->
-			SELECT /* #cachetoken#search_images_api */ <cfif application.razuna.api.thedatabase EQ "oracle">to_char(NVL(i.img_id, 0))<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">cast(ifnull(i.img_id, 0) AS char)<cfelseif application.razuna.api.thedatabase EQ "mssql">isnull(cast(i.img_id as varchar(100)), '0')</cfif> id,
+			SELECT /* #cachetoken#search_images_api */ <cfif application.razuna.thedatabase EQ "oracle">to_char(NVL(i.img_id, 0))<cfelseif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">cast(ifnull(i.img_id, 0) AS char)<cfelseif application.razuna.thedatabase EQ "mssql">isnull(cast(i.img_id as varchar(100)), '0')</cfif> id,
 			i.img_filename filename,
 			ct.folder_id_r folder_id,
 			fo.folder_name,
@@ -458,7 +458,7 @@
 			i.path_to_asset,
 			i.cloud_url,
 			i.cloud_url_org,
-			<cfif application.razuna.api.thedatabase EQ "oracle">to_char(NVL(i.img_size, 0))<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">cast(ifnull(i.img_size, 0) AS char)<cfelseif application.razuna.api.thedatabase EQ "mssql">isnull(cast(i.img_size as varchar(100)), '0')</cfif> AS size, cast(i.img_size as decimal(12,0))  AS size_num,
+			<cfif application.razuna.thedatabase EQ "oracle">to_char(NVL(i.img_size, 0))<cfelseif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">cast(ifnull(i.img_size, 0) AS char)<cfelseif application.razuna.thedatabase EQ "mssql">isnull(cast(i.img_size as varchar(100)), '0')</cfif> AS size, cast(i.img_size as decimal(12,0))  AS size_num,
 			i.img_width AS width,
 			i.img_height AS height,
 			'1' AS isalias,
@@ -466,46 +466,46 @@
 			it.img_keywords keywords,
 			i.img_create_time dateadd,
 			i.img_change_time datechange,
-			CASE WHEN NOT (i.img_group is null OR i.img_group='') THEN (SELECT expiry_date FROM #application.razuna.api.prefix["#arguments.istruct.api_key#"]#images WHERE img_id=i.img_group) ELSE i.expiry_date END  expiry_date_actual,
-	        <cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
-			    concat('#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.istruct.api_key#"]#/',i.path_to_asset,'/',i.img_filename_org) AS local_url_org,
+			CASE WHEN NOT (i.img_group is null OR i.img_group='') THEN (SELECT expiry_date FROM #session.hostdbprefix#images WHERE img_id=i.img_group) ELSE i.expiry_date END  expiry_date_actual,
+	        <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">
+			    concat('#application.razuna.thehttp##cgi.HTTP_HOST#/#application.razuna.dynpath#/assets/#session.hostid#/',i.path_to_asset,'/',i.img_filename_org) AS local_url_org,
 			    CASE WHEN (i.img_group is null OR i.img_group='')
 			    	THEN
-						concat('#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.istruct.api_key#"]#/',i.path_to_asset,'/','thumb_',i.img_id,'.',i.thumb_extension)
+						concat('#application.razuna.thehttp##cgi.HTTP_HOST#/#application.razuna.dynpath#/assets/#session.hostid#/',i.path_to_asset,'/','thumb_',i.img_id,'.',i.thumb_extension)
 					ELSE
-						concat('#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.istruct.api_key#"]#/',i.path_to_asset,'/','thumb_',i.img_group,'.',i.thumb_extension)
+						concat('#application.razuna.thehttp##cgi.HTTP_HOST#/#application.razuna.dynpath#/assets/#session.hostid#/',i.path_to_asset,'/','thumb_',i.img_group,'.',i.thumb_extension)
 				END as local_url_thumb,
-	        <cfelseif application.razuna.api.thedatabase EQ "mssql">
-	            '#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.istruct.api_key#"]#/' + i.path_to_asset + '/'  + i.img_filename_org AS local_url_org,
+	        <cfelseif application.razuna.thedatabase EQ "mssql">
+	            '#application.razuna.thehttp##cgi.HTTP_HOST#/#application.razuna.dynpath#/assets/#session.hostid#/' + i.path_to_asset + '/'  + i.img_filename_org AS local_url_org,
 	            CASE WHEN (i.img_group is null OR i.img_group='')
 			    	THEN
-						'#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.istruct.api_key#"]#/' + i.path_to_asset + '/' + 'thumb_' + i.img_id + '.' + i.thumb_extension
+						'#application.razuna.thehttp##cgi.HTTP_HOST#/#application.razuna.dynpath#/assets/#session.hostid#/' + i.path_to_asset + '/' + 'thumb_' + i.img_id + '.' + i.thumb_extension
 					ELSE
-						'#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.istruct.api_key#"]#/' + i.path_to_asset + '/' + 'thumb_' + i.img_group + '.' + i.thumb_extension
+						'#application.razuna.thehttp##cgi.HTTP_HOST#/#application.razuna.dynpath#/assets/#session.hostid#/' + i.path_to_asset + '/' + 'thumb_' + i.img_group + '.' + i.thumb_extension
 				END as local_url_thumb,
 	        </cfif>
-	    	<cfif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
+	    	<cfif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">
 	    		(
 	    			SELECT GROUP_CONCAT(DISTINCT ic.col_id_r ORDER BY ic.col_id_r SEPARATOR ',') AS col_id
-	    			FROM #application.razuna.api.prefix["#arguments.istruct.api_key#"]#collections_ct_files ic
+	    			FROM #session.hostdbprefix#collections_ct_files ic
 	    			WHERE ic.file_id_r = i.img_id
 	    			AND ic.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 	    		) AS colid
-	    	<cfelseif application.razuna.api.thedatabase EQ "mssql">
+	    	<cfelseif application.razuna.thedatabase EQ "mssql">
 	    		STUFF(
 	    			(
 	    				SELECT ', ' + ic.col_id_r
-	    				FROM #application.razuna.api.prefix["#arguments.istruct.api_key#"]#collections_ct_files ic
+	    				FROM #session.hostdbprefix#collections_ct_files ic
 	    	         	WHERE ic.file_id_r = i.img_id
 	    	         	AND ic.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 	    	          	FOR XML PATH ('')
 	              	)
 	              	, 1, 1, ''
 	    		) AS colid
-	    	<cfelseif application.razuna.api.thedatabase EQ "oracle">
+	    	<cfelseif application.razuna.thedatabase EQ "oracle">
 	    		(
 	    			SELECT wmsys.wm_concat(ic.col_id_r) AS col_id
-	    			FROM #application.razuna.api.prefix["#arguments.istruct.api_key#"]#collections_ct_files ic
+	    			FROM #session.hostdbprefix#collections_ct_files ic
 	    			WHERE ic.file_id_r = i.img_id
 	    			AND ic.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 	    		) AS colid
@@ -535,7 +535,7 @@
 				i.hashtag,
 				'' as labels,
 				'#session.customaccess#' as permfolder,
-				<cfif application.razuna.api.thedatabase EQ "mssql">i.img_id + '-img'<cfelse>concat(i.img_id,'-img')</cfif> as listid
+				<cfif application.razuna.thedatabase EQ "mssql">i.img_id + '-img'<cfelse>concat(i.img_id,'-img')</cfif> as listid
 				<cfif arguments.istruct.cs.images_metadata NEQ "">
 					<cfloop list="#arguments.istruct.cs.images_metadata#" index="m" delimiters=",">
 						,<cfif m CONTAINS "keywords" OR m CONTAINS "description">it
@@ -560,12 +560,12 @@
 					</cfloop>
 				</cfif>
 			</cfif>
-			FROM #application.razuna.api.prefix["#arguments.istruct.api_key#"]#images i
+			FROM #session.hostdbprefix#images i
 			INNER JOIN ct_aliases ct ON i.img_id = ct.asset_id_r
-			LEFT JOIN #application.razuna.api.prefix["#arguments.istruct.api_key#"]#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = 1
-			LEFT JOIN #application.razuna.api.prefix["#arguments.istruct.api_key#"]#xmp x ON x.id_r = i.img_id
-			LEFT JOIN #application.razuna.api.prefix["#arguments.istruct.api_key#"]#folders fo ON fo.folder_id = ct.folder_id_r AND fo.host_id = i.host_id
-			WHERE i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.istruct.api_key#"]#">
+			LEFT JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = 1
+			LEFT JOIN #session.hostdbprefix#xmp x ON x.id_r = i.img_id
+			LEFT JOIN #session.hostdbprefix#folders fo ON fo.folder_id = ct.folder_id_r AND fo.host_id = i.host_id
+			WHERE i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			<cfif !arguments.istruct.dbdirect>
 				AND	i.img_id IN (<cfif qryluceneimg.recordcount EQ 0>'0'<cfelse>'0'<cfloop query="cattreeimg">,'#categorytree#'</cfloop></cfif>)
 			<cfelse>
@@ -582,7 +582,7 @@
 				<!--- Check permission on this folder --->
 				WHEN EXISTS(
 					SELECT fg.folder_id_r
-					FROM #application.razuna.api.prefix["#arguments.istruct.api_key#"]#folders_groups fg
+					FROM #session.hostdbprefix#folders_groups fg
 					WHERE fg.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 					AND fg.folder_id_r = ct.folder_id_r
 					AND fg.grp_permission IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
@@ -591,7 +591,7 @@
 				<!--- When folder is shared for everyone --->
 				WHEN EXISTS(
 					SELECT fg2.folder_id_r
-					FROM #application.razuna.api.prefix["#arguments.istruct.api_key#"]#folders_groups fg2
+					FROM #session.hostdbprefix#folders_groups fg2
 					WHERE fg2.grp_id_r = '0'
 					AND fg2.folder_id_r = ct.folder_id_r
 					AND fg2.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -604,7 +604,7 @@
 			<!--- Only if we have dates --->
 			<cfif arguments.istruct.dbdirect>
 				<cfif arguments.istruct.datecreate NEQ "">
-					<cfif application.razuna.api.thedatabase EQ "mssql">
+					<cfif application.razuna.thedatabase EQ "mssql">
 						AND (DATEPART(yy, i.img_create_time) = idate.the_create_year
 						AND DATEPART(mm, i.img_create_time) = idate.the_create_month
 						AND DATEPART(dd, i.img_create_time) = idate.the_create_day)
@@ -613,7 +613,7 @@
 					</cfif>
 				</cfif>
 				<cfif arguments.istruct.datechange NEQ "">
-					<cfif application.razuna.api.thedatabase EQ "mssql">
+					<cfif application.razuna.thedatabase EQ "mssql">
 						AND (DATEPART(yy, i.img_change_time) = idate.the_change_year
 						AND DATEPART(mm, i.img_change_time) = idate.the_change_month
 						AND DATEPART(dd, i.img_change_time) = idate.the_change_day)
@@ -681,7 +681,7 @@
 				<cfset thesearchfor = "#thesearchfor# #_add_and# change_time:[#replace(arguments.vstruct.datechangerange, "-", "", "ALL")#]">
 			</cfif>
 			<!--- Search in Lucene --->
-			<cfset var qrylucenevid = search(criteria=thesearchfor, category="vid", hostid="#application.razuna.api.hostid["#arguments.vstruct.api_key#"]#", startrow=arguments.vstruct.startrow, maxrows=arguments.vstruct.maxrows, folderid=arguments.vstruct.folderid, showrenditions=arguments.vstruct.showrenditions, search_upc=arguments.vstruct.search_upc)>
+			<cfset var qrylucenevid = search(criteria=thesearchfor, category="vid", hostid=session.hostid, startrow=arguments.vstruct.startrow, maxrows=arguments.vstruct.maxrows, folderid=arguments.vstruct.folderid, showrenditions=arguments.vstruct.showrenditions, search_upc=arguments.vstruct.search_upc, search_type="")>
 			<!--- If lucene returns no records --->
 			<cfif qrylucenevid.recordcount NEQ 0>
 				<!--- Sometimes it can happen that the category tree is empty thus we filter them with a QoQ here --->
@@ -701,8 +701,8 @@
 		</cfif>
 		<cfset var cachetoken = getcachetoken(arguments.vstruct.api_key,"search")>
 		<!--- Query --->
-		<cfquery datasource="#application.razuna.api.dsn#" name="qry_vid" cachedwithin="1" region="razcache">
-		SELECT /* #cachetoken#search_videos_api */ <cfif application.razuna.api.thedatabase EQ "oracle">to_char(NVL(v.vid_id, 0))<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">cast(ifnull(v.vid_id, 0) AS char)<cfelseif application.razuna.api.thedatabase EQ "mssql">isnull(cast(v.vid_id as varchar(100)), '0')</cfif> id,
+		<cfquery datasource="#application.razuna.datasource#" name="qry_vid" cachedwithin="1" region="razcache">
+		SELECT /* #cachetoken#search_videos_api */ <cfif application.razuna.thedatabase EQ "oracle">to_char(NVL(v.vid_id, 0))<cfelseif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">cast(ifnull(v.vid_id, 0) AS char)<cfelseif application.razuna.thedatabase EQ "mssql">isnull(cast(v.vid_id as varchar(100)), '0')</cfif> id,
 		v.vid_filename as filename,
 		v.folder_id_r as folder_id,
 		fo.folder_name,
@@ -718,7 +718,7 @@
 		v.path_to_asset,
 		v.cloud_url,
 		v.cloud_url_org,
-		<cfif application.razuna.api.thedatabase EQ "oracle">to_char(NVL(v.vid_size, 0))<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">cast(ifnull(v.vid_size, 0) AS char)<cfelseif application.razuna.api.thedatabase EQ "mssql">isnull(cast(v.vid_size as varchar(100)), '0')</cfif> AS size, cast(v.vid_size as decimal(12,0))  AS size_num,
+		<cfif application.razuna.thedatabase EQ "oracle">to_char(NVL(v.vid_size, 0))<cfelseif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">cast(ifnull(v.vid_size, 0) AS char)<cfelseif application.razuna.thedatabase EQ "mssql">isnull(cast(v.vid_size as varchar(100)), '0')</cfif> AS size, cast(v.vid_size as decimal(12,0))  AS size_num,
 		v.vid_width AS width,
 		v.vid_height AS height,
 		'0' AS isalias,
@@ -726,36 +726,36 @@
 		vt.vid_keywords keywords,
 		v.vid_create_time dateadd,
 		v.vid_change_time datechange,
-		CASE WHEN NOT (v.vid_group is null OR v.vid_group='') THEN (SELECT expiry_date FROM #application.razuna.api.prefix["#arguments.vstruct.api_key#"]#videos WHERE vid_id=v.vid_group) ELSE v.expiry_date END  expiry_date_actual,
-        <cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
-            concat('#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.vstruct.api_key#"]#/',v.path_to_asset,'/',v.vid_name_org) AS local_url_org,
-            concat('#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.vstruct.api_key#"]#/',v.path_to_asset,'/',v.vid_name_image) AS local_url_thumb,
-        <cfelseif application.razuna.api.thedatabase EQ "mssql">
-            '#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.vstruct.api_key#"]#/' + v.path_to_asset + '/' + v.vid_name_org AS local_url_org,
-            '#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.vstruct.api_key#"]#/' + v.path_to_asset + '/' + v.vid_name_image AS local_url_thumb,
+		CASE WHEN NOT (v.vid_group is null OR v.vid_group='') THEN (SELECT expiry_date FROM #session.hostdbprefix#videos WHERE vid_id=v.vid_group) ELSE v.expiry_date END  expiry_date_actual,
+        <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">
+            concat('#application.razuna.thehttp##cgi.HTTP_HOST#/#application.razuna.dynpath#/assets/#session.hostid#/',v.path_to_asset,'/',v.vid_name_org) AS local_url_org,
+            concat('#application.razuna.thehttp##cgi.HTTP_HOST#/#application.razuna.dynpath#/assets/#session.hostid#/',v.path_to_asset,'/',v.vid_name_image) AS local_url_thumb,
+        <cfelseif application.razuna.thedatabase EQ "mssql">
+            '#application.razuna.thehttp##cgi.HTTP_HOST#/#application.razuna.dynpath#/assets/#session.hostid#/' + v.path_to_asset + '/' + v.vid_name_org AS local_url_org,
+            '#application.razuna.thehttp##cgi.HTTP_HOST#/#application.razuna.dynpath#/assets/#session.hostid#/' + v.path_to_asset + '/' + v.vid_name_image AS local_url_thumb,
         </cfif>
-        <cfif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
+        <cfif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">
 			(
 				SELECT GROUP_CONCAT(DISTINCT vc.col_id_r ORDER BY vc.col_id_r SEPARATOR ',') AS col_id
-				FROM #application.razuna.api.prefix["#arguments.vstruct.api_key#"]#collections_ct_files vc
+				FROM #session.hostdbprefix#collections_ct_files vc
 				WHERE vc.file_id_r = v.vid_id
 				AND vc.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 			) AS colid
-		<cfelseif application.razuna.api.thedatabase EQ "mssql">
+		<cfelseif application.razuna.thedatabase EQ "mssql">
 			STUFF(
 				(
 					SELECT ', ' + vc.col_id_r
-					FROM #application.razuna.api.prefix["#arguments.vstruct.api_key#"]#collections_ct_files vc
+					FROM #session.hostdbprefix#collections_ct_files vc
 		         	WHERE vc.file_id_r = v.vid_id
 		         	AND vc.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 		          	FOR XML PATH ('')
 	          	)
 	          	, 1, 1, ''
 			) AS colid
-		<cfelseif application.razuna.api.thedatabase EQ "oracle">
+		<cfelseif application.razuna.thedatabase EQ "oracle">
 			(
 				SELECT wmsys.wm_concat(vc.col_id_r) AS col_id
-				FROM #application.razuna.api.prefix["#arguments.vstruct.api_key#"]#collections_ct_files vc
+				FROM #session.hostdbprefix#collections_ct_files vc
 				WHERE vc.file_id_r = v.vid_id
 				AND vc.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 			) AS colid
@@ -788,7 +788,7 @@
 			v.hashtag,
 			'' as labels,
 			'#session.customaccess#' as permfolder,
-			<cfif application.razuna.api.thedatabase EQ "mssql">v.vid_id + '-vid'<cfelse>concat(v.vid_id,'-vid')</cfif> as listid
+			<cfif application.razuna.thedatabase EQ "mssql">v.vid_id + '-vid'<cfelse>concat(v.vid_id,'-vid')</cfif> as listid
 			<!--- custom metadata fields to show --->
 			<cfif arguments.vstruct.cs.images_metadata NEQ "">
 				<cfloop list="#arguments.vstruct.cs.images_metadata#" index="m" delimiters=",">
@@ -813,10 +813,10 @@
 				</cfloop>
 			</cfif>
 		</cfif>
-        FROM #application.razuna.api.prefix["#arguments.vstruct.api_key#"]#videos v
-		LEFT JOIN #application.razuna.api.prefix["#arguments.vstruct.api_key#"]#videos_text vt ON v.vid_id = vt.vid_id_r AND vt.lang_id_r = 1
-		LEFT JOIN #application.razuna.api.prefix["#arguments.vstruct.api_key#"]#folders fo ON fo.folder_id = v.folder_id_r AND fo.host_id = v.host_id
-		WHERE v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.vstruct.api_key#"]#">
+        FROM #session.hostdbprefix#videos v
+		LEFT JOIN #session.hostdbprefix#videos_text vt ON v.vid_id = vt.vid_id_r AND vt.lang_id_r = 1
+		LEFT JOIN #session.hostdbprefix#folders fo ON fo.folder_id = v.folder_id_r AND fo.host_id = v.host_id
+		WHERE v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		<cfif !arguments.vstruct.dbdirect>
 			AND v.vid_id IN (<cfif qrylucenevid.recordcount EQ 0>'0'<cfelse>'0'<cfloop query="cattreevid">,'#categorytree#'</cfloop></cfif>)
 		<cfelse>
@@ -832,7 +832,7 @@
 			<!--- Check permission on this folder --->
 			WHEN EXISTS(
 				SELECT fg.folder_id_r
-				FROM #application.razuna.api.prefix["#arguments.vstruct.api_key#"]#folders_groups fg
+				FROM #session.hostdbprefix#folders_groups fg
 				WHERE fg.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				AND fg.folder_id_r = v.folder_id_r
 				AND fg.grp_permission IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
@@ -841,7 +841,7 @@
 			<!--- When folder is shared for everyone --->
 			WHEN EXISTS(
 				SELECT fg2.folder_id_r
-				FROM #application.razuna.api.prefix["#arguments.vstruct.api_key#"]#folders_groups fg2
+				FROM #session.hostdbprefix#folders_groups fg2
 				WHERE fg2.grp_id_r = '0'
 				AND fg2.folder_id_r = v.folder_id_r
 				AND fg2.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -854,7 +854,7 @@
 		<!--- Only if we have dates --->
 		<cfif !arguments.vstruct.dbdirect>
 			<cfif arguments.vstruct.datecreate NEQ "">
-				<cfif application.razuna.api.thedatabase EQ "mssql">
+				<cfif application.razuna.thedatabase EQ "mssql">
 					AND (DATEPART(yy, v.vid_create_time) = vdate.the_create_year
 					AND DATEPART(mm, v.vid_create_time) = vdate.the_create_month
 					AND DATEPART(dd, v.vid_create_time) = vdate.the_create_day)
@@ -863,7 +863,7 @@
 				</cfif>
 			</cfif>
 			<cfif arguments.vstruct.datechange NEQ "">
-				<cfif application.razuna.api.thedatabase EQ "mssql">
+				<cfif application.razuna.thedatabase EQ "mssql">
 					AND (DATEPART(yy, v.vid_change_time) = vdate.the_change_year
 					AND DATEPART(mm, v.vid_change_time) = vdate.the_change_month
 					AND DATEPART(dd, v.vid_change_time) = vdate.the_change_day)
@@ -892,7 +892,7 @@
 			<cfif arguments.vstruct.ui>, v.is_available, v.link_kind, v.link_path_url</cfif>
 		UNION ALL
 		<!--- Get Aliases --->
-		SELECT /* #cachetoken#search_videos_api */ <cfif application.razuna.api.thedatabase EQ "oracle">to_char(NVL(v.vid_id, 0))<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">cast(ifnull(v.vid_id, 0) AS char)<cfelseif application.razuna.api.thedatabase EQ "mssql">isnull(cast(v.vid_id as varchar(100)), '0')</cfif> id,
+		SELECT /* #cachetoken#search_videos_api */ <cfif application.razuna.thedatabase EQ "oracle">to_char(NVL(v.vid_id, 0))<cfelseif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">cast(ifnull(v.vid_id, 0) AS char)<cfelseif application.razuna.thedatabase EQ "mssql">isnull(cast(v.vid_id as varchar(100)), '0')</cfif> id,
 		v.vid_filename as filename,
 		ct.folder_id_r as folder_id,
 		fo.folder_name,
@@ -908,7 +908,7 @@
 		v.path_to_asset,
 		v.cloud_url,
 		v.cloud_url_org,
-		<cfif application.razuna.api.thedatabase EQ "oracle">to_char(NVL(v.vid_size, 0))<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">cast(ifnull(v.vid_size, 0) AS char)<cfelseif application.razuna.api.thedatabase EQ "mssql">isnull(cast(v.vid_size as varchar(100)), '0')</cfif> AS size, cast(v.vid_size as decimal(12,0))  AS size_num,
+		<cfif application.razuna.thedatabase EQ "oracle">to_char(NVL(v.vid_size, 0))<cfelseif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">cast(ifnull(v.vid_size, 0) AS char)<cfelseif application.razuna.thedatabase EQ "mssql">isnull(cast(v.vid_size as varchar(100)), '0')</cfif> AS size, cast(v.vid_size as decimal(12,0))  AS size_num,
 		v.vid_width AS width,
 		v.vid_height AS height,
 		'1' AS isalias,
@@ -916,36 +916,36 @@
 		vt.vid_keywords keywords,
 		v.vid_create_time dateadd,
 		v.vid_change_time datechange,
-		CASE WHEN NOT (v.vid_group is null OR v.vid_group='') THEN (SELECT expiry_date FROM #application.razuna.api.prefix["#arguments.vstruct.api_key#"]#videos WHERE vid_id=v.vid_group) ELSE v.expiry_date END  expiry_date_actual,
-        <cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
-            concat('#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.vstruct.api_key#"]#/',v.path_to_asset,'/',v.vid_name_org) AS local_url_org,
-            concat('#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.vstruct.api_key#"]#/',v.path_to_asset,'/',v.vid_name_image) AS local_url_thumb,
-        <cfelseif application.razuna.api.thedatabase EQ "mssql">
-            '#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.vstruct.api_key#"]#/' + v.path_to_asset + '/' + v.vid_name_org AS local_url_org,
-            '#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.vstruct.api_key#"]#/' + v.path_to_asset + '/' + v.vid_name_image AS local_url_thumb,
+		CASE WHEN NOT (v.vid_group is null OR v.vid_group='') THEN (SELECT expiry_date FROM #session.hostdbprefix#videos WHERE vid_id=v.vid_group) ELSE v.expiry_date END  expiry_date_actual,
+        <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">
+            concat('#application.razuna.thehttp##cgi.HTTP_HOST#/#application.razuna.dynpath#/assets/#session.hostid#/',v.path_to_asset,'/',v.vid_name_org) AS local_url_org,
+            concat('#application.razuna.thehttp##cgi.HTTP_HOST#/#application.razuna.dynpath#/assets/#session.hostid#/',v.path_to_asset,'/',v.vid_name_image) AS local_url_thumb,
+        <cfelseif application.razuna.thedatabase EQ "mssql">
+            '#application.razuna.thehttp##cgi.HTTP_HOST#/#application.razuna.dynpath#/assets/#session.hostid#/' + v.path_to_asset + '/' + v.vid_name_org AS local_url_org,
+            '#application.razuna.thehttp##cgi.HTTP_HOST#/#application.razuna.dynpath#/assets/#session.hostid#/' + v.path_to_asset + '/' + v.vid_name_image AS local_url_thumb,
         </cfif>
-        <cfif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
+        <cfif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">
 			(
 				SELECT GROUP_CONCAT(DISTINCT vc.col_id_r ORDER BY vc.col_id_r SEPARATOR ',') AS col_id
-				FROM #application.razuna.api.prefix["#arguments.vstruct.api_key#"]#collections_ct_files vc
+				FROM #session.hostdbprefix#collections_ct_files vc
 				WHERE vc.file_id_r = v.vid_id
 				AND vc.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 			) AS colid
-		<cfelseif application.razuna.api.thedatabase EQ "mssql">
+		<cfelseif application.razuna.thedatabase EQ "mssql">
 			STUFF(
 				(
 					SELECT ', ' + vc.col_id_r
-					FROM #application.razuna.api.prefix["#arguments.vstruct.api_key#"]#collections_ct_files vc
+					FROM #session.hostdbprefix#collections_ct_files vc
 		         	WHERE vc.file_id_r = v.vid_id
 		         	AND vc.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 		          	FOR XML PATH ('')
 	          	)
 	          	, 1, 1, ''
 			) AS colid
-		<cfelseif application.razuna.api.thedatabase EQ "oracle">
+		<cfelseif application.razuna.thedatabase EQ "oracle">
 			(
 				SELECT wmsys.wm_concat(vc.col_id_r) AS col_id
-				FROM #application.razuna.api.prefix["#arguments.vstruct.api_key#"]#collections_ct_files vc
+				FROM #session.hostdbprefix#collections_ct_files vc
 				WHERE vc.file_id_r = v.vid_id
 				AND vc.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 			) AS colid
@@ -975,7 +975,7 @@
 			v.hashtag,
 			'' as labels,
 			'#session.customaccess#' as permfolder,
-			<cfif application.razuna.api.thedatabase EQ "mssql">v.vid_id + '-vid'<cfelse>concat(v.vid_id,'-vid')</cfif> as listid
+			<cfif application.razuna.thedatabase EQ "mssql">v.vid_id + '-vid'<cfelse>concat(v.vid_id,'-vid')</cfif> as listid
 			<!--- custom metadata fields to show --->
 			<cfif arguments.vstruct.cs.images_metadata NEQ "">
 				<cfloop list="#arguments.vstruct.cs.images_metadata#" index="m" delimiters=",">
@@ -1000,11 +1000,11 @@
 				</cfloop>
 			</cfif>
 		</cfif>
-        		FROM #application.razuna.api.prefix["#arguments.vstruct.api_key#"]#videos v
+        		FROM #session.hostdbprefix#videos v
         		INNER JOIN ct_aliases ct ON v.vid_id = ct.asset_id_r
-		LEFT JOIN #application.razuna.api.prefix["#arguments.vstruct.api_key#"]#videos_text vt ON v.vid_id = vt.vid_id_r AND vt.lang_id_r = 1
-		LEFT JOIN #application.razuna.api.prefix["#arguments.vstruct.api_key#"]#folders fo ON fo.folder_id = ct.folder_id_r AND fo.host_id = v.host_id
-		WHERE v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.vstruct.api_key#"]#">
+		LEFT JOIN #session.hostdbprefix#videos_text vt ON v.vid_id = vt.vid_id_r AND vt.lang_id_r = 1
+		LEFT JOIN #session.hostdbprefix#folders fo ON fo.folder_id = ct.folder_id_r AND fo.host_id = v.host_id
+		WHERE v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		<cfif !arguments.vstruct.dbdirect>
 			AND v.vid_id IN (<cfif qrylucenevid.recordcount EQ 0>'0'<cfelse>'0'<cfloop query="cattreevid">,'#categorytree#'</cfloop></cfif>)
 		<cfelse>
@@ -1020,7 +1020,7 @@
 			<!--- Check permission on this folder --->
 			WHEN EXISTS(
 				SELECT fg.folder_id_r
-				FROM #application.razuna.api.prefix["#arguments.vstruct.api_key#"]#folders_groups fg
+				FROM #session.hostdbprefix#folders_groups fg
 				WHERE fg.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				AND fg.folder_id_r = ct.folder_id_r
 				AND fg.grp_permission IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
@@ -1029,7 +1029,7 @@
 			<!--- When folder is shared for everyone --->
 			WHEN EXISTS(
 				SELECT fg2.folder_id_r
-				FROM #application.razuna.api.prefix["#arguments.vstruct.api_key#"]#folders_groups fg2
+				FROM #session.hostdbprefix#folders_groups fg2
 				WHERE fg2.grp_id_r = '0'
 				AND fg2.folder_id_r = ct.folder_id_r
 				AND fg2.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -1042,7 +1042,7 @@
 		<!--- Only if we have dates --->
 		<cfif !arguments.vstruct.dbdirect>
 			<cfif arguments.vstruct.datecreate NEQ "">
-				<cfif application.razuna.api.thedatabase EQ "mssql">
+				<cfif application.razuna.thedatabase EQ "mssql">
 					AND (DATEPART(yy, v.vid_create_time) = vdate.the_create_year
 					AND DATEPART(mm, v.vid_create_time) = vdate.the_create_month
 					AND DATEPART(dd, v.vid_create_time) = vdate.the_create_day)
@@ -1051,7 +1051,7 @@
 				</cfif>
 			</cfif>
 			<cfif arguments.vstruct.datechange NEQ "">
-				<cfif application.razuna.api.thedatabase EQ "mssql">
+				<cfif application.razuna.thedatabase EQ "mssql">
 					AND (DATEPART(yy, v.vid_change_time) = vdate.the_change_year
 					AND DATEPART(mm, v.vid_change_time) = vdate.the_change_month
 					AND DATEPART(dd, v.vid_change_time) = vdate.the_change_day)
@@ -1119,7 +1119,7 @@
 				<cfset thesearchfor = "#thesearchfor# #_add_and# change_time:[#replace(arguments.astruct.datechangerange, "-", "", "ALL")#]">
 			</cfif>
 			<!--- Search in Lucene --->
-			<cfset var qryluceneaud = search(criteria=thesearchfor, category="aud", hostid="#application.razuna.api.hostid["#arguments.astruct.api_key#"]#", startrow=arguments.astruct.startrow, maxrows=arguments.astruct.maxrows, folderid=arguments.astruct.folderid, showrenditions=arguments.astruct.showrenditions, search_upc=arguments.astruct.search_upc)>
+			<cfset var qryluceneaud = search(criteria=thesearchfor, category="aud", hostid=session.hostid, startrow=arguments.astruct.startrow, maxrows=arguments.astruct.maxrows, folderid=arguments.astruct.folderid, showrenditions=arguments.astruct.showrenditions, search_upc=arguments.astruct.search_upc, search_type="")>
 			<!--- If lucene returns no records --->
 			<cfif qryluceneaud.recordcount NEQ 0>
 				<!--- Sometimes it can happen that the category tree is empty thus we filter them with a QoQ here --->
@@ -1139,8 +1139,8 @@
 		</cfif>
 		<cfset var cachetoken = getcachetoken(arguments.astruct.api_key,"search")>
 		<!--- Query --->
-		<cfquery datasource="#application.razuna.api.dsn#" name="qry_aud" cachedwithin="1" region="razcache">
-		SELECT /* #cachetoken#search_audios_api */ <cfif application.razuna.api.thedatabase EQ "oracle">to_char(NVL(a.aud_id, 0))<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">cast(ifnull(a.aud_id, 0) AS char)<cfelseif application.razuna.api.thedatabase EQ "mssql">isnull(cast(a.aud_id as varchar(100)), '0')</cfif> id,
+		<cfquery datasource="#application.razuna.datasource#" name="qry_aud" cachedwithin="1" region="razcache">
+		SELECT /* #cachetoken#search_audios_api */ <cfif application.razuna.thedatabase EQ "oracle">to_char(NVL(a.aud_id, 0))<cfelseif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">cast(ifnull(a.aud_id, 0) AS char)<cfelseif application.razuna.thedatabase EQ "mssql">isnull(cast(a.aud_id as varchar(100)), '0')</cfif> id,
 		a.aud_name filename,
 		a.folder_id_r folder_id,
 		fo.folder_name,
@@ -1152,7 +1152,7 @@
 		a.path_to_asset,
 		a.cloud_url,
 		a.cloud_url_org,
-		<cfif application.razuna.api.thedatabase EQ "oracle">to_char(NVL(a.aud_size, 0))<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">cast(ifnull(a.aud_size, 0) AS char)<cfelseif application.razuna.api.thedatabase EQ "mssql">isnull(cast(a.aud_size as varchar(100)), '0')</cfif> AS size, cast(a.aud_size as decimal(12,0))  AS size_num,
+		<cfif application.razuna.thedatabase EQ "oracle">to_char(NVL(a.aud_size, 0))<cfelseif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">cast(ifnull(a.aud_size, 0) AS char)<cfelseif application.razuna.thedatabase EQ "mssql">isnull(cast(a.aud_size as varchar(100)), '0')</cfif> AS size, cast(a.aud_size as decimal(12,0))  AS size_num,
 		0 AS width,
 		0 AS height,
 		'0' AS isalias,
@@ -1160,35 +1160,35 @@
 		aut.aud_keywords keywords,
 		a.aud_create_time dateadd,
 		a.aud_change_time datechange,
-		CASE WHEN NOT (a.aud_group is null OR a.aud_group='') THEN (SELECT expiry_date FROM #application.razuna.api.prefix["#arguments.astruct.api_key#"]#audios WHERE aud_id=a.aud_group) ELSE a.expiry_date END  expiry_date_actual,
-        <cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
-            concat('#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.astruct.api_key#"]#/',a.path_to_asset,'/',a.aud_name_org) AS local_url_org,
-        <cfelseif application.razuna.api.thedatabase EQ "mssql">
-            '#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.astruct.api_key#"]#/' + a.path_to_asset + '/' + a.aud_name_org AS local_url_org,
+		CASE WHEN NOT (a.aud_group is null OR a.aud_group='') THEN (SELECT expiry_date FROM #session.hostdbprefix#audios WHERE aud_id=a.aud_group) ELSE a.expiry_date END  expiry_date_actual,
+        <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">
+            concat('#application.razuna.thehttp##cgi.HTTP_HOST#/#application.razuna.dynpath#/assets/#session.hostid#/',a.path_to_asset,'/',a.aud_name_org) AS local_url_org,
+        <cfelseif application.razuna.thedatabase EQ "mssql">
+            '#application.razuna.thehttp##cgi.HTTP_HOST#/#application.razuna.dynpath#/assets/#session.hostid#/' + a.path_to_asset + '/' + a.aud_name_org AS local_url_org,
          </cfif>
 		'0' as local_url_thumb,
-		<cfif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
+		<cfif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">
 			(
 				SELECT GROUP_CONCAT(DISTINCT ac.col_id_r ORDER BY ac.col_id_r SEPARATOR ',') AS col_id
-				FROM #application.razuna.api.prefix["#arguments.astruct.api_key#"]#collections_ct_files ac
+				FROM #session.hostdbprefix#collections_ct_files ac
 				WHERE ac.file_id_r = a.aud_id
 				AND ac.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 			) AS colid
-		<cfelseif application.razuna.api.thedatabase EQ "mssql">
+		<cfelseif application.razuna.thedatabase EQ "mssql">
 			STUFF(
 				(
 					SELECT ', ' + ac.col_id_r
-					FROM #application.razuna.api.prefix["#arguments.astruct.api_key#"]#collections_ct_files ac
+					FROM #session.hostdbprefix#collections_ct_files ac
 		         	WHERE ac.file_id_r = a.aud_id
 		         	AND ac.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 		          	FOR XML PATH ('')
 	          	)
 	          	, 1, 1, ''
 			) AS colid
-		<cfelseif application.razuna.api.thedatabase EQ "oracle">
+		<cfelseif application.razuna.thedatabase EQ "oracle">
 			(
 				SELECT wmsys.wm_concat(ac.col_id_r) AS col_id
-				FROM #application.razuna.api.prefix["#arguments.astruct.api_key#"]#collections_ct_files ac
+				FROM #session.hostdbprefix#collections_ct_files ac
 				WHERE ac.file_id_r = a.aud_id
 				AND ac.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 			) AS colid
@@ -1221,7 +1221,7 @@
 			a.hashtag,
 			'' as labels,
 			'#session.customaccess#' as permfolder,
-			<cfif application.razuna.api.thedatabase EQ "mssql">a.aud_id + '-aud'<cfelse>concat(a.aud_id,'-aud')</cfif> as listid
+			<cfif application.razuna.thedatabase EQ "mssql">a.aud_id + '-aud'<cfelse>concat(a.aud_id,'-aud')</cfif> as listid
 			<!--- custom metadata fields to show --->
 			<cfif arguments.astruct.cs.images_metadata NEQ "">
 				<cfloop list="#arguments.astruct.cs.images_metadata#" index="m" delimiters=",">
@@ -1246,10 +1246,10 @@
 				</cfloop>
 			</cfif>
 		</cfif>
-		FROM #application.razuna.api.prefix["#arguments.astruct.api_key#"]#audios a
-		LEFT JOIN #application.razuna.api.prefix["#arguments.astruct.api_key#"]#audios_text aut ON a.aud_id = aut.aud_id_r AND aut.lang_id_r = 1
-		LEFT JOIN #application.razuna.api.prefix["#arguments.astruct.api_key#"]#folders fo ON fo.folder_id = a.folder_id_r AND fo.host_id = a.host_id
-		WHERE a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.astruct.api_key#"]#">
+		FROM #session.hostdbprefix#audios a
+		LEFT JOIN #session.hostdbprefix#audios_text aut ON a.aud_id = aut.aud_id_r AND aut.lang_id_r = 1
+		LEFT JOIN #session.hostdbprefix#folders fo ON fo.folder_id = a.folder_id_r AND fo.host_id = a.host_id
+		WHERE a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		<cfif !arguments.astruct.dbdirect>
 			AND a.aud_id IN (<cfif qryluceneaud.recordcount EQ 0>'0'<cfelse>'0'<cfloop query="cattreeaud">,'#categorytree#'</cfloop></cfif>)
 		<cfelse>
@@ -1265,7 +1265,7 @@
 			<!--- Check permission on this folder --->
 			WHEN EXISTS(
 				SELECT fg.folder_id_r
-				FROM #application.razuna.api.prefix["#arguments.astruct.api_key#"]#folders_groups fg
+				FROM #session.hostdbprefix#folders_groups fg
 				WHERE fg.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				AND fg.folder_id_r = a.folder_id_r
 				AND fg.grp_permission IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
@@ -1274,7 +1274,7 @@
 			<!--- When folder is shared for everyone --->
 			WHEN EXISTS(
 				SELECT fg2.folder_id_r
-				FROM #application.razuna.api.prefix["#arguments.astruct.api_key#"]#folders_groups fg2
+				FROM #session.hostdbprefix#folders_groups fg2
 				WHERE fg2.grp_id_r = '0'
 				AND fg2.folder_id_r = a.folder_id_r
 				AND fg2.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -1287,7 +1287,7 @@
 		<!--- Only if we have dates --->
 		<cfif !arguments.astruct.dbdirect>
 			<cfif arguments.astruct.datecreate NEQ "">
-				<cfif application.razuna.api.thedatabase EQ "mssql">
+				<cfif application.razuna.thedatabase EQ "mssql">
 					AND (DATEPART(yy, a.aud_create_time) = adate.the_create_year
 					AND DATEPART(mm, a.aud_create_time) = adate.the_create_month
 					AND DATEPART(dd, a.aud_create_time) = adate.the_create_day)
@@ -1296,7 +1296,7 @@
 				</cfif>
 			</cfif>
 			<cfif arguments.astruct.datechange NEQ "">
-				<cfif application.razuna.api.thedatabase EQ "mssql">
+				<cfif application.razuna.thedatabase EQ "mssql">
 					AND (DATEPART(yy, a.aud_change_time) = adate.the_change_year
 					AND DATEPART(mm, a.aud_change_time) = adate.the_change_month
 					AND DATEPART(dd, a.aud_change_time) = adate.the_change_day)
@@ -1324,7 +1324,7 @@
 		GROUP BY a.aud_id, a.aud_name, a.folder_id_r, fo.folder_name, a.aud_extension, a.aud_name_org, a.aud_extension, a.path_to_asset, a.cloud_url, a.cloud_url_org, a.aud_size, aut.aud_description, aut.aud_keywords, a.aud_create_time, a.aud_change_time, a.hashtag, fo.folder_name, a.aud_name, a.aud_group, a.expiry_date<cfif arguments.astruct.ui>, a.is_available, a.link_kind, a.link_path_url</cfif>
 		UNION ALL
 		<!--- Get Aliases --->
-		SELECT /* #cachetoken#search_audios_api */ <cfif application.razuna.api.thedatabase EQ "oracle">to_char(NVL(a.aud_id, 0))<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">cast(ifnull(a.aud_id, 0) AS char)<cfelseif application.razuna.api.thedatabase EQ "mssql">isnull(cast(a.aud_id as varchar(100)), '0')</cfif> id,
+		SELECT /* #cachetoken#search_audios_api */ <cfif application.razuna.thedatabase EQ "oracle">to_char(NVL(a.aud_id, 0))<cfelseif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">cast(ifnull(a.aud_id, 0) AS char)<cfelseif application.razuna.thedatabase EQ "mssql">isnull(cast(a.aud_id as varchar(100)), '0')</cfif> id,
 		a.aud_name filename,
 		ct.folder_id_r folder_id,
 		fo.folder_name,
@@ -1336,7 +1336,7 @@
 		a.path_to_asset,
 		a.cloud_url,
 		a.cloud_url_org,
-		<cfif application.razuna.api.thedatabase EQ "oracle">to_char(NVL(a.aud_size, 0))<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">cast(ifnull(a.aud_size, 0) AS char)<cfelseif application.razuna.api.thedatabase EQ "mssql">isnull(cast(a.aud_size as varchar(100)), '0')</cfif> AS size, cast(a.aud_size as decimal(12,0))  AS size_num,
+		<cfif application.razuna.thedatabase EQ "oracle">to_char(NVL(a.aud_size, 0))<cfelseif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">cast(ifnull(a.aud_size, 0) AS char)<cfelseif application.razuna.thedatabase EQ "mssql">isnull(cast(a.aud_size as varchar(100)), '0')</cfif> AS size, cast(a.aud_size as decimal(12,0))  AS size_num,
 		0 AS width,
 		0 AS height,
 		'1' AS isalias,
@@ -1344,35 +1344,35 @@
 		aut.aud_keywords keywords,
 		a.aud_create_time dateadd,
 		a.aud_change_time datechange,
-		CASE WHEN NOT (a.aud_group is null OR a.aud_group='') THEN (SELECT expiry_date FROM #application.razuna.api.prefix["#arguments.astruct.api_key#"]#audios WHERE aud_id=a.aud_group) ELSE a.expiry_date END  expiry_date_actual,
-        <cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
-            concat('#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.astruct.api_key#"]#/',a.path_to_asset,'/',a.aud_name_org) AS local_url_org,
-        <cfelseif application.razuna.api.thedatabase EQ "mssql">
-            '#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.astruct.api_key#"]#/' + a.path_to_asset + '/' + a.aud_name_org AS local_url_org,
+		CASE WHEN NOT (a.aud_group is null OR a.aud_group='') THEN (SELECT expiry_date FROM #session.hostdbprefix#audios WHERE aud_id=a.aud_group) ELSE a.expiry_date END  expiry_date_actual,
+        <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">
+            concat('#application.razuna.thehttp##cgi.HTTP_HOST#/#application.razuna.dynpath#/assets/#session.hostid#/',a.path_to_asset,'/',a.aud_name_org) AS local_url_org,
+        <cfelseif application.razuna.thedatabase EQ "mssql">
+            '#application.razuna.thehttp##cgi.HTTP_HOST#/#application.razuna.dynpath#/assets/#session.hostid#/' + a.path_to_asset + '/' + a.aud_name_org AS local_url_org,
          </cfif>
 		'0' as local_url_thumb,
-		<cfif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
+		<cfif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">
 			(
 				SELECT GROUP_CONCAT(DISTINCT ac.col_id_r ORDER BY ac.col_id_r SEPARATOR ',') AS col_id
-				FROM #application.razuna.api.prefix["#arguments.astruct.api_key#"]#collections_ct_files ac
+				FROM #session.hostdbprefix#collections_ct_files ac
 				WHERE ac.file_id_r = a.aud_id
 				AND ac.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 			) AS colid
-		<cfelseif application.razuna.api.thedatabase EQ "mssql">
+		<cfelseif application.razuna.thedatabase EQ "mssql">
 			STUFF(
 				(
 					SELECT ', ' + ac.col_id_r
-					FROM #application.razuna.api.prefix["#arguments.astruct.api_key#"]#collections_ct_files ac
+					FROM #session.hostdbprefix#collections_ct_files ac
 		         	WHERE ac.file_id_r = a.aud_id
 		         	AND ac.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 		          	FOR XML PATH ('')
 	          	)
 	          	, 1, 1, ''
 			) AS colid
-		<cfelseif application.razuna.api.thedatabase EQ "oracle">
+		<cfelseif application.razuna.thedatabase EQ "oracle">
 			(
 				SELECT wmsys.wm_concat(ac.col_id_r) AS col_id
-				FROM #application.razuna.api.prefix["#arguments.astruct.api_key#"]#collections_ct_files ac
+				FROM #session.hostdbprefix#collections_ct_files ac
 				WHERE ac.file_id_r = a.aud_id
 				AND ac.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 			) AS colid
@@ -1402,7 +1402,7 @@
 			a.hashtag,
 			'' as labels,
 			'#session.customaccess#' as permfolder,
-			<cfif application.razuna.api.thedatabase EQ "mssql">a.aud_id + '-aud'<cfelse>concat(a.aud_id,'-aud')</cfif> as listid
+			<cfif application.razuna.thedatabase EQ "mssql">a.aud_id + '-aud'<cfelse>concat(a.aud_id,'-aud')</cfif> as listid
 			<!--- custom metadata fields to show --->
 			<cfif arguments.astruct.cs.images_metadata NEQ "">
 				<cfloop list="#arguments.astruct.cs.images_metadata#" index="m" delimiters=",">
@@ -1427,11 +1427,11 @@
 				</cfloop>
 			</cfif>
 		</cfif>
-		FROM #application.razuna.api.prefix["#arguments.astruct.api_key#"]#audios a
+		FROM #session.hostdbprefix#audios a
 		INNER JOIN ct_aliases ct ON a.aud_id = ct.asset_id_r
-		LEFT JOIN #application.razuna.api.prefix["#arguments.astruct.api_key#"]#audios_text aut ON a.aud_id = aut.aud_id_r AND aut.lang_id_r = 1
-		LEFT JOIN #application.razuna.api.prefix["#arguments.astruct.api_key#"]#folders fo ON fo.folder_id = ct.folder_id_r AND fo.host_id = a.host_id
-		WHERE a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.astruct.api_key#"]#">
+		LEFT JOIN #session.hostdbprefix#audios_text aut ON a.aud_id = aut.aud_id_r AND aut.lang_id_r = 1
+		LEFT JOIN #session.hostdbprefix#folders fo ON fo.folder_id = ct.folder_id_r AND fo.host_id = a.host_id
+		WHERE a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		<cfif !arguments.astruct.dbdirect>
 			AND a.aud_id IN (<cfif qryluceneaud.recordcount EQ 0>'0'<cfelse>'0'<cfloop query="cattreeaud">,'#categorytree#'</cfloop></cfif>)
 		<cfelse>
@@ -1447,7 +1447,7 @@
 			<!--- Check permission on this folder --->
 			WHEN EXISTS(
 				SELECT fg.folder_id_r
-				FROM #application.razuna.api.prefix["#arguments.astruct.api_key#"]#folders_groups fg
+				FROM #session.hostdbprefix#folders_groups fg
 				WHERE fg.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				AND fg.folder_id_r = ct.folder_id_r
 				AND fg.grp_permission IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
@@ -1456,7 +1456,7 @@
 			<!--- When folder is shared for everyone --->
 			WHEN EXISTS(
 				SELECT fg2.folder_id_r
-				FROM #application.razuna.api.prefix["#arguments.astruct.api_key#"]#folders_groups fg2
+				FROM #session.hostdbprefix#folders_groups fg2
 				WHERE fg2.grp_id_r = '0'
 				AND fg2.folder_id_r = ct.folder_id_r
 				AND fg2.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -1469,7 +1469,7 @@
 		<!--- Only if we have dates --->
 		<cfif !arguments.astruct.dbdirect>
 			<cfif arguments.astruct.datecreate NEQ "">
-				<cfif application.razuna.api.thedatabase EQ "mssql">
+				<cfif application.razuna.thedatabase EQ "mssql">
 					AND (DATEPART(yy, a.aud_create_time) = adate.the_create_year
 					AND DATEPART(mm, a.aud_create_time) = adate.the_create_month
 					AND DATEPART(dd, a.aud_create_time) = adate.the_create_day)
@@ -1478,7 +1478,7 @@
 				</cfif>
 			</cfif>
 			<cfif arguments.astruct.datechange NEQ "">
-				<cfif application.razuna.api.thedatabase EQ "mssql">
+				<cfif application.razuna.thedatabase EQ "mssql">
 					AND (DATEPART(yy, a.aud_change_time) = adate.the_change_year
 					AND DATEPART(mm, a.aud_change_time) = adate.the_change_month
 					AND DATEPART(dd, a.aud_change_time) = adate.the_change_day)
@@ -1545,7 +1545,7 @@
 				<cfset thesearchfor = "#thesearchfor# #_add_and# change_time:[#replace(arguments.fstruct.datechangerange, "-", "", "ALL")#]">
 			</cfif>
 			<!--- Search in Lucene --->
-			<cfset var qrylucenedoc = search(criteria=thesearchfor, category="doc", hostid="#application.razuna.api.hostid["#arguments.fstruct.api_key#"]#", startrow=arguments.fstruct.startrow, maxrows=arguments.fstruct.maxrows, folderid=arguments.fstruct.folderid, showrenditions=arguments.fstruct.showrenditions, search_upc=arguments.fstruct.search_upc)>
+			<cfset var qrylucenedoc = search(criteria=thesearchfor, category="doc", hostid=session.hostid, startrow=arguments.fstruct.startrow, maxrows=arguments.fstruct.maxrows, folderid=arguments.fstruct.folderid, showrenditions=arguments.fstruct.showrenditions, search_upc=arguments.fstruct.search_upc, search_type="")>
 			<!--- If lucene returns no records --->
 			<cfif qrylucenedoc.recordcount NEQ 0>
 				<!--- Sometimes it can happen that the category tree is empty thus we filter them with a QoQ here --->
@@ -1565,13 +1565,13 @@
 		</cfif>
 		<cfset var cachetoken = getcachetoken(arguments.fstruct.api_key,"search")>
 		<!--- Query --->
-		<cfquery datasource="#application.razuna.api.dsn#" name="qry_doc" cachedwithin="1" region="razcache">
+		<cfquery datasource="#application.razuna.datasource#" name="qry_doc" cachedwithin="1" region="razcache">
 		SELECT /* #cachetoken#search_files_api */
-			<cfif application.razuna.api.thedatabase EQ "oracle">
+			<cfif application.razuna.thedatabase EQ "oracle">
 				to_char(NVL(f.file_id, 0))
-			<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
+			<cfelseif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">
 				cast(ifnull(f.file_id, 0) AS char)
-			<cfelseif application.razuna.api.thedatabase EQ "mssql">
+			<cfelseif application.razuna.thedatabase EQ "mssql">
 				isnull(cast(f.file_id as varchar(100)), '0')
 			</cfif> AS id,
 		f.file_name filename,
@@ -1585,7 +1585,7 @@
 		f.path_to_asset,
 		f.cloud_url,
 		f.cloud_url_org,
-		<cfif application.razuna.api.thedatabase EQ "oracle">to_char(NVL(f.file_size, 0))<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">cast(ifnull(f.file_size, 0) AS char)<cfelseif application.razuna.api.thedatabase EQ "mssql">isnull(cast(f.file_size as varchar(100)), '0')</cfif> AS size, cast(f.file_size as decimal(12,0))  AS size_num,
+		<cfif application.razuna.thedatabase EQ "oracle">to_char(NVL(f.file_size, 0))<cfelseif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">cast(ifnull(f.file_size, 0) AS char)<cfelseif application.razuna.thedatabase EQ "mssql">isnull(cast(f.file_size as varchar(100)), '0')</cfif> AS size, cast(f.file_size as decimal(12,0))  AS size_num,
 		0 AS width,
 		0 AS height,
 		'0' AS isalias,
@@ -1594,34 +1594,34 @@
 		f.file_create_time dateadd,
 		f.file_change_time datechange,
 		f.expiry_date expiry_date_actual,
-        <cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
-            concat('#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.fstruct.api_key#"]#/',f.path_to_asset,'/',f.file_name_org) AS local_url_org,
-        <cfelseif application.razuna.api.thedatabase EQ "mssql">
-            '#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.fstruct.api_key#"]#/' + f.path_to_asset + '/' + f.file_name_org AS local_url_org,
+        <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">
+            concat('#application.razuna.thehttp##cgi.HTTP_HOST#/#application.razuna.dynpath#/assets/#session.hostid#/',f.path_to_asset,'/',f.file_name_org) AS local_url_org,
+        <cfelseif application.razuna.thedatabase EQ "mssql">
+            '#application.razuna.thehttp##cgi.HTTP_HOST#/#application.razuna.dynpath#/assets/#session.hostid#/' + f.path_to_asset + '/' + f.file_name_org AS local_url_org,
         </cfif>
 		'0' as local_url_thumb,
-		<cfif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
+		<cfif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">
 			(
 				SELECT GROUP_CONCAT(DISTINCT fc.col_id_r ORDER BY fc.col_id_r SEPARATOR ',') AS col_id
-				FROM #application.razuna.api.prefix["#arguments.fstruct.api_key#"]#collections_ct_files fc
+				FROM #session.hostdbprefix#collections_ct_files fc
 				WHERE fc.file_id_r = f.file_id
 				AND fc.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 			) AS colid
-		<cfelseif application.razuna.api.thedatabase EQ "mssql">
+		<cfelseif application.razuna.thedatabase EQ "mssql">
 			STUFF(
 				(
 					SELECT ', ' + fc.col_id_r
-					FROM #application.razuna.api.prefix["#arguments.fstruct.api_key#"]#collections_ct_files fc
+					FROM #session.hostdbprefix#collections_ct_files fc
 		         	WHERE fc.file_id_r = f.file_id
 		         	AND fc.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 		          	FOR XML PATH ('')
 	          	)
 	          	, 1, 1, ''
 			) AS colid
-		<cfelseif application.razuna.api.thedatabase EQ "oracle">
+		<cfelseif application.razuna.thedatabase EQ "oracle">
 			(
 				SELECT wmsys.wm_concat(fc.col_id_r) AS col_id
-				FROM #application.razuna.api.prefix["#arguments.fstruct.api_key#"]#collections_ct_files fc
+				FROM #session.hostdbprefix#collections_ct_files fc
 				WHERE fc.file_id_r = f.file_id
 				AND fc.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 			) AS colid
@@ -1651,7 +1651,7 @@
 			f.hashtag,
 			'' as labels,
 			'#session.customaccess#' as permfolder,
-			<cfif application.razuna.api.thedatabase EQ "mssql">f.file_id + '-doc'<cfelse>concat(f.file_id,'-doc')</cfif> as listid
+			<cfif application.razuna.thedatabase EQ "mssql">f.file_id + '-doc'<cfelse>concat(f.file_id,'-doc')</cfif> as listid
 			<!--- custom metadata fields to show --->
 			<cfif arguments.fstruct.cs.images_metadata NEQ "">
 				<cfloop list="#arguments.fstruct.cs.images_metadata#" index="m" delimiters=",">
@@ -1677,11 +1677,11 @@
 				</cfloop>
 			</cfif>
 		</cfif>
-		FROM #application.razuna.api.prefix["#arguments.fstruct.api_key#"]#files f
-		LEFT JOIN #application.razuna.api.prefix["#arguments.fstruct.api_key#"]#files_desc ft ON f.file_id = ft.file_id_r AND ft.lang_id_r = 1
-		LEFT JOIN #application.razuna.api.prefix["#arguments.fstruct.api_key#"]#files_xmp x ON f.file_id = x.asset_id_r AND x.host_id = f.host_id
-		LEFT JOIN #application.razuna.api.prefix["#arguments.fstruct.api_key#"]#folders fo ON fo.folder_id = f.folder_id_r AND fo.host_id = f.host_id
-		WHERE f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.fstruct.api_key#"]#">
+		FROM #session.hostdbprefix#files f
+		LEFT JOIN #session.hostdbprefix#files_desc ft ON f.file_id = ft.file_id_r AND ft.lang_id_r = 1
+		LEFT JOIN #session.hostdbprefix#files_xmp x ON f.file_id = x.asset_id_r AND x.host_id = f.host_id
+		LEFT JOIN #session.hostdbprefix#folders fo ON fo.folder_id = f.folder_id_r AND fo.host_id = f.host_id
+		WHERE f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		<cfif !arguments.fstruct.dbdirect>
 			AND f.file_id IN (<cfif qrylucenedoc.recordcount EQ 0>'0'<cfelse>'0'<cfloop query="cattreedoc">,'#categorytree#'</cfloop></cfif>)
 		<cfelse>
@@ -1697,7 +1697,7 @@
 			<!--- Check permission on this folder --->
 			WHEN EXISTS(
 				SELECT fg.folder_id_r
-				FROM #application.razuna.api.prefix["#arguments.fstruct.api_key#"]#folders_groups fg
+				FROM #session.hostdbprefix#folders_groups fg
 				WHERE fg.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				AND fg.folder_id_r = f.folder_id_r
 				AND fg.grp_permission IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
@@ -1706,7 +1706,7 @@
 			<!--- When folder is shared for everyone --->
 			WHEN EXISTS(
 				SELECT fg2.folder_id_r
-				FROM #application.razuna.api.prefix["#arguments.fstruct.api_key#"]#folders_groups fg2
+				FROM #session.hostdbprefix#folders_groups fg2
 				WHERE fg2.grp_id_r = '0'
 				AND fg2.folder_id_r = f.folder_id_r
 				AND fg2.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -1719,7 +1719,7 @@
 		<!--- Only if we have dates --->
 		<cfif !arguments.fstruct.dbdirect>
 			<cfif arguments.fstruct.datecreate NEQ "">
-				<cfif application.razuna.api.thedatabase EQ "mssql">
+				<cfif application.razuna.thedatabase EQ "mssql">
 					AND (DATEPART(yy, f.file_create_time) = fdate.the_create_year
 					AND DATEPART(mm, f.file_create_time) = fdate.the_create_month
 					AND DATEPART(dd, f.file_create_time) = fdate.the_create_day)
@@ -1728,7 +1728,7 @@
 				</cfif>
 			</cfif>
 			<cfif arguments.fstruct.datechange NEQ "">
-				<cfif application.razuna.api.thedatabase EQ "mssql">
+				<cfif application.razuna.thedatabase EQ "mssql">
 					AND (DATEPART(yy, f.file_change_time) = fdate.the_change_year
 					AND DATEPART(mm, f.file_change_time) = fdate.the_change_month
 					AND DATEPART(dd, f.file_change_time) = fdate.the_change_day)
@@ -1759,11 +1759,11 @@
 		UNION ALL
 		<!--- Get Aliases --->
 		SELECT /* #cachetoken#search_files_api */
-			<cfif application.razuna.api.thedatabase EQ "oracle">
+			<cfif application.razuna.thedatabase EQ "oracle">
 				to_char(NVL(f.file_id, 0))
-			<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
+			<cfelseif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">
 				cast(ifnull(f.file_id, 0) AS char)
-			<cfelseif application.razuna.api.thedatabase EQ "mssql">
+			<cfelseif application.razuna.thedatabase EQ "mssql">
 				isnull(cast(f.file_id as varchar(100)), '0')
 			</cfif> AS id,
 		f.file_name filename,
@@ -1777,7 +1777,7 @@
 		f.path_to_asset,
 		f.cloud_url,
 		f.cloud_url_org,
-		<cfif application.razuna.api.thedatabase EQ "oracle">to_char(NVL(f.file_size, 0))<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">cast(ifnull(f.file_size, 0) AS char)<cfelseif application.razuna.api.thedatabase EQ "mssql">isnull(cast(f.file_size as varchar(100)), '0')</cfif> AS size, cast(f.file_size as decimal(12,0))  AS size_num,
+		<cfif application.razuna.thedatabase EQ "oracle">to_char(NVL(f.file_size, 0))<cfelseif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">cast(ifnull(f.file_size, 0) AS char)<cfelseif application.razuna.thedatabase EQ "mssql">isnull(cast(f.file_size as varchar(100)), '0')</cfif> AS size, cast(f.file_size as decimal(12,0))  AS size_num,
 		0 AS width,
 		0 AS height,
 		'1' AS isalias,
@@ -1786,34 +1786,34 @@
 		f.file_create_time dateadd,
 		f.file_change_time datechange,
 		f.expiry_date expiry_date_actual,
-        <cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
-            concat('#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.fstruct.api_key#"]#/',f.path_to_asset,'/',f.file_name_org) AS local_url_org,
-        <cfelseif application.razuna.api.thedatabase EQ "mssql">
-            '#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.fstruct.api_key#"]#/' + f.path_to_asset + '/' + f.file_name_org AS local_url_org,
+        <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">
+            concat('#application.razuna.thehttp##cgi.HTTP_HOST#/#application.razuna.dynpath#/assets/#session.hostid#/',f.path_to_asset,'/',f.file_name_org) AS local_url_org,
+        <cfelseif application.razuna.thedatabase EQ "mssql">
+            '#application.razuna.thehttp##cgi.HTTP_HOST#/#application.razuna.dynpath#/assets/#session.hostid#/' + f.path_to_asset + '/' + f.file_name_org AS local_url_org,
         </cfif>
 		'0' as local_url_thumb,
-		<cfif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
+		<cfif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">
 			(
 				SELECT GROUP_CONCAT(DISTINCT fc.col_id_r ORDER BY fc.col_id_r SEPARATOR ',') AS col_id
-				FROM #application.razuna.api.prefix["#arguments.fstruct.api_key#"]#collections_ct_files fc
+				FROM #session.hostdbprefix#collections_ct_files fc
 				WHERE fc.file_id_r = f.file_id
 				AND fc.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 			) AS colid
-		<cfelseif application.razuna.api.thedatabase EQ "mssql">
+		<cfelseif application.razuna.thedatabase EQ "mssql">
 			STUFF(
 				(
 					SELECT ', ' + fc.col_id_r
-					FROM #application.razuna.api.prefix["#arguments.fstruct.api_key#"]#collections_ct_files fc
+					FROM #session.hostdbprefix#collections_ct_files fc
 		         	WHERE fc.file_id_r = f.file_id
 		         	AND fc.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 		          	FOR XML PATH ('')
 	          	)
 	          	, 1, 1, ''
 			) AS colid
-		<cfelseif application.razuna.api.thedatabase EQ "oracle">
+		<cfelseif application.razuna.thedatabase EQ "oracle">
 			(
 				SELECT wmsys.wm_concat(fc.col_id_r) AS col_id
-				FROM #application.razuna.api.prefix["#arguments.fstruct.api_key#"]#collections_ct_files fc
+				FROM #session.hostdbprefix#collections_ct_files fc
 				WHERE fc.file_id_r = f.file_id
 				AND fc.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 			) AS colid
@@ -1843,7 +1843,7 @@
 			f.hashtag,
 			'' as labels,
 			'#session.customaccess#' as permfolder,
-			<cfif application.razuna.api.thedatabase EQ "mssql">f.file_id + '-doc'<cfelse>concat(f.file_id,'-doc')</cfif> as listid
+			<cfif application.razuna.thedatabase EQ "mssql">f.file_id + '-doc'<cfelse>concat(f.file_id,'-doc')</cfif> as listid
 			<!--- custom metadata fields to show --->
 			<cfif arguments.fstruct.cs.images_metadata NEQ "">
 				<cfloop list="#arguments.fstruct.cs.images_metadata#" index="m" delimiters=",">
@@ -1869,12 +1869,12 @@
 				</cfloop>
 			</cfif>
 		</cfif>
-		FROM #application.razuna.api.prefix["#arguments.fstruct.api_key#"]#files f
+		FROM #session.hostdbprefix#files f
 		INNER JOIN ct_aliases ct ON f.file_id = ct.asset_id_r
-		LEFT JOIN #application.razuna.api.prefix["#arguments.fstruct.api_key#"]#files_desc ft ON f.file_id = ft.file_id_r AND ft.lang_id_r = 1
-		LEFT JOIN #application.razuna.api.prefix["#arguments.fstruct.api_key#"]#files_xmp x ON f.file_id = x.asset_id_r AND x.host_id = f.host_id
-		LEFT JOIN #application.razuna.api.prefix["#arguments.fstruct.api_key#"]#folders fo ON fo.folder_id = ct.folder_id_r AND fo.host_id = f.host_id
-		WHERE f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.fstruct.api_key#"]#">
+		LEFT JOIN #session.hostdbprefix#files_desc ft ON f.file_id = ft.file_id_r AND ft.lang_id_r = 1
+		LEFT JOIN #session.hostdbprefix#files_xmp x ON f.file_id = x.asset_id_r AND x.host_id = f.host_id
+		LEFT JOIN #session.hostdbprefix#folders fo ON fo.folder_id = ct.folder_id_r AND fo.host_id = f.host_id
+		WHERE f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		<cfif !arguments.fstruct.dbdirect>
 			AND f.file_id IN (<cfif qrylucenedoc.recordcount EQ 0>'0'<cfelse>'0'<cfloop query="cattreedoc">,'#categorytree#'</cfloop></cfif>)
 		<cfelse>
@@ -1890,7 +1890,7 @@
 			<!--- Check permission on this folder --->
 			WHEN EXISTS(
 				SELECT fg.folder_id_r
-				FROM #application.razuna.api.prefix["#arguments.fstruct.api_key#"]#folders_groups fg
+				FROM #session.hostdbprefix#folders_groups fg
 				WHERE fg.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				AND fg.folder_id_r = ct.folder_id_r
 				AND fg.grp_permission IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
@@ -1899,7 +1899,7 @@
 			<!--- When folder is shared for everyone --->
 			WHEN EXISTS(
 				SELECT fg2.folder_id_r
-				FROM #application.razuna.api.prefix["#arguments.fstruct.api_key#"]#folders_groups fg2
+				FROM #session.hostdbprefix#folders_groups fg2
 				WHERE fg2.grp_id_r = '0'
 				AND fg2.folder_id_r = ct.folder_id_r
 				AND fg2.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -1912,7 +1912,7 @@
 		<!--- Only if we have dates --->
 		<cfif !arguments.fstruct.dbdirect>
 			<cfif arguments.fstruct.datecreate NEQ "">
-				<cfif application.razuna.api.thedatabase EQ "mssql">
+				<cfif application.razuna.thedatabase EQ "mssql">
 					AND (DATEPART(yy, f.file_create_time) = fdate.the_create_year
 					AND DATEPART(mm, f.file_create_time) = fdate.the_create_month
 					AND DATEPART(dd, f.file_create_time) = fdate.the_create_day)
@@ -1921,7 +1921,7 @@
 				</cfif>
 			</cfif>
 			<cfif arguments.fstruct.datechange NEQ "">
-				<cfif application.razuna.api.thedatabase EQ "mssql">
+				<cfif application.razuna.thedatabase EQ "mssql">
 					AND (DATEPART(yy, f.file_change_time) = fdate.the_change_year
 					AND DATEPART(mm, f.file_change_time) = fdate.the_change_month
 					AND DATEPART(dd, f.file_change_time) = fdate.the_change_day)
@@ -1970,11 +1970,11 @@
 					WHERE qry_doc.extension = <cfqueryparam value="pdf" cfsqltype="cf_sql_varchar">
 				</cfcase>
 				<cfcase value="other">
-					WHERE qry_doc.extension <cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam value="pdf" cfsqltype="cf_sql_varchar">
-					AND qry_doc.extension <cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam value="xls" cfsqltype="cf_sql_varchar">
-					AND qry_doc.extension <cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam value="xlsx" cfsqltype="cf_sql_varchar">
-					AND qry_doc.extension <cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam value="doc" cfsqltype="cf_sql_varchar">
-					AND qry_doc.extension <cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam value="docx" cfsqltype="cf_sql_varchar">
+					WHERE qry_doc.extension <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam value="pdf" cfsqltype="cf_sql_varchar">
+					AND qry_doc.extension <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam value="xls" cfsqltype="cf_sql_varchar">
+					AND qry_doc.extension <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam value="xlsx" cfsqltype="cf_sql_varchar">
+					AND qry_doc.extension <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam value="doc" cfsqltype="cf_sql_varchar">
+					AND qry_doc.extension <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam value="docx" cfsqltype="cf_sql_varchar">
 				</cfcase>
 			</cfswitch>
 			</cfquery>
@@ -1990,7 +1990,7 @@
 		<!--- Param --->
 		<cfset var sd = structNew()>
 		<!--- If we are on MS SQL the date has to be formated differently --->
-		<cfif application.razuna.api.thedatabase EQ "mssql">
+		<cfif application.razuna.thedatabase EQ "mssql">
 			<!--- Set the counter --->
 			<cfset var thecountercreate = 1>
 			<cfset var thecounterchange = 1>

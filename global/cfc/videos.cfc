@@ -245,10 +245,6 @@
 	<cfargument name="offset" type="numeric" required="false" default="0">
 	<cfargument name="rowmaxpage" type="numeric" required="false" default="0">
 	<cfargument name="thestruct" type="struct" required="false" default="">
-	<!--- Set thestruct if not here --->
-	<cfif NOT isstruct(arguments.thestruct)>
-		<cfset arguments.thestruct = structnew()>
-	</cfif>
 	<cfreturn getFolderAssets(folder_id=Arguments.folder_id, ColumnList=Arguments.ColumnList, file_extension=Arguments.file_extension, offset=arguments.thestruct.razuna.session.offset, rowmaxpage=arguments.thestruct.razuna.session.rowmaxpage, thestruct=arguments.thestruct)>
 </cffunction>
 
@@ -1653,7 +1649,7 @@
 					<cfelse>
 						<cfset var theacodec = "copy">
 					</cfif>
-					<cfset var theargument="-i #inputpath# -vcodec h263 -acodec #theacodec# -ac 1 -ar 8000 -r 25 -ab 12.2k #_scale# -y #thispreviewvideo#">
+					<cfset var theargument="-i #inputpath# -vcodec h263 -ac 1 -ar 8000 -r 25 -ab 12.2k #_scale# -y #thispreviewvideo#">
 				</cfcase>
 				<!--- MXF --->
 				<cfcase value="mxf">
@@ -1679,7 +1675,7 @@
 						<cfset var theaac = "libfaac">
 					</cfif>
 
-					<cfset var theargument="-i #inputpath# #_scale# -vcodec libx264 -pix_fmt yuv420p -acodec #theaac# -crf 22 -threads 2 -y #thispreviewvideo#">
+					<cfset var theargument="-i #inputpath# #_scale# -vcodec libx264 -pix_fmt yuv420p -crf 22 -threads 2 -y #thispreviewvideo#">
 				</cfdefaultcase>
 			</cfswitch>
 			<!--- FFMPEG: CONVERT THE VIDEO --->
@@ -1718,7 +1714,7 @@
 				<cfset transvalues[1] = "#ucase(theformat)#">
 				<cfinvoke component="defaults" method="trans" transid="video_convert_error_subject" values="#transvalues#" returnvariable="convert_error_sub" />
 				<cfinvoke component="defaults" method="trans" transid="video_convert_error_message" values="#transvalues#" returnvariable="convert_error_msg" />
-				<cfinvoke component="email" method="send_email" prefix="#arguments.thestruct.razuna.session.hostdbprefix#" to="#qryuser.user_email#" subject="#convert_error_sub#" themessage="#convert_error_msg#">
+				<cfinvoke component="email" method="send_email" prefix="#arguments.thestruct.razuna.session.hostdbprefix#" to="#qryuser.user_email#" subject="#convert_error_sub#" themessage="#convert_error_msg#" thestruct="#arguments.thestruct#">
 				<cfcontinue>
 			</cfif>
 			<!--- <cfreturn 0> --->
@@ -1733,7 +1729,7 @@
 				<cfset transvalues[1] = "#ucase(theformat)#">
 				<cfinvoke component="defaults" method="trans" transid="video_convert_error_subject" values="#transvalues#" returnvariable="convert_error_sub" />
 				<cfinvoke component="defaults" method="trans" transid="video_convert_error_message" values="#transvalues#" returnvariable="convert_error_msg" />
-				<cfinvoke component="email" method="send_email" prefix="#arguments.thestruct.razuna.session.hostdbprefix#" to="#qryuser.user_email#" subject="#convert_error_sub#" themessage="#convert_error_msg#">
+				<cfinvoke component="email" method="send_email" prefix="#arguments.thestruct.razuna.session.hostdbprefix#" to="#qryuser.user_email#" subject="#convert_error_sub#" themessage="#convert_error_msg#" thestruct="#arguments.thestruct#">
 			<cfelse>
 				<!--- If we are MP4 run it trough MP4Box --->
 				<cfif theformat EQ "mp4" AND arguments.thestruct.thetools.mp4box NEQ "">

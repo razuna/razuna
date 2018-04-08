@@ -39,7 +39,7 @@
 			<cfset s.file_id = arguments.id>
 			<cfset s.type = arguments.type>
 			<!--- call internal method --->
-			<cfinvoke component="global.cfc.comments" method="get" thestruct="#s#" returnVariable="thexml">
+			<cfset thexml = callFunction(comp="global.cfc.comments", func="get", thestruct=s)>
 		<!--- No session found --->
 		<cfelse>
 			<cfset var thexml = timeout()>
@@ -47,7 +47,7 @@
 		<!--- Return --->
 		<cfreturn thexml>
 	</cffunction>
-	
+
 	<!--- Get one comment --->
 	<cffunction name="get" access="remote" output="false" returntype="query" returnformat="json">
 		<cfargument name="api_key" required="true">
@@ -60,7 +60,7 @@
 			<cfset var s = structNew()>
 			<cfset s.com_id = arguments.id>
 			<!--- call internal method --->
-			<cfinvoke component="global.cfc.comments" method="edit" thestruct="#s#" returnVariable="thexml">
+			<cfset thexml = callFunction(comp="global.cfc.comments", func="edit", thestruct=s)>
 		<!--- No session found --->
 		<cfelse>
 			<cfset var thexml = timeout()>
@@ -68,7 +68,7 @@
 		<!--- Return --->
 		<cfreturn thexml>
 	</cffunction>
-	
+
 	<!--- Add / Update comment --->
 	<cffunction name="set" access="remote" output="false" returntype="struct" returnformat="json">
 		<cfargument name="api_key" required="true">
@@ -95,7 +95,7 @@
 					<!--- Create new ID --->
 					<cfset session.newcommentid = createuuid()>
 					<!--- call internal method --->
-					<cfinvoke component="global.cfc.comments" method="add" thestruct="#s#">
+					<cfset callFunction(comp="global.cfc.comments", func="add", thestruct=s)>
 					<!--- Return --->
 					<cfset thexml.responsecode = 0>
 					<cfset thexml.message = "Comment successfully added">
@@ -103,7 +103,7 @@
 				<!--- Update --->
 				<cfelse>
 					<!--- call internal method --->
-					<cfinvoke component="global.cfc.comments" method="update" thestruct="#s#">
+					<cfset callFunction(comp="global.cfc.comments", func="update", thestruct=s)>
 					<!--- Return --->
 					<cfset thexml.responsecode = 0>
 					<cfset thexml.message = "Comment successfully updated">
@@ -121,7 +121,7 @@
 		<!--- Return --->
 		<cfreturn thexml>
 	</cffunction>
-	
+
 	<!--- Remove comment --->
 	<cffunction name="remove" access="remote" output="false" returntype="struct" returnformat="json">
 		<cfargument name="api_key" required="true">
@@ -136,7 +136,7 @@
 				<cfset var s = structNew()>
 				<cfset s.id = arguments.id>
 				<!--- call internal method --->
-				<cfinvoke component="global.cfc.comments" method="remove" thestruct="#s#">
+				<cfset callFunction(comp="global.cfc.comments", func="remove", thestruct=s)>
 				<!--- Return --->
 				<cfset thexml.responsecode = 0>
 				<cfset thexml.message = "Comment(s) successfully removed">
@@ -152,7 +152,7 @@
 		<!--- Return --->
 		<cfreturn thexml>
 	</cffunction>
-	
-	
-	
+
+
+
 </cfcomponent>
