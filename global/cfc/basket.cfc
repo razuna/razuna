@@ -50,7 +50,7 @@
 				<!--- Set the fileid --->
 				<cfset attributes.intstruct.file_id = ids>
 		</cfif>
-	
+
 		<cfloop index="thenr" delimiters="," list="#attributes.intstruct.file_id#">
 			<!--- If we come from a overview we have numbers with the type --->
 			<cfset thetype = listlast(thenr,"-")>
@@ -72,7 +72,7 @@
 				<!--- Sometimes we have a 0 in the list, filter this out --->
 				<cfif thenr NEQ 0 AND len(thetype) LTE 5>
 					<!--- insert the prodcut to the cart --->
-					<cfquery datasource="#attributes.intstruct.datasource#">
+					<cfquery datasource="#attributes.intstruct.razuna.application.datasource#">
 					<cfif attributes.intstruct.razuna.application.thedatabase EQ "mysql">INSERT IGNORE<cfelse>MERGE</cfif> INTO #attributes.intstruct.razuna.session.hostdbprefix#cart
 					(cart_id, user_id, cart_product_id, cart_create_date, cart_create_time, cart_change_date, cart_change_time, cart_file_type, host_id)
 					VALUES(
@@ -162,6 +162,11 @@
 		<cfset var limit = true>
 	</cfif>
 	<cfparam name="arguments.thestruct.get_all_fields" default="false">
+	<!--- Store sessions to get all files in basket --->
+	<cfset session.allorg = "all">
+	<cfset session.allthumb = "all">
+	<cfset session.allrend = "all">
+	<cfset session.allvers = "all">
 	<!--- Get the cachetoken for here --->
 	<cfset var cachetoken = getcachetoken(type="general", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 	<!--- Get total --->
@@ -412,7 +417,7 @@
 		WHERE c.cart_id = <cfqueryparam value="#arguments.thestruct.razuna.session.thecart#" cfsqltype="cf_sql_varchar">
 		AND c.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 		ORDER BY c.cart_file_type
-		<cfif limit>LIMIT 200</cfif>
+		<cfif limit>LIMIT 2</cfif>
 	</cfquery>
 <!--- 	<cfdump var="#qry#">
 	<cfabort> --->
@@ -678,8 +683,8 @@
 		</cfif>
 	</cfif>
 	<!--- Zip the folder --->
-	<cfthread name="#basketname#" intstruct="#arguments.thestruct#">
-		<cfzip action="create" ZIPFILE="#attributes.intstruct.thepath#/outgoing/#attributes.intstruct.zipname#" source="#attributes.intstruct.newpath#" recurse="true" timeout="300" />
+	<cfthread name="#basketname#" zip_path="#arguments.thestruct.thepath#/outgoing/#arguments.thestruct.zipname#" zip_source="#arguments.thestruct.newpath#">
+		<cfzip action="create" ZIPFILE="#attributes.zip_path#" source="#attributes.zip_source#" recurse="true" timeout="300" />
 	</cfthread>
 	<!--- Get thread status --->
 	<cfset var thethread=cfthread["#basketname#"]>
@@ -1186,7 +1191,7 @@
 			<cfset var fileNameOK = true>
 			<cfset var uniqueCount = 1>
 			<cfset var thenameorg = arguments.thestruct.thefinalname>
-
+			
 			<!--- Copying to AWS --->
 			<cfif isdefined("arguments.thestruct.awsdatasource") AND isdefined("arguments.thestruct.awsbucket")>
 				<cfif theart EQ "versions">

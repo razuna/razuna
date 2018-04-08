@@ -54,7 +54,7 @@
 
 <cfoutput>
 	<!--- If more than 200 we disable checkboxes --->
-	<cfset _chk_disabled = qry_basket.total GT 200 ? 'disabled' : ''>
+	<cfset _chk_disabled = qry_basket.total GT 2 ? 'disabled' : ''>
 	<!--- Get network path --->
 	<cfsavecontent variable="netpath">
 		#evaluate("qry_customization.#session.user_os#_netpath2asset")#
