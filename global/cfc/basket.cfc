@@ -162,11 +162,6 @@
 		<cfset var limit = true>
 	</cfif>
 	<cfparam name="arguments.thestruct.get_all_fields" default="false">
-	<!--- Store sessions to get all files in basket --->
-	<cfset session.allorg = "all">
-	<cfset session.allthumb = "all">
-	<cfset session.allrend = "all">
-	<cfset session.allvers = "all">
 	<!--- Get the cachetoken for here --->
 	<cfset var cachetoken = getcachetoken(type="general", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 	<!--- Get total --->
@@ -417,10 +412,15 @@
 		WHERE c.cart_id = <cfqueryparam value="#arguments.thestruct.razuna.session.thecart#" cfsqltype="cf_sql_varchar">
 		AND c.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 		ORDER BY c.cart_file_type
-		<cfif limit>LIMIT 2</cfif>
+		<cfif limit>LIMIT 100</cfif>
 	</cfquery>
-<!--- 	<cfdump var="#qry#">
-	<cfabort> --->
+	<!--- <cfdump var="#qry#">
+	<cfdump var="#session#"> --->
+	<!--- <cfdump var="#arguments.thestruct#"> --->
+	<!--- <cfabort> --->
+	<!--- <cfset consoleoutput(true, true)>
+	<cfset console(limit)>
+	<cfset console(qry)> --->
 	<cfreturn qry>
 </cffunction>
 
@@ -480,7 +480,7 @@
 <cffunction name="writebasket" output="true">
 	<cfargument name="thestruct" type="struct">
 	<!--- <cfset consoleoutput(true, true)>
-	<cfset console(arguments.thestruct.artofimage)>
+	<cfset console(arguments.thestruct)>
 	<cfabort> --->
 	<!--- Params --->
 	<cfparam default="" name="arguments.thestruct.artofimage">

@@ -54,7 +54,7 @@
 
 <cfoutput>
 	<!--- If more than 200 we disable checkboxes --->
-	<cfset _chk_disabled = qry_basket.total GT 2 ? 'disabled' : ''>
+	<cfset _chk_disabled = qry_basket.total GT 100 ? 'disabled' : ''>
 	<!--- Get network path --->
 	<cfsavecontent variable="netpath">
 		#evaluate("qry_customization.#session.user_os#_netpath2asset")#
@@ -69,7 +69,7 @@
 				<cfif attributes.fromshare EQ "F">
                     <cfif qry_basket.recordcount NEQ 0>
                     	<cfif _chk_disabled EQ "disabled">
-	                    	<div style="padding:15px;background-color:cornsilk;">As you have more than 200 assets in the basket we only show the first 200 assets. Though, actions will apply to all assets in your basket.</div>
+	                    	<div style="padding:15px;background-color:cornsilk;">As you have more than 100 assets in the basket we only show the first 100 assets. Though, actions will apply to all assets in your basket.</div>
 	                    	<div style="padding-top:15px"></div>
 	                    </cfif>
                     	<!--- Buttons --->
@@ -963,12 +963,6 @@
 		// Switch
 		switch(the_value) {
 			case 'first':
-				_type = 'all-org-thumb';
-				_type_org = true;
-				_type_thumb = true;
-				_type_rend = false;
-				_type_vers = false;
-				break;
 			case 'all':
 				_type = 'all';
 				_type_org = true;
@@ -985,13 +979,13 @@
 				break;
 		}
 		// If disabled
-		var _disabled = $('#basket_disabled').val();
-		if ( _disabled === '' ) {
-			_type_org = false;
-			_type_thumb = false;
-			_type_rend = false;
-			_type_vers = false;
-		}
+		// var _disabled = $('#basket_disabled').val();
+		// if ( _disabled === '' ) {
+		// 	_type_org = false;
+		// 	_type_thumb = false;
+		// 	_type_rend = false;
+		// 	_type_vers = false;
+		// }
 		// Submit the values so we put them into sessions
 		var url = 'index.cfm?fa=c.store_art_values';
 		var items = '&artofimage=' + _type + '&artofvideo=' + _type + '&artofaudio=' + _type + '&artoffile=' + _type + '&allorg=' + _type_org + '&allthumb=' + _type_thumb + '&allrend=' + _type_rend + '&allvers=' + _type_vers;
