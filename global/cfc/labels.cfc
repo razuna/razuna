@@ -92,9 +92,12 @@
 	<!--- Add labels --->
 	<cffunction name="label_add_all" output="true" access="public">
 		<cfargument name="thestruct" type="struct">
-		<cfthread intstruct="#arguments.thestruct#">
+		<!--- <cfset consoleoutput(true, true)>
+		<cfset console("arguments.thestruct", arguments.thestruct)> --->
+		<cfinvoke method="label_add_all_thread" thestruct="#arguments.thestruct#" />
+		<!--- <cfthread intstruct="#arguments.thestruct#">
 			<cfinvoke method="label_add_all_thread" thestruct="#attributes.intstruct#" />
-		</cfthread>
+		</cfthread> --->
 	</cffunction>
 
 	<!--- Add labels --->
@@ -205,7 +208,7 @@
 			<cfset console("FIRST !!! attributes.intstruct.file_ids: #attributes.intstruct.file_ids#")> --->
 			<cfif attributes.intstruct.file_ids EQ "all">
 				<!--- As we have all get all IDS from this search --->
-				<cfinvoke component="search" method="getAllIdsMain" thestruct="#arguments.thestruct#" searchupc="#attributes.intstruct.razuna.session.search.searchupc#" searchtext="#attributes.intstruct.razuna.session.search.searchtext#" searchtype="#attributes.intstruct.razuna.session.search.searchtype#" searchrenditions="#attributes.intstruct.razuna.session.search.searchrenditions#" searchfolderid="#attributes.intstruct.razuna.session.search.searchfolderid#" hostid="#attributes.intstruct.razuna.session.hostid#" returnvariable="ids">
+				<cfinvoke component="search" method="getAllIdsMain" thestruct="#attributes.intstruct#" searchupc="#attributes.intstruct.razuna.session.search.searchupc#" searchtext="#attributes.intstruct.razuna.session.search.searchtext#" searchtype="#attributes.intstruct.razuna.session.search.searchtype#" searchrenditions="#attributes.intstruct.razuna.session.search.searchrenditions#" searchfolderid="#attributes.intstruct.razuna.session.search.searchfolderid#" hostid="#attributes.intstruct.razuna.session.hostid#" returnvariable="ids">
 					<!--- Set the fileid --->
 					<cfset attributes.intstruct.file_ids = ids>
 			</cfif>
@@ -476,27 +479,27 @@
 			(
 				SELECT count(ct.ct_label_id)
 				FROM ct_labels ct
-				LEFT JOIN #arguments.thestruct.razuna.session.hostdbprefix#images i ON ct.ct_id_r = i.img_id AND ct.ct_type = <cfqueryparam value="img" cfsqltype="cf_sql_varchar"/> AND (i.img_group IS NULL OR i.img_group = '')
-				LEFT JOIN #arguments.thestruct.razuna.session.hostdbprefix#audios a ON ct.ct_id_r = a.aud_id AND ct.ct_type = <cfqueryparam value="aud" cfsqltype="cf_sql_varchar"/> AND (a.aud_group IS NULL OR a.aud_group = '')
-				LEFT JOIN #arguments.thestruct.razuna.session.hostdbprefix#videos v ON ct.ct_id_r = v.vid_id AND ct.ct_type = <cfqueryparam value="vid" cfsqltype="cf_sql_varchar"/> AND (v.vid_group IS NULL OR v.vid_group = '')
-				LEFT JOIN #arguments.thestruct.razuna.session.hostdbprefix#files fi ON ct.ct_id_r = fi.file_id  AND ct.ct_type = <cfqueryparam value="doc" cfsqltype="cf_sql_varchar"/>
-				LEFT JOIN #arguments.thestruct.razuna.session.hostdbprefix#folders fo ON ct.ct_id_r = fo.folder_id  AND ct.ct_type = <cfqueryparam value="folder" cfsqltype="cf_sql_varchar"/>
-				LEFT JOIN #arguments.thestruct.razuna.session.hostdbprefix#collections c ON ct.ct_id_r = c.col_id  AND ct.ct_type =<cfqueryparam value="collection" cfsqltype="cf_sql_varchar"/>
+				LEFT JOIN #arguments.thestruct.razuna.session.hostdbprefix#images i ON ct.ct_id_r = i.img_id AND ct.ct_type = <cfqueryparam value="img" cfsqltype="cf_sql_varchar"/> AND (i.img_group IS NULL OR i.img_group = '') AND i.host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />
+				LEFT JOIN #arguments.thestruct.razuna.session.hostdbprefix#audios a ON ct.ct_id_r = a.aud_id AND ct.ct_type = <cfqueryparam value="aud" cfsqltype="cf_sql_varchar"/> AND (a.aud_group IS NULL OR a.aud_group = '') AND a.host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />
+				LEFT JOIN #arguments.thestruct.razuna.session.hostdbprefix#videos v ON ct.ct_id_r = v.vid_id AND ct.ct_type = <cfqueryparam value="vid" cfsqltype="cf_sql_varchar"/> AND (v.vid_group IS NULL OR v.vid_group = '') AND v.host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />
+				LEFT JOIN #arguments.thestruct.razuna.session.hostdbprefix#files fi ON ct.ct_id_r = fi.file_id  AND ct.ct_type = <cfqueryparam value="doc" cfsqltype="cf_sql_varchar"/> AND fi.host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />
+				LEFT JOIN #arguments.thestruct.razuna.session.hostdbprefix#folders fo ON ct.ct_id_r = fo.folder_id  AND ct.ct_type = <cfqueryparam value="folder" cfsqltype="cf_sql_varchar"/> AND fo.host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />
+				LEFT JOIN #arguments.thestruct.razuna.session.hostdbprefix#collections c ON ct.ct_id_r = c.col_id  AND ct.ct_type =<cfqueryparam value="collection" cfsqltype="cf_sql_varchar"/> AND c.host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />
 				WHERE ct.ct_label_id = l.label_id
 				<!--- Make sure that records exists --->
 				AND (
-					EXISTS (select 1 from #arguments.thestruct.razuna.session.hostdbprefix#audios where ct.ct_id_r = aud_id)
-					OR EXISTS (select 1 from #arguments.thestruct.razuna.session.hostdbprefix#images where ct.ct_id_r = img_id)
-					OR EXISTS (select 1 from #arguments.thestruct.razuna.session.hostdbprefix#videos where ct.ct_id_r = vid_id)
-					OR EXISTS (select 1 from #arguments.thestruct.razuna.session.hostdbprefix#files where ct.ct_id_r = file_id)
+					EXISTS (select 1 from #arguments.thestruct.razuna.session.hostdbprefix#audios where ct.ct_id_r = aud_id AND host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />)
+					OR EXISTS (select 1 from #arguments.thestruct.razuna.session.hostdbprefix#images where ct.ct_id_r = img_id AND host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />)
+					OR EXISTS (select 1 from #arguments.thestruct.razuna.session.hostdbprefix#videos where ct.ct_id_r = vid_id AND host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />)
+					OR EXISTS (select 1 from #arguments.thestruct.razuna.session.hostdbprefix#files where ct.ct_id_r = file_id AND host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />)
 				)
 				<!--- Exclude assets in trash --->
-				AND NOT EXISTS (select 1 from #arguments.thestruct.razuna.session.hostdbprefix#audios where ct.ct_id_r = aud_id AND ct.ct_type ='aud' AND in_trash = 'T')
-				AND NOT EXISTS (select 1 from #arguments.thestruct.razuna.session.hostdbprefix#images where ct.ct_id_r = img_id AND ct.ct_type ='img' AND in_trash = 'T')
-				AND NOT EXISTS (select 1 from #arguments.thestruct.razuna.session.hostdbprefix#videos where ct.ct_id_r = vid_id AND ct.ct_type ='vid' AND in_trash = 'T')
-				AND NOT EXISTS (select 1 from #arguments.thestruct.razuna.session.hostdbprefix#files where ct.ct_id_r = file_id AND ct.ct_type ='doc' AND in_trash = 'T')
-				AND NOT EXISTS (select 1 from #arguments.thestruct.razuna.session.hostdbprefix#folders where ct.ct_id_r = folder_id AND ct.ct_type ='folder' AND in_trash = 'T')
-				AND NOT EXISTS (select 1 from #arguments.thestruct.razuna.session.hostdbprefix#collections where ct.ct_id_r = col_id AND ct.ct_type ='collection' AND in_trash = 'T')
+				AND NOT EXISTS (select 1 from #arguments.thestruct.razuna.session.hostdbprefix#audios where ct.ct_id_r = aud_id AND ct.ct_type ='aud' AND in_trash = 'T' AND host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />)
+				AND NOT EXISTS (select 1 from #arguments.thestruct.razuna.session.hostdbprefix#images where ct.ct_id_r = img_id AND ct.ct_type ='img' AND in_trash = 'T' AND host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />)
+				AND NOT EXISTS (select 1 from #arguments.thestruct.razuna.session.hostdbprefix#videos where ct.ct_id_r = vid_id AND ct.ct_type ='vid' AND in_trash = 'T' AND host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />)
+				AND NOT EXISTS (select 1 from #arguments.thestruct.razuna.session.hostdbprefix#files where ct.ct_id_r = file_id AND ct.ct_type ='doc' AND in_trash = 'T' AND host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />)
+				AND NOT EXISTS (select 1 from #arguments.thestruct.razuna.session.hostdbprefix#folders where ct.ct_id_r = folder_id AND ct.ct_type ='folder' AND in_trash = 'T' AND host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />)
+				AND NOT EXISTS (select 1 from #arguments.thestruct.razuna.session.hostdbprefix#collections where ct.ct_id_r = col_id AND ct.ct_type ='collection' AND in_trash = 'T' AND host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />)
 				<!--- Ensure user is folder owner or has access to folder in which asset resides --->
 				AND
 				(
@@ -504,47 +507,47 @@
 				EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#arguments.thestruct.razuna.session.theuserid#' and ct_g_u_grp_id in ('1','2'))
 				OR
 				EXISTS (
-					SELECT 1 FROM #arguments.thestruct.razuna.session.hostdbprefix#folders WHERE folder_id =  fo.folder_id AND folder_owner = '#arguments.thestruct.razuna.session.theuserid#'
+					SELECT 1 FROM #arguments.thestruct.razuna.session.hostdbprefix#folders WHERE folder_id =  fo.folder_id AND folder_owner = '#arguments.thestruct.razuna.session.theuserid#' AND host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />
 					UNION ALL
-					SELECT 1 FROM #arguments.thestruct.razuna.session.hostdbprefix#collections WHERE col_id =  c.col_id AND col_owner = '#arguments.thestruct.razuna.session.theuserid#'
+					SELECT 1 FROM #arguments.thestruct.razuna.session.hostdbprefix#collections WHERE col_id =  c.col_id AND col_owner = '#arguments.thestruct.razuna.session.theuserid#' AND host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />
 					UNION ALL
-					SELECT 1 FROM #arguments.thestruct.razuna.session.hostdbprefix#folders WHERE folder_id =  i.folder_id_r AND folder_owner = '#arguments.thestruct.razuna.session.theuserid#'
+					SELECT 1 FROM #arguments.thestruct.razuna.session.hostdbprefix#folders WHERE folder_id =  i.folder_id_r AND folder_owner = '#arguments.thestruct.razuna.session.theuserid#' AND host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />
 					UNION ALL
-					SELECT 1 FROM #arguments.thestruct.razuna.session.hostdbprefix#folders WHERE folder_id =  a.folder_id_r AND folder_owner = '#arguments.thestruct.razuna.session.theuserid#'
+					SELECT 1 FROM #arguments.thestruct.razuna.session.hostdbprefix#folders WHERE folder_id =  a.folder_id_r AND folder_owner = '#arguments.thestruct.razuna.session.theuserid#' AND host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />
 					UNION ALL
-					SELECT 1 FROM #arguments.thestruct.razuna.session.hostdbprefix#folders WHERE folder_id =  v.folder_id_r AND folder_owner = '#arguments.thestruct.razuna.session.theuserid#'
+					SELECT 1 FROM #arguments.thestruct.razuna.session.hostdbprefix#folders WHERE folder_id =  v.folder_id_r AND folder_owner = '#arguments.thestruct.razuna.session.theuserid#' AND host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />
 					UNION ALL
-					SELECT 1 FROM #arguments.thestruct.razuna.session.hostdbprefix#folders WHERE folder_id =  fi.folder_id_r AND folder_owner = '#arguments.thestruct.razuna.session.theuserid#'
+					SELECT 1 FROM #arguments.thestruct.razuna.session.hostdbprefix#folders WHERE folder_id =  fi.folder_id_r AND folder_owner = '#arguments.thestruct.razuna.session.theuserid#' AND host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />
 					)
 				OR
 				<!--- Check if folder privilege is 'Everyone', groupid=0 --->
 				EXISTS (
-					SELECT 1 FROM #arguments.thestruct.razuna.session.hostdbprefix#folders_groups f WHERE  fo.folder_id = f.folder_id_r  AND f.grp_id_r = '0'
+					SELECT 1 FROM #arguments.thestruct.razuna.session.hostdbprefix#folders_groups f WHERE  fo.folder_id = f.folder_id_r  AND f.grp_id_r = '0' AND f.host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />
 					UNION ALL
-					SELECT 1 FROM #arguments.thestruct.razuna.session.hostdbprefix#collections_groups cg WHERE c.col_id = cg.col_id_r AND cg.grp_id_r = '0'
+					SELECT 1 FROM #arguments.thestruct.razuna.session.hostdbprefix#collections_groups cg WHERE c.col_id = cg.col_id_r AND cg.grp_id_r = '0' AND cg.host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />
 					UNION ALL
-					SELECT 1 FROM  #arguments.thestruct.razuna.session.hostdbprefix#folders_groups f WHERE i.folder_id_r = f.folder_id_r AND f.grp_id_r = '0'
+					SELECT 1 FROM  #arguments.thestruct.razuna.session.hostdbprefix#folders_groups f WHERE i.folder_id_r = f.folder_id_r AND f.grp_id_r = '0' AND f.host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />
 					UNION ALL
-					SELECT 1 FROM #arguments.thestruct.razuna.session.hostdbprefix#folders_groups f WHERE  a.folder_id_r = f.folder_id_r AND  f.grp_id_r = '0'
+					SELECT 1 FROM #arguments.thestruct.razuna.session.hostdbprefix#folders_groups f WHERE  a.folder_id_r = f.folder_id_r AND  f.grp_id_r = '0' AND f.host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />
 					UNION ALL
-					SELECT 1 FROM #arguments.thestruct.razuna.session.hostdbprefix#folders_groups f WHERE  v.folder_id_r = f.folder_id_r AND f.grp_id_r = '0'
+					SELECT 1 FROM #arguments.thestruct.razuna.session.hostdbprefix#folders_groups f WHERE  v.folder_id_r = f.folder_id_r AND f.grp_id_r = '0' AND f.host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />
 					UNION ALL
-					SELECT 1 FROM #arguments.thestruct.razuna.session.hostdbprefix#folders_groups f WHERE fi.folder_id_r = f.folder_id_r AND f.grp_id_r = '0'
+					SELECT 1 FROM #arguments.thestruct.razuna.session.hostdbprefix#folders_groups f WHERE fi.folder_id_r = f.folder_id_r AND f.grp_id_r = '0' AND f.host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />
 					)
 				OR
 				<!--- Check is user is in group that has access --->
 				EXISTS (
-					SELECT 1 FROM ct_groups_users cc, #arguments.thestruct.razuna.session.hostdbprefix#folders_groups f WHERE cc.ct_g_u_user_id ='#arguments.thestruct.razuna.session.theuserid#' AND fo.folder_id = f.folder_id_r AND f.grp_id_r = cc.ct_g_u_grp_id  AND f.grp_permission IN  ('r','w','x')
+					SELECT 1 FROM ct_groups_users cc, #arguments.thestruct.razuna.session.hostdbprefix#folders_groups f WHERE cc.ct_g_u_user_id ='#arguments.thestruct.razuna.session.theuserid#' AND fo.folder_id = f.folder_id_r AND f.grp_id_r = cc.ct_g_u_grp_id  AND f.grp_permission IN  ('r','w','x') AND f.host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />
 					UNION ALL
-					SELECT 1 FROM ct_groups_users cc, #arguments.thestruct.razuna.session.hostdbprefix#collections_groups cg WHERE cc.ct_g_u_user_id ='#arguments.thestruct.razuna.session.theuserid#' AND c.col_id = cg.col_id_r AND cg.grp_id_r = cc.ct_g_u_grp_id AND cg.grp_permission IN  ('r','w','x')
+					SELECT 1 FROM ct_groups_users cc, #arguments.thestruct.razuna.session.hostdbprefix#collections_groups cg WHERE cc.ct_g_u_user_id ='#arguments.thestruct.razuna.session.theuserid#' AND c.col_id = cg.col_id_r AND cg.grp_id_r = cc.ct_g_u_grp_id AND cg.grp_permission IN  ('r','w','x') AND cg.host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />
 					UNION ALL
-					SELECT 1 FROM ct_groups_users cc, #arguments.thestruct.razuna.session.hostdbprefix#folders_groups f WHERE cc.ct_g_u_user_id ='#arguments.thestruct.razuna.session.theuserid#' AND i.folder_id_r = f.folder_id_r AND f.grp_id_r = cc.ct_g_u_grp_id  AND f.grp_permission IN  ('r','w','x')
+					SELECT 1 FROM ct_groups_users cc, #arguments.thestruct.razuna.session.hostdbprefix#folders_groups f WHERE cc.ct_g_u_user_id ='#arguments.thestruct.razuna.session.theuserid#' AND i.folder_id_r = f.folder_id_r AND f.grp_id_r = cc.ct_g_u_grp_id  AND f.grp_permission IN  ('r','w','x') AND f.host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />
 					UNION ALL
-					SELECT 1 FROM ct_groups_users cc, #arguments.thestruct.razuna.session.hostdbprefix#folders_groups f WHERE cc.ct_g_u_user_id ='#arguments.thestruct.razuna.session.theuserid#' AND a.folder_id_r = f.folder_id_r AND f.grp_id_r = cc.ct_g_u_grp_id  AND f.grp_permission IN  ('r','w','x')
+					SELECT 1 FROM ct_groups_users cc, #arguments.thestruct.razuna.session.hostdbprefix#folders_groups f WHERE cc.ct_g_u_user_id ='#arguments.thestruct.razuna.session.theuserid#' AND a.folder_id_r = f.folder_id_r AND f.grp_id_r = cc.ct_g_u_grp_id  AND f.grp_permission IN  ('r','w','x') AND f.host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />
 					UNION ALL
-					SELECT 1 FROM ct_groups_users cc, #arguments.thestruct.razuna.session.hostdbprefix#folders_groups f WHERE cc.ct_g_u_user_id ='#arguments.thestruct.razuna.session.theuserid#' AND v.folder_id_r = f.folder_id_r AND f.grp_id_r = cc.ct_g_u_grp_id AND f.grp_permission IN  ('r','w','x')
+					SELECT 1 FROM ct_groups_users cc, #arguments.thestruct.razuna.session.hostdbprefix#folders_groups f WHERE cc.ct_g_u_user_id ='#arguments.thestruct.razuna.session.theuserid#' AND v.folder_id_r = f.folder_id_r AND f.grp_id_r = cc.ct_g_u_grp_id AND f.grp_permission IN  ('r','w','x') AND f.host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />
 					UNION ALL
-					SELECT 1 FROM ct_groups_users cc, #arguments.thestruct.razuna.session.hostdbprefix#folders_groups f WHERE cc.ct_g_u_user_id ='#arguments.thestruct.razuna.session.theuserid#' AND fi.folder_id_r = f.folder_id_r AND f.grp_id_r = cc.ct_g_u_grp_id AND f.grp_permission IN  ('r','w','x')
+					SELECT 1 FROM ct_groups_users cc, #arguments.thestruct.razuna.session.hostdbprefix#folders_groups f WHERE cc.ct_g_u_user_id ='#arguments.thestruct.razuna.session.theuserid#' AND fi.folder_id_r = f.folder_id_r AND f.grp_id_r = cc.ct_g_u_grp_id AND f.grp_permission IN  ('r','w','x') AND f.host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />
 					)
 				)
 				<!--- Check if asset has expired and if user has only read only permissions in which case we hide asset --->
@@ -552,13 +555,13 @@
 				<!--- Check if admin user --->
 				WHEN EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#arguments.thestruct.razuna.session.theuserid#' and ct_g_u_grp_id in ('1','2')) THEN 1
 				<!---  Check if asset is in folder for which user has read only permissions and asset has expired in which case we do not display asset to user --->
-				WHEN EXISTS (SELECT 1 FROM ct_groups_users cc, #arguments.thestruct.razuna.session.hostdbprefix#folders_groups fg WHERE cc.ct_g_u_user_id ='#arguments.thestruct.razuna.session.theuserid#' AND i.folder_id_r = fg.folder_id_r AND cc.ct_g_u_grp_id = fg.grp_id_r AND fg.grp_permission NOT IN  ('w','x') AND i.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />
+				WHEN EXISTS (SELECT 1 FROM ct_groups_users cc, #arguments.thestruct.razuna.session.hostdbprefix#folders_groups fg WHERE cc.ct_g_u_user_id ='#arguments.thestruct.razuna.session.theuserid#' AND i.folder_id_r = fg.folder_id_r AND cc.ct_g_u_grp_id = fg.grp_id_r AND fg.grp_permission NOT IN  ('w','x') AND i.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" /> AND fg.host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />
 					UNION ALL
-					SELECT 1 FROM ct_groups_users cc, #arguments.thestruct.razuna.session.hostdbprefix#folders_groups fg WHERE cc.ct_g_u_user_id ='#arguments.thestruct.razuna.session.theuserid#' AND a.folder_id_r = fg.folder_id_r AND cc.ct_g_u_grp_id = fg.grp_id_r AND fg.grp_permission NOT IN  ('w','x') AND a.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />
+					SELECT 1 FROM ct_groups_users cc, #arguments.thestruct.razuna.session.hostdbprefix#folders_groups fg WHERE cc.ct_g_u_user_id ='#arguments.thestruct.razuna.session.theuserid#' AND a.folder_id_r = fg.folder_id_r AND cc.ct_g_u_grp_id = fg.grp_id_r AND fg.grp_permission NOT IN  ('w','x') AND a.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" /> AND fg.host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />
 					UNION ALL
-					SELECT 1 FROM ct_groups_users cc, #arguments.thestruct.razuna.session.hostdbprefix#folders_groups fg WHERE cc.ct_g_u_user_id ='#arguments.thestruct.razuna.session.theuserid#' AND v.folder_id_r = fg.folder_id_r AND cc.ct_g_u_grp_id = fg.grp_id_r AND fg.grp_permission NOT IN  ('w','x') AND v.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />
+					SELECT 1 FROM ct_groups_users cc, #arguments.thestruct.razuna.session.hostdbprefix#folders_groups fg WHERE cc.ct_g_u_user_id ='#arguments.thestruct.razuna.session.theuserid#' AND v.folder_id_r = fg.folder_id_r AND cc.ct_g_u_grp_id = fg.grp_id_r AND fg.grp_permission NOT IN  ('w','x') AND v.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" /> AND fg.host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />
 					UNION ALL
-					SELECT 1 FROM ct_groups_users cc, #arguments.thestruct.razuna.session.hostdbprefix#folders_groups fg WHERE cc.ct_g_u_user_id ='#arguments.thestruct.razuna.session.theuserid#' AND fi.folder_id_r = fg.folder_id_r AND cc.ct_g_u_grp_id = fg.grp_id_r AND fg.grp_permission NOT IN  ('w','x') AND fi.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />
+					SELECT 1 FROM ct_groups_users cc, #arguments.thestruct.razuna.session.hostdbprefix#folders_groups fg WHERE cc.ct_g_u_user_id ='#arguments.thestruct.razuna.session.theuserid#' AND fi.folder_id_r = fg.folder_id_r AND cc.ct_g_u_grp_id = fg.grp_id_r AND fg.grp_permission NOT IN  ('w','x') AND fi.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" /> AND fg.host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />
 					) THEN 0
 				ELSE 1 END  = 1
 
@@ -567,6 +570,7 @@
 				SELECT <cfif arguments.thestruct.razuna.application.thedatabase EQ "mssql">TOP 1 </cfif>label_id
 				FROM #arguments.thestruct.razuna.session.hostdbprefix#labels
 				WHERE label_id_r = l.label_id
+				AND host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />
 				<cfif arguments.thestruct.razuna.application.thedatabase EQ "oracle">
 					AND ROWNUM = 1
 				<cfelseif arguments.thestruct.razuna.application.thedatabase EQ "mysql" OR arguments.thestruct.razuna.application.thedatabase EQ "h2">
@@ -620,57 +624,57 @@
 			(
 				SELECT count(ct_label_id)
 				FROM ct_labels l
-				LEFT JOIN #arguments.thestruct.razuna.session.hostdbprefix#images i ON l.ct_id_r = i.img_id AND l.ct_type = <cfqueryparam value="img" cfsqltype="cf_sql_varchar"/>
-				LEFT JOIN #arguments.thestruct.razuna.session.hostdbprefix#audios a ON l.ct_id_r = a.aud_id AND l.ct_type = <cfqueryparam value="aud" cfsqltype="cf_sql_varchar"/>
-				LEFT JOIN #arguments.thestruct.razuna.session.hostdbprefix#videos v ON l.ct_id_r = v.vid_id AND l.ct_type = <cfqueryparam value="vid" cfsqltype="cf_sql_varchar"/>
-				LEFT JOIN #arguments.thestruct.razuna.session.hostdbprefix#files f ON l.ct_id_r = f.file_id AND l.ct_type = <cfqueryparam value="doc" cfsqltype="cf_sql_varchar"/>
+				LEFT JOIN #arguments.thestruct.razuna.session.hostdbprefix#images i ON l.ct_id_r = i.img_id AND l.ct_type = <cfqueryparam value="img" cfsqltype="cf_sql_varchar"/> AND i.host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />
+				LEFT JOIN #arguments.thestruct.razuna.session.hostdbprefix#audios a ON l.ct_id_r = a.aud_id AND l.ct_type = <cfqueryparam value="aud" cfsqltype="cf_sql_varchar"/> AND a.host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />
+				LEFT JOIN #arguments.thestruct.razuna.session.hostdbprefix#videos v ON l.ct_id_r = v.vid_id AND l.ct_type = <cfqueryparam value="vid" cfsqltype="cf_sql_varchar"/> AND v.host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />
+				LEFT JOIN #arguments.thestruct.razuna.session.hostdbprefix#files f ON l.ct_id_r = f.file_id AND l.ct_type = <cfqueryparam value="doc" cfsqltype="cf_sql_varchar"/> AND f.host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />
 				WHERE ct_type IN (<cfqueryparam value="img,vid,aud,doc" cfsqltype="cf_sql_varchar" list="Yes" />)
 				AND ct_label_id = <cfqueryparam value="#arguments.label_id#" cfsqltype="cf_sql_varchar" />
 				<!--- Make sure that records exists --->
 				AND (
-					EXISTS (select 1 from #arguments.thestruct.razuna.session.hostdbprefix#audios where l.ct_id_r = aud_id)
-					OR EXISTS (select 1 from #arguments.thestruct.razuna.session.hostdbprefix#images where l.ct_id_r = img_id)
-					OR EXISTS (select 1 from #arguments.thestruct.razuna.session.hostdbprefix#videos where l.ct_id_r = vid_id)
-					OR EXISTS (select 1 from #arguments.thestruct.razuna.session.hostdbprefix#files where l.ct_id_r = file_id)
+					EXISTS (select 1 from #arguments.thestruct.razuna.session.hostdbprefix#audios where l.ct_id_r = aud_id AND host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />)
+					OR EXISTS (select 1 from #arguments.thestruct.razuna.session.hostdbprefix#images where l.ct_id_r = img_id AND host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />)
+					OR EXISTS (select 1 from #arguments.thestruct.razuna.session.hostdbprefix#videos where l.ct_id_r = vid_id AND host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />)
+					OR EXISTS (select 1 from #arguments.thestruct.razuna.session.hostdbprefix#files where l.ct_id_r = file_id AND host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />)
 				)
 				<!--- Exclude assets in trash --->
-				AND NOT EXISTS (select 1 from #arguments.thestruct.razuna.session.hostdbprefix#audios where l.ct_id_r = aud_id AND l.ct_type ='aud' AND in_trash = 'T')
-				AND NOT EXISTS (select 1 from #arguments.thestruct.razuna.session.hostdbprefix#images where l.ct_id_r = img_id AND l.ct_type ='img' AND in_trash = 'T')
-				AND NOT EXISTS (select 1 from #arguments.thestruct.razuna.session.hostdbprefix#videos where l.ct_id_r = vid_id AND l.ct_type ='vid' AND in_trash = 'T')
-				AND NOT EXISTS (select 1 from #arguments.thestruct.razuna.session.hostdbprefix#files where l.ct_id_r = file_id AND l.ct_type ='doc' AND in_trash = 'T')
+				AND NOT EXISTS (select 1 from #arguments.thestruct.razuna.session.hostdbprefix#audios where l.ct_id_r = aud_id AND l.ct_type ='aud' AND in_trash = 'T' AND host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />)
+				AND NOT EXISTS (select 1 from #arguments.thestruct.razuna.session.hostdbprefix#images where l.ct_id_r = img_id AND l.ct_type ='img' AND in_trash = 'T' AND host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />)
+				AND NOT EXISTS (select 1 from #arguments.thestruct.razuna.session.hostdbprefix#videos where l.ct_id_r = vid_id AND l.ct_type ='vid' AND in_trash = 'T' AND host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />)
+				AND NOT EXISTS (select 1 from #arguments.thestruct.razuna.session.hostdbprefix#files where l.ct_id_r = file_id AND l.ct_type ='doc' AND in_trash = 'T' AND host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />)
 				<!--- Ensure user has access to folder in which asset resides --->
 				AND
 				(
 				EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#arguments.thestruct.razuna.session.theuserid#' and ct_g_u_grp_id in ('1','2'))
 				OR
 				EXISTS (
-					SELECT 1 FROM #arguments.thestruct.razuna.session.hostdbprefix#folders WHERE folder_id =  i.folder_id_r AND folder_owner = '#arguments.thestruct.razuna.session.theuserid#'  AND in_trash = 'F'
+					SELECT 1 FROM #arguments.thestruct.razuna.session.hostdbprefix#folders WHERE folder_id =  i.folder_id_r AND folder_owner = '#arguments.thestruct.razuna.session.theuserid#'  AND in_trash = 'F' AND host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />
 					UNION ALL
-					SELECT 1 FROM #arguments.thestruct.razuna.session.hostdbprefix#folders WHERE folder_id =  a.folder_id_r AND folder_owner = '#arguments.thestruct.razuna.session.theuserid#'  AND in_trash = 'F'
+					SELECT 1 FROM #arguments.thestruct.razuna.session.hostdbprefix#folders WHERE folder_id =  a.folder_id_r AND folder_owner = '#arguments.thestruct.razuna.session.theuserid#'  AND in_trash = 'F' AND host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />
 					UNION ALL
-					SELECT 1 FROM #arguments.thestruct.razuna.session.hostdbprefix#folders WHERE folder_id =  v.folder_id_r AND folder_owner = '#arguments.thestruct.razuna.session.theuserid#'  AND in_trash = 'F'
+					SELECT 1 FROM #arguments.thestruct.razuna.session.hostdbprefix#folders WHERE folder_id =  v.folder_id_r AND folder_owner = '#arguments.thestruct.razuna.session.theuserid#'  AND in_trash = 'F' AND host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />
 					UNION ALL
-					SELECT 1 FROM #arguments.thestruct.razuna.session.hostdbprefix#folders WHERE folder_id =  f.folder_id_r AND folder_owner = '#arguments.thestruct.razuna.session.theuserid#'  AND in_trash = 'F'
+					SELECT 1 FROM #arguments.thestruct.razuna.session.hostdbprefix#folders WHERE folder_id =  f.folder_id_r AND folder_owner = '#arguments.thestruct.razuna.session.theuserid#'  AND in_trash = 'F' AND host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />
 					)
 				OR
 				EXISTS (
-					SELECT 1 FROM #arguments.thestruct.razuna.session.hostdbprefix#folders_groups f WHERE i.folder_id_r = f.folder_id_r AND  f.grp_id_r ='0'
+					SELECT 1 FROM #arguments.thestruct.razuna.session.hostdbprefix#folders_groups f WHERE i.folder_id_r = f.folder_id_r AND  f.grp_id_r ='0' AND f.host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />
 					UNION ALL
-					SELECT 1 FROM #arguments.thestruct.razuna.session.hostdbprefix#folders_groups f WHERE  a.folder_id_r = f.folder_id_r AND f.grp_id_r ='0'
+					SELECT 1 FROM #arguments.thestruct.razuna.session.hostdbprefix#folders_groups f WHERE  a.folder_id_r = f.folder_id_r AND f.grp_id_r ='0' AND f.host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />
 					UNION ALL
-					SELECT 1 FROM #arguments.thestruct.razuna.session.hostdbprefix#folders_groups f WHERE  v.folder_id_r = f.folder_id_r AND f.grp_id_r = '0'
+					SELECT 1 FROM #arguments.thestruct.razuna.session.hostdbprefix#folders_groups f WHERE  v.folder_id_r = f.folder_id_r AND f.grp_id_r = '0' AND f.host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />
 					UNION ALL
-					SELECT 1 FROM #arguments.thestruct.razuna.session.hostdbprefix#folders_groups fg WHERE  f.folder_id_r = fg.folder_id_r AND fg.grp_id_r = '0'
+					SELECT 1 FROM #arguments.thestruct.razuna.session.hostdbprefix#folders_groups fg WHERE  f.folder_id_r = fg.folder_id_r AND fg.grp_id_r = '0' AND fg.host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />
 					)
 				OR
 				EXISTS (
-					SELECT 1 FROM ct_groups_users c, #arguments.thestruct.razuna.session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#arguments.thestruct.razuna.session.theuserid#' AND i.folder_id_r = f.folder_id_r AND f.grp_id_r = c.ct_g_u_grp_id AND f.grp_permission IN  ('r','w','x')
+					SELECT 1 FROM ct_groups_users c, #arguments.thestruct.razuna.session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#arguments.thestruct.razuna.session.theuserid#' AND i.folder_id_r = f.folder_id_r AND f.grp_id_r = c.ct_g_u_grp_id AND f.grp_permission IN  ('r','w','x') AND f.host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />
 					UNION ALL
-					SELECT 1 FROM ct_groups_users c, #arguments.thestruct.razuna.session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#arguments.thestruct.razuna.session.theuserid#' AND a.folder_id_r = f.folder_id_r AND f.grp_id_r = c.ct_g_u_grp_id AND f.grp_permission IN  ('r','w','x')
+					SELECT 1 FROM ct_groups_users c, #arguments.thestruct.razuna.session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#arguments.thestruct.razuna.session.theuserid#' AND a.folder_id_r = f.folder_id_r AND f.grp_id_r = c.ct_g_u_grp_id AND f.grp_permission IN  ('r','w','x') AND f.host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />
 					UNION ALL
-					SELECT 1 FROM ct_groups_users c, #arguments.thestruct.razuna.session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#arguments.thestruct.razuna.session.theuserid#' AND v.folder_id_r = f.folder_id_r AND f.grp_id_r = c.ct_g_u_grp_id  AND f.grp_permission IN  ('r','w','x')
+					SELECT 1 FROM ct_groups_users c, #arguments.thestruct.razuna.session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#arguments.thestruct.razuna.session.theuserid#' AND v.folder_id_r = f.folder_id_r AND f.grp_id_r = c.ct_g_u_grp_id  AND f.grp_permission IN  ('r','w','x') AND f.host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />
 					UNION ALL
-					SELECT 1 FROM ct_groups_users c, #arguments.thestruct.razuna.session.hostdbprefix#folders_groups fg WHERE ct_g_u_user_id ='#arguments.thestruct.razuna.session.theuserid#' AND f.folder_id_r = fg.folder_id_r AND fg.grp_id_r = c.ct_g_u_grp_id AND fg.grp_permission IN  ('r','w','x')
+					SELECT 1 FROM ct_groups_users c, #arguments.thestruct.razuna.session.hostdbprefix#folders_groups fg WHERE ct_g_u_user_id ='#arguments.thestruct.razuna.session.theuserid#' AND f.folder_id_r = fg.folder_id_r AND fg.grp_id_r = c.ct_g_u_grp_id AND fg.grp_permission IN  ('r','w','x') AND fg.host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />
 					)
 				)
 				<!--- Check if asset has expired and if user has only read only permissions in which case we hide asset --->
@@ -678,13 +682,13 @@
 				<!--- Check if admin user --->
 				WHEN EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#arguments.thestruct.razuna.session.theuserid#' and ct_g_u_grp_id in ('1','2')) THEN 1
 				<!---  Check if asset is in folder for which user has read only permissions and asset has expired in which case we do not display asset to user --->
-				WHEN EXISTS (SELECT 1 FROM ct_groups_users c, #arguments.thestruct.razuna.session.hostdbprefix#folders_groups fg WHERE ct_g_u_user_id ='#arguments.thestruct.razuna.session.theuserid#' AND i.folder_id_r = fg.folder_id_r AND c.ct_g_u_grp_id = fg.grp_id_r AND grp_permission NOT IN  ('w','x') AND i.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />
+				WHEN EXISTS (SELECT 1 FROM ct_groups_users c, #arguments.thestruct.razuna.session.hostdbprefix#folders_groups fg WHERE ct_g_u_user_id ='#arguments.thestruct.razuna.session.theuserid#' AND i.folder_id_r = fg.folder_id_r AND c.ct_g_u_grp_id = fg.grp_id_r AND grp_permission NOT IN  ('w','x') AND i.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" /> AND fg.host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />
 					UNION ALL
-					SELECT 1 FROM ct_groups_users c, #arguments.thestruct.razuna.session.hostdbprefix#folders_groups fg WHERE ct_g_u_user_id ='#arguments.thestruct.razuna.session.theuserid#' AND a.folder_id_r = fg.folder_id_r AND c.ct_g_u_grp_id = fg.grp_id_r AND grp_permission NOT IN  ('w','x') AND a.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />
+					SELECT 1 FROM ct_groups_users c, #arguments.thestruct.razuna.session.hostdbprefix#folders_groups fg WHERE ct_g_u_user_id ='#arguments.thestruct.razuna.session.theuserid#' AND a.folder_id_r = fg.folder_id_r AND c.ct_g_u_grp_id = fg.grp_id_r AND grp_permission NOT IN  ('w','x') AND a.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" /> AND fg.host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />
 					UNION ALL
-					SELECT 1 FROM ct_groups_users c, #arguments.thestruct.razuna.session.hostdbprefix#folders_groups fg WHERE ct_g_u_user_id ='#arguments.thestruct.razuna.session.theuserid#' AND v.folder_id_r = fg.folder_id_r AND c.ct_g_u_grp_id = fg.grp_id_r AND grp_permission NOT IN  ('w','x') AND v.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />
+					SELECT 1 FROM ct_groups_users c, #arguments.thestruct.razuna.session.hostdbprefix#folders_groups fg WHERE ct_g_u_user_id ='#arguments.thestruct.razuna.session.theuserid#' AND v.folder_id_r = fg.folder_id_r AND c.ct_g_u_grp_id = fg.grp_id_r AND grp_permission NOT IN  ('w','x') AND v.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" /> AND fg.host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />
 					UNION ALL
-					SELECT 1 FROM ct_groups_users c, #arguments.thestruct.razuna.session.hostdbprefix#folders_groups fg WHERE ct_g_u_user_id ='#arguments.thestruct.razuna.session.theuserid#' AND f.folder_id_r = fg.folder_id_r AND c.ct_g_u_grp_id = fg.grp_id_r AND grp_permission NOT IN  ('w','x') AND f.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />
+					SELECT 1 FROM ct_groups_users c, #arguments.thestruct.razuna.session.hostdbprefix#folders_groups fg WHERE ct_g_u_user_id ='#arguments.thestruct.razuna.session.theuserid#' AND f.folder_id_r = fg.folder_id_r AND c.ct_g_u_grp_id = fg.grp_id_r AND grp_permission NOT IN  ('w','x') AND f.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" /> AND fg.host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />
 					) THEN 0
 				ELSE 1 END  = 1
 			) AS count_assets,
@@ -706,11 +710,11 @@
 				(
 				EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#arguments.thestruct.razuna.session.theuserid#' and ct_g_u_grp_id in ('1','2'))
 				OR
-				EXISTS (SELECT 1 FROM #arguments.thestruct.razuna.session.hostdbprefix#folders WHERE folder_id =  l.ct_id_r AND folder_owner = '#arguments.thestruct.razuna.session.theuserid#' AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">)
+				EXISTS (SELECT 1 FROM #arguments.thestruct.razuna.session.hostdbprefix#folders WHERE folder_id =  l.ct_id_r AND folder_owner = '#arguments.thestruct.razuna.session.theuserid#' AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F"> AND host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />)
 				OR
-				EXISTS (SELECT 1 FROM  #arguments.thestruct.razuna.session.hostdbprefix#folders_groups f WHERE l.ct_id_r = f.folder_id_r AND  f.grp_id_r = '0')
+				EXISTS (SELECT 1 FROM  #arguments.thestruct.razuna.session.hostdbprefix#folders_groups f WHERE l.ct_id_r = f.folder_id_r AND  f.grp_id_r = '0' AND f.host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />)
 				OR
-				EXISTS (SELECT 1 FROM ct_groups_users c, #arguments.thestruct.razuna.session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#arguments.thestruct.razuna.session.theuserid#' AND l.ct_id_r = f.folder_id_r AND f.grp_id_r = c.ct_g_u_grp_id AND f.grp_permission IN  ('r','w','x'))
+				EXISTS (SELECT 1 FROM ct_groups_users c, #arguments.thestruct.razuna.session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#arguments.thestruct.razuna.session.theuserid#' AND l.ct_id_r = f.folder_id_r AND f.grp_id_r = c.ct_g_u_grp_id AND f.grp_permission IN  ('r','w','x') AND f.host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />)
 				)
 			) AS count_folders,
 			(
@@ -719,17 +723,17 @@
 				LEFT JOIN #arguments.thestruct.razuna.session.hostdbprefix#collections c ON l.ct_id_r = c.col_id  AND l.ct_type =<cfqueryparam value="collection" cfsqltype="cf_sql_varchar"/>
 				WHERE ct_type = <cfqueryparam value="collection" cfsqltype="cf_sql_varchar" />
 				AND ct_label_id = <cfqueryparam value="#arguments.label_id#" cfsqltype="cf_sql_varchar" />
-				AND NOT EXISTS (select 1 from #arguments.thestruct.razuna.session.hostdbprefix#collections where l.ct_id_r = col_id AND l.ct_type ='collection' AND in_trash = 'T')
+				AND NOT EXISTS (select 1 from #arguments.thestruct.razuna.session.hostdbprefix#collections where l.ct_id_r = col_id AND l.ct_type ='collection' AND in_trash = 'T' AND host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />)
 				<!--- Ensure user has access to collection --->
 				AND
 				(
 				EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#arguments.thestruct.razuna.session.theuserid#' and ct_g_u_grp_id in ('1','2'))
 				OR
-				EXISTS (SELECT 1 FROM #arguments.thestruct.razuna.session.hostdbprefix#collections WHERE col_id =  l.ct_id_r AND col_owner = '#arguments.thestruct.razuna.session.theuserid#' AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">)
+				EXISTS (SELECT 1 FROM #arguments.thestruct.razuna.session.hostdbprefix#collections WHERE col_id =  l.ct_id_r AND col_owner = '#arguments.thestruct.razuna.session.theuserid#' AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F"> AND host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />)
 				OR
-				EXISTS (SELECT 1 FROM  #arguments.thestruct.razuna.session.hostdbprefix#collections_groups f WHERE l.ct_id_r = f.col_id_r AND f.grp_id_r = '0')
+				EXISTS (SELECT 1 FROM  #arguments.thestruct.razuna.session.hostdbprefix#collections_groups f WHERE l.ct_id_r = f.col_id_r AND f.grp_id_r = '0' AND f.host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />)
 				OR
-				EXISTS (SELECT 1 FROM ct_groups_users c, #arguments.thestruct.razuna.session.hostdbprefix#collections_groups f WHERE ct_g_u_user_id ='#arguments.thestruct.razuna.session.theuserid#' AND l.ct_id_r = f.col_id_r AND f.grp_id_r = c.ct_g_u_grp_id AND f.grp_permission IN  ('r','w','x'))
+				EXISTS (SELECT 1 FROM ct_groups_users c, #arguments.thestruct.razuna.session.hostdbprefix#collections_groups f WHERE ct_g_u_user_id ='#arguments.thestruct.razuna.session.theuserid#' AND l.ct_id_r = f.col_id_r AND f.grp_id_r = c.ct_g_u_grp_id AND f.grp_permission IN  ('r','w','x') AND f.host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />)
 				)
 			) AS count_collections
 		FROM ct_labels
@@ -840,6 +844,8 @@
 			AND ct.ct_type = <cfqueryparam value="img" cfsqltype="cf_sql_varchar" />
 			AND i.folder_id_r = f.folder_id
 			AND (i.img_group IS NULL OR i.img_group = '')
+			AND f.host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />
+			AND i.host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />
 			<cfif arguments.thestruct.razuna.application.thedatabase EQ "mssql">
 				AND i.img_id NOT IN (
 				SELECT TOP #min# mssql_i.img_id
@@ -847,24 +853,25 @@
 				WHERE mssql_ct.ct_label_id = <cfqueryparam value="#arguments.label_id#" cfsqltype="cf_sql_varchar" />
 				AND mssql_ct.ct_id_r = mssql_i.img_id
 				AND mssql_ct.ct_type = <cfqueryparam value="img" cfsqltype="cf_sql_varchar" />
+				AND mssql_f.host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />
 			)
 			</cfif>
 			<!--- Ensure user is owner of folder or has access to folder in which asset resides --->
 			AND (
 				EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#arguments.thestruct.razuna.session.theuserid#' and ct_g_u_grp_id in ('1','2'))
 				OR
-				EXISTS (SELECT 1 FROM #arguments.thestruct.razuna.session.hostdbprefix#folders WHERE folder_id =  i.folder_id_r AND folder_owner = '#arguments.thestruct.razuna.session.theuserid#' )
+				EXISTS (SELECT 1 FROM #arguments.thestruct.razuna.session.hostdbprefix#folders WHERE folder_id =  i.folder_id_r AND folder_owner = '#arguments.thestruct.razuna.session.theuserid#' AND host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" /> )
 				OR
-				EXISTS (SELECT 1 FROM #arguments.thestruct.razuna.session.hostdbprefix#folders_groups f WHERE i.folder_id_r = f.folder_id_r AND f.grp_id_r = '0')
+				EXISTS (SELECT 1 FROM #arguments.thestruct.razuna.session.hostdbprefix#folders_groups f WHERE i.folder_id_r = f.folder_id_r AND f.grp_id_r = '0' AND f.host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />)
 				OR
-				EXISTS (SELECT 1 FROM ct_groups_users c, #arguments.thestruct.razuna.session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#arguments.thestruct.razuna.session.theuserid#' AND i.folder_id_r = f.folder_id_r AND f.grp_id_r = c.ct_g_u_grp_id AND f.grp_permission IN  ('r','w','x'))
+				EXISTS (SELECT 1 FROM ct_groups_users c, #arguments.thestruct.razuna.session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#arguments.thestruct.razuna.session.theuserid#' AND i.folder_id_r = f.folder_id_r AND f.grp_id_r = c.ct_g_u_grp_id AND f.grp_permission IN  ('r','w','x') AND f.host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />)
 			   )
 			<!--- Check if asset has expired and if user has only read only permissions in which case we hide asset --->
 			AND CASE
 			<!--- Check if admin user --->
 			WHEN EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#arguments.thestruct.razuna.session.theuserid#' and ct_g_u_grp_id in ('1','2')) THEN 1
 			<!---  Check if asset is in folder for which user has read only permissions and asset has expired in which case we do not display asset to user --->
-			WHEN EXISTS (SELECT 1 FROM ct_groups_users c, #arguments.thestruct.razuna.session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#arguments.thestruct.razuna.session.theuserid#' AND i.folder_id_r = f.folder_id_r AND c.ct_g_u_grp_id = f.grp_id_r AND grp_permission NOT IN  ('w','x') AND i.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />) THEN 0
+			WHEN EXISTS (SELECT 1 FROM ct_groups_users c, #arguments.thestruct.razuna.session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#arguments.thestruct.razuna.session.theuserid#' AND i.folder_id_r = f.folder_id_r AND c.ct_g_u_grp_id = f.grp_id_r AND grp_permission NOT IN  ('w','x') AND i.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" /> AND f.host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />) THEN 0
 			ELSE 1 END  = 1
 			UNION ALL
 			SELECT
@@ -910,6 +917,8 @@
 			AND f.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 			AND ct.ct_type = <cfqueryparam value="doc" cfsqltype="cf_sql_varchar" />
 			AND f.folder_id_r = fo.folder_id
+			AND f.host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />
+			AND fo.host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />
 			<cfif arguments.thestruct.razuna.application.thedatabase EQ "mssql">
 				AND f.file_id NOT IN (
 				SELECT TOP #min# mssql_f.file_id
@@ -917,24 +926,25 @@
 				WHERE mssql_ct.ct_label_id = <cfqueryparam value="#arguments.label_id#" cfsqltype="cf_sql_varchar" />
 				AND mssql_ct.ct_id_r = mssql_f.file_id
 				AND mssql_ct.ct_type = <cfqueryparam value="doc" cfsqltype="cf_sql_varchar" />
+				AND mssql_f.host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />
 			)
 			</cfif>
 			<!--- Ensure user is owner of folder or has access to folder in which asset resides --->
 			AND (
 				EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#arguments.thestruct.razuna.session.theuserid#' and ct_g_u_grp_id in ('1','2'))
 				OR
-				EXISTS (SELECT 1 FROM #arguments.thestruct.razuna.session.hostdbprefix#folders WHERE folder_id =  f.folder_id_r AND folder_owner = '#arguments.thestruct.razuna.session.theuserid#' )
+				EXISTS (SELECT 1 FROM #arguments.thestruct.razuna.session.hostdbprefix#folders WHERE folder_id =  f.folder_id_r AND folder_owner = '#arguments.thestruct.razuna.session.theuserid#' AND host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" /> )
 				OR
-				EXISTS (SELECT 1 FROM #arguments.thestruct.razuna.session.hostdbprefix#folders_groups fg WHERE f.folder_id_r = fg.folder_id_r AND fg.grp_id_r = '0')
+				EXISTS (SELECT 1 FROM #arguments.thestruct.razuna.session.hostdbprefix#folders_groups fg WHERE f.folder_id_r = fg.folder_id_r AND fg.grp_id_r = '0' AND fg.host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />)
 				OR
-				EXISTS (SELECT 1 FROM ct_groups_users c, #arguments.thestruct.razuna.session.hostdbprefix#folders_groups fg WHERE ct_g_u_user_id ='#arguments.thestruct.razuna.session.theuserid#' AND f.folder_id_r = fg.folder_id_r AND fg.grp_id_r = c.ct_g_u_grp_id AND fg.grp_permission IN  ('r','w','x'))
+				EXISTS (SELECT 1 FROM ct_groups_users c, #arguments.thestruct.razuna.session.hostdbprefix#folders_groups fg WHERE ct_g_u_user_id ='#arguments.thestruct.razuna.session.theuserid#' AND f.folder_id_r = fg.folder_id_r AND fg.grp_id_r = c.ct_g_u_grp_id AND fg.grp_permission IN  ('r','w','x') AND fg.host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />)
 			   )
 			<!--- Check if asset has expired and if user has only read only permissions in which case we hide asset --->
 			AND CASE
 			<!--- Check if admin user --->
 			WHEN EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#arguments.thestruct.razuna.session.theuserid#' and ct_g_u_grp_id in ('1','2')) THEN 1
 			<!---  Check if asset is in folder for which user has read only permissions and asset has expired in which case we do not display asset to user --->
-			WHEN EXISTS (SELECT 1 FROM ct_groups_users c, #arguments.thestruct.razuna.session.hostdbprefix#folders_groups fg WHERE ct_g_u_user_id ='#arguments.thestruct.razuna.session.theuserid#' AND f.folder_id_r = fg.folder_id_r AND c.ct_g_u_grp_id = fg.grp_id_r AND fg.grp_permission NOT IN  ('w','x') AND f.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />) THEN 0
+			WHEN EXISTS (SELECT 1 FROM ct_groups_users c, #arguments.thestruct.razuna.session.hostdbprefix#folders_groups fg WHERE ct_g_u_user_id ='#arguments.thestruct.razuna.session.theuserid#' AND f.folder_id_r = fg.folder_id_r AND c.ct_g_u_grp_id = fg.grp_id_r AND fg.grp_permission NOT IN  ('w','x') AND f.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" /> AND fg.host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />) THEN 0
 			ELSE 1 END  = 1
 			UNION ALL
 			SELECT
@@ -978,6 +988,8 @@
 			AND ct.ct_type = <cfqueryparam value="vid" cfsqltype="cf_sql_varchar" />
 			AND v.folder_id_r = f.folder_id
 			AND (v.vid_group IS NULL OR v.vid_group = '')
+			AND f.host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />
+			AND v.host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />
 			<cfif arguments.thestruct.razuna.application.thedatabase EQ "mssql">
 				AND v.vid_id NOT IN (
 					SELECT TOP #min# mssql_v.vid_id
@@ -985,24 +997,25 @@
 					WHERE mssql_ct.ct_label_id = <cfqueryparam value="#arguments.label_id#" cfsqltype="cf_sql_varchar" />
 					AND mssql_ct.ct_id_r = mssql_v.vid_id
 					AND mssql_ct.ct_type = <cfqueryparam value="vid" cfsqltype="cf_sql_varchar" />
+					AND mssql_v.host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />
 				)
 			</cfif>
 			<!--- Ensure user is owner of folder or has access to folder in which asset resides --->
 			AND (
 				EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#arguments.thestruct.razuna.session.theuserid#' and ct_g_u_grp_id in ('1','2'))
 				OR
-				EXISTS (SELECT 1 FROM #arguments.thestruct.razuna.session.hostdbprefix#folders WHERE folder_id =  v.folder_id_r AND folder_owner = '#arguments.thestruct.razuna.session.theuserid#' )
+				EXISTS (SELECT 1 FROM #arguments.thestruct.razuna.session.hostdbprefix#folders WHERE folder_id =  v.folder_id_r AND folder_owner = '#arguments.thestruct.razuna.session.theuserid#' AND host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" /> )
 				OR
-				EXISTS (SELECT 1 FROM  #arguments.thestruct.razuna.session.hostdbprefix#folders_groups f WHERE  v.folder_id_r = f.folder_id_r AND f.grp_id_r = '0')
+				EXISTS (SELECT 1 FROM  #arguments.thestruct.razuna.session.hostdbprefix#folders_groups f WHERE  v.folder_id_r = f.folder_id_r AND f.grp_id_r = '0' AND f.host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />)
 				OR
-				EXISTS (SELECT 1 FROM ct_groups_users c, #arguments.thestruct.razuna.session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#arguments.thestruct.razuna.session.theuserid#' AND v.folder_id_r = f.folder_id_r AND f.grp_id_r = c.ct_g_u_grp_id AND f.grp_permission IN  ('r','w','x'))
+				EXISTS (SELECT 1 FROM ct_groups_users c, #arguments.thestruct.razuna.session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#arguments.thestruct.razuna.session.theuserid#' AND v.folder_id_r = f.folder_id_r AND f.grp_id_r = c.ct_g_u_grp_id AND f.grp_permission IN  ('r','w','x') AND f.host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />)
 			   )
 			<!--- Check if asset has expired and if user has only read only permissions in which case we hide asset --->
 			AND CASE
 			<!--- Check if admin user --->
 			WHEN EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#arguments.thestruct.razuna.session.theuserid#' and ct_g_u_grp_id in ('1','2')) THEN 1
 			<!---  Check if asset is in folder for which user has read only permissions and asset has expired in which case we do not display asset to user --->
-			WHEN EXISTS (SELECT 1 FROM ct_groups_users c, #arguments.thestruct.razuna.session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#arguments.thestruct.razuna.session.theuserid#' AND v.folder_id_r = f.folder_id_r AND c.ct_g_u_grp_id = f.grp_id_r AND grp_permission NOT IN  ('w','x') AND v.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />) THEN 0
+			WHEN EXISTS (SELECT 1 FROM ct_groups_users c, #arguments.thestruct.razuna.session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#arguments.thestruct.razuna.session.theuserid#' AND v.folder_id_r = f.folder_id_r AND c.ct_g_u_grp_id = f.grp_id_r AND grp_permission NOT IN  ('w','x') AND v.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" /> AND f.host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />) THEN 0
 			ELSE 1 END  = 1
 			UNION ALL
 			SELECT
@@ -1046,6 +1059,8 @@
 			AND ct.ct_type = <cfqueryparam value="aud" cfsqltype="cf_sql_varchar" />
 			AND a.folder_id_r = f.folder_id
 			AND (a.aud_group IS NULL OR a.aud_group = '')
+			AND f.host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />
+			AND a.host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />
 			<cfif arguments.thestruct.razuna.application.thedatabase EQ "mssql">
 				AND a.aud_id NOT IN (
 					SELECT TOP #min# mssql_a.aud_id
@@ -1053,24 +1068,25 @@
 					WHERE mssql_ct.ct_label_id = <cfqueryparam value="#arguments.label_id#" cfsqltype="cf_sql_varchar" />
 					AND mssql_ct.ct_id_r = mssql_a.aud_id
 					AND mssql_ct.ct_type = <cfqueryparam value="aud" cfsqltype="cf_sql_varchar" />
+					AND mssql_a.host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />
 				)
 			</cfif>
 			<!--- Ensure user is owner of folder or has access to folder in which asset resides --->
 			AND (
 				EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#arguments.thestruct.razuna.session.theuserid#' and ct_g_u_grp_id in ('1','2'))
 				OR
-				EXISTS (SELECT 1 FROM #arguments.thestruct.razuna.session.hostdbprefix#folders WHERE folder_id =  a.folder_id_r AND folder_owner = '#arguments.thestruct.razuna.session.theuserid#' )
+				EXISTS (SELECT 1 FROM #arguments.thestruct.razuna.session.hostdbprefix#folders WHERE folder_id =  a.folder_id_r AND folder_owner = '#arguments.thestruct.razuna.session.theuserid#' AND host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" /> )
 				OR
-				EXISTS (SELECT 1 FROM #arguments.thestruct.razuna.session.hostdbprefix#folders_groups f WHERE a.folder_id_r = f.folder_id_r AND f.grp_id_r = '0')
+				EXISTS (SELECT 1 FROM #arguments.thestruct.razuna.session.hostdbprefix#folders_groups f WHERE a.folder_id_r = f.folder_id_r AND f.grp_id_r = '0' AND f.host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />)
 				OR
-				EXISTS (SELECT 1 FROM ct_groups_users c, #arguments.thestruct.razuna.session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#arguments.thestruct.razuna.session.theuserid#' AND a.folder_id_r = f.folder_id_r AND f.grp_id_r = c.ct_g_u_grp_id  AND f.grp_permission IN  ('r','w','x'))
+				EXISTS (SELECT 1 FROM ct_groups_users c, #arguments.thestruct.razuna.session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#arguments.thestruct.razuna.session.theuserid#' AND a.folder_id_r = f.folder_id_r AND f.grp_id_r = c.ct_g_u_grp_id  AND f.grp_permission IN  ('r','w','x') AND f.host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />)
 			   )
 			<!--- Check if asset has expired and if user has only read only permissions in which case we hide asset --->
 			AND CASE
 			<!--- Check if admin user --->
 			WHEN EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#arguments.thestruct.razuna.session.theuserid#' and ct_g_u_grp_id in ('1','2')) THEN 1
 			<!---  Check if asset is in folder for which user has read only permissions and asset has expired in which case we do not display asset to user --->
-			WHEN EXISTS (SELECT 1 FROM ct_groups_users c, #arguments.thestruct.razuna.session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#arguments.thestruct.razuna.session.theuserid#' AND a.folder_id_r = f.folder_id_r AND c.ct_g_u_grp_id = f.grp_id_r AND grp_permission NOT IN  ('w','x') AND a.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />) THEN 0
+			WHEN EXISTS (SELECT 1 FROM ct_groups_users c, #arguments.thestruct.razuna.session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#arguments.thestruct.razuna.session.theuserid#' AND a.folder_id_r = f.folder_id_r AND c.ct_g_u_grp_id = f.grp_id_r AND grp_permission NOT IN  ('w','x') AND a.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" /> AND f.host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />) THEN 0
 			ELSE 1 END  = 1
 			ORDER BY #sortby#
 			<cfif arguments.thestruct.razuna.application.thedatabase EQ "mysql" OR arguments.thestruct.razuna.application.thedatabase EQ "h2">
@@ -1111,6 +1127,7 @@
 			AND ct.ct_id_r = f.folder_id
 			AND f.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 			AND ct.ct_type = <cfqueryparam value="folder" cfsqltype="cf_sql_varchar" />
+			AND f.host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />
 			<!--- Ensure user has access to folder  --->
 			AND
 			(
@@ -1118,7 +1135,7 @@
 				OR
 				folder_owner = '#arguments.thestruct.razuna.session.theuserid#'
 				OR
-				EXISTS (SELECT 1 FROM ct_groups_users c, #arguments.thestruct.razuna.session.hostdbprefix#folders_groups fg WHERE c.ct_g_u_user_id ='#arguments.thestruct.razuna.session.theuserid#' AND f.folder_id = fg.folder_id_r AND (fg.grp_id_r = c.ct_g_u_grp_id OR fg.grp_id_r = 0)AND fg.grp_permission IN  ('r','w','x'))
+				EXISTS (SELECT 1 FROM ct_groups_users c, #arguments.thestruct.razuna.session.hostdbprefix#folders_groups fg WHERE c.ct_g_u_user_id ='#arguments.thestruct.razuna.session.theuserid#' AND f.folder_id = fg.folder_id_r AND (fg.grp_id_r = c.ct_g_u_grp_id OR fg.grp_id_r = 0)AND fg.grp_permission IN  ('r','w','x') AND fg.host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />)
 			)
 			</cfquery>
 			<!--- Get proper folderaccess --->
@@ -1139,6 +1156,7 @@
 			AND ctl.ct_id_r = c.col_id
 			AND c.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 			AND ctl.ct_type = <cfqueryparam value="collection" cfsqltype="cf_sql_varchar" />
+			AND c.host_id = <cfqueryparam value="#arguments.thestruct.razuna.session.hostid#" cfsqltype="cf_sql_numeric" />
 			<!--- Ensure user has access to collection --->
 			AND
 			(
@@ -1554,7 +1572,7 @@
 	<cffunction name="store_values" output="false" returntype="void">
 		<cfargument name="thestruct" required="yes" type="struct">
 		<!--- Get the cachetoken for here --->
-		<cfset var cachetoken = getcachetoken("labels")>
+		<cfset var cachetoken = getcachetoken(type="labels", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 		<!--- Var --->
 		<cfset var qry = "">
 		<!--- Grab all files related to this labelid --->
