@@ -149,7 +149,7 @@
 		<cfset arguments.thestruct.razuna.session.search.searchrenditions = arguments.thestruct.prefs.set2_rendition_search>
 
 		<!--- Search in Lucene  --->
-		<cfinvoke component="lucene" method="search" criteria="#arguments.thestruct.searchtext#" category="#thetype#" hostid="#arguments.thestruct.razuna.session.hostid#" startrow="#_startrow#" maxrows="#_maxrows#" folderid="#arguments.thestruct.list_recfolders#" search_type="#arguments.thestruct.search_type#" search_rendition="#arguments.thestruct.prefs.set2_rendition_search#" search_upc="#arguments.thestruct.searchupc#" thestruct="#arguments.thestruct#" returnvariable="qry_lucene">
+		<cfinvoke component="lucene" method="search" criteria="#arguments.thestruct.searchtext#" category="#thetype#" hostid="#arguments.thestruct.razuna.session.hostid#" startrow="#_startrow#" maxrows="#_maxrows#" folderid="#arguments.thestruct.list_recfolders#" search_type="#arguments.thestruct.search_type#" search_rendition="#arguments.thestruct.prefs.set2_rendition_search#" searchupc="#arguments.thestruct.searchupc#" thestruct="#arguments.thestruct#" returnvariable="qry_lucene">
 
 		<!--- Get all ids --->
 		<cfinvoke method="getAllIdsWithType" qry_lucene="#qry_lucene#" iscol="#arguments.thestruct.iscol#" newsearch="#arguments.thestruct.newsearch#" thestruct="#arguments.thestruct#" returnvariable="qry_idstype">
@@ -1310,7 +1310,7 @@
 
 
 	<!--- Get all ids --->
-	<cffunction name="getAllIdsMain" cachedwithin="1" region="razcache">
+	<cffunction name="getAllIdsMain">
 		<cfargument name="thestruct" type="struct" required="true">
 		<cfargument name="searchupc" type="string">
 		<cfargument name="searchtext" type="string">
@@ -1318,7 +1318,9 @@
 		<cfargument name="searchrenditions" type="string">
 		<cfargument name="searchfolderid" type="string">
 		<cfargument name="hostid" type="numeric">
-
+		<!--- <cfset consoleoutput(true, true)>
+		<cfset console("getAllIdsMain arguments", arguments.searchupc)>
+		<cfabort> --->
 		<!--- Var --->
 		<cfset var ids = "0,">
 
@@ -1329,24 +1331,29 @@
 			<cfset var _func = "getAllIds">
 		</cfif>
 
+		<!--- <cfset console("_func", _func)> --->
 		<cfinvoke component="search" method="#_func#" thestruct="#arguments.thestruct#" searchupc="#arguments.searchupc#" searchtext="#arguments.searchtext#" searchtype="#arguments.searchtype#" searchrenditions="#arguments.searchrenditions#" searchfolderid="#arguments.searchfolderid#" hostid="#arguments.hostid#" returnvariable="ids">
 
 		<cfreturn ids>
 	</cffunction>
 
 	<!--- Get all ids if search is all --->
-	<cffunction name="getAllIds" cachedwithin="1" region="razcache">
+	<cffunction name="getAllIds">
 		<cfargument name="thestruct" type="struct" required="true">
+		<cfargument name="searchupc" type="string">
 		<cfargument name="searchtext" type="string">
 		<cfargument name="searchtype" type="string">
 		<cfargument name="searchrenditions" type="string">
 		<cfargument name="searchfolderid" type="string">
 		<cfargument name="hostid" type="numeric">
+		<!--- <cfset consoleoutput(true, true)>
+		<cfset console("getAllIds arguments", arguments.searchupc)>
+		<cfabort> --->
 		<!--- Var --->
 		<cfset var qry_lucene ="">
 		<cfset var _ids ="0,">
 		<!--- Get all records --->
-		<cfinvoke component="lucene" method="search" criteria="#arguments.searchtext#" category="#arguments.searchtype#" hostid="#arguments.hostid#" startrow="0" maxrows="0" search_type="" search_rendition="#arguments.searchrenditions#" folderid="#arguments.searchfolderid#" returnvariable="qry_lucene" thestruct="#arguments.thestruct#">
+		<cfinvoke component="lucene" method="search" criteria="#arguments.searchtext#" category="#arguments.searchtype#" hostid="#arguments.hostid#" startrow="0" maxrows="0" search_type="#arguments.searchtype#" search_rendition="#arguments.searchrenditions#" folderid="#arguments.searchfolderid#" thestruct="#arguments.thestruct#" searchupc="#arguments.searchupc#" returnvariable="qry_lucene">
 		<!--- Loop over results --->
 		<cfloop query="qry_lucene">
 			<cfinvoke component="folders" method="setaccess" returnvariable="theaccess" thestruct="#arguments.thestruct#" folder_id="#folder#" />

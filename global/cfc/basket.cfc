@@ -35,20 +35,21 @@
 	<!--- Params --->
 	<cfparam name="arguments.thestruct.thetype" default="">
 	<cfparam name="arguments.thestruct.fromshare" default="F">
-<!--- 	<cfset consoleoutput(true, true)>
+	<!--- <cfset consoleoutput(true, true)>
 	<cfset console(arguments.thestruct)> --->
 
 	<cfthread intstruct="#arguments.thestruct#">
 
 		<!--- If this is from search the file_id should be all --->
-		<cfif attributes.intstruct.file_id EQ "all">
+		<cfif attributes.intstruct.razuna.session.file_id EQ "all">
 			<!--- <cfset consoleoutput(true, true)>
-			<cfset console(attributes.intstruct.sessions)>
-			<cfset console(attributes.intstruct.razuna.session.search)> --->
+			<cfset console(attributes.intstruct.razuna.session)> --->
 			<!--- As we have all get all IDS from this search --->
 			<cfinvoke component="search" method="getAllIdsMain" searchupc="#attributes.intstruct.razuna.session.search.searchupc#" searchtext="#attributes.intstruct.razuna.session.search.searchtext#" searchtype="#attributes.intstruct.razuna.session.search.searchtype#" searchrenditions="#attributes.intstruct.razuna.session.search.searchrenditions#" searchfolderid="#attributes.intstruct.razuna.session.search.searchfolderid#" hostid="#attributes.intstruct.razuna.session.hostid#" thestruct="#attributes.intstruct#" returnvariable="ids">
-				<!--- Set the fileid --->
-				<cfset attributes.intstruct.file_id = ids>
+			<!--- Set the fileid --->
+			<cfset attributes.intstruct.file_id = ids>
+			<!--- <cfset consoleoutput(true, true)>
+			<cfset console("ids", ids)> --->
 		</cfif>
 
 		<cfloop index="thenr" delimiters="," list="#attributes.intstruct.file_id#">
@@ -90,6 +91,8 @@
 				</cfif>
 			<!--- </cfif> --->
 		</cfloop>
+		<!--- Flush Cache --->
+		<cfinvoke component="global.cfc.extQueryCaching" method="resetcachetoken" type="general" hostid="#attributes.intstruct.razuna.session.hostid#" thestruct="#attributes.intstruct#">
 	</cfthread>
 	<!--- Flush Cache --->
 	<cfset resetcachetoken(type="general", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
