@@ -544,6 +544,13 @@
 	</cfquery>
 	<!--- Size of all assets in basket in MB --->
 	<cfset var basketsize = totsize.basketsize/1000000>
+	<!--- <cfset consoleoutput(true, true)>
+	<cfset console("arguments.thestruct.razuna.session.allorg", arguments.thestruct.razuna.session.allorg)>
+	<cfset console("arguments.thestruct.razuna.session.allthumb", arguments.thestruct.razuna.session.allthumb)>
+	<cfset console("arguments.thestruct.razuna.session.allrend", arguments.thestruct.razuna.session.allrend)>
+	<cfset console("arguments.thestruct.razuna.session.allvers", arguments.thestruct.razuna.session.allvers)>
+	<cfset console("thebasket", thebasket)>
+	<cfabort> --->
 	<!--- Loop trough the basket --->
 	<cfloop query="thebasket">
 		<cfif (cart_size)>
@@ -570,14 +577,18 @@
 				<cfif arguments.thestruct.razuna.session.allrend EQ "true">
 					<cfinvoke component="images" method="relatedimages" thestruct="#arguments.thestruct#" returnvariable="qry_related">
 					<cfif qry_related.recordcount>
-						<cfset arguments.thestruct.artofimage = arguments.thestruct.artofimage & cart_product_id & "-" & valueList(qry_related.img_id) & ",">
+						<cfloop query="qry_related">
+							<cfset arguments.thestruct.artofimage = arguments.thestruct.artofimage & arguments.thestruct.theid & "-" & img_id & ",">
+						</cfloop>
 					</cfif>
 				</cfif>
 				<!--- If versions download then grab all renditions of this id --->
 				<cfif arguments.thestruct.razuna.session.allvers EQ "true">
 					<cfinvoke component="global" method="getAdditionalVersions" thestruct="#arguments.thestruct#" returnvariable="qry_add_versions">
 					<cfif qry_add_versions.recordcount>
-						<cfset arguments.thestruct.artofimage = arguments.thestruct.artofimage & valueList(qry_add_versions.basket_download_id) & ",">
+						<cfloop query="qry_add_versions">
+							<cfset arguments.thestruct.artofimage = arguments.thestruct.artofimage & arguments.thestruct.theid & "-" & basket_download_id & ",">
+						</cfloop>
 					</cfif>
 				</cfif>
 				<!--- Feedback --->
@@ -585,6 +596,9 @@
 					<cfoutput><strong>#getting_image# "#filename#"</strong><br><br></cfoutput>
 					<cfflush>
 				</cfif>
+				<!--- <cfset consoleoutput(true, true)>
+				<cfset console("arguments.thestruct.artofimage", arguments.thestruct.artofimage)>
+				<cfabort> --->
 				<!--- Write Image --->
 				<cfinvoke method="writeimages" thestruct="#arguments.thestruct#">
 			</cfcase>
@@ -601,14 +615,18 @@
 				<cfif arguments.thestruct.razuna.session.allrend EQ "true">
 					<cfinvoke component="videos" method="relatedvideos" thestruct="#arguments.thestruct#" returnvariable="qry_related">
 					<cfif qry_related.recordcount>
-						<cfset arguments.thestruct.artofvideo = arguments.thestruct.artofvideo & cart_product_id & "-" & valueList(qry_related.vid_id)>
+						<cfloop query="qry_related">
+							<cfset arguments.thestruct.artofvideo = arguments.thestruct.artofvideo & arguments.thestruct.theid & "-" & vid_id & ",">
+						</cfloop>
 					</cfif>
 				</cfif>
 				<!--- If versions download then grab all renditions of this id --->
 				<cfif arguments.thestruct.razuna.session.allvers EQ "true">
 					<cfinvoke component="global" method="getAdditionalVersions" thestruct="#arguments.thestruct#" returnvariable="qry_add_versions">
 					<cfif qry_add_versions.recordcount>
-						<cfset arguments.thestruct.artofvideo = arguments.thestruct.artofvideo & valueList(qry_add_versions.basket_download_id) & ",">
+						<cfloop query="qry_add_versions">
+							<cfset arguments.thestruct.artofvideo = arguments.thestruct.artofvideo & arguments.thestruct.theid & "-" & basket_download_id & ",">
+						</cfloop>
 					</cfif>
 				</cfif>
 				<!--- Feedback --->
@@ -632,14 +650,18 @@
 				<cfif arguments.thestruct.razuna.session.allrend EQ "true">
 					<cfinvoke component="audios" method="relatedaudios" thestruct="#arguments.thestruct#" returnvariable="qry_related">
 					<cfif qry_related.recordcount>
-						<cfset arguments.thestruct.artofaudio = arguments.thestruct.artofaudio & cart_product_id & "-" & valueList(qry_related.aud_id)>
+						<cfloop query="qry_related">
+							<cfset arguments.thestruct.artofaudio = arguments.thestruct.artofaudio & arguments.thestruct.theid & "-" & aud_id & ",">
+						</cfloop>
 					</cfif>
 				</cfif>
 				<!--- If versions download then grab all renditions of this id --->
 				<cfif arguments.thestruct.razuna.session.allvers EQ "true">
 					<cfinvoke component="global" method="getAdditionalVersions" thestruct="#arguments.thestruct#" returnvariable="qry_add_versions">
 					<cfif qry_add_versions.recordcount>
-						<cfset arguments.thestruct.artofaudio = arguments.thestruct.artofaudio & valueList(qry_add_versions.basket_download_id) & ",">
+						<cfloop query="qry_add_versions">
+							<cfset arguments.thestruct.artofaudio = arguments.thestruct.artofaudio & arguments.thestruct.theid & "-" & basket_download_id & ",">
+						</cfloop>
 					</cfif>
 				</cfif>
 				<!--- Feedback --->
@@ -660,7 +682,9 @@
 				<cfif arguments.thestruct.razuna.session.allvers EQ "true">
 					<cfinvoke component="global" method="getAdditionalVersions" thestruct="#arguments.thestruct#" returnvariable="qry_add_versions">
 					<cfif qry_add_versions.recordcount>
-						<cfset arguments.thestruct.artoffile = arguments.thestruct.artoffile & valueList(qry_add_versions.basket_download_id) & ",">
+						<cfloop query="qry_add_versions">
+							<cfset arguments.thestruct.artoffile = arguments.thestruct.artoffile & arguments.thestruct.theid & "-" & basket_download_id & ",">
+						</cfloop>
 					</cfif>
 				</cfif>
 				<!--- Feedback --->
