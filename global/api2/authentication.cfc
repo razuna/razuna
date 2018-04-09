@@ -272,16 +272,18 @@
 		<cfargument name="maxrows" required="true" type="numeric">
 		<cfargument name="folderid" required="true" type="string">
 		<cfargument name="showrenditions" required="false" default="true" type="string">
-		<cfargument name="search_upc" type="boolean" required="false" default="false">
+		<cfargument name="search_upc" type="string" required="false" default="false">
 		<!--- Renditions param is boolean convert it here --->
 		<cfif !arguments.showrenditions>
 			<cfset var _rendition = "t">
 		<cfelse>
 			<cfset var _rendition = "f">
 		</cfif>
+		<!--- Convert search_upc to boolean --->
+		<cfset var _search_upc = arguments.search_upc EQ 'true' ? true : false>
 		<!--- Call Lucene --->
 		<cfif application.razuna.lucene EQ "global.cfc.lucene">
-			<cfset var qrylucene = callFunction(comp="global.cfc.lucene", func="search", hostid=arguments.hostid, criteria=arguments.criteria, category=arguments.category, startrow=arguments.startrow, maxrows=arguments.maxrows, folderid=arguments.folderid, search_rendition=_rendition, searchupc=arguments.search_upc, search_type="" )>
+			<cfset var qrylucene = callFunction(comp="global.cfc.lucene", func="search", hostid=arguments.hostid, criteria=arguments.criteria, category=arguments.category, startrow=arguments.startrow, maxrows=arguments.maxrows, folderid=arguments.folderid, search_rendition=_rendition, searchupc=_search_upc, search_type="")>
 		<cfelse>
 			<!--- Merge struct with default one --->
 			<cfset arguments = setStruct(arguments)>

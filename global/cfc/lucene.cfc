@@ -66,11 +66,13 @@
 		<cfargument name="folderid" type="string">
 		<cfargument name="search_type" type="string">
 		<cfargument name="search_rendition" type="string">
-		<cfargument name="searchupc" type="boolean">
+		<cfargument name="searchupc" type="any">
 		<cfargument name="thestruct" type="struct" required="true" />
 		<!--- <cfset consoleoutput(true, true)>
 		<cfset console("lucene search arguments", arguments)>
 		<cfabort> --->
+		<!--- Convert search_upc to boolean --->
+		<cfset var _search_upc = arguments.searchupc EQ 'true' ? true : false>
 		<!--- Param --->
 		<cfset var _taskserver = "" />
 		<!--- Query settings --->
@@ -94,7 +96,7 @@
 			<cfhttpparam name="folderid" value="#arguments.folderid#" type="formfield" />
 			<cfhttpparam name="search_type" value="#arguments.search_type#" type="formfield" />
 			<cfhttpparam name="search_rendition" value="#arguments.search_rendition#" type="formfield" />
-			<cfhttpparam name="search_upc" value="#arguments.searchupc#" type="formfield" />
+			<cfhttpparam name="search_upc" value="#_search_upc#" type="formfield" />
 			<!--- <cfhttpparam name="thestruct" value="#arguments.thestruct#" type="formfield" /> --->
 		</cfhttp>
 		<!--- if statuscode is not 200 --->
@@ -135,6 +137,7 @@
 			<cfdump var="#cfhttp#" label="ERROR" />
 			<cfabort>
 		</cfif>
+
 	</cffunction>
 
 	<!--- INDEX: Update from API --->
