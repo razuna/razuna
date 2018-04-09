@@ -281,7 +281,7 @@
 		</cfif>
 		<!--- Call Lucene --->
 		<cfif application.razuna.lucene EQ "global.cfc.lucene">
-			<cfset var qrylucene = callFunction(comp="global.cfc.lucene", func="search", hostid=arguments.hostid, criteria=arguments.criteria, category=arguments.category, startrow=arguments.startrow, maxrows=arguments.maxrows, folderid=arguments.folderid, search_rendition=_rendition, search_upc=arguments.search_upc, search_type="" )>
+			<cfset var qrylucene = callFunction(comp="global.cfc.lucene", func="search", hostid=arguments.hostid, criteria=arguments.criteria, category=arguments.category, startrow=arguments.startrow, maxrows=arguments.maxrows, folderid=arguments.folderid, search_rendition=_rendition, searchupc=arguments.search_upc, search_type="" )>
 		<cfelse>
 			<!--- Merge struct with default one --->
 			<cfset arguments = setStruct(arguments)>
@@ -294,7 +294,7 @@
 				<cfhttpparam name="maxrows" value="#arguments.maxrows#" type="url" />
 				<cfhttpparam name="folderid" value="#arguments.folderid#" type="url" />
 				<cfhttpparam name="search_rendition" value="#_rendition#" type="url" />
-				<cfhttpparam name="search_upc" value="#arguments.search_upc#" type="url" />
+				<cfhttpparam name="searchupc" value="#arguments.search_upc#" type="url" />
 				<cfhttpparam name="search_type" value="" type="url" />
 			</cfhttp>
 			<!--- Set the return --->
