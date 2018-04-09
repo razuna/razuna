@@ -970,7 +970,7 @@ border: 1px solid #357EC7;
 	0px 1px 3px rgba(000,000,000,0.5),
 	inset 0px 0px 3px rgba(255,255,255,1);
 	width: 160px;
-	height: 35px;
+	/* height: 35px; */
 	text-align: center;
 	line-height: 50px;
 	background-color: #82cdff;

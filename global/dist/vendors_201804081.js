@@ -509,7 +509,7 @@ for(j=i=this.get_string("New node"),k=[],l=0,m=c.children.length;m>l;l++)k.push(
 			$('#' + uniqID).append('<div class="sticky-note" rel="' + uniqID + '">' + note + '</div>');
 			
 			// Smoother animation
-			var height = $('#' + uniqID).height();
+			var height = $('#' + uniqID).height() + 25;
 			$('#' + uniqID).css('height', height);
 			
 			$('#' + uniqID).slideDown(settings['speed']);

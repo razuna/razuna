@@ -6407,7 +6407,7 @@ function destroywindow(numb) {
 }
 // Load Content with JQuery
 function loadcontent(ele,url){
-	$("body").append('<div id="bodyoverlay"><img src="' + dynpath + '/global/host/dam/images/loading-bars.gif" border="0" style="padding:10px;"></div>');
+	$("body").append('<div id="bodyoverlay"><img src="' + dynpath + '/global/host/dam/images/loading-bars.gif" border="0"></div>');
 	// Load the page
 	$("#" + ele).load(url, function() {
 		$("#bodyoverlay").remove();
@@ -6415,7 +6415,7 @@ function loadcontent(ele,url){
 }
 // Load overlay
 function loadoverlay(){
-	$("body").append('<div id="bodyoverlay"><img src="' + dynpath + '/global/host/dam/images/loading-bars.gif" border="0" style="padding:10px;"></div>');
+	$("body").append('<div id="bodyoverlay"><img src="' + dynpath + '/global/host/dam/images/loading-bars.gif" border="0"></div>');
 }
 // Form: Get Action URL
 function formaction(theid) {
@@ -6780,7 +6780,7 @@ function checkentry(){
 		}
 		else {
 			// Show loading bar
-			$("body").append('<div id="bodyoverlay"><img src="' + dynpath + '/global/host/dam/images/loading-bars.gif" border="0" style="padding:10px;"></div>');
+			$("body").append('<div id="bodyoverlay"><img src="' + dynpath + '/global/host/dam/images/loading-bars.gif" border="0"></div>');
 			// We are now using POST for the search field (much more compatible then a simple load for foreign chars)
 			$('#rightside').load('index.cfm?fa=c.search_simple', { searchtext: encodeURIComponent(theentry), folder_id: thefolderid, thetype: thetype }, function(){
 				$("#bodyoverlay").remove();
