@@ -72,41 +72,7 @@
 
 		<div style="clear:both;padding-bottom:25px;"></div>
 
-		<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
-			<tr>
-				<th colspan="4">
-					<div style="float:right;"><a href="##" onclick="showwindow('#myself#c.scheduler_script_detail&sched_id=0','New Scheduled Script',650,1);">New Scheduled Script</a></div>
-				</th>
-			</tr>
-			<tr>
-				<td colspan="4">Scheduled scripts are dedicated scripts that runs on the server to perform specialized backend actions</td>
-			</tr>
-			<cfif qry_scripts.recordcount>
-				<tr>
-					<th width="20%" nowrap="true">Name</th>
-					<th width="20%" nowrap="true">Last update</th>
-					<th width="20%" nowrap="true">Active</th>
-					<th width="60%"></th>
-				</tr>
-				<!--- Loop over all scheduled events in database table --->
-				<cfloop query="qry_scripts">
-					<tr class="list">
-						<td nowrap="true"><a href="##" onclick="showwindow('#myself#c.scheduler_script_detail&sched_id=#sched_id#','#Encodeforjavascript(value)#',650,1);">#value#</a></td>
-						<td nowrap="true">#date_added#</td>
-						<td>
-							<cfif active>
-								<span class="fa fa-thumbs-o-up"></span>
-							<cfelse>
-								<span class="fa fa-thumbs-o-down"></span>
-							</cfif>
-						</td>
-						<td nowrap="true">
-							<a href="##" onclick="showwindow('#myself#ajax.remove_record&what=scheduler&id=#sched_id#&loaddiv=admin_schedules','#myFusebox.getApplicationData().defaults.trans("remove_selected")#',400,1);return false"><img src="#dynpath#/global/host/dam/images/trash.png" border="0" /></a>
-						</td>
-					</tr>
-				</cfloop>
-			</cfif>
-		</table>
+		
 
 
 		<div id="sched_status" style="float:left;margin:10px;color:green;visibility:hidden;"></div>
