@@ -24,7 +24,7 @@
 *
 --->
 <cfoutput>
-<cfif qry_av.assets.recordcount NEQ 0 OR qry_av.links.recordcount NEQ 0>
+<cfif qry_av.recordcount NEQ 0>
 	<table border="0" cellpadding="0" cellspacing="0" width="100%">
 		<cfloop query="qry_av">
 			<!--- Format size --->
@@ -33,11 +33,11 @@
 				<cfif av_type eq 'img' >
 					<td width="75" align="center">
 						<cfif application.razuna.storage EQ 'local'>
-							<cfset thumb_url = '//#cgi.http_host##dynpath#/assets/#session.hostid##qry_av.assets.av_thumb_url#'>
+							<cfset thumb_url = '//#cgi.http_host##dynpath#/assets/#session.hostid##qry_av.av_thumb_url#'>
 						<cfelse>
-							<cfset thumb_url = '#qry_av.assets.av_thumb_url#'>
+							<cfset thumb_url = '#qry_av.av_thumb_url#'>
 						</cfif>
-						 <cfif qry_av.assets.av_thumb_url NEQ ""><a href="#thumb_url#" target="_blank"><img src="#thumb_url#" style="max-height:50px;max-width:100px;padding-right:10px;"></a></cfif>
+						 <cfif qry_av.av_thumb_url NEQ ""><a href="#thumb_url#" target="_blank"><img src="#thumb_url#" style="max-height:50px;max-width:100px;padding-right:10px;"></a></cfif>
 					</td>
 				</cfif>
 				<td valign="top">
@@ -58,7 +58,7 @@
 							<input type="text" id="inputavo#av_id#" style="width:100%;" value="//#cgi.http_host##dynpath#/assets/#session.hostid##av_link_url#" />
 						<cfelse>
 							<input type="text" id="inputavo#av_id#" style="width:100%;" value="#av_link_url#" />
-						</cfif>		
+						</cfif>
 					</div>
 				</td>
 			</tr>
@@ -85,7 +85,7 @@
 			buttons: {
 				"#myFusebox.getApplicationData().defaults.trans('yes')#": function() {
 					$( this ).dialog( "close" );
-					$('##div_forall').load('#myself#c.swap_rendition_original&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#&id=' + id, function(){ 
+					$('##div_forall').load('#myself#c.swap_rendition_original&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#&id=' + id, function(){
 						if (type == 'img')loadren();
 						if (type == 'vid')loadrenvid();
 						if (type == 'aud')loadrenaud();
@@ -106,7 +106,7 @@
 			buttons: {
 				"#myFusebox.getApplicationData().defaults.trans("remove_rend_ok")#": function() {
 					$( this ).dialog( "close" );
-					$('##div_forall').load('#myself#c.av_link_remove_new&file_id=#attributes.file_id#&id=' + id, function(){ 
+					$('##div_forall').load('#myself#c.av_link_remove_new&file_id=#attributes.file_id#&id=' + id, function(){
 						if (type == 'img')loadren();
 						if (type == 'vid')loadrenvid();
 						if (type == 'aud')loadrenaud();
