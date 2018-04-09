@@ -3394,11 +3394,11 @@ This is the main function called directly by a single upload else from addassets
 		<cfexecute name="#arguments.thestruct.theshhto#" timeout="60" variable="orgheight" />
 		<cfexecute name="#arguments.thestruct.theshwto#" timeout="60" variable="orgwidth" />
 		<!--- Exiftool on windows return the whole path with the sizes thus trim and get last --->
-		<cfset arguments.thestruct.thexmp.orgheight = trim(listlast(thumbheight," "))>
-		<cfset arguments.thestruct.thexmp.orgwidth = trim(listlast(thumbwidth," "))>
+		<cfset arguments.thestruct.thexmp.orgheight = trim(listlast(orgheight," "))>
+		<cfset arguments.thestruct.thexmp.orgwidth = trim(listlast(orgwidth," "))>
 
-		<cfset arguments.thestruct.theheight = trim(listlast(thumbheight," "))>
-		<cfset arguments.thestruct.thewidth = trim(listlast(thumbwidth," "))>
+		<cfset arguments.thestruct.theheight = trim(listlast(orgheight," "))>
+		<cfset arguments.thestruct.thewidth = trim(listlast(orgwidth," "))>
 
 		<!--- Remove the temp file sh --->
 		<cffile action="delete" file="#arguments.thestruct.thesh#">
