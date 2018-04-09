@@ -210,7 +210,10 @@
 	<!--- Set CustomFields --->
 	<cffunction name="setCustomField" access="public" returntype="void">
 		<cfargument name="thestruct" type="struct" required="true" />
-		<cfinvoke component="custom_fields" method="savevalues" thestruct="#arguments.thestruct#" />
+		<!--- Param --->
+		<cfset var _s = getStruct()>
+		<cfset _s.thestruct = arguments.thestruct>
+		<cfinvoke component="custom_fields" method="savevalues" thestruct="#_s#" />
 		<cfreturn />
 	</cffunction>
 
