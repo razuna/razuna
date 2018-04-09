@@ -850,16 +850,23 @@ Comment:<br>
 			<cfset idcol  = "asset_id_r">
 		</cfif>
 		<!--- Param --->
-		<cfset var qry = "">
+		<cfset var qry = structnew()>
 		<!--- Query links --->
-		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qry" cachedwithin="1" region="razcache">
-		SELECT /* #cachetoken#get_versions_link */ av_id, asset_id_r, av_link_title, av_link_url, thesize, thewidth, theheight, av_type, hashtag, folder_id_r, av_thumb_url, selection, theorder, av_link as link
+		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qry.links" cachedwithin="1" region="razcache">
+		SELECT /* #cachetoken#get_versions_link */ av_id, asset_id_r, av_link_title, av_link_url, folder_id_r, av_type, av_thumb_url
 		FROM #arguments.thestruct.razuna.session.hostdbprefix#additional_versions
 		WHERE #idcol# = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
-		ORDER BY theorder DESC
+		AND av_link = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="1">
 		</cfquery>
-		<!--- Return --->
+		<!--- Query links --->
+		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qry.assets" cachedwithin="1" region="razcache">
+		SELECT /* #cachetoken#get_versions_link2 */ av_id, asset_id_r, av_link_title, av_link_url, thesize, thewidth, theheight, av_type, hashtag, folder_id_r, av_thumb_url
+		FROM #arguments.thestruct.razuna.session.hostdbprefix#additional_versions
+		WHERE #idcol# = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
+		AND av_link = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="0">
+		</cfquery>
 		<cfreturn qry />
 	</cffunction>
 
@@ -1092,11 +1099,10 @@ Comment:<br>
 		<cfset var qry = "">
 		<!--- Query --->
 		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qry">
-		SELECT av_link_title, av_link_url, av_link, theorder
+		SELECT av_link_title, av_link_url, av_link
 		FROM #arguments.thestruct.razuna.session.hostdbprefix#additional_versions
 		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 		AND av_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.av_id#">
-		ORDER BY theorder
 		</cfquery>
 		<cfreturn qry />
 	</cffunction>

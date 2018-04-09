@@ -9909,7 +9909,7 @@
 						<!-- CFC: Get Additional versions -->
 						<invoke object="myFusebox.getApplicationData().global" methodcall="get_versions_link(thestruct=attributes)" returnvariable="qry_av" />
 						<!-- Set filename -->
-						<set name="attributes.filename" value="#qry_av.av_link_title#" />
+						<set name="attributes.filename" value="#qry_av.assets.av_link_title#" />
 					</true>
 					<false>
 						<!-- Set filename -->
@@ -9934,7 +9934,7 @@
 						<!-- CFC: Get Additional versions -->
 						<invoke object="myFusebox.getApplicationData().global" methodcall="get_versions_link(thestruct=attributes)" returnvariable="qry_av" />
 						<!-- Set filename -->
-						<set name="attributes.filename" value="#qry_av.av_link_title#" />
+						<set name="attributes.filename" value="#qry_av.assets.av_link_title#" />
 					</true>
 					<false>
 						<!-- Set filename -->
@@ -9958,7 +9958,7 @@
 						<!-- CFC: Get Additional versions -->
 						<invoke object="myFusebox.getApplicationData().global" methodcall="get_versions_link(thestruct=attributes)" returnvariable="qry_av" />
 						<!-- Set filename -->
-						<set name="attributes.filename" value="#qry_av.av_link_title#" />
+						<set name="attributes.filename" value="#qry_av.assets.av_link_title#" />
 					</true>
 					<false>
 						<!-- Set filename -->
@@ -9982,7 +9982,7 @@
 						<!-- CFC: Get Additional versions -->
 						<invoke object="myFusebox.getApplicationData().global" methodcall="get_versions_link(thestruct=attributes)" returnvariable="qry_av" />
 						<!-- Set filename -->
-						<set name="attributes.filename" value="#qry_av.av_link_title#" />
+						<set name="attributes.filename" value="#qry_av.assets.av_link_title#" />
 					</true>
 					<false>
 						<!-- Set filename -->
