@@ -1583,6 +1583,7 @@
 						<cfinvoke component="global" method="ExtractUPCInfo" returnvariable="upcinfo">
 							<cfinvokeargument name="upcnumber" value="#get_upc.upcnumber#"/>
 							<cfinvokeargument name="upcgrpsize" value="#upcstruct.upcgrpsize#"/>
+							<cfinvokeargument name="thestruct" value="#arguments.thestruct#">
 						</cfinvoke>
 					</cfif>
 

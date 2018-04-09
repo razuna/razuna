@@ -1140,6 +1140,7 @@
 				<cfinvoke component="global" method="ExtractUPCInfo" returnvariable="upcinfo">
 					<cfinvokeargument name="upcnumber" value="#upcnum#"/>
 					<cfinvokeargument name="upcgrpsize" value="#upcstruct.upcgrpsize#"/>
+					<cfinvokeargument name="thestruct" value="#arguments.thestruct#">
 				</cfinvoke>
 				<cfif theart NEQ "thumb">
 					<cfset var rendition_version ="">
