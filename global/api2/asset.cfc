@@ -1540,4 +1540,129 @@
 		</cfif>
 		<cfreturn theqry>
 	</cffunction>
+
+	<!--- UPC: GET --->
+	<cffunction name="getupc" access="remote" output="false" returntype="query" returnformat="json">
+		<cfargument name="api_key" required="true">
+		<cfargument name="assetid" required="true">
+		<cfargument name="assettype" required="true">
+		<!--- Check key --->
+		<cfset var thesession = checkdb(arguments.api_key)>
+		<!--- Check to see if session is valid --->
+		<cfif thesession>
+			<cfset var qry = "">
+			<!--- Get permission for asset (folder) --->
+			<cfset var folderaccess = checkFolderPerm(arguments.api_key, arguments.assetid)>
+			<!--- If user has access --->
+			<cfif folderaccess EQ "R"  OR folderaccess EQ "W" OR folderaccess EQ "X">
+				<!--- Set db and id --->
+				<cfif arguments.assettype EQ "img">
+					<cfset var thedb = "images">
+					<cfset var theid = "img_id">
+					<cfset var theupc = "img_upc_number">
+					<cfset var cachetoken = getcachetoken(arguments.api_key,"images")>
+				<cfelseif arguments.assettype EQ "doc">
+					<cfset var thedb = "files">
+					<cfset var theid = "file_id">
+					<cfset var theupc = "file_upc_number">
+					<cfset var cachetoken = getcachetoken(arguments.api_key,"files")>
+				<cfelseif arguments.assettype EQ "vid">
+					<cfset var thedb = "videos">
+					<cfset var theid = "vid_id">
+					<cfset var theupc = "vid_upc_number">
+					<cfset var cachetoken = getcachetoken(arguments.api_key,"videos")>
+				<cfelseif arguments.assettype EQ "aud">
+					<cfset var thedb = "audios">
+					<cfset var theid = "aud_id">
+					<cfset var theupc = "aud_upc_number">
+					<cfset var cachetoken = getcachetoken(arguments.api_key,"audios")>
+				<cfelse>
+					<cfreturn noaccess()>
+				</cfif>
+				<!--- Loop over the assetid --->
+				<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
+				SELECT /* #cachetoken#getupc */ #theupc# AS upc_number, '#arguments.assettype#' AS type, #theid# AS id
+				FROM #session.hostdbprefix##thedb#
+				WHERE #theid# IN (<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.assetid#" list="Yes">)
+				</cfquery>
+			<!--- No access --->
+			<cfelse>
+				<!--- Return --->
+				<cfset var qry = noaccess()>
+			</cfif>
+		<!--- No session found --->
+		<cfelse>
+			<cfset var qry = timeout()>
+		</cfif>
+		<!--- Return --->
+		<cfreturn qry>
+	</cffunction>
+
+	<!--- UPC: GET --->
+	<cffunction name="setupc" access="remote" output="false" returntype="struct" returnformat="json">
+		<cfargument name="api_key" required="true">
+		<cfargument name="assetid" required="true">
+		<cfargument name="assettype" required="true">
+		<cfargument name="upc_number" required="true">
+		<!--- Check key --->
+		<cfset var thesession = checkdb(arguments.api_key)>
+		<!--- Check to see if session is valid --->
+		<cfif thesession>
+			<cfset var qry = "">
+			<!--- Get permission for asset (folder) --->
+			<cfset var folderaccess = checkFolderPerm(arguments.api_key, arguments.assetid)>
+			<!--- If user has access --->
+			<cfif folderaccess EQ "R"  OR folderaccess EQ "W" OR folderaccess EQ "X">
+				<!--- Set db and id --->
+				<cfif arguments.assettype EQ "img">
+					<cfset var thedb = "images">
+					<cfset var theid = "img_id">
+					<cfset var theupc = "img_upc_number">
+					<cfset var cachetoken = getcachetoken(arguments.api_key,"images")>
+				<cfelseif arguments.assettype EQ "doc">
+					<cfset var thedb = "files">
+					<cfset var theid = "file_id">
+					<cfset var theupc = "file_upc_number">
+					<cfset var cachetoken = getcachetoken(arguments.api_key,"files")>
+				<cfelseif arguments.assettype EQ "vid">
+					<cfset var thedb = "videos">
+					<cfset var theid = "vid_id">
+					<cfset var theupc = "vid_upc_number">
+					<cfset var cachetoken = getcachetoken(arguments.api_key,"videos")>
+				<cfelseif arguments.assettype EQ "aud">
+					<cfset var thedb = "audios">
+					<cfset var theid = "aud_id">
+					<cfset var theupc = "aud_upc_number">
+					<cfset var cachetoken = getcachetoken(arguments.api_key,"audios")>
+				<cfelse>
+					<!--- Feedback --->
+					<cfset thexml.responsecode = 0>
+					<cfset thexml.message = "You did not provide a valid file type">
+				</cfif>
+				<!--- Loop over the assetid --->
+				<cfloop list="#arguments.assetid#" index="i" delimiters=",">
+					<!--- Loop over the assetid --->
+					<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
+					UPDATE #session.hostdbprefix##thedb#
+					SET #theupc# = <cfqueryparam value="#arguments.upc_number#" cfsqltype="cf_sql_varchar">
+					WHERE #theid# =  <cfqueryparam value="#i#" cfsqltype="cf_sql_varchar">
+					</cfquery>
+				</cfloop>
+				<!--- Feedback --->
+				<cfset thexml.responsecode = 0>
+				<cfset thexml.message = "UPC number was successfully updated">
+			<!--- No access --->
+			<cfelse>
+				<!--- Return --->
+				<cfset var thexml = noaccess('s')>
+			</cfif>
+		<!--- No session found --->
+		<cfelse>
+			<cfset var thexml = timeout('s')>
+		</cfif>
+		<!--- Return --->
+		<cfreturn thexml>
+	</cffunction>
+
+	
 </cfcomponent>
