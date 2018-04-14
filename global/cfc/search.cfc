@@ -1368,7 +1368,7 @@
 	</cffunction>
 
 	<!--- Get all ids if search is all --->
-	<cffunction name="getAllIdsUpc" cachedwithin="1" region="razcache">
+	<cffunction name="getAllIdsUpc">
 		<cfargument name="thestruct" type="struct" required="true">
 		<cfargument name="searchtext" type="string">
 		<cfargument name="searchtype" type="string">

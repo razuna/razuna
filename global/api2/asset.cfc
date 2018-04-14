@@ -1664,5 +1664,4 @@
 		<cfreturn thexml>
 	</cffunction>
 
-	
 </cfcomponent>
