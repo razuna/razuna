@@ -2289,6 +2289,7 @@
 	<!--- Set inner loop --->
 	<cfset var q_start = 1>
 	<cfset var q_end = 990>
+	<cfset var qryintern = "">
 	<!--- Query --->
 	<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qryintern" cachedwithin="1" region="razcache">
 		<cfloop from="#pos_start#" to="#pos_end#" index="i">
@@ -2303,6 +2304,26 @@
 			<cfset q_start = q_end + 1>
 	    	<cfset q_end = q_end + 990>
 	    </cfloop>
+	</cfquery>
+	<!--- Return --->
+	<cfreturn qryintern>
+</cffunction>
+
+<!--- Get description and keywords for print --->
+<cffunction name="gettextforexport" output="false">
+	<cfargument name="theid" type="string">
+	<cfargument name="thestruct" type="struct" required="true" />
+	<!--- Var --->
+	<cfset var qryintern = "">
+	<!--- Get the cachetoken for here --->
+	<cfset var cachetoken = getcachetoken(type="videos", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
+	<!--- Query --->
+	<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qryintern" cachedwithin="1" region="razcache">
+	SELECT /* #cachetoken#gettextvid */ vid_id_r tid, vid_description description, vid_keywords keywords
+	FROM #arguments.thestruct.razuna.session.hostdbprefix#videos_text
+	WHERE vid_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.theid#">
+	AND lang_id_r = <cfqueryparam cfsqltype="cf_sql_numeric" value="1">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 	</cfquery>
 	<!--- Return --->
 	<cfreturn qryintern>

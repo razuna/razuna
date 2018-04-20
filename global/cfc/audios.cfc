@@ -1882,6 +1882,8 @@
 	<!--- Set inner loop --->
 	<cfset var q_start = 1>
 	<cfset var q_end = 990>
+	<!--- Var --->
+	<cfset var qryintern = "">
 	<!--- Query --->
 	<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qryintern" cachedwithin="1" region="razcache">
 		<cfloop from="#pos_start#" to="#pos_end#" index="i">
@@ -1896,6 +1898,26 @@
 			<cfset q_start = q_end + 1>
 	    	<cfset q_end = q_end + 990>
 	    </cfloop>
+	</cfquery>
+	<!--- Return --->
+	<cfreturn qryintern>
+</cffunction>
+
+<!--- Get description and keywords for print --->
+<cffunction name="gettextforexport" output="false">
+	<cfargument name="theid" type="string">
+	<cfargument name="thestruct" type="struct" required="true" />
+	<!--- Get the cachetoken for here --->
+	<cfset var cachetoken = getcachetoken(type="audios", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
+	<!--- Var --->
+	<cfset var qryintern = "">
+	<!--- Query --->
+	<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qryintern" cachedwithin="1" region="razcache">
+	SELECT /* #cachetoken#gettextaud */ aud_id_r tid, aud_description description, aud_keywords keywords
+	FROM #arguments.thestruct.razuna.session.hostdbprefix#audios_text
+	WHERE aud_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.theid#">
+	AND lang_id_r = <cfqueryparam cfsqltype="cf_sql_numeric" value="1">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 	</cfquery>
 	<!--- Return --->
 	<cfreturn qryintern>

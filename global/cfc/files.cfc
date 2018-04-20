@@ -1655,6 +1655,8 @@
 		<!--- Set inner loop --->
 		<cfset var q_start = 1>
 		<cfset var q_end = 990>
+		<!--- Var --->
+		<cfset var qryintern = "">
 		<!--- Query --->
 		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qryintern" cachedwithin="1" region="razcache">
 			<cfloop from="#pos_start#" to="#pos_end#" index="i">
@@ -1669,6 +1671,26 @@
 				<cfset q_start = q_end + 1>
 		    	<cfset q_end = q_end + 990>
 		    </cfloop>
+		</cfquery>
+		<!--- Return --->
+		<cfreturn qryintern>
+	</cffunction>
+
+	<!--- Get description and keywords for print --->
+	<cffunction name="gettextforexport" output="false">
+		<cfargument name="theid" type="string">
+		<cfargument name="thestruct" type="struct" required="true" />
+		<!--- Get the cachetoken for here --->
+		<cfset var cachetoken = getcachetoken(type="files", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
+		<!--- Var --->
+		<cfset var qryintern = "">
+		<!--- Query --->
+		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qryintern" cachedwithin="1" region="razcache">
+		SELECT /* #cachetoken#gettextfile */ file_id_r tid, file_desc description, file_keywords keywords
+		FROM #arguments.thestruct.razuna.session.hostdbprefix#files_desc
+		WHERE file_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.theid#">
+		AND lang_id_r = <cfqueryparam cfsqltype="cf_sql_numeric" value="1">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 		</cfquery>
 		<!--- Return --->
 		<cfreturn qryintern>

@@ -2308,6 +2308,8 @@
 	<!--- Set inner loop --->
 	<cfset var q_start = 1>
 	<cfset var q_end = 990>
+	<!--- Var --->
+	<cfset var qryintern = "">
 	<!--- Query --->
 	<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qryintern" cachedwithin="1" region="razcache">
 		<cfloop from="#pos_start#" to="#pos_end#" index="i">
@@ -2325,6 +2327,26 @@
 	</cfquery>
 	<!--- Return --->
 	<cfreturn qryintern>
+</cffunction>
+
+<!--- Get description and keywords for print --->
+<cffunction name="gettextforexport" output="false">
+	<cfargument name="theid" type="string">
+	<cfargument name="thestruct" type="struct" required="true" />
+	<!--- Var --->
+	<cfset var qry = "">
+	<!--- Get the cachetoken for here --->
+	<cfset var cachetoken = getcachetoken(type="images", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
+	<!--- Query --->
+	<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qry" cachedwithin="1" region="razcache">
+	SELECT /* #cachetoken#gettextimg */ img_id_r tid, img_description description, img_keywords keywords
+	FROM #arguments.thestruct.razuna.session.hostdbprefix#images_text
+	WHERE img_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.theid#">
+	AND lang_id_r = <cfqueryparam cfsqltype="cf_sql_numeric" value="1">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
+	</cfquery>
+	<!--- Return --->
+	<cfreturn qry>
 </cffunction>
 
 <!--- Get rawmetadata --->

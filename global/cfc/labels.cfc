@@ -362,6 +362,7 @@
 		<!--- Param --->
 		<cfset var l = "">
 		<cfset var qry = "">
+		<cfset var qryct = "">
 		<!--- Get the cachetoken for here --->
 		<cfset var cachetoken = getcachetoken(type="labels", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 		<!--- Query ct table --->

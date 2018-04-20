@@ -1730,6 +1730,9 @@
 		<cfset arguments.thestruct.get_all_fields = true>
 		<!--- Read Basket --->
 		<cfinvoke component="basket" method="readbasket" thestruct="#arguments.thestruct#" returnvariable="thebasket">
+		<!--- Feedback --->
+		<cfoutput><br/><strong>We found #thebasket.recordcount# with metadata. Gathering data now to export...</strong><br /></cfoutput>
+		<cfflush>
 		<!--- Loop over items in basket --->
 		<cfloop query="thebasket">
 			<!--- Set query --->
@@ -1754,39 +1757,48 @@
 		<cfflush> --->
 	<!--- If we export all assets from folder --->
 	<cfelseif arguments.thestruct.what EQ "folder">
+		<!--- Params --->
+		<cfset var qry = "">
+		<cfset var qry_img = "">
+		<cfset var qry_vid = "">
+		<cfset var qry_aud = "">
+		<cfset var qry_doc = "">
 		<!--- Get the cachetoken for here --->
 		<cfset var cachetoken = getcachetoken(type="folders", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 		<!--- Get id from folder with type --->
-		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qry" cachedwithin="1" region="razcache">
-		SELECT /* #cachetoken#meta_export */ img_id AS theid, 'img' AS thetype, folder_id_r,
+		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qry_img" cachedwithin="1" region="razcache">
+		SELECT /* #cachetoken#meta_export_img */ img_id AS theid, 'img' AS thetype, folder_id_r,
 		img_filename as url_file_name, cloud_url_org, img_create_time AS create_date, img_change_time AS change_date, img_size AS size, img_width AS width, img_height AS height, img_upc_number as upc_number, expiry_date
 		FROM #arguments.thestruct.razuna.session.hostdbprefix#images
-		WHERE (img_group IS NULL OR img_group = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="">)
+		WHERE img_group IS NULL
 		<cfif arguments.thestruct.expwhat NEQ "all">
 			AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
 		</cfif>
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 		AND in_trash = <cfqueryparam value="F" cfsqltype="CF_SQL_VARCHAR">
-		UNION ALL
-		SELECT vid_id AS theid, 'vid' AS thetype,folder_id_r,vid_filename as url_file_name, cloud_url_org, vid_create_time AS create_date, vid_change_time AS change_date, vid_size AS size, vid_width AS width, vid_height AS height, vid_upc_number as upc_number, expiry_date
+		</cfquery>
+		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qry_vid" cachedwithin="1" region="razcache">
+		SELECT /* #cachetoken#meta_export_vid */ vid_id AS theid, 'vid' AS thetype,folder_id_r,vid_filename as url_file_name, cloud_url_org, vid_create_time AS create_date, vid_change_time AS change_date, vid_size AS size, vid_width AS width, vid_height AS height, vid_upc_number as upc_number, expiry_date
 		FROM #arguments.thestruct.razuna.session.hostdbprefix#videos
-		WHERE (vid_group IS NULL OR vid_group = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="">)
+		WHERE vid_group IS NULL
 		<cfif arguments.thestruct.expwhat NEQ "all">
 			AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
 		</cfif>
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 		AND in_trash = <cfqueryparam value="F" cfsqltype="CF_SQL_VARCHAR">
-		UNION ALL
-		SELECT aud_id AS theid, 'aud' AS thetype,folder_id_r,aud_name as url_file_name, cloud_url_org, aud_create_time AS create_date, aud_change_time AS change_date, aud_size AS size, NULL AS width, NULL As height, aud_upc_number as upc_number, expiry_date
+		</cfquery>
+		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qry_aud" cachedwithin="1" region="razcache">
+		SELECT /* #cachetoken#meta_export_aud */ aud_id AS theid, 'aud' AS thetype,folder_id_r,aud_name as url_file_name, cloud_url_org, aud_create_time AS create_date, aud_change_time AS change_date, aud_size AS size, NULL AS width, NULL As height, aud_upc_number as upc_number, expiry_date
 		FROM #arguments.thestruct.razuna.session.hostdbprefix#audios
-		WHERE (aud_group IS NULL OR aud_group = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="">)
+		WHERE aud_group IS NULL
 		<cfif arguments.thestruct.expwhat NEQ "all">
 			AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
 		</cfif>
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 		AND in_trash = <cfqueryparam value="F" cfsqltype="CF_SQL_VARCHAR">
-		UNION ALL
-		SELECT file_id AS theid, 'doc' AS thetype,folder_id_r,file_name as url_file_name, cloud_url_org, file_create_time AS create_date, file_change_time AS change_date, file_size AS size, NULL AS width, NULL As height, file_upc_number as upc_number, expiry_date
+		</cfquery>
+		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qry_doc" cachedwithin="1" region="razcache">
+		SELECT /* #cachetoken#meta_export_doc */ file_id AS theid, 'doc' AS thetype,folder_id_r,file_name as url_file_name, cloud_url_org, file_create_time AS create_date, file_change_time AS change_date, file_size AS size, NULL AS width, NULL As height, file_upc_number as upc_number, expiry_date
 		FROM #arguments.thestruct.razuna.session.hostdbprefix#files
 		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 		AND in_trash = <cfqueryparam value="F" cfsqltype="CF_SQL_VARCHAR">
@@ -1794,6 +1806,23 @@
 			AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
 		</cfif>
 		</cfquery>
+		<!--- Temp db --->
+		<cfquery dbtype="query" name="qry">
+		SELECT *
+		FROM qry_img
+		UNION
+		SELECT *
+		FROM qry_vid
+		UNION
+		SELECT *
+		FROM qry_aud
+		UNION
+		SELECT *
+		FROM qry_doc
+		</cfquery>
+		<!--- Feedback --->
+		<cfoutput><br/><strong>We found #qry.recordcount# with metadata. Gathering data now to export...</strong><br /></cfoutput>
+		<cfflush>
 		<!--- Loop over items --->
 		<cfloop query="qry">
 			<!--- Set query --->
@@ -1825,7 +1854,6 @@
 			<!--- The first part is the ID the last the type --->
 			<cfset arguments.thestruct.file_id = listfirst(i, "-")>
 			<cfset arguments.thestruct.filetype = listlast(i, "-")>
-
 			<!--- Get details about file --->
 			<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qry" cachedwithin="1" region="razcache">
 			<cfif arguments.thestruct.filetype EQ 'img'>
@@ -1916,7 +1944,7 @@
 			<!--- Get Custom Fields --->
 			<cfinvoke component="custom_fields" method="gettextvalues" thestruct="#arguments.thestruct#" returnVariable="arguments.thestruct.qry_cf" />
 			<!--- Get keywords and description --->
-			<cfinvoke component="images" method="gettext" qry="#arguments.thestruct.qry#" thestruct="#arguments.thestruct#" returnVariable="arguments.thestruct.qry_text" />
+			<cfinvoke component="images" method="gettextforexport" theid="#arguments.thestruct.file_id#" thestruct="#arguments.thestruct#" returnVariable="arguments.thestruct.qry_text" />
 			<!--- Get XMP values --->
 			<cfinvoke method="readxmpdb" thestruct="#arguments.thestruct#" returnVariable="arguments.thestruct.qry_xmp" />
 			<!--- The file_url --->
@@ -1948,7 +1976,7 @@
 			<!--- Get Custom Fields --->
 			<cfinvoke component="custom_fields" method="gettextvalues" thestruct="#arguments.thestruct#" returnVariable="arguments.thestruct.qry_cf" />
 			<!--- Get keywords and description --->
-			<cfinvoke component="videos" method="gettext" qry="#arguments.thestruct.qry#" thestruct="#arguments.thestruct#" returnVariable="arguments.thestruct.qry_text" />
+			<cfinvoke component="videos" method="gettextforexport" theid="#arguments.thestruct.file_id#" thestruct="#arguments.thestruct#" returnVariable="arguments.thestruct.qry_text" />
 			<cfif arguments.thestruct.razuna.application.storage EQ "local">
 				<cfset arguments.thestruct.file_url = "#arguments.thestruct.razuna.session.thehttp##cgi.http_host##cgi.context_path#/assets/#arguments.thestruct.razuna.session.hostid#/#qry_video.path_to_asset#/#qry_video.filenameorg#">
 			<cfelse>
@@ -1989,7 +2017,7 @@
 			<!--- Get Custom Fields --->
 			<cfinvoke component="custom_fields" method="gettextvalues" thestruct="#arguments.thestruct#" returnVariable="arguments.thestruct.qry_cf" />
 			<!--- Get keywords and description --->
-			<cfinvoke component="audios" method="gettext" qry="#arguments.thestruct.qry#" thestruct="#arguments.thestruct#" returnVariable="arguments.thestruct.qry_text" />
+			<cfinvoke component="audios" method="gettextforexport" theid="#arguments.thestruct.file_id#" thestruct="#arguments.thestruct#" returnVariable="arguments.thestruct.qry_text" />
 			<cfif arguments.thestruct.razuna.application.storage EQ "local">
 				<cfset arguments.thestruct.file_url = "#arguments.thestruct.razuna.session.thehttp##cgi.http_host##cgi.context_path#/assets/#arguments.thestruct.razuna.session.hostid#/#qry_audio.detail.path_to_asset#/#qry_audio.detail.filenameorg#">
 			<cfelse>
@@ -2018,7 +2046,7 @@
 			<!--- Get Custom Fields --->
 			<cfinvoke component="custom_fields" method="gettextvalues" thestruct="#arguments.thestruct#" returnVariable="arguments.thestruct.qry_cf" />
 			<!--- Get keywords and description --->
-			<cfinvoke component="files" method="gettext" qry="#arguments.thestruct.qry#" thestruct="#arguments.thestruct#" returnVariable="arguments.thestruct.qry_text" />
+			<cfinvoke component="files" method="gettextforexport" theid="#arguments.thestruct.file_id#" thestruct="#arguments.thestruct#" returnVariable="arguments.thestruct.qry_text" />
 			<!--- Get PDF XMP --->
 			<cfinvoke component="files" method="getpdfxmp" thestruct="#arguments.thestruct#" returnVariable="arguments.thestruct.qry_pdfxmp" />
 			<cfif arguments.thestruct.razuna.application.storage EQ "local">
