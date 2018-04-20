@@ -2544,6 +2544,9 @@
 	<!--- Param --->
 	<cfset arguments.thestruct.grpno = "T">
 	<cfparam name="arguments.thestruct.in_search_selection" default="false" />
+	<cfset var langFolder = "">
+	<cfset var samefolder = "">
+	<cfset var langDesc = "">
 	<!--- Get the first lang at position 1 (it is always sorted) --->
 	<cfset var _lang = ListGetat(arguments.thestruct.langcount, 1)>
 	<!--- Put first folder name into folder_name (we wrap this is a try catch as when we come from private folder we only have folder_name) --->
@@ -2563,7 +2566,7 @@
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 	</cfquery>
 	<!--- If there is not a record with the same name continue --->
-	<cfif #samefolder.recordcount# EQ 0>
+	<cfif samefolder.recordcount EQ 0>
 		<!--- Get Folder Name for the Log
 		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="thisfolder">
 			SELECT folder_name
@@ -2593,7 +2596,7 @@
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 				</cfquery>
 				<!--- Update existing or insert new description --->
-				<cfif langFolder.recordCount GT 0>
+				<cfif langFolder.recordCount>
 					<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
 					UPDATE #arguments.thestruct.razuna.session.hostdbprefix#folders_name
 					SET folder_name = <cfqueryparam value="#evaluate(thisfolder)#" cfsqltype="cf_sql_varchar">
@@ -2627,7 +2630,7 @@
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 				</cfquery>
 				<!--- Update existing or insert new description --->
-				<cfif langDesc.recordCount GT 0>
+				<cfif langDesc.recordCount>
 					<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
 					UPDATE #arguments.thestruct.razuna.session.hostdbprefix#folders_desc
 					SET folder_desc = <cfqueryparam value="#evaluate(thisfield)#" cfsqltype="cf_sql_varchar">
@@ -4347,7 +4350,7 @@
 	<cfargument name="col" type="string" required="false">
 	<cfargument name="actionismove" type="string" required="false">
 	<cfargument name="permlist" type="string" required="false">
-	<cfargument name="kind" type="string" required="false"
+	<cfargument name="kind" type="string" required="false">
 	<cfargument name="fromtrash" type="boolean" required="false">
 	<cfargument name="thestruct" type="struct" required="true" />
 
@@ -4388,13 +4391,13 @@
 		<cfelse>
 			CASE
 				WHEN EXISTS (
-					SELECT folder_name
+					SELECT DISTINCT folder_name
 					FROM #arguments.thestruct.razuna.session.hostdbprefix#folders_name
 					WHERE folder_id_r = f.folder_id
 					AND lang_id_r = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.thelangid#">
 					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 				) THEN (
-					SELECT folder_name
+					SELECT DISTINCT folder_name
 					FROM #arguments.thestruct.razuna.session.hostdbprefix#folders_name
 					WHERE folder_id_r = f.folder_id
 					AND lang_id_r = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.thelangid#">
