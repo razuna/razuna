@@ -67,7 +67,7 @@
 		<cfargument name="search_type" type="string">
 		<cfargument name="search_rendition" type="string">
 		<cfargument name="searchupc" type="any">
-		<cfargument name="thestruct" type="struct" required="true" />
+		<cfargument name="thestruct" type="struct" required="false" />
 		<!--- <cfset consoleoutput(true, true)>
 		<cfset console("lucene search arguments", arguments)>
 		<cfabort> --->
