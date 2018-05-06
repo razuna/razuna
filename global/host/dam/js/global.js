@@ -2104,4 +2104,15 @@ $(document).ready(function() {
 			$('.ddselection_header').hide();
 		}
 	});
+
+	// Notification
+	Noty.overrideDefaults({
+		theme: 'bootstrap-v3',
+		type: 'warning',
+		queue: 'global',
+		timeout: 5000,
+		progressBar: true,
+		closeWith: ['click', 'button']
+	});
+
 });
