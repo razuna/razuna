@@ -224,14 +224,14 @@
 		<cfargument name="thestruct" type="struct" required="true" />
 
 		<!--- Set is_available and is_indexed --->
-		<cfset set_values(file_id=arguments.file_id, file_type=arguments.file_type, is_available='2', is_indexed='1')>
+		<cfset set_values(file_id=arguments.file_id, file_type=arguments.file_type, is_available='2', is_indexed='1', thestruct=arguments.thestruct)>
 
 		<!--- Get the approval values --->
 		<cfset var _qry_approval = admin_get(thestruct=arguments.thestruct)>
 		<!--- Get all users of this approval process (we want the list of ids and only for group 1) --->
-		<cfset var _qry_users = get_approval_users(false).user_ids>
+		<cfset var _qry_users = get_approval_users(all=false, thestruct=arguments.thestruct).user_ids>
 		<!--- Send out email to approval group --->
-		<cfset send_message(group_users=_qry_users, kind='request', file_owner=arguments.file_owner, file_id=arguments.file_id, file_type=arguments.file_type, dynpath=arguments.dynpath, urlasset=arguments.urlasset, urlglobal=arguments.urlglobal)>
+		<cfset send_message(group_users=_qry_users, kind='request', file_owner=arguments.file_owner, file_id=arguments.file_id, file_type=arguments.file_type, dynpath=arguments.dynpath, urlasset=arguments.urlasset, urlglobal=arguments.urlglobal, thestruct=arguments.thestruct)>
 
 		<!--- <cfset console('DONE !!!!!!!!!!!!!!!!!!!!!!!!!!!!')> --->
 
@@ -247,12 +247,12 @@
 		<!--- Get approval record --->
 		<cfset var _qry_approval = admin_get(thestruct=arguments.thestruct)>
 		<!--- Set approval in db --->
-		<cfset set_approval_done(file_id=arguments.thestruct.file_id)>
+		<cfset set_approval_done(file_id=arguments.thestruct.file_id, thestruct=arguments.thestruct)>
 
 		<!--- Approval from all users in group 1 required --->
 		<cfif _qry_approval.approval_group_1_all>
 			<!--- Check who has approved so far --->
-			<cfset var _group_result = get_approval_done(file_id=arguments.thestruct.file_id, group='1', file_type=arguments.thestruct.file_type, dynpath=arguments.thestruct.dynpath, urlasset=arguments.thestruct.urlasset, urlglobal=arguments.thestruct.urlglobal)>
+			<cfset var _group_result = get_approval_done(file_id=arguments.thestruct.file_id, group='1', file_type=arguments.thestruct.file_type, dynpath=arguments.thestruct.dynpath, urlasset=arguments.thestruct.urlasset, urlglobal=arguments.thestruct.urlglobal, thestruct=arguments.thestruct)>
 			<!--- If above return false then we need further approval from others --->
 			<cfif ! _group_result>
 				<cfset console('EVERYONE IN GROUP 1 HAS TO APPROVE!!!!!!!!!!')>
@@ -265,7 +265,7 @@
 		<cfif _release_file AND _qry_approval.approval_group_2_all>
 			<cfset console("WE NEED TO CHECK USERS IN GROUP 2")>
 			<!--- Check who has approved so far --->
-			<cfset var _group_result = get_approval_done(file_id=arguments.thestruct.file_id, group='2', file_type=arguments.thestruct.file_type, dynpath=arguments.thestruct.dynpath, urlasset=arguments.thestruct.urlasset, urlglobal=arguments.thestruct.urlglobal)>
+			<cfset var _group_result = get_approval_done(file_id=arguments.thestruct.file_id, group='2', file_type=arguments.thestruct.file_type, dynpath=arguments.thestruct.dynpath, urlasset=arguments.thestruct.urlasset, urlglobal=arguments.thestruct.urlglobal, thestruct=arguments.thestruct)>
 			<!--- If above return false then we need further approval from others --->
 			<cfif ! _group_result>
 				<cfset console('EVERYONE IN GROUP 2 HAS TO APPROVE!!!!!!!!!!')>
@@ -277,7 +277,7 @@
 		<!--- Check if we need to get approval from anyone in group 2 but only if not group all is enabled as this is done above --->
 		<cfif _release_file AND ! _qry_approval.approval_group_2_all AND _qry_approval.approval_group_2 NEQ ''>
 			<!--- Check if any user in group 2 has approved --->
-			<cfset var _group_result = get_approval_done(file_id=arguments.thestruct.file_id, group='2', all=false, file_type=arguments.thestruct.file_type, dynpath=arguments.thestruct.dynpath, urlasset=arguments.thestruct.urlasset, urlglobal=arguments.thestruct.urlglobal)>
+			<cfset var _group_result = get_approval_done(file_id=arguments.thestruct.file_id, group='2', all=false, file_type=arguments.thestruct.file_type, dynpath=arguments.thestruct.dynpath, urlasset=arguments.thestruct.urlasset, urlglobal=arguments.thestruct.urlglobal, thestruct=arguments.thestruct)>
 			<!--- If none have approved --->
 			<cfif ! _group_result>
 				<cfset console('NO ONE IN GROUP 2 HAS APPROVED SO FAR !!!!!!!!!!')>
@@ -290,13 +290,13 @@
 		<cfif _release_file>
 			<cfset console('ALL GOOD. WE ARE RELEASING THE FILE !!!!!!!!!!')>
 			<!--- Get record --->
-			<cfset var _qry_file = get_file_values(file_id=arguments.thestruct.file_id, file_type=arguments.thestruct.file_type, dynpath=arguments.thestruct.dynpath, urlasset=arguments.thestruct.urlasset, urlglobal=arguments.thestruct.urlglobal)>
+			<cfset var _qry_file = get_file_values(file_id=arguments.thestruct.file_id, file_type=arguments.thestruct.file_type, dynpath=arguments.thestruct.dynpath, urlasset=arguments.thestruct.urlasset, urlglobal=arguments.thestruct.urlglobal, thestruct=arguments.thestruct)>
 			<!--- Set is_available and is_indexed --->
-			<cfset set_values(file_id=arguments.thestruct.file_id, file_type=arguments.thestruct.file_type, is_available='1', is_indexed='0')>
+			<cfset set_values(file_id=arguments.thestruct.file_id, file_type=arguments.thestruct.file_type, is_available='1', is_indexed='0', thestruct=arguments.thestruct)>
 			<!--- Get all users of this approval process --->
-			<cfset var _qry_users = get_approval_users(true).user_ids>
+			<cfset var _qry_users = get_approval_users(all=true, thestruct=arguments.thestruct).user_ids>
 			<!--- Send out email to approval group --->
-			<cfset send_message(group_users=_qry_users, kind='done', file_owner=_qry_file.qry.file_owner, file_id=arguments.thestruct.file_id, file_type=arguments.thestruct.file_type, dynpath=arguments.thestruct.dynpath, urlasset=arguments.thestruct.urlasset, urlglobal=arguments.thestruct.urlglobal)>
+			<cfset send_message(group_users=_qry_users, kind='done', file_owner=_qry_file.qry.file_owner, file_id=arguments.thestruct.file_id, file_type=arguments.thestruct.file_type, dynpath=arguments.thestruct.dynpath, urlasset=arguments.thestruct.urlasset, urlglobal=arguments.thestruct.urlglobal, thestruct=arguments.thestruct)>
 
 			<!--- Execute workflow --->
 			<cfset console("EXECUTE WORKFLOW !!!!!!!!!!!!!")>
@@ -334,9 +334,9 @@
 			<cfset var _id = "file_id">
 		</cfif>
 		<!--- Get all users of this approval process --->
-		<cfset var _qry_users = get_approval_users(true).user_ids>
+		<cfset var _qry_users = get_approval_users(all=true, thestruct=arguments.thestruct).user_ids>
 		<!--- Send out the email with the rejection --->
-		<cfset send_message(group_users=_qry_users, kind='reject', reject_message=arguments.thestruct.reject_message, file_owner=arguments.thestruct.file_owner, file_id=arguments.thestruct.file_id, file_type=arguments.thestruct.file_type, dynpath=arguments.thestruct.dynpath, urlasset=arguments.thestruct.urlasset, urlglobal=arguments.thestruct.urlglobal)>
+		<cfset send_message(group_users=_qry_users, kind='reject', reject_message=arguments.thestruct.reject_message, file_owner=arguments.thestruct.file_owner, file_id=arguments.thestruct.file_id, file_type=arguments.thestruct.file_type, dynpath=arguments.thestruct.dynpath, urlasset=arguments.thestruct.urlasset, urlglobal=arguments.thestruct.urlglobal, thestruct=arguments.thestruct)>
 		<!--- Remove in DB --->
 		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
 		DELETE FROM #_db#
@@ -533,7 +533,7 @@
 		<!--- If this is still false then send out email to users who need to approve further --->
 		<cfif ! _all_approved>
 			<cfset console("SEND EMAIL !!!!!!")>
-			<cfset send_message(qry_users=qry_approved_users, group_users=_group_users, kind='approval', file_id=arguments.file_id, file_type=arguments.file_type, dynpath=arguments.dynpath, urlasset=arguments.urlasset, urlglobal=arguments.urlglobal)>
+			<cfset send_message(qry_users=qry_approved_users, group_users=_group_users, kind='approval', file_id=arguments.file_id, file_type=arguments.file_type, dynpath=arguments.dynpath, urlasset=arguments.urlasset, urlglobal=arguments.urlglobal, thestruct=arguments.thestruct)>
 		</cfif>
 
 
@@ -550,33 +550,30 @@
 
 	<!--- Send out the email --->
 	<cffunction name="send_message" access="private" output="true">
-		<cfargument name="qry_users" type="query" required="false" />
-		<cfargument name="group_users" type="string" required="true" />
-		<cfargument name="kind" type="string" required="true" />
-		<cfargument name="reject_message" type="string" required="false" />
+		<cfargument name="qry_users" type="query" required="false" default="#queryNew('')#" />
+		<cfargument name="group_users" type="string" required="true" default="" />
+		<cfargument name="kind" type="string" required="true" default="" />
+		<cfargument name="reject_message" type="string" required="false" default="" />
 		<cfargument name="file_owner" type="string" required="false" default="0" />
-		<cfargument name="file_id" type="string" required="true" />
-		<cfargument name="file_type" type="string" required="true" />
-		<cfargument name="dynpath" type="string" required="true" />
-		<cfargument name="urlglobal" type="string" required="true" />
-		<cfargument name="urlasset" type="string" required="true" />
-		<cfargument name="thestruct" type="struct" required="true" />
+		<cfargument name="file_id" type="string" required="true" default="" />
+		<cfargument name="file_type" type="string" required="true" default="" />
+		<cfargument name="dynpath" type="string" required="true" default="" />
+		<cfargument name="urlglobal" type="string" required="true" default="" />
+		<cfargument name="urlasset" type="string" required="true" default="" />
+		<cfargument name="thestruct" type="struct" required="true" default="#structnew()#" />
 
 		<!--- Subject Prefix --->
 		<cfset var _subject_prefix = "[Approval]:">
 
-		<!--- Get current user --->
-		<cfinvoke component="global.cfc.users" method="details" thestruct="#arguments.thestruct#" returnvariable="qry_current_user" />
-
 		<!--- Get file owner if not empty --->
 		<cfif arguments.file_owner NEQ 0>
 			<!--- Get file owner --->
-			<cfset arguments.user_id = arguments.file_owner>
+			<cfset arguments.thestruct.user_id = arguments.file_owner>
 			<cfinvoke component="global.cfc.users" method="details" thestruct="#arguments.thestruct#" returnvariable="qry_owner" />
 		</cfif>
 
 		<!--- Get record --->
-		<cfset var _qry_file = get_file_values(file_id=arguments.file_id, file_type=arguments.file_type, dynpath=arguments.dynpath, urlasset=arguments.urlasset, urlglobal=arguments.urlglobal)>
+		<cfset var _qry_file = get_file_values(file_id=arguments.file_id, file_type=arguments.file_type, dynpath=arguments.dynpath, urlasset=arguments.urlasset, urlglobal=arguments.urlglobal, thestruct=arguments.thestruct)>
 
 		<!--- Set the proper URL to get back to Razuna --->
 		<cfset var _raz_url = replaceNoCase(arguments.urlglobal, "global/", "", "ONE")>
@@ -601,7 +598,7 @@
 				<cfif _found.recordcount EQ 0>
 					<cfset console("User has not approved send message !!!!!!!")>
 					<!--- Get users name and email --->
-					<cfset arguments.user_id = id>
+					<cfset arguments.thestruct.user_id = id>
 					<cfinvoke component="global.cfc.users" method="details" thestruct="#arguments.thestruct#" returnvariable="qry_user" />
 					<!--- Email message --->
 					<cfsavecontent variable="_message"><cfoutput>
@@ -650,7 +647,7 @@ User #qry_owner.user_first_name# #qry_owner.user_last_name# (#qry_owner.user_ema
 				<!--- Subject --->
 				<cfset var _subject = "File has been fully approved and is now available">
 				<!--- Get users name and email --->
-				<cfset arguments.user_id = id>
+				<cfset arguments.thestruct.user_id = id>
 				<cfinvoke component="global.cfc.users" method="details" thestruct="#arguments.thestruct#" returnvariable="qry_user" />
 				<!--- Email message --->
 				<cfsavecontent variable="_message"><cfoutput>
@@ -669,7 +666,7 @@ This is to let you know that the file (#_qry_file.qry.file_name#) has been fully
 				<!--- Subject --->
 				<cfset var _subject = "File has been rejected">
 				<!--- Get users name and email --->
-				<cfset arguments.user_id = id>
+				<cfset arguments.thestruct.user_id = id>
 				<cfinvoke component="global.cfc.users" method="details" thestruct="#arguments.thestruct#" returnvariable="qry_user" />
 				<!--- Email message --->
 				<cfsavecontent variable="_message"><cfoutput>
