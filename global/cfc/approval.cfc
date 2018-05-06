@@ -565,6 +565,10 @@
 		<!--- Subject Prefix --->
 		<cfset var _subject_prefix = "[Approval]:">
 
+		<!--- Get current user --->
+		<cfset arguments.thestruct.user_id = arguments.thestruct.razuna.session.theuserid>
+		<cfinvoke component="global.cfc.users" method="details" thestruct="#arguments.thestruct#" returnvariable="qry_current_user" />
+
 		<!--- Get file owner if not empty --->
 		<cfif arguments.file_owner NEQ 0>
 			<!--- Get file owner --->

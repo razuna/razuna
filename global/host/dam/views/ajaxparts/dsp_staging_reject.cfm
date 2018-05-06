@@ -25,8 +25,8 @@
 --->
 <cfoutput>
 	<div id="reject_#attributes.file_id#">
-		<h1>Reject file</h1>
-		<h3>You opted to reject this file. Please state why you rejected this file. This message will be sent to the person who uploaded the file and to all group members who are in the approval process.</h3>
+		<h2>Reject file</h2>
+		<p>You opted to reject this file. Please state why you rejected this file. This message will be sent to the person who uploaded the file and to all group members who are in the approval process.</p>
 		<form id="form_reject_file" name="form_reject_file" method="post">
 			<input type="hidden" name="file_id" id="file_id" value="#attributes.file_id#">
 			<input type="hidden" name="file_type" value="#attributes.file_type#">
@@ -53,7 +53,6 @@
 		else {
 			finalSubmit();
 		}
-		
 		return false;
 	});
 	// Internal submit
@@ -70,7 +69,7 @@
 		})
 		.done( function() {
 			// Show confirmation in the window
-			$('##reject_' + id).html("<h2>Your message has been sent and the file has been rejected! <br><br><a href='##'' onclick='destroywindow(1);return false;'>You can close this window now</a></h2>");
+			$('##reject_' + id).html("<h4>Your message has been sent and the file has been rejected! <br><br><a href='##'' onclick='destroywindow(1);return false;'>You can close this window now</a></h4>");
 			// Refresh the approval area
 			loadcontent('rightside','#myself#c.staging');
 		})
