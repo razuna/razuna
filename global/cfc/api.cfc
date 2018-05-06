@@ -130,10 +130,10 @@
 	<cffunction name="getHost" access="public" returntype="query">
 		<cfargument name="id" type="numeric" required="true" />
 		<!--- Param --->
-		<cfset var s = structNew()>
-		<cfset s.host_id = arguments.id>
+		<cfset var _s = getStruct()>
+		<cfset _s.host_id = arguments.id>
 		<!--- Call host details --->
-		<cfinvoke component="hosts" method="getdetail" thestruct="#s#" returnvariable="qryhost" />
+		<cfinvoke component="hosts" method="getdetail" thestruct="#_s#" returnvariable="qryhost" />
 		<cfreturn qryhost />
 	</cffunction>
 
@@ -164,14 +164,18 @@
 	<!--- Get Users --->
 	<cffunction name="getUser" access="public" returntype="query">
 		<cfargument name="user_id" type="string" required="true" />
-		<cfinvoke component="users" method="details" thestruct="#arguments#" returnvariable="qryuser" />
+		<!--- Param --->
+		<cfset var _s = getStruct()>
+		<cfset _s.user_id = arguments.user_id>
+		<cfinvoke component="users" method="details" thestruct="#_s#" returnvariable="qryuser" />
 		<cfreturn qryuser />
 	</cffunction>
 
 	<!--- Get Users of Groups --->
 	<cffunction name="getUsersOfGroups" access="public" returntype="query">
 		<cfargument name="thewho" type="string" required="true" />
-		<cfinvoke component="groups_users" method="getUsersOfGroups" grp_id="#arguments.thewho#" returnvariable="qrygrp" />
+		<cfset var _s = getStruct()>
+		<cfinvoke component="groups_users" method="getUsersOfGroups" grp_id="#arguments.thewho#" thestruct="#_s#" returnvariable="qrygrp" />
 		<cfreturn qrygrp />
 	</cffunction>
 
@@ -200,10 +204,10 @@
 	<cffunction name="getCustomFieldsValues" access="public" returntype="query">
 		<cfargument name="fileid" type="string" required="true" />
 		<!--- Param --->
-		<cfset var s = structNew()>
-		<cfset s.file_id = arguments.fileid>
+		<cfset var _s = getStruct()>
+		<cfset _s.file_id = arguments.fileid>
 		<!--- Call method --->
-		<cfinvoke component="custom_fields" method="gettextvalues" thestruct="#s#" returnvariable="qrycfv" />
+		<cfinvoke component="custom_fields" method="gettextvalues" thestruct="#_s#" returnvariable="qrycfv" />
 		<cfreturn qrycfv />
 	</cffunction>
 
@@ -262,6 +266,7 @@
 			<cfinvokeargument name="thepath" value="#arguments.thepath#">
 			<cfinvokeargument name="sendaszip" value="#arguments.sendaszip#">
 			<cfinvokeargument name="userid" value="#arguments.userid#">
+			<cfinvokeargument name="thestruct" value="#getStruct()#">
 		</cfinvoke>
 	</cffunction>
 
@@ -269,7 +274,7 @@
 	<cffunction name="getFolderName" access="public" returntype="string">
 		<cfargument name="folderid" type="string" required="true" />
 		<cfset var _s = getStruct()>
-		<cfinvoke component="folders" method="getfoldername" folder_id="#arguments.folderid#" thestruct="#s#" returnvariable="fn" />
+		<cfinvoke component="folders" method="getfoldername" folder_id="#arguments.folderid#" thestruct="#_s#" returnvariable="fn" />
 		<cfreturn fn />
 	</cffunction>
 
@@ -374,7 +379,7 @@
 			<!--- Call function --->
 			<cfinvoke component="images" method="gettext" qry="#qry#" thestruct="#_s#" returnvariable="r.metadata">
 			<cfinvoke component="images" method="getrawmetadata" qry="#qry#" thestruct="#_s#" returnvariable="r.rawmetadata">
-			<cfinvoke component="xmp" method="readxmpdb" thestruct="#s#" thestruct="#_s#" returnvariable="r.xmpmetadata">
+			<cfinvoke component="xmp" method="readxmpdb" thestruct="#_s#" returnvariable="r.xmpmetadata">
 		<!--- Videos --->
 		<cfelseif arguments.type EQ "vid">
 			<!--- Call function --->
@@ -390,7 +395,7 @@
 			<!--- Call function --->
 			<cfinvoke component="files" method="gettext" qry="#qry#" thestruct="#_s#" returnvariable="r.metadata">
 			<cfinvoke component="files" method="getrawmetadata" qry="#qry#" thestruct="#_s#" returnvariable="r.rawmetadata">
-			<cfinvoke component="files" method="getpdfxmp" thestruct="#s#" thestruct="#_s#" returnvariable="r.xmpmetadata">
+			<cfinvoke component="files" method="getpdfxmp" thestruct="#_s#" returnvariable="r.xmpmetadata">
 		</cfif>
 		<!--- Return --->
 		<cfreturn r />
