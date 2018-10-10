@@ -8658,45 +8658,46 @@
 	<cfset var cachetoken = getcachetoken(type="folders", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 	<!--- Subscribe folder details --->
 	<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qry" cachedwithin="1" region="razcache">
-	SELECT /* #cachetoken#getInSearchSelection */ folder_id, folder_name
-	FROM (
-			SELECT f.folder_id, f.folder_name, f.folder_owner,
-			<!--- Permission follow but not for sysadmin and admin --->
-			<cfif not arguments.thestruct.razuna.session.is_system_admin and not arguments.thestruct.razuna.session.is_administrator>
-				CASE
-					<!--- Check permission on this folder --->
-					WHEN EXISTS(
-						SELECT fg.folder_id_r
-						FROM #arguments.thestruct.razuna.session.hostdbprefix#folders_groups fg
-						WHERE fg.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
-						AND fg.folder_id_r = f.folder_id
-						AND fg.grp_permission IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
-						AND fg.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.razuna.session.thegroupofuser#" list="true">)
-						) THEN 'unlocked'
-					<!--- When folder is shared for everyone --->
-					WHEN EXISTS(
-						SELECT fg2.folder_id_r
-						FROM #arguments.thestruct.razuna.session.hostdbprefix#folders_groups fg2
-						WHERE fg2.grp_id_r = '0'
-						AND fg2.folder_id_r = f.folder_id
-						AND fg2.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
-						AND fg2.grp_permission IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
-						) THEN 'unlocked'
-					<!--- If this is the user folder or he is the owner --->
-					WHEN f.folder_owner = '#arguments.thestruct.razuna.session.theUserID#' THEN 'unlocked'
-					<!--- If this is the upload bin --->
-					WHEN f.folder_id = '1' THEN 'unlocked'
-					ELSE 'locked'
-				END AS perm
-			<cfelse>
-				'unlocked' AS perm
-			</cfif>
-			FROM #arguments.thestruct.razuna.session.hostdbprefix#folders f LEFT JOIN users u ON u.user_id = f.folder_owner
-			WHERE f.in_search_selection = <cfqueryparam cfsqltype="cf_sql_varchar" value="true">
-			AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
-		) as itb
-	WHERE itb.perm = <cfqueryparam cfsqltype="cf_sql_varchar" value="unlocked">
+	SELECT /* #cachetoken#getInSearchSelection */ f.folder_id, f.folder_name,
+	<!--- Permission follow but not for sysadmin and admin --->
+	<cfif not arguments.thestruct.razuna.session.is_system_admin and not arguments.thestruct.razuna.session.is_administrator>
+		CASE
+			<!--- Check permission on this folder --->
+			WHEN EXISTS(
+				SELECT fg.folder_id_r
+				FROM #arguments.thestruct.razuna.session.hostdbprefix#folders_groups fg
+				WHERE fg.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
+				AND fg.folder_id_r = f.folder_id
+				AND fg.grp_permission IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
+				AND fg.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.razuna.session.thegroupofuser#" list="true">)
+				) THEN 'unlocked'
+			<!--- When folder is shared for everyone --->
+			WHEN EXISTS(
+				SELECT fg2.folder_id_r
+				FROM #arguments.thestruct.razuna.session.hostdbprefix#folders_groups fg2
+				WHERE fg2.grp_id_r = '0'
+				AND fg2.folder_id_r = f.folder_id
+				AND fg2.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
+				AND fg2.grp_permission IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
+				) THEN 'unlocked'
+			<!--- If this is the user folder or he is the owner --->
+			WHEN f.folder_owner = '#arguments.thestruct.razuna.session.theUserID#' THEN 'unlocked'
+			<!--- If this is the upload bin --->
+			WHEN f.folder_id = '1' THEN 'unlocked'
+			ELSE 'locked'
+		END AS perm
+	<cfelse>
+		'unlocked' AS perm
+	</cfif>
+	FROM #arguments.thestruct.razuna.session.hostdbprefix#folders f LEFT JOIN users u ON u.user_id = f.folder_owner
+	WHERE f.in_search_selection = <cfqueryparam cfsqltype="cf_sql_varchar" value="true">
+	AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 	ORDER BY folder_name
+	</cfquery>
+	<cfquery dbtype="query" name="qry">
+	SELECT *
+	FROM qry
+	WHERE perm = <cfqueryparam cfsqltype="cf_sql_varchar" value="unlocked">
 	</cfquery>
 	<!--- Return --->
 	<cfreturn qry />
