@@ -65,7 +65,7 @@
 					<a href="##" onclick="showwindow('#myself##xfa.assetadd#&folder_id=#folder_id#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("add_file"))#',650,1);return false;"><button class="awesome big green">#myFusebox.getApplicationData().defaults.trans("add_your_files")#</button></a>
 				</cfif>
 			</cfif>
-			<cfif attributes.folderaccess NEQ "R">
+			<cfif attributes.folderaccess NEQ "R" AND (cs.icon_create_subfolder OR isadmin)>
 				<a href="##" onclick="$('##rightside').load('#myself#c.folder_new&from=list&theid=#url.folder_id#&iscol=F');return false;" title="#myFusebox.getApplicationData().defaults.trans("tooltip_folder_desc")#"><button class="awesome big green">#myFusebox.getApplicationData().defaults.trans("create_subfolder")#</button></a>
 				<!--- <p style="padding-top:20px;">
 					<button class="awesome big grey" onclick="showwindow('#myself#ajax.trash_folder&folder_id=#attributes.folder_id#&iscol=#qry_folder.folder_is_collection#','#myFusebox.getApplicationData().defaults.trans("trash_folder")#',400,1);">#myFusebox.getApplicationData().defaults.trans("create_subfolder")#</button>
@@ -75,28 +75,26 @@
 		<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 			<tr>
 				<td style="border:0px;">
-					<div class="grid-masonry">
-						<!--- Show Subfolders --->
-						<cfloop query="qry_subfolders">
-							<div class="assetbox grid-masonry-item" style="text-align:center;">
-								<a href="##" onclick="razunatreefocusbranch('#folder_id_r#','#folder_id#');loadcontent('rightside','index.cfm?fa=c.folder&folder_id=#folder_id#');">
-									<div class="theimg">
-										<cfif directoryexists("#ExpandPath("../..")#global/host/folderthumbnail/#session.hostid#/#folder_id#")>
-											<cfdirectory name="myDir" action="list" directory="#ExpandPath("../../")#global/host/folderthumbnail/#session.hostid#/#folder_id#/" type="file">
-											<cfif myDir.RecordCount>
-												<img src="#dynpath#/global/host/folderthumbnail/#session.hostid#/#folder_id#/#myDir.name#" border="0"><br />
-											<cfelse>
-												<img src="#dynpath#/global/host/dam/images/folder-yellow.png" border="0"><br />
-											</cfif>
+					<!--- Show Subfolders --->
+					<cfloop query="qry_subfolders">
+						<div class="assetbox" style="text-align:center;height:200px;width:160px;float:left;">
+							<a href="##" onclick="razunatreefocusbranch('#folder_id_r#','#folder_id#');loadcontent('rightside','index.cfm?fa=c.folder&folder_id=#folder_id#');">
+								<div class="theimg">
+									<cfif directoryexists("#ExpandPath("../..")#global/host/folderthumbnail/#session.hostid#/#folder_id#")>
+										<cfdirectory name="myDir" action="list" directory="#ExpandPath("../../")#global/host/folderthumbnail/#session.hostid#/#folder_id#/" type="file">
+										<cfif myDir.RecordCount>
+											<img src="#dynpath#/global/host/folderthumbnail/#session.hostid#/#folder_id#/#myDir.name#" border="0"><br />
 										<cfelse>
 											<img src="#dynpath#/global/host/dam/images/folder-yellow.png" border="0"><br />
 										</cfif>
-									</div>
-									<strong>#folder_name#</strong>
-								</a>
-							</div>
-						</cfloop>
-					</div>
+									<cfelse>
+										<img src="#dynpath#/global/host/dam/images/folder-yellow.png" border="0"><br />
+									</cfif>
+								</div>
+								<strong>#folder_name#</strong>
+							</a>
+						</div>
+					</cfloop>
 				</td>
 			</tr>
 		</table>
@@ -173,10 +171,10 @@
 												#myFusebox.getApplicationData().global.converttomb('#left(evaluate(listlast(m," ")),150)#')# MB
 											<cfelseif m CONTAINS "_time">
 												<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
-												#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(date_create, "HH:mm")#
+												#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat(thestruct=attributes)#")# #timeformat(date_create, "HH:mm")#
 											<cfelseif m CONTAINS "expiry_date">
 												<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
-												#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")#
+												#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat(thestruct=attributes)#")#
 											<cfelse>
 												<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
 												#left(evaluate(listlast(m," ")),150)#
@@ -259,10 +257,10 @@
 													#myFusebox.getApplicationData().global.converttomb('#left(evaluate(listlast(m," ")),150)#')# MB
 												<cfelseif m CONTAINS "_time">
 													<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
-													#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(date_create, "HH:mm")#
+													#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat(thestruct=attributes)#")# #timeformat(date_create, "HH:mm")#
 												<cfelseif m CONTAINS "expiry_date">
 													<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
-													#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")#
+													#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat(thestruct=attributes)#")#
 												<cfelse>
 													<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
 													#left(evaluate(listlast(m," ")),150)#
@@ -295,7 +293,7 @@
 										The upload of "#filename#" is still in progress!
 										<br /><br>
 										#myFusebox.getApplicationData().defaults.trans("date_created")#:<br>
-										#dateformat(date_create, "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(date_create, "HH:mm")#
+										#dateformat(date_create, "#myFusebox.getApplicationData().defaults.getdateformat(thestruct=attributes)#")# #timeformat(date_create, "HH:mm")#
 										<br><br>
 										<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=images&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;">Delete</a>
 									</cfif>
@@ -338,10 +336,10 @@
 												#myFusebox.getApplicationData().global.converttomb('#left(evaluate(listlast(m," ")),150)#')# MB
 											<cfelseif m CONTAINS "_time">
 												<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
-												#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(date_create, "HH:mm")#
+												#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat(thestruct=attributes)#")# #timeformat(date_create, "HH:mm")#
 											<cfelseif m CONTAINS "expiry_date">
 												<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
-												#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")#
+												#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat(thestruct=attributes)#")#
 											<cfelse>
 												<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
 												#left(evaluate(listlast(m," ")),150)#
@@ -422,10 +420,10 @@
 													#myFusebox.getApplicationData().global.converttomb('#left(evaluate(listlast(m," ")),150)#')# MB
 												<cfelseif m CONTAINS "_time">
 													<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
-													#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(date_create, "HH:mm")#
+													#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat(thestruct=attributes)#")# #timeformat(date_create, "HH:mm")#
 												<cfelseif m CONTAINS "expiry_date">
 													<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
-													#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")#
+													#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat(thestruct=attributes)#")#
 												<cfelse>
 													<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
 													#left(evaluate(listlast(m," ")),150)#
@@ -458,7 +456,7 @@
 										The upload of "#filename#" is still in progress!
 										<br /><br>
 										#myFusebox.getApplicationData().defaults.trans("date_created")#:<br>
-										#dateformat(date_create, "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(date_create, "HH:mm")#
+										#dateformat(date_create, "#myFusebox.getApplicationData().defaults.getdateformat(thestruct=attributes)#")# #timeformat(date_create, "HH:mm")#
 										<br><br>
 										<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=videos&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;">Delete</a>
 									</cfif>
@@ -501,10 +499,10 @@
 												#myFusebox.getApplicationData().global.converttomb('#left(evaluate(listlast(m," ")),150)#')# MB
 											<cfelseif m CONTAINS "_time">
 												<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
-												#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(date_create, "HH:mm")#
+												#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat(thestruct=attributes)#")# #timeformat(date_create, "HH:mm")#
 											<cfelseif m CONTAINS "expiry_date">
 												<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
-												#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")#
+												#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat(thestruct=attributes)#")#
 											<cfelse>
 												<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
 												#left(evaluate(listlast(m," ")),150)#
@@ -567,10 +565,10 @@
 													#myFusebox.getApplicationData().global.converttomb('#left(evaluate(listlast(m," ")),150)#')# MB
 												<cfelseif m CONTAINS "_time">
 													<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
-													#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(date_create, "HH:mm")#
+													#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat(thestruct=attributes)#")# #timeformat(date_create, "HH:mm")#
 												<cfelseif m CONTAINS "expiry_date">
 													<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
-													#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")#
+													#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat(thestruct=attributes)#")#
 												<cfelse>
 													<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
 													#left(evaluate(listlast(m," ")),150)#
@@ -603,7 +601,7 @@
 										The upload of "#filename#" is still in progress!
 										<br /><br>
 										#myFusebox.getApplicationData().defaults.trans("date_created")#:<br>
-										#dateformat(date_create, "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(date_create, "HH:mm")#
+										#dateformat(date_create, "#myFusebox.getApplicationData().defaults.getdateformat(thestruct=attributes)#")# #timeformat(date_create, "HH:mm")#
 										<br><br>
 										<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=audios&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;">Delete</a>
 									</cfif>
@@ -646,10 +644,10 @@
 												#myFusebox.getApplicationData().global.converttomb('#left(evaluate(listlast(m," ")),150)#')# MB
 											<cfelseif m CONTAINS "_time">
 												<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
-												#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(date_create, "HH:mm")#
+												#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat(thestruct=attributes)#")# #timeformat(date_create, "HH:mm")#
 											<cfelseif m CONTAINS "expiry_date">
 												<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
-												#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")#
+												#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat(thestruct=attributes)#")#
 											<cfelse>
 												<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
 												#left(evaluate(listlast(m," ")),150)#
@@ -725,10 +723,10 @@
 													#myFusebox.getApplicationData().global.converttomb('#left(evaluate(listlast(m," ")),150)#')# MB
 												<cfelseif m CONTAINS "_time">
 													<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
-													#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(date_create, "HH:mm")#
+													#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat(thestruct=attributes)#")# #timeformat(date_create, "HH:mm")#
 												<cfelseif m CONTAINS "expiry_date">
 													<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
-													#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")#
+													#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat(thestruct=attributes)#")#
 												<cfelse>
 													<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
 													#left(evaluate(listlast(m," ")),150)#
@@ -761,7 +759,7 @@
 										The upload of "#filename#" is still in progress!
 										<br /><br>
 										#myFusebox.getApplicationData().defaults.trans("date_created")#:<br>
-										#dateformat(date_create, "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(date_create, "HH:mm")#
+										#dateformat(date_create, "#myFusebox.getApplicationData().defaults.getdateformat(thestruct=attributes)#")# #timeformat(date_create, "HH:mm")#
 										<br><br>
 										<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=files&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;">Delete</a>
 									</cfif>
@@ -832,7 +830,7 @@
 								The upload of "#filename#" is still in progress!
 								<br /><br>
 								#myFusebox.getApplicationData().defaults.trans("date_created")#:<br>
-								#dateformat(date_create, "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(date_create, "HH:mm")#
+								#dateformat(date_create, "#myFusebox.getApplicationData().defaults.getdateformat(thestruct=attributes)#")# #timeformat(date_create, "HH:mm")#
 								<br>
 							</cfif>
 							<!--- Icons --->
@@ -943,7 +941,7 @@
 								The upload of "#filename#" is still in progress!
 								<br /><br>
 								#myFusebox.getApplicationData().defaults.trans("date_created")#:<br>
-								#dateformat(date_create, "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(date_create, "HH:mm")#
+								#dateformat(date_create, "#myFusebox.getApplicationData().defaults.getdateformat(thestruct=attributes)#")# #timeformat(date_create, "HH:mm")#
 								<br>
 							</cfif>
 							<!--- Icons --->
@@ -1041,7 +1039,7 @@
 								The upload of "#filename#" is still in progress!
 								<br /><br>
 								#myFusebox.getApplicationData().defaults.trans("date_created")#:<br>
-								#dateformat(date_create, "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(date_create, "HH:mm")#
+								#dateformat(date_create, "#myFusebox.getApplicationData().defaults.getdateformat(thestruct=attributes)#")# #timeformat(date_create, "HH:mm")#
 								<br>
 							</cfif>
 							<!--- Icons --->
@@ -1146,7 +1144,7 @@
 								The upload of "#filename#" is still in progress!
 								<br /><br>
 								#myFusebox.getApplicationData().defaults.trans("date_created")#:<br>
-								#dateformat(date_create, "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(date_create, "HH:mm")#
+								#dateformat(date_create, "#myFusebox.getApplicationData().defaults.getdateformat(thestruct=attributes)#")# #timeformat(date_create, "HH:mm")#
 								<br>
 							</cfif>
 							<!--- Icons --->
@@ -1317,8 +1315,8 @@
 							</div>
 						</td>
 						<td nowrap="true" width="1%" align="center" valign="top">Image</td>
-						<td nowrap="true" width="1%" align="center" valign="top">#dateformat(date_create, "#myFusebox.getApplicationData().defaults.getdateformat()#")#</td>
-						<td nowrap="true" width="1%" align="center" valign="top">#dateformat(date_change, "#myFusebox.getApplicationData().defaults.getdateformat()#")#</td>
+						<td nowrap="true" width="1%" align="center" valign="top">#dateformat(date_create, "#myFusebox.getApplicationData().defaults.getdateformat(thestruct=attributes)#")#</td>
+						<td nowrap="true" width="1%" align="center" valign="top">#dateformat(date_change, "#myFusebox.getApplicationData().defaults.getdateformat(thestruct=attributes)#")#</td>
 					</tr>
 				<!--- Videos --->
 				<cfelseif kind EQ "vid">
@@ -1411,8 +1409,8 @@
 							</div>
 						</td>
 						<td nowrap="true" width="1%" align="center" valign="top">Video</td>
-						<td nowrap="true" width="1%" align="center" valign="top">#dateformat(date_create, "#myFusebox.getApplicationData().defaults.getdateformat()#")#</td>
-						<td nowrap="true" width="1%" align="center" valign="top">#dateformat(date_change, "#myFusebox.getApplicationData().defaults.getdateformat()#")#</td>
+						<td nowrap="true" width="1%" align="center" valign="top">#dateformat(date_create, "#myFusebox.getApplicationData().defaults.getdateformat(thestruct=attributes)#")#</td>
+						<td nowrap="true" width="1%" align="center" valign="top">#dateformat(date_change, "#myFusebox.getApplicationData().defaults.getdateformat(thestruct=attributes)#")#</td>
 					</tr>
 				<!--- Audios --->
 				<cfelseif kind EQ "aud">
@@ -1492,8 +1490,8 @@
 							</div>
 						</td>
 						<td nowrap="true" width="1%" align="center" valign="top">Audio</td>
-						<td nowrap="true" width="1%" align="center" valign="top">#dateformat(date_create, "#myFusebox.getApplicationData().defaults.getdateformat()#")#</td>
-						<td nowrap="true" width="1%" align="center" valign="top">#dateformat(date_change, "#myFusebox.getApplicationData().defaults.getdateformat()#")#</td>
+						<td nowrap="true" width="1%" align="center" valign="top">#dateformat(date_create, "#myFusebox.getApplicationData().defaults.getdateformat(thestruct=attributes)#")#</td>
+						<td nowrap="true" width="1%" align="center" valign="top">#dateformat(date_change, "#myFusebox.getApplicationData().defaults.getdateformat(thestruct=attributes)#")#</td>
 					</tr>
 				<!--- All other files --->
 				<cfelse>
@@ -1581,8 +1579,8 @@
 							</div>
 						</td>
 						<td nowrap="true" width="1%" align="center" valign="top">Document</td>
-						<td nowrap="true" width="1%" align="center" valign="top">#dateformat(date_create, "#myFusebox.getApplicationData().defaults.getdateformat()#")#</td>
-						<td nowrap="true" width="1%" align="center" valign="top">#dateformat(date_change, "#myFusebox.getApplicationData().defaults.getdateformat()#")#</td>
+						<td nowrap="true" width="1%" align="center" valign="top">#dateformat(date_create, "#myFusebox.getApplicationData().defaults.getdateformat(thestruct=attributes)#")#</td>
+						<td nowrap="true" width="1%" align="center" valign="top">#dateformat(date_change, "#myFusebox.getApplicationData().defaults.getdateformat(thestruct=attributes)#")#</td>
 					</tr>
 				</cfif>
 			</cfloop>

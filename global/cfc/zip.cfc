@@ -55,16 +55,16 @@
 
 	<!--- -------------------------------------------------- --->
 	<!--- AddFiles --->
-	<cffunction name="AddFiles" access="public" output="no" returntype="boolean" hint="Add files to a new or an existing Zip file archive.">
+	<cffunction name="AddFiles" access="public" output="no" returntype="boolean" >
 
 		<!--- Function Arguments --->
-		<cfargument name="zipFilePath" required="yes" type="string"                hint="Pathname of the Zip file to add files.">
-		<cfargument name="files"       required="no"  type="string"                hint="| (Chr(124)) delimited list of files to add to the Zip file. Required if argument 'directory' is not set.">
-		<cfargument name="directory"   required="no"  type="string"                hint="Absolute pathname of directory to add to the Zip file. Required if argument 'files' is not set.">
-		<cfargument name="filter"      required="no"  type="string"  default=""    hint="File extension filter. One filter can be applied. Only if argument 'directory' is set.">
-		<cfargument name="recurse"     required="no"  type="boolean" default="no"  hint="Get recursive files of subdirectories. Only if argument 'directory' is set.">
-		<cfargument name="compression" required="no"  type="numeric" default="9"   hint="Compression level (0 through 9, 0=minimum, 9=maximum).">
-		<cfargument name="savePaths"   required="no"  type="boolean" default="no"  hint="Save full path info.">
+		<cfargument name="zipFilePath" required="yes" type="string"                >
+		<cfargument name="files"       required="no"  type="string"                >
+		<cfargument name="directory"   required="no"  type="string"                >
+		<cfargument name="filter"      required="no"  type="string"  default=""    >
+		<cfargument name="recurse"     required="no"  type="boolean" default="no"  >
+		<cfargument name="compression" required="no"  type="numeric" default="9"   >
+		<cfargument name="savePaths"   required="no"  type="boolean" default="no"  >
 
 		<cfscript>
 
@@ -183,11 +183,11 @@
 
 	<!--- -------------------------------------------------- --->
 	<!--- DeleteFiles --->
-	<cffunction name="DeleteFiles" access="public" output="no" returntype="boolean" hint="Delete files from an existing Zip file archive.">
+	<cffunction name="DeleteFiles" access="public" output="no" returntype="boolean" >
 
 		<!--- Function Arguments --->
-		<cfargument name="zipFilePath" required="yes" type="string" hint="Pathname of the Zip file to delete files from.">
-		<cfargument name="files"       required="yes" type="string" hint="| (Chr(124)) delimited list of files to delete from Zip file.">
+		<cfargument name="zipFilePath" required="yes" type="string" >
+		<cfargument name="files"       required="yes" type="string" >
 
 		<cfscript>
 
@@ -282,15 +282,15 @@
 
 	<!--- -------------------------------------------------- --->
 	<!--- Extract --->
-	<cffunction name="Extract" access="public" output="no" returntype="boolean" hint="Extracts a specified Zip file into a specified directory.">
+	<cffunction name="Extract" access="public" output="no" returntype="boolean" >
 
 		<!--- Function Arguments --->
-		<cfargument name="zipFilePath"      required="yes" type="string"                              hint="Pathname of the Zip file to extract.">
-		<cfargument name="extractPath"      required="no"  type="string"  default="#ExpandPath(".")#" hint="Pathname to extract the Zip file to.">
-		<cfargument name="extractFiles"     required="no"  type="string"                              hint="| (Chr(124)) delimited list of files to extract.">
-		<cfargument name="useFolderNames"   required="no"  type="boolean" default="yes"               hint="Create folders using the pathinfo stored in the Zip file.">
-		<cfargument name="overwriteFiles"   required="no"  type="boolean" default="no"                hint="Overwrite existing files.">
-		<cfargument name="suppressMetadata" required="no"  type="boolean" default="no"                hint="Suppress irrelevant Files and Folders for Metadata.">
+		<cfargument name="zipFilePath"      required="yes" type="string"                              >
+		<cfargument name="extractPath"      required="no"  type="string"  default="#ExpandPath(".")#" >
+		<cfargument name="extractFiles"     required="no"  type="string"                              >
+		<cfargument name="useFolderNames"   required="no"  type="boolean" default="yes"               >
+		<cfargument name="overwriteFiles"   required="no"  type="boolean" default="no"                >
+		<cfargument name="suppressMetadata" required="no"  type="boolean" default="no"                >
 
 		<cfscript>
 
@@ -410,10 +410,10 @@
 
 	<!--- -------------------------------------------------- --->
 	<!--- List --->
-	<cffunction name="List" access="public" output="no" returntype="query" hint="List the content of a specified Zip file.">
+	<cffunction name="List" access="public" output="no" returntype="query" >
 		<!--- Function Arguments --->
-		<cfargument name="zipFilePath" required="yes" type="string" hint="Pathname of the Zip file to list the content.">
-		<cfargument name="suppressMetadata" required="no"  type="boolean" default="no" hint="Suppress irrelevant Files and Folders for Metadata.">
+		<cfargument name="zipFilePath" required="yes" type="string" >
+		<cfargument name="suppressMetadata" required="no"  type="boolean" default="no" >
 
 		<cfscript>
 
@@ -476,11 +476,11 @@
 
 	<!--- -------------------------------------------------- --->
 	<!--- gzipAddFile --->
-	<cffunction name="gzipAddFile" access="public" output="no" returntype="boolean" hint="Create a new GZip file archive.">
+	<cffunction name="gzipAddFile" access="public" output="no" returntype="boolean" >
 
 		<!--- Function Arguments --->
-		<cfargument name="gzipFilePath" required="yes" type="string" hint="Pathname of the GZip file to create.">
-		<cfargument name="filePath"     required="yes" type="string" hint="Pathname of a file to add to the GZip file archive.">
+		<cfargument name="gzipFilePath" required="yes" type="string" >
+		<cfargument name="filePath"     required="yes" type="string" >
 
 		<cfscript>
 
@@ -538,11 +538,11 @@
 
 	<!--- -------------------------------------------------- --->
 	<!--- gzipExtract --->
-	<cffunction name="gzipExtract" access="public" output="no" returntype="boolean" hint="Extracts a specified GZip file into a specified directory.">
+	<cffunction name="gzipExtract" access="public" output="no" returntype="boolean" >
 
 		<!--- Function Arguments --->
-		<cfargument name="gzipFilePath" required="yes" type="string"                             hint="Pathname of the GZip file to extract.">
-		<cfargument name="extractPath"  required="no"  type="string" default="#ExpandPath(".")#" hint="Pathname to extract the GZip file to.">
+		<cfargument name="gzipFilePath" required="yes" type="string"                             >
+		<cfargument name="extractPath"  required="no"  type="string" default="#ExpandPath(".")#" >
 
 		<cfscript>
 
@@ -602,12 +602,12 @@
 
 	<!--- -------------------------------------------------- --->
 	<!--- FilesList --->
-	<cffunction name="FilesList" access="private" output="no" returntype="array" hint="Create an array with the file names of specified directory.">
+	<cffunction name="FilesList" access="private" output="no" returntype="array" >
 
 		<!--- Function Arguments --->
-		<cfargument name="directory" required="yes" type="string"               hint="Absolute pathname of directory to get files list.">
-		<cfargument name="filter"    required="no"  type="string"  default=""   hint="File extension filter. One filter can be applied.">
-		<cfargument name="recurse"   required="no"  type="boolean" default="no" hint="Get recursive files of subdirectories.">
+		<cfargument name="directory" required="yes" type="string"               >
+		<cfargument name="filter"    required="no"  type="string"  default=""   >
+		<cfargument name="recurse"   required="no"  type="boolean" default="no" >
 
 		<cfset var i = 0>
 		<cfset var n = 0>
@@ -649,10 +649,10 @@
 
 	<!--- -------------------------------------------------- --->
 	<!--- PathFormat --->
-	<cffunction name="PathFormat" access="private" output="no" returntype="string" hint="Convert path into Windows or Unix format.">
+	<cffunction name="PathFormat" access="private" output="no" returntype="string" >
 
 		<!--- Function Arguments --->
-		<cfargument name="path" required="yes" type="string" hint="The path and file to extract.">
+		<cfargument name="path" required="yes" type="string" >
 
 		<cfif FindNoCase("Windows", this.os)>
 			<cfset arguments.path = Replace(arguments.path, "/", "\", "ALL")>

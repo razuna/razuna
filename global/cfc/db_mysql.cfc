@@ -439,11 +439,16 @@
 		(
 			news_id			varchar(100),
 			news_title		varchar(500),
+			news_excerpt	varchar(2000),
+			news_frontpage	tinyint(1) DEFAULT '0',
 			news_active		varchar(6),
 			news_text		text,
 			news_date		varchar(20),
 			host_id 		int default 0,
-			PRIMARY KEY (news_id)
+			PRIMARY KEY (news_id),
+			KEY news_host_id (host_id),
+			KEY news_active (news_active),
+			KEY news_date (news_date)
 		)
 		#this.tableoptions#
 		</cfquery>
@@ -489,8 +494,12 @@
 			id 				varchar(100),
 			type 			varchar(10) DEFAULT NULL,
 			host_id 		int DEFAULT NULL,
-			PRIMARY KEY (id)
-		)
+			time_stamp 		timestamp,
+			PRIMARY KEY (id),
+			KEY l_type_idx (type),
+			KEY l_host_id_idx (host_id),
+			KEY l_rime_stamp_idx (time_stamp)
+		) #this.tableoptions#
 		</cfquery>
 
 
@@ -676,7 +685,7 @@
 			 <cfquery datasource="#arguments.thestruct.dsn#">
 			 INSERT INTO #arguments.thestruct.theschema#.options
 			 (opt_id, opt_value, rec_uuid)
-			 VALUES ('conf_db_type', '#session.firsttime.database_type#', '#createuuid()#')
+			 VALUES ('conf_db_type', '#arguments.thestruct.razuna.session.firsttime.database_type#', '#createuuid()#')
 			 </cfquery>
 			<!--- USERS --->
 			<cfquery datasource="#arguments.thestruct.dsn#">
@@ -1346,6 +1355,7 @@
 		<cfargument name="dsn" type="string" required="true">
 		<cfargument name="theschema" type="string" required="true">
 		<cfargument name="host_db_prefix" type="string" required="true">
+		<cfargument name="thestruct" type="struct" required="true" />
 		<!--- Params --->
 		<cfset arguments.thestruct = structnew()>
 		<cfset arguments.thestruct.dsn = arguments.dsn>
@@ -1358,7 +1368,7 @@
 	<!--- Create Host --->
 	<cffunction name="create_host" access="public" output="false">
 		<cfargument name="thestruct" type="Struct">
-		<cfset arguments.thestruct.theschema = application.razuna.theschema>
+		<cfset arguments.thestruct.theschema = arguments.thestruct.razuna.application.theschema>
 		<!--- Create Tables --->
 		<cfinvoke method="create_tables" thestruct="#arguments.thestruct#">
 	</cffunction>
@@ -1618,12 +1628,17 @@
 		  IN_TRASH		   	   VARCHAR(2) DEFAULT 'F',
 		  IS_INDEXED		   VARCHAR(1) DEFAULT 0,
 		  FILE_UPC_NUMBER	   VARCHAR(15),
-		  EXPIRY_DATE DATE,
+		  EXPIRY_DATE 		   DATE,
 		PRIMARY KEY (FILE_ID),
 		KEY #arguments.thestruct.host_db_prefix#files_hostid (HOST_ID),
 	    KEY #arguments.thestruct.host_db_prefix#files_folderid (folder_id_r),
 	    KEY #arguments.thestruct.host_db_prefix#files_is_available (IS_AVAILABLE),
 	    KEY #arguments.thestruct.host_db_prefix#files_expiry_date (EXPIRY_DATE),
+	    KEY #arguments.thestruct.host_db_prefix#files_trash (in_trash),
+	    KEY #arguments.thestruct.host_db_prefix#files_indexed (is_indexed),
+	    KEY #arguments.thestruct.host_db_prefix#files_path_to_asset (path_to_asset),
+	    KEY #arguments.thestruct.host_db_prefix#files_create_time (file_CREATE_TIME),
+	    KEY #arguments.thestruct.host_db_prefix#files_hashtag (hashtag),
 		FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE
 		)
 		#this.tableoptions#
@@ -1714,6 +1729,11 @@
 	  	KEY #arguments.thestruct.host_db_prefix#img_is_available (IS_AVAILABLE),
 	  	KEY #arguments.thestruct.host_db_prefix#img_expiry_date (EXPIRY_DATE),
 	  	KEY #arguments.thestruct.host_db_prefix#img_group (IMG_GROUP),
+	  	KEY #arguments.thestruct.host_db_prefix#img_create_time (img_create_time),
+	  	KEY #arguments.thestruct.host_db_prefix#img_trash (in_trash),
+	  	KEY #arguments.thestruct.host_db_prefix#img_indexed (is_indexed),
+	  	KEY #arguments.thestruct.host_db_prefix#img_path_to_asset (path_to_asset),
+	  	KEY #arguments.thestruct.host_db_prefix#img_hashtag (hashtag),
 		FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE
 		)
 		#this.tableoptions#
@@ -2143,6 +2163,11 @@
 	    KEY #arguments.thestruct.host_db_prefix#vid_is_available (IS_AVAILABLE),
 	    KEY #arguments.thestruct.host_db_prefix#vid_expiry_date (EXPIRY_DATE),
     	KEY #arguments.thestruct.host_db_prefix#vid_group (VID_GROUP),
+    	KEY #arguments.thestruct.host_db_prefix#vid_trash (in_trash),
+    	KEY #arguments.thestruct.host_db_prefix#vid_path_to_asset (path_to_asset),
+    	KEY #arguments.thestruct.host_db_prefix#vid_create_time (vid_create_time),
+    	KEY #arguments.thestruct.host_db_prefix#vid_indexed (is_indexed),
+    	KEY #arguments.thestruct.host_db_prefix#vid_hashtag (hashtag),
 		FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE
 		)
 		#this.tableoptions#
@@ -2401,6 +2426,11 @@
      		KEY #arguments.thestruct.host_db_prefix#aud_is_available (IS_AVAILABLE),
      		KEY #arguments.thestruct.host_db_prefix#aud_expiry_date (EXPIRY_DATE),
  			KEY #arguments.thestruct.host_db_prefix#aud_group (AUD_GROUP),
+ 			KEY #arguments.thestruct.host_db_prefix#aud_trash (in_trash),
+ 			KEY #arguments.thestruct.host_db_prefix#aud_indexed (is_indexed),
+ 			KEY #arguments.thestruct.host_db_prefix#aud_path_to_asset (path_to_asset),
+ 			KEY #arguments.thestruct.host_db_prefix#aud_create_time (aud_CREATE_TIME),
+ 			KEY #arguments.thestruct.host_db_prefix#aud_hashtag (hashtag),
 			FOREIGN KEY (HOST_ID) REFERENCES hosts (HOST_ID) ON DELETE CASCADE
 		)
 		#this.tableoptions#
@@ -2630,7 +2660,7 @@
 		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#export_template (
 	  	exp_id				varchar(100),
 		exp_field			varchar(200),
-		exp_value			varchar(2000),
+		exp_value			text,
 		exp_timestamp		TIMESTAMP NULL,
 		user_id				varchar(100),
 		host_id				int,
@@ -2766,23 +2796,75 @@
 		#this.tableoptions#
 		</cfquery>
 
+		<!--- UPC --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#upc_template (
+		upc_temp_id 		varchar(100),
+  		upc_date_create	 	timestamp,
+  		upc_date_update		timestamp,
+  		upc_who				varchar(100),
+  		upc_active 			varchar(1) DEFAULT '0',
+  		host_id				int,
+  		upc_name			varchar(200),
+  		upc_description 	varchar(2000),
+  		PRIMARY KEY (upc_temp_id),
+  		key #arguments.thestruct.host_db_prefix#upc_t_upc_active (upc_active),
+  		key #arguments.thestruct.host_db_prefix#upc_t_host_id (host_id)
+		)
+		#this.tableoptions#
+		</cfquery>
+
+		<!--- UPC --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#upc_template_val (
+  		upc_temp_id_r		varchar(100),
+  		rec_uuid			varchar(100),
+  		upc_field			varchar(200),
+  		upc_is_original		boolean default '0',
+  		host_id				int,
+  		PRIMARY KEY (rec_uuid),
+  		key #arguments.thestruct.host_db_prefix#upc_tv_upc_field (upc_field),
+  		key #arguments.thestruct.host_db_prefix#upc_tv_host_id (host_id)
+		)
+		#this.tableoptions#
+		</cfquery>
+
+		<!--- task scripts --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#scheduled_scripts (
+  		id_name				varchar(200),
+  		value				varchar(2000),
+  		date_added			timestamp,
+  		sched_id			varchar(100),
+  		host_id				int,
+  		KEY #arguments.thestruct.host_db_prefix#scripts_id (id_name),
+  		KEY #arguments.thestruct.host_db_prefix#scripts_host_id (host_id),
+  		KEY #arguments.thestruct.host_db_prefix#scripts_date_added (date_added),
+  		KEY #arguments.thestruct.host_db_prefix#scripts_sched_id (sched_id)
+		)
+		#this.tableoptions#
+		</cfquery>
+
+
+
 	</cffunction>
 
 	<!--- Clear database completely --->
 	<cffunction name="clearall" access="public" output="false">
+		<cfargument name="thestruct" type="struct" required="true" />
 		<!--- Query Tables --->
-		<cfquery datasource="#session.firsttime.database#" name="qrytables">
+		<cfquery datasource="#arguments.thestruct.razuna.session.firsttime.database#" name="qrytables">
 		SELECT table_name
 		FROM information_schema.tables
-		WHERE table_schema = '#session.firsttime.db_schema#'
+		WHERE table_schema = '#arguments.thestruct.razuna.session.firsttime.db_schema#'
 		</cfquery>
 		<!--- Loop and drop tables --->
 		<cfloop query="qrytables">
-			<cfquery datasource="#session.firsttime.database#">
+			<cfquery datasource="#arguments.thestruct.razuna.session.firsttime.database#">
 			SET foreign_key_checks = 0
 			</cfquery>
 			<cftry>
-				<cfquery datasource="#session.firsttime.database#">
+				<cfquery datasource="#arguments.thestruct.razuna.session.firsttime.database#">
 				DROP TABLE #table_name#
 				</cfquery>
 				<cfcatch type="any"></cfcatch>

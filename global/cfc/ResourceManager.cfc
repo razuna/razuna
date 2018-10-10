@@ -6,20 +6,20 @@
  **/
 --->
 <cfcomponent name="ResourceManager"
-	hint="Provides support for Adobe Flex style Resource Bundles"
+	
 >
 	<!--- INIT --->
 
 	<cffunction name="init"
-		hint="Constructor" 
+		 
 		access="public" 
 		returntype="ResourceManager" 
 		output="false" 
 	>
-		<cfargument name="resourcePackagePath" hint="Flex style Resource Package folder path" type="string" required="true" /> 
-		<cfargument name="baseLocale" hint="Base locale to fall back on if there are no matches for a particular key and locale" type="string" required="false" default="English" />
-		<cfargument name="admin" hint="Find the admin for basePackagePath" type="string" required="false" default="" /> 
-		<cfargument name="propertiesEncoding" hint="File Encoding of Resource Bundle properties files" type="string" required="false" default="UTF-8" />
+		<cfargument name="resourcePackagePath"  type="string" required="true" /> 
+		<cfargument name="baseLocale"  type="string" required="false" default="English" />
+		<cfargument name="admin"  type="string" required="false" default="" /> 
+		<cfargument name="propertiesEncoding"  type="string" required="false" default="UTF-8" />
 		<cfif arguments.admin EQ 'admin'>
 			<cfset variables.basePackagePath = expandPath(arguments.resourcePackagePath)>
 		<cfelse>
@@ -37,15 +37,15 @@
 	<!--- PUBLIC --->
 
 	<cffunction name="getString"
-		hint="Get String from Resource Bundle" 
+		 
 		access="public" 
 		returntype="string" 
 		output="false" 
 	>
-		<cfargument name="resourceBundleName" hint="Resource Bundle Name" type="string" required="true" /> 
-		<cfargument name="key" hint="Resource Key" type="string" required="true" />
-		<cfargument name="values" hint="Array of values to substitute for $1, $2 etc in the resource string" type="array" required="false" default="#arrayNew(1)#" />
-		<cfargument name="locale" hint="Resource Locale" type="string" required="false" default="#this.getLocaleCode()#" />
+		<cfargument name="resourceBundleName"  type="string" required="true" /> 
+		<cfargument name="key"  type="string" required="true" />
+		<cfargument name="values"  type="array" required="false" default="#arrayNew(1)#" />
+		<cfargument name="locale"  type="string" required="false" default="#this.getLocaleCode()#" />
 		
 		<!--- LOCALS --->
 		<cfset var resource = '' />
@@ -108,7 +108,7 @@
 
 
 	<cffunction name="getLocaleCode"
-		hint="Get current request's Locale code" 
+		 
 		access="public" 
 		returntype="string" 
 		output="false" 
@@ -123,12 +123,12 @@
 	
 	
 	<cffunction name="setLocaleCode"
-		hint="Set current request's Locale code" 
+		 
 		access="public" 
 		returntype="string" 
 		output="false" 
 	> 
-		<cfargument name="locale" hint="Locale Code" type="string" required="true" />
+		<cfargument name="locale"  type="string" required="true" />
 		
 		<cfset setLocale( arguments.locale ) />
 		
@@ -137,7 +137,7 @@
 
 
 	<cffunction name="getLocaleChain"
-		hint="Get array of locale codes with a resource package available" 
+		 
 		access="public" 
 		returntype="array" 
 		output="false" 
@@ -159,12 +159,12 @@
 	
 	
 	<cffunction name="getLocaleDirection"
-		hint="Get language direction (rtl|rtl) for the locale code" 
+		 
 		access="public" 
 		returntype="string" 
 		output="false" 
 	> 
-		<cfargument name="locale" hint="Resource Locale" type="string" required="false" default="#this.getLocaleCode()#" />
+		<cfargument name="locale"  type="string" required="false" default="#this.getLocaleCode()#" />
 
 		<cfif createObject('java', 'java.awt.ComponentOrientation').getOrientation( createObject('java', 'java.util.Locale').init(arguments.locale) ).isLeftToRight() >
 			<cfreturn 'ltr' />
@@ -184,13 +184,13 @@
 	
 	
 	<cffunction name="getResourceBundle"
-		hint="Get Resource Bundle from Resource Bundle (with cache)" 
+		 
 		access="private" 
 		returntype="struct" 
 		output="false" 
 	> 
-		<cfargument name="resourceBundleName" hint="Resource Bundle Name" type="string" required="true" />
-		<cfargument name="locale" hint="Resource Locale" type="string" required="false" default="#this.getLocaleCode()#" />
+		<cfargument name="resourceBundleName"  type="string" required="true" />
+		<cfargument name="locale"  type="string" required="false" default="#this.getLocaleCode()#" />
 
 		<!--- LOCALS --->
 		<cfset var resourceBundle = structNew() />
@@ -261,12 +261,12 @@
 	
 	
 	<cffunction name="getLocalePackage"
-		hint="Get Locale Package from Resource Bundle (with cache)" 
+		 
 		access="private" 
 		returntype="struct" 
 		output="false" 
 	> 
-		<cfargument name="locale" hint="Resource Locale" type="string" required="false" default="#this.getLocaleCode()#" />
+		<cfargument name="locale"  type="string" required="false" default="#this.getLocaleCode()#" />
 
 		<!--- LOCALS --->
 		<cfset var currentLocale = '' />
@@ -317,12 +317,12 @@
 
 
 	<cffunction name="getLocaleFallBack"
-		hint="Get fall back Locale code" 
+		 
 		access="private" 
 		returntype="string" 
 		output="false" 
 	> 
-		<cfargument name="locale" hint="Locale" type="string" required="false" default="#this.getLocaleCode()#" />
+		<cfargument name="locale"  type="string" required="false" default="#this.getLocaleCode()#" />
 	
 		<cfif not findNoCase('_', arguments.locale) >
 			<!--- Country --->

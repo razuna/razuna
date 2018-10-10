@@ -24,9 +24,6 @@
 *
 --->
 <cfcomponent output="false">
-	
-	<!--- Set application values --->
-	<cfparam name="application.razuna.api.lucene" default="global.cfc.lucene">
 
 	<!--- Check for db entry --->
 	<cffunction name="checkdb" access="public" output="no">
@@ -47,14 +44,14 @@
 		</cfif>
 		<cfset var qry = "">
 		<!--- Query --->
-		<cfquery datasource="#application.razuna.api.dsn#" name="qry" cachedwithin="1" region="razcache">
+		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 		SELECT  /* #theapikey##thehostid#checkdb */  u.user_id, gu.ct_g_u_grp_id grpid, ct.ct_u_h_host_id hostid
 		FROM users u INNER JOIN ct_users_hosts ct ON u.user_id = ct.ct_u_h_user_id
 		LEFT JOIN ct_groups_users gu ON gu.ct_g_u_user_id = u.user_id <!--- Left join on groups since users that are non admin can now also access the API and they may not be part of any groups --->
 		WHERE user_api_key = <cfqueryparam value="#theapikey#" cfsqltype="cf_sql_varchar">
 		<cfif thehostid NEQ "">
 			AND ct.ct_u_h_host_id = <cfqueryparam value="#thehostid#" cfsqltype="cf_sql_numeric">
-		</cfif> 
+		</cfif>
 		GROUP BY user_id, ct_g_u_grp_id, ct_u_h_host_id
 		</cfquery>
 		<!--- If user not found then deny access --->
@@ -66,20 +63,15 @@
 			<cfset var status = true>
 			<cfset session.thegroupofuser = 0>
 			<!--- Get Host prefix --->
-			<cfquery datasource="#application.razuna.api.dsn#" name="pre" cachedwithin="1" region="razcache">
+			<cfquery datasource="#application.razuna.datasource#" name="pre" cachedwithin="1" region="razcache">
 			SELECT /* #theapikey##thehostid#checkdb2 */ host_shard_group, host_path, host_name
 			FROM hosts
 			WHERE host_id = <cfqueryparam value="#qry.hostid#" cfsqltype="cf_sql_numeric">
 			</cfquery>
 			<!--- Set Host information --->
-			<cfset application.razuna.api.host_path = pre.host_path>
-			<cfset application.razuna.api.prefix[#arguments.api_key#] = pre.host_shard_group>
-			<cfset application.razuna.api.hostpath[#arguments.api_key#] = pre.host_path>
-			<cfset application.razuna.api.hostname[#arguments.api_key#] = pre.host_name>
-			<cfset application.razuna.api.hostid[#arguments.api_key#] = qry.hostid>
-			<cfset application.razuna.api.userid[#arguments.api_key#] = qry.user_id>
-			<cfset application.razuna.trans = createObject("component","global.cfc.ResourceManager").init('translations')>
+			<!--- <cfset application.razuna.trans = createObject("component","global.cfc.ResourceManager").init('translations')> --->
 			<cfset session.hostdbprefix = pre.host_shard_group>
+			<cfset session.hostpath = pre.host_path>
 			<cfset session.hostid = qry.hostid>
 			<cfset session.theuserid = qry.user_id>
 			<cfset session.thelang = "English">
@@ -90,35 +82,13 @@
 			<cfif listlen(valuelist(qry.grpid)) GT 0>
 				<cfset session.thegroupofuser = valuelist(qry.grpid)>
 			</cfif>
-			<!--- Set vars needed for AWS --->
-			<cfif application.razuna.api.storage EQ "amazon">
-				<cfset var qry = "">
-				<cfquery datasource="#application.razuna.api.dsn#" name="qry">
-				SELECT set2_aws_bucket
-				FROM #application.razuna.api.prefix["#arguments.api_key#"]#settings_2
-				WHERE set2_id = <cfqueryparam value="#application.razuna.api.setid#" cfsqltype="cf_sql_numeric">
-				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
-				</cfquery>
-				<cfquery datasource="razuna_default" name="qry_config">
-				SELECT conf_aws_access_key, conf_aws_secret_access_key, conf_aws_location
-				FROM razuna_config
-				</cfquery>
-				<cfset application.razuna.api.awskey = qry_config.conf_aws_access_key>
-				<cfset application.razuna.api.awskeysecret = qry_config.conf_aws_secret_access_key>
-				<cfset application.razuna.api.awslocation = qry_config.conf_aws_location>
-				<cfset application.razuna.awsbucket = qry.set2_aws_bucket>
-				<cfset application.razuna.awskey = application.razuna.api.awskey>
-				<cfset application.razuna.awskeysecret = application.razuna.api.awskeysecret>
-				<cfset application.razuna.awslocation = application.razuna.api.awslocation>
-				<cfif NOT isDefined("application.razuna.s3ds")>
-					<cfset application.razuna.s3ds = AmazonRegisterDataSource("aws","#application.razuna.api.awskey#","#application.razuna.api.awskeysecret#","#application.razuna.api.awslocation#")>
-				</cfif>
-			</cfif>
+			<!--- Set application and session --->
+			<cfset _setAppSession()>
 		</cfif>
 		<!--- Return --->
 		<cfreturn status>
 	</cffunction>
-	
+
 	<!--- Create timeout error --->
 	<cffunction name="timeout" access="public" output="false">
 		<cfargument name="type" required="false" default="q" type="string" />
@@ -165,10 +135,8 @@
 	<cffunction name="getcachetoken" output="false" returntype="string">
 		<cfargument name="api_key" type="string">
 		<cfargument name="type" type="string" required="yes">
-		<!--- Set session --->
-		<cfset session.hostid = application.razuna.api.hostid["#arguments.api_key#"]>
 		<!--- Call reset function --->
-		<cfinvoke component="global.cfc.extQueryCaching" method="getcachetoken" type="#arguments.type#" returnvariable="c" />
+		<cfset var c = callFunction(comp="global.cfc.extQueryCaching", func="getcachetoken", type=arguments.type, hostid=session.hostid)>
 		<!--- Return --->
 		<cfreturn c />
 	</cffunction>
@@ -177,11 +145,8 @@
 	<cffunction name="resetcachetoken" output="false" returntype="void">
 		<cfargument name="api_key" type="string">
 		<cfargument name="type" type="string" required="yes">
-		<!--- Set session --->
-		<cfset session.hostid = application.razuna.api.hostid["#arguments.api_key#"]>
 		<!--- Call reset function --->
-		<!--- <cfinvoke component="global.cfc.extQueryCaching" method="resetcachetoken" type="#arguments.type#" /> --->
-		<cfinvoke component="global.cfc.extQueryCaching" method="resetcachetokenall" />
+		<cfset callFunction(comp="global.cfc.extQueryCaching", func="resetcachetokenall", hostid=session.hostid)>
 		<!--- Return --->
 		<cfreturn />
 	</cffunction>
@@ -196,21 +161,21 @@
 		<cfset arguments.comingfrom = cgi.http_referer>
 		<!--- Query --->
 		<cfif arguments.action NEQ "on_folder_add">
-			<cfquery datasource="#application.razuna.api.dsn#" name="qry_forwf">
+			<cfquery datasource="#application.razuna.datasource#" name="qry_forwf">
 			SELECT folder_id_r, img_filename AS thefilename, 'img' AS thefiletype
-			FROM #application.razuna.api.prefix["#arguments.api_key#"]#images
+			FROM #session.hostdbprefix#images
 			WHERE img_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.fileid#">
 			UNION ALL
 			SELECT folder_id_r, vid_filename AS thefilename, 'vid' AS thefiletype
-			FROM #application.razuna.api.prefix["#arguments.api_key#"]#videos
+			FROM #session.hostdbprefix#videos
 			WHERE vid_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.fileid#">
 			UNION ALL
 			SELECT folder_id_r, aud_name AS thefilename, 'aud' AS thefiletype
-			FROM #application.razuna.api.prefix["#arguments.api_key#"]#audios
+			FROM #session.hostdbprefix#audios
 			WHERE aud_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.fileid#">
 			UNION ALL
 			SELECT folder_id_r, file_name AS thefilename, 'doc' AS thefiletype
-			FROM #application.razuna.api.prefix["#arguments.api_key#"]#files
+			FROM #session.hostdbprefix#files
 			WHERE file_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.fileid#">
 			</cfquery>
 			<!--- Set vars --->
@@ -219,11 +184,12 @@
 			<cfset arguments.file_name = qry_forwf.thefilename>
 			<!--- Call workflow --->
 			<cfset arguments.folder_action = false>
-			<cfinvoke component="global.cfc.plugins" method="getactions" theaction="#arguments.action#" args="#arguments#" />
+			<cfset callFunction(comp="global.cfc.plugins", func="getactions", theaction=arguments.action, args=arguments)>
 			<!--- Call workflow --->
 			<cfset arguments.folder_action = true>
 		</cfif>
-		<cfinvoke component="global.cfc.plugins" method="getactions" theaction="#arguments.action#" args="#arguments#" />
+		<!--- Merge struct with default one --->
+		<cfset callFunction(comp="global.cfc.plugins", func="getactions", theaction=arguments.action, args=arguments)>
 		<!--- Return --->
 		<cfreturn />
 	</cffunction>
@@ -234,11 +200,11 @@
 		<!--- Temp --->
 		<cfset var qry = "" />
 		<!--- Query --->
-		<cfquery datasource="#application.razuna.api.dsn#" name="qry">
+		<cfquery datasource="#application.razuna.datasource#" name="qry">
 		SELECT set2_path_to_assets
-		FROM #application.razuna.api.prefix["#arguments.api_key#"]#settings_2
-		WHERE set2_id = <cfqueryparam value="#application.razuna.api.setid#" cfsqltype="cf_sql_numeric">
-		AND host_id = <cfqueryparam value="#application.razuna.api.hostid["#arguments.api_key#"]#" cfsqltype="cf_sql_numeric">
+		FROM #session.hostdbprefix#settings_2
+		WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
+		AND host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric">
 		</cfquery>
 		<!--- Return --->
 		<cfreturn qry.set2_path_to_assets />
@@ -250,11 +216,11 @@
 		<!--- Temp --->
 		<cfset var qry = "" />
 		<!--- Query --->
-		<cfquery datasource="#application.razuna.api.dsn#" name="qry">
+		<cfquery datasource="#application.razuna.datasource#" name="qry">
 		SELECT set2_img_format
-		FROM #application.razuna.api.prefix["#arguments.api_key#"]#settings_2
-		WHERE set2_id = <cfqueryparam value="#application.razuna.api.setid#" cfsqltype="cf_sql_numeric">
-		AND host_id = <cfqueryparam value="#application.razuna.api.hostid["#arguments.api_key#"]#" cfsqltype="cf_sql_numeric">
+		FROM #session.hostdbprefix#settings_2
+		WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
+		AND host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric">
 		</cfquery>
 		<!--- Return --->
 		<cfreturn qry.set2_img_format />
@@ -269,6 +235,7 @@
 			<cfinvoke method="updateSearchIndexThread">
 				<cfinvokeargument name="assetid" value="#attributes.intstruct.assetid#" />
 				<cfinvokeargument name="api_key" value="#attributes.intstruct.api_key#" />
+				<cfinvokeargument name="thestruct" value="#attributes.intstruct.thestruct#" />
 			</cfinvoke>
 		</cfthread>
 		<!--- Return --->
@@ -280,20 +247,18 @@
 		<cfargument name="assetid" required="true">
 		<cfargument name="api_key" required="true">
 		<!--- Call Lucene --->
-		<cfif application.razuna.api.lucene EQ "global.cfc.lucene">
-			<cfinvoke component="#application.razuna.api.lucene#" method="index_update_api">
-				<cfinvokeargument name="assetid" value="#arguments.assetid#" />
-				<cfinvokeargument name="dsn" value="#application.razuna.api.dsn#" />
-				<cfinvokeargument name="prefix" value="#application.razuna.api.prefix["#arguments.api_key#"]#" />
-				<cfinvokeargument name="hostid" value="#application.razuna.api.hostid["#arguments.api_key#"]#" />
-			</cfinvoke>
+		<cfif application.razuna.lucene EQ "global.cfc.lucene">
+			<cfset callFunction(comp="global.cfc.lucene", func="index_update_api", assetid=arguments.assetid)>
 		<cfelse>
-			<cfhttp url="#application.razuna.api.lucene#/global/cfc/lucene.cfc">
+			<!--- Merge struct with default one --->
+			<cfset arguments = setStruct(arguments)>
+			<cfhttp url="#application.razuna.lucene#/global/cfc/lucene.cfc">
 				<cfhttpparam name="method" value="index_update_api" type="url" />
 				<cfhttpparam name="assetid" value="#arguments.assetid#" type="url" />
-				<cfhttpparam name="dsn" value="#application.razuna.api.dsn#" type="url" />
-				<cfhttpparam name="prefix" value="#application.razuna.api.prefix["#arguments.api_key#"]#" type="url" />
-				<cfhttpparam name="hostid" value="#application.razuna.api.hostid["#arguments.api_key#"]#" type="url" />	
+				<cfhttpparam name="dsn" value="#application.razuna.datasource#" type="url" />
+				<cfhttpparam name="prefix" value="#session.hostdbprefix#" type="url" />
+				<cfhttpparam name="hostid" value="#session.hostid#" type="url" />
+				<cfhttpparam name="thestruct" value="#arguments.thestruct#" type="url" />
 			</cfhttp>
 		</cfif>
 	</cffunction>
@@ -307,25 +272,22 @@
 		<cfargument name="maxrows" required="true" type="numeric">
 		<cfargument name="folderid" required="true" type="string">
 		<cfargument name="showrenditions" required="false" default="true" type="string">
+		<cfargument name="search_upc" type="string" required="false" default="false">
 		<!--- Renditions param is boolean convert it here --->
 		<cfif !arguments.showrenditions>
 			<cfset var _rendition = "t">
 		<cfelse>
 			<cfset var _rendition = "f">
 		</cfif>
+		<!--- Convert search_upc to boolean --->
+		<cfset var _search_upc = arguments.search_upc EQ 'true' ? true : false>
 		<!--- Call Lucene --->
-		<cfif application.razuna.api.lucene EQ "global.cfc.lucene">
-			<cfinvoke component="#application.razuna.api.lucene#" method="search" returnvariable="qrylucene"> 
-				<cfinvokeargument name="criteria" value="#arguments.criteria#" />
-				<cfinvokeargument name="category" value="#arguments.category#" />
-				<cfinvokeargument name="hostid" value="#arguments.hostid#" />
-				<cfinvokeargument name="startrow" value="#arguments.startrow#" />
-				<cfinvokeargument name="maxrows" value="#arguments.maxrows#" />
-				<cfinvokeargument name="folderid" value="#arguments.folderid#" />
-				<cfinvokeargument name="search_rendition" value="#_rendition#" />
-			</cfinvoke>
+		<cfif application.razuna.lucene EQ "global.cfc.lucene">
+			<cfset var qrylucene = callFunction(comp="global.cfc.lucene", func="search", hostid=arguments.hostid, criteria=arguments.criteria, category=arguments.category, startrow=arguments.startrow, maxrows=arguments.maxrows, folderid=arguments.folderid, search_rendition=_rendition, searchupc=_search_upc, search_type="")>
 		<cfelse>
-			<cfhttp url="#application.razuna.api.lucene#/global/cfc/lucene.cfc">
+			<!--- Merge struct with default one --->
+			<cfset arguments = setStruct(arguments)>
+			<cfhttp url="#application.razuna.lucene#/global/cfc/lucene.cfc">
 				<cfhttpparam name="method" value="search" type="url" />
 				<cfhttpparam name="criteria" value="#arguments.criteria#" type="url" />
 				<cfhttpparam name="category" value="#arguments.category#" type="url" />
@@ -334,6 +296,8 @@
 				<cfhttpparam name="maxrows" value="#arguments.maxrows#" type="url" />
 				<cfhttpparam name="folderid" value="#arguments.folderid#" type="url" />
 				<cfhttpparam name="search_rendition" value="#_rendition#" type="url" />
+				<cfhttpparam name="searchupc" value="#arguments.search_upc#" type="url" />
+				<cfhttpparam name="search_type" value="" type="url" />
 			</cfhttp>
 			<!--- Set the return --->
 			<cfwddx action="wddx2cfml" input="#cfhttp.filecontent#" output="qrylucene" />
@@ -411,7 +375,7 @@
 		<cfset qry.thetotal = qdocc + qimgc + qvidc + qaudc>
 		<!--- Return --->
 		<cfreturn qry>
-	</cffunction>  
+	</cffunction>
 
 	<!--- Check for desktop user --->
 	<cffunction name="checkDesktop" access="public" output="no">
@@ -431,10 +395,10 @@
 		</cfif>
 		<cfset var qry = "">
 		<!--- Query --->
-		<cfquery datasource="#application.razuna.api.dsn#" name="qry" cachedwithin="1" region="razcache">
+		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 		SELECT /* #theapikey##thehostid#checkdesktop */ u.user_id, gu.ct_g_u_grp_id grpid, ct.ct_u_h_host_id hostid
 		FROM ct_users_hosts ct, users u left join ct_groups_users gu on gu.ct_g_u_user_id = u.user_id
-		WHERE user_api_key = <cfqueryparam value="#theapikey#" cfsqltype="cf_sql_varchar"> 
+		WHERE user_api_key = <cfqueryparam value="#theapikey#" cfsqltype="cf_sql_varchar">
 		AND u.user_id = ct.ct_u_h_user_id
 		<cfif thehostid NEQ "">
 			AND ct.ct_u_h_host_id = <cfqueryparam value="#thehostid#" cfsqltype="cf_sql_numeric">
@@ -453,16 +417,12 @@
 			<cfset status.hostid = qry.hostid>
 			<cfset status.grpid = qry.grpid>
 			<!--- Get Host prefix --->
-			<cfquery datasource="#application.razuna.api.dsn#" name="pre" cachedwithin="1" region="razcache">
+			<cfquery datasource="#application.razuna.datasource#" name="pre" cachedwithin="1" region="razcache">
 			SELECT /* #theapikey##thehostid#checkdesktop2 */ host_shard_group,host_path
 			FROM hosts
 			WHERE host_id = <cfqueryparam value="#qry.hostid#" cfsqltype="cf_sql_numeric">
 			</cfquery>
 			<!--- Set Host information --->
-			<cfset application.razuna.api.host_path = pre.host_path>
-			<cfset application.razuna.api.prefix[#arguments.api_key#] = pre.host_shard_group>
-			<cfset application.razuna.api.hostid[#arguments.api_key#] = qry.hostid>
-			<cfset application.razuna.api.userid[#arguments.api_key#] = qry.user_id>
 			<cfset session.hostdbprefix = pre.host_shard_group>
 			<cfset session.hostid = qry.hostid>
 			<cfset session.theuserid = qry.user_id>
@@ -493,9 +453,9 @@
 		<!--- Else we need to query group access for this user --->
 		<cfelse>
 			<!--- Get folder_id --->
-			<cfquery datasource="#application.razuna.api.dsn#" name="qry">
+			<cfquery datasource="#application.razuna.datasource#" name="qry">
 			SELECT a.folder_id_r, f.folder_owner, fg.grp_id_r, fg.grp_permission
-			FROM #application.razuna.api.prefix["#arguments.api_key#"]#images a, #application.razuna.api.prefix["#arguments.api_key#"]#folders f LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#folders_groups fg ON f.folder_id = fg.folder_id_r AND fg.host_id = f.host_id
+			FROM #session.hostdbprefix#images a, #session.hostdbprefix#folders f LEFT JOIN #session.hostdbprefix#folders_groups fg ON f.folder_id = fg.folder_id_r AND fg.host_id = f.host_id
 			WHERE a.img_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.assetid#">
 			AND f.folder_id = a.folder_id_r
 			AND f.host_id = a.host_id
@@ -503,12 +463,12 @@
 				fg.grp_id_r IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#session.thegroupofuser#" list="true">)
 				OR
 				fg.grp_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
-				OR 
+				OR
 				f.folder_owner =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.theuserid#">
 			)
 			UNION ALL
 			SELECT a.folder_id_r, f.folder_owner, fg.grp_id_r, fg.grp_permission
-			FROM #application.razuna.api.prefix["#arguments.api_key#"]#videos a, #application.razuna.api.prefix["#arguments.api_key#"]#folders f LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#folders_groups fg ON f.folder_id = fg.folder_id_r AND fg.host_id = f.host_id
+			FROM #session.hostdbprefix#videos a, #session.hostdbprefix#folders f LEFT JOIN #session.hostdbprefix#folders_groups fg ON f.folder_id = fg.folder_id_r AND fg.host_id = f.host_id
 			WHERE a.vid_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.assetid#">
 			AND f.folder_id = a.folder_id_r
 			AND f.host_id = a.host_id
@@ -516,12 +476,12 @@
 				fg.grp_id_r IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#session.thegroupofuser#" list="true">)
 				OR
 				fg.grp_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
-				OR 
+				OR
 				f.folder_owner =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.theuserid#">
 			)
 			UNION ALL
 			SELECT a.folder_id_r, f.folder_owner, fg.grp_id_r, fg.grp_permission
-			FROM #application.razuna.api.prefix["#arguments.api_key#"]#audios a, #application.razuna.api.prefix["#arguments.api_key#"]#folders f LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#folders_groups fg ON f.folder_id = fg.folder_id_r AND fg.host_id = f.host_id
+			FROM #session.hostdbprefix#audios a, #session.hostdbprefix#folders f LEFT JOIN #session.hostdbprefix#folders_groups fg ON f.folder_id = fg.folder_id_r AND fg.host_id = f.host_id
 			WHERE a.aud_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.assetid#">
 			AND f.folder_id = a.folder_id_r
 			AND f.host_id = a.host_id
@@ -529,12 +489,12 @@
 				fg.grp_id_r IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#session.thegroupofuser#" list="true">)
 				OR
 				fg.grp_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
-				OR 
+				OR
 				f.folder_owner =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.theuserid#">
 			)
 			UNION ALL
 			SELECT a.folder_id_r, f.folder_owner, fg.grp_id_r, fg.grp_permission
-			FROM #application.razuna.api.prefix["#arguments.api_key#"]#files a, #application.razuna.api.prefix["#arguments.api_key#"]#folders f LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#folders_groups fg ON f.folder_id = fg.folder_id_r AND fg.host_id = f.host_id
+			FROM #session.hostdbprefix#files a, #session.hostdbprefix#folders f LEFT JOIN #session.hostdbprefix#folders_groups fg ON f.folder_id = fg.folder_id_r AND fg.host_id = f.host_id
 			WHERE a.file_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.assetid#">
 			AND f.folder_id = a.folder_id_r
 			AND f.host_id = a.host_id
@@ -542,7 +502,7 @@
 				fg.grp_id_r IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#session.thegroupofuser#" list="true">)
 				OR
 				fg.grp_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
-				OR 
+				OR
 				f.folder_owner =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.theuserid#">
 			)
 			</cfquery>
@@ -582,16 +542,16 @@
 		<!--- Else we need to query group access for this user --->
 		<cfelse>
 			<!--- Query --->
-			<cfquery datasource="#application.razuna.api.dsn#" name="fprop">
+			<cfquery datasource="#application.razuna.datasource#" name="fprop">
 			SELECT  f.folder_owner, fg.grp_id_r, fg.grp_permission
-			FROM  #application.razuna.api.prefix["#arguments.api_key#"]#folders f LEFT JOIN  #application.razuna.api.prefix["#arguments.api_key#"]#folders_groups fg ON f.folder_id = fg.folder_id_r AND f.host_id = fg.host_id
+			FROM  #session.hostdbprefix#folders f LEFT JOIN  #session.hostdbprefix#folders_groups fg ON f.folder_id = fg.folder_id_r AND f.host_id = fg.host_id
 			WHERE f.folder_id = <cfqueryparam value="#arguments.folder_id#" cfsqltype="CF_SQL_VARCHAR">
 			AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			AND (
 				fg.grp_id_r IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#session.thegroupofuser#" list="true">)
 				OR
 				fg.grp_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
-				OR 
+				OR
 				f.folder_owner =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.theuserid#">
 				)
 			</cfquery>
@@ -631,56 +591,56 @@
 		<!--- Else we need to query group access for this user --->
 		<cfelse>
 			<!--- Query --->
-			<cfquery datasource="#application.razuna.api.dsn#" name="lprop">
+			<cfquery datasource="#application.razuna.datasource#" name="lprop">
 			SELECT 1
 				FROM ct_labels l
-				LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#images i ON l.ct_id_r = i.img_id AND  l.ct_type =<cfqueryparam value="img" cfsqltype="cf_sql_varchar"/>
-				LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#audios a ON l.ct_id_r = a.aud_id  AND  l.ct_type =<cfqueryparam value="aud" cfsqltype="cf_sql_varchar"/>
-				LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#videos v ON l.ct_id_r = v.vid_id  AND  l.ct_type =<cfqueryparam value="vid" cfsqltype="cf_sql_varchar"/>
-				LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#files f ON l.ct_id_r = f.file_id  AND  l.ct_type =<cfqueryparam value="doc" cfsqltype="cf_sql_varchar"/>
-				LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#folders fo ON l.ct_id_r = fo.folder_id  AND  l.ct_type =<cfqueryparam value="folder" cfsqltype="cf_sql_varchar"/>
+				LEFT JOIN #session.hostdbprefix#images i ON l.ct_id_r = i.img_id AND  l.ct_type =<cfqueryparam value="img" cfsqltype="cf_sql_varchar"/>
+				LEFT JOIN #session.hostdbprefix#audios a ON l.ct_id_r = a.aud_id  AND  l.ct_type =<cfqueryparam value="aud" cfsqltype="cf_sql_varchar"/>
+				LEFT JOIN #session.hostdbprefix#videos v ON l.ct_id_r = v.vid_id  AND  l.ct_type =<cfqueryparam value="vid" cfsqltype="cf_sql_varchar"/>
+				LEFT JOIN #session.hostdbprefix#files f ON l.ct_id_r = f.file_id  AND  l.ct_type =<cfqueryparam value="doc" cfsqltype="cf_sql_varchar"/>
+				LEFT JOIN #session.hostdbprefix#folders fo ON l.ct_id_r = fo.folder_id  AND  l.ct_type =<cfqueryparam value="folder" cfsqltype="cf_sql_varchar"/>
 				WHERE
 				ct_label_id = <cfqueryparam value="#arguments.label_id#" cfsqltype="cf_sql_varchar" />
 				<!--- Ensure user has access to folder in which asset resides --->
-				AND 
+				AND
 				(
 				<!--- Check if user is owner of folder containing asset that has label--->
 				EXISTS (
-					SELECT 1 FROM #application.razuna.api.prefix["#arguments.api_key#"]#folders WHERE folder_id =  i.folder_id_r AND folder_owner = '#session.theuserid#' 
+					SELECT 1 FROM #session.hostdbprefix#folders WHERE folder_id =  i.folder_id_r AND folder_owner = '#session.theuserid#'
 					UNION
-					SELECT 1 FROM #application.razuna.api.prefix["#arguments.api_key#"]#folders WHERE folder_id =  a.folder_id_r AND folder_owner = '#session.theuserid#' 
+					SELECT 1 FROM #session.hostdbprefix#folders WHERE folder_id =  a.folder_id_r AND folder_owner = '#session.theuserid#'
 					UNION
-					SELECT 1 FROM #application.razuna.api.prefix["#arguments.api_key#"]#folders WHERE folder_id =  v.folder_id_r AND folder_owner = '#session.theuserid#' 
+					SELECT 1 FROM #session.hostdbprefix#folders WHERE folder_id =  v.folder_id_r AND folder_owner = '#session.theuserid#'
 					UNION
-					SELECT 1 FROM #application.razuna.api.prefix["#arguments.api_key#"]#folders WHERE folder_id =  f.folder_id_r AND folder_owner = '#session.theuserid#' 
+					SELECT 1 FROM #session.hostdbprefix#folders WHERE folder_id =  f.folder_id_r AND folder_owner = '#session.theuserid#'
 					UNION
-					SELECT 1 FROM #application.razuna.api.prefix["#arguments.api_key#"]#folders WHERE folder_id =  fo.folder_id_r AND folder_owner = '#session.theuserid#' 
-					) 
+					SELECT 1 FROM #session.hostdbprefix#folders WHERE folder_id =  fo.folder_id_r AND folder_owner = '#session.theuserid#'
+					)
 				OR
 				<!--- Check if folder containing asset that has label is accessible to 'Everyone' and that user has appropriate access privileges on it   --->
 				EXISTS (
-					SELECT 1 FROM #application.razuna.api.prefix["#arguments.api_key#"]#folders_groups f WHERE i.folder_id_r = f.folder_id_r AND  f.grp_id_r ='0' AND f.grp_permission IN  (<cfqueryparam cfsqltype="cf_sql_varchar" value="#privileges#" list="true">)
+					SELECT 1 FROM #session.hostdbprefix#folders_groups f WHERE i.folder_id_r = f.folder_id_r AND  f.grp_id_r ='0' AND f.grp_permission IN  (<cfqueryparam cfsqltype="cf_sql_varchar" value="#privileges#" list="true">)
 					UNION
-					SELECT 1 FROM #application.razuna.api.prefix["#arguments.api_key#"]#folders_groups f WHERE  a.folder_id_r = f.folder_id_r AND f.grp_id_r ='0' AND f.grp_permission IN  (<cfqueryparam cfsqltype="cf_sql_varchar" value="#privileges#" list="true">)
+					SELECT 1 FROM #session.hostdbprefix#folders_groups f WHERE  a.folder_id_r = f.folder_id_r AND f.grp_id_r ='0' AND f.grp_permission IN  (<cfqueryparam cfsqltype="cf_sql_varchar" value="#privileges#" list="true">)
 					UNION
-					SELECT 1 FROM #application.razuna.api.prefix["#arguments.api_key#"]#folders_groups f WHERE  v.folder_id_r = f.folder_id_r AND f.grp_id_r = '0' AND f.grp_permission IN  (<cfqueryparam cfsqltype="cf_sql_varchar" value="#privileges#" list="true">)
+					SELECT 1 FROM #session.hostdbprefix#folders_groups f WHERE  v.folder_id_r = f.folder_id_r AND f.grp_id_r = '0' AND f.grp_permission IN  (<cfqueryparam cfsqltype="cf_sql_varchar" value="#privileges#" list="true">)
 					UNION
-					SELECT 1 FROM #application.razuna.api.prefix["#arguments.api_key#"]#folders_groups fg WHERE  f.folder_id_r = fg.folder_id_r AND fg.grp_id_r = '0' AND fg.grp_permission IN  (<cfqueryparam cfsqltype="cf_sql_varchar" value="#privileges#" list="true">)
+					SELECT 1 FROM #session.hostdbprefix#folders_groups fg WHERE  f.folder_id_r = fg.folder_id_r AND fg.grp_id_r = '0' AND fg.grp_permission IN  (<cfqueryparam cfsqltype="cf_sql_varchar" value="#privileges#" list="true">)
 					UNION
-					SELECT 1 FROM #application.razuna.api.prefix["#arguments.api_key#"]#folders_groups fg WHERE  fo.folder_id = fg.folder_id_r AND fg.grp_id_r = '0' AND fg.grp_permission IN  (<cfqueryparam cfsqltype="cf_sql_varchar" value="#privileges#" list="true">)
+					SELECT 1 FROM #session.hostdbprefix#folders_groups fg WHERE  fo.folder_id = fg.folder_id_r AND fg.grp_id_r = '0' AND fg.grp_permission IN  (<cfqueryparam cfsqltype="cf_sql_varchar" value="#privileges#" list="true">)
 					)
 				OR
 				<!--- Check if folder containing asset that has label is accessible to a group that user belows to and that he has appropriate access privileges on it  --->
 				EXISTS (
-					SELECT 1 FROM ct_groups_users c, #application.razuna.api.prefix["#arguments.api_key#"]#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND i.folder_id_r = f.folder_id_r AND f.grp_id_r = c.ct_g_u_grp_id AND f.grp_permission IN  (<cfqueryparam cfsqltype="cf_sql_varchar" value="#privileges#" list="true">)
+					SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND i.folder_id_r = f.folder_id_r AND f.grp_id_r = c.ct_g_u_grp_id AND f.grp_permission IN  (<cfqueryparam cfsqltype="cf_sql_varchar" value="#privileges#" list="true">)
 					UNION
-					SELECT 1 FROM ct_groups_users c, #application.razuna.api.prefix["#arguments.api_key#"]#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND a.folder_id_r = f.folder_id_r AND f.grp_id_r = c.ct_g_u_grp_id AND f.grp_permission IN  (<cfqueryparam cfsqltype="cf_sql_varchar" value="#privileges#" list="true">)
+					SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND a.folder_id_r = f.folder_id_r AND f.grp_id_r = c.ct_g_u_grp_id AND f.grp_permission IN  (<cfqueryparam cfsqltype="cf_sql_varchar" value="#privileges#" list="true">)
 					UNION
-					SELECT 1 FROM ct_groups_users c, #application.razuna.api.prefix["#arguments.api_key#"]#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND v.folder_id_r = f.folder_id_r AND f.grp_id_r = c.ct_g_u_grp_id  AND f.grp_permission IN  (<cfqueryparam cfsqltype="cf_sql_varchar" value="#privileges#" list="true">)
+					SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND v.folder_id_r = f.folder_id_r AND f.grp_id_r = c.ct_g_u_grp_id  AND f.grp_permission IN  (<cfqueryparam cfsqltype="cf_sql_varchar" value="#privileges#" list="true">)
 					UNION
-					SELECT 1 FROM ct_groups_users c, #application.razuna.api.prefix["#arguments.api_key#"]#folders_groups fg WHERE ct_g_u_user_id ='#session.theuserid#' AND f.folder_id_r = fg.folder_id_r AND fg.grp_id_r = c.ct_g_u_grp_id AND fg.grp_permission IN  (<cfqueryparam cfsqltype="cf_sql_varchar" value="#privileges#" list="true">)
+					SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups fg WHERE ct_g_u_user_id ='#session.theuserid#' AND f.folder_id_r = fg.folder_id_r AND fg.grp_id_r = c.ct_g_u_grp_id AND fg.grp_permission IN  (<cfqueryparam cfsqltype="cf_sql_varchar" value="#privileges#" list="true">)
 					UNION
-					SELECT 1 FROM ct_groups_users c, #application.razuna.api.prefix["#arguments.api_key#"]#folders_groups fg WHERE ct_g_u_user_id ='#session.theuserid#' AND fo.folder_id = fg.folder_id_r AND fg.grp_id_r = c.ct_g_u_grp_id AND fg.grp_permission IN  (<cfqueryparam cfsqltype="cf_sql_varchar" value="#privileges#" list="true">)
+					SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups fg WHERE ct_g_u_user_id ='#session.theuserid#' AND fo.folder_id = fg.folder_id_r AND fg.grp_id_r = c.ct_g_u_grp_id AND fg.grp_permission IN  (<cfqueryparam cfsqltype="cf_sql_varchar" value="#privileges#" list="true">)
 					)
 				)
 			</cfquery>
@@ -689,6 +649,85 @@
 			</cfif>
 		</cfif>
 		<cfreturn labelaccess />
+	</cffunction>
+
+	<!--- Call function --->
+	<cffunction name="callFunction" returntype="any" access="public">
+		<cfargument name="comp" type="string" required="true">
+		<cfargument name="func" type="string" required="true">
+		<cfargument name="thestruct" type="struct" required="false" default="#structnew()#">
+		<cfargument name="args" type="struct" required="false" default="#structnew()#">
+		<cfargument name="folder_id" type="string" required="false" default="">
+		<cfargument name="folderid" type="string" required="false" default="">
+		<cfargument name="parentid" type="string" required="false" default="">
+		<cfargument name="id" type="string" required="false" default="">
+		<cfargument name="type" type="string" required="false" default="">
+		<cfargument name="fileid" type="string" required="false" default="">
+		<cfargument name="label_id" type="string" required="false" default="">
+		<cfargument name="label_kind" type="string" required="false" default="">
+		<cfargument name="fromapi" type="string" required="false" default="">
+		<cfargument name="group_id" type="string" required="false" default="">
+		<cfargument name="user_id" type="string" required="false" default="">
+		<cfargument name="hostid" type="string" required="false" default="">
+		<cfargument name="theaction" type="string" required="false" default="">
+		<cfargument name="assetid" type="string" required="false" default="">
+		<cfargument name="criteria" type="string" required="false" default="">
+		<cfargument name="category" type="string" required="false" default="">
+		<cfargument name="startrow" type="string" required="false" default="0">
+		<cfargument name="maxrows" type="string" required="false" default="25">
+		<cfargument name="search_rendition" type="string" required="false" default="">
+		<cfargument name="search_upc" type="string" required="false" default="">
+		<cfargument name="search_type" type="string" required="false" default="">
+		<!--- Var --->
+		<cfset var _return = "">
+		<!--- Merge struct with default one --->
+		<cfset arguments = setStruct(arguments)>
+		<!--- Invoke function --->
+		<cfinvoke component="#arguments.comp#" method="#arguments.func#" thestruct="#arguments.thestruct#" folder_id="#arguments.folder_id#" folderid="#arguments.folderid#" parentid="#arguments.parentid#" id="#arguments.id#" type="#arguments.type#" fileid="#arguments.fileid#" label_id="#arguments.label_id#" label_kind="#arguments.label_kind#" fromapi="#arguments.fromapi#" group_id="#arguments.group_id#" user_id="#arguments.user_id#" hostid="#arguments.hostid#" theaction="#arguments.theaction#" assetid="#arguments.assetid#" criteria="#arguments.criteria#" category="#arguments.category#" startrow="#arguments.startrow#" maxrows="#arguments.maxrows#" search_rendition="#arguments.search_rendition#" search_upc="#arguments.search_upc#" args="#arguments.args#" search_type="#arguments.search_type#" returnvariable="_return" />
+		<!--- Return --->
+		<cfreturn _return />
+	</cffunction>
+
+	<!--- Put intop the struct --->
+	<cffunction name="setStruct" returntype="struct" access="public">
+		<cfargument name="_s" type="struct" required="true">
+		<!--- If thestruct is not here --->
+		<cfif ! structKeyExists(arguments._s, "thestruct")>
+			<cfset arguments._s.thestruct = structnew()>
+		</cfif>
+		<!--- Create struct --->
+		<cfset var _new = structnew()>
+		<cfset _new.thestruct.razuna = structnew()>
+		<!--- Add application razuna scope --->
+		<cfset _new.thestruct.razuna.application = application.razuna.application>
+		<cfset _new.thestruct.razuna.session = application.razuna.session>
+		<!--- Add passed in arguments to thestruct --->
+		<cfset structAppend(_new.thestruct, arguments._s.thestruct)>
+		<!--- Delete thestruct from arguments --->
+		<cfset StructDelete(arguments._s, "thestruct")>
+		<!--- Finally just merge new with arguments --->
+		<cfset structAppend(arguments._s, _new)>
+		<!--- Return --->
+		<cfreturn arguments._s />
+	</cffunction>
+
+	<!--- Set App and session into app scope to pass them on --->
+	<cffunction name="_setAppSession" returntype="void" access="private">
+		<cfset application.razuna.session = structnew()>
+		<cfset application.razuna.application.datasource = application.razuna.datasource>
+		<cfset application.razuna.application.thedatabase = application.razuna.thedatabase>
+		<cfset application.razuna.application.storage = application.razuna.storage>
+		<cfset application.razuna.application.setid = application.razuna.setid>
+		<cfset application.razuna.application.theschema = application.razuna.theschema>
+		<cfset application.razuna.application.awskey = application.razuna.awskey>
+		<cfset application.razuna.application.awskeysecret = application.razuna.awskeysecret>
+		<cfset application.razuna.application.awslocation = application.razuna.awslocation>
+		<cfset application.razuna.application.awstenaneonebucket = application.razuna.awstenaneonebucket>
+		<cfset application.razuna.application.awstenaneonebucketname = application.razuna.awstenaneonebucketname>
+		<cfset application.razuna.application.isp = application.razuna.isp>
+		<cfset application.razuna.application.rfs = application.razuna.rfs>
+		<cfset application.razuna.application.s3ds = application.razuna.s3ds>
+		<cfset application.razuna.session = session>
 	</cffunction>
 
 </cfcomponent>

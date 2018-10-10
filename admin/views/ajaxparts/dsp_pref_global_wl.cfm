@@ -33,11 +33,11 @@
 				<!--- CSS --->
 				<li><a href="##wl_css">CSS</a></li>
 				<!--- News --->
-				<li><a href="##wl_news" onclick="loadcontent('wl_news','#myself#c.wl_news');">#defaultsObj.trans("wl_news")#</a></li>
+				<li><a href="##wl_news" onclick="loadcontent('wl_news','#myself#c.wl_news');">#myFusebox.getApplicationData().defaults.trans("wl_news")#</a></li>
 				<!--- ISP setup --->
-				<li><a href="##wl_isp">#defaultsObj.trans("wl_hosting_setting")#</a></li>
+				<li><a href="##wl_isp">#myFusebox.getApplicationData().defaults.trans("wl_hosting_setting")#</a></li>
 				<!--- Most recently updates --->
-				<!--- <li><a href="##wl_show_recent_updates">#defaultsObj.trans("wl_show_recent_updates")#</a></li> --->
+				<!--- <li><a href="##wl_show_recent_updates">#myFusebox.getApplicationData().defaults.trans("wl_show_recent_updates")#</a></li> --->
 			</ul>
 			<!--- Options --->
 			<div id="wl_options">
@@ -45,13 +45,13 @@
 				<!--- General title tag --->
 				<strong>#myFusebox.getApplicationData().defaults.trans("header_wl_main_html_title")#</strong><br />
 				#myFusebox.getApplicationData().defaults.trans("header_wl_main_html_title_desc")#<br />
-				<div style="float:left;"><input type="text" style="width:500px;" name="wl_html_title" id="wl_html_title" value="<cfif qry_options.wl_html_title EQ "">Razuna - the open source alternative to Digital Asset Management<cfelse>#qry_options.wl_html_title#</cfif>"></div><div style="float:left;padding-left:10px;"><a href="##" onclick="usedefaults('wl_html_title');return false;">#defaultsObj.trans("use_default")#</a></div>
+				<div style="float:left;"><input type="text" style="width:500px;" name="wl_html_title" id="wl_html_title" value="<cfif qry_options.wl_html_title EQ "">Razuna - the open source alternative to Digital Asset Management<cfelse>#qry_options.wl_html_title#</cfif>"></div><div style="float:left;padding-left:10px;"><a href="##" onclick="usedefaults('wl_html_title');return false;">#myFusebox.getApplicationData().defaults.trans("use_default")#</a></div>
 				<div style="clear:both;"></div>
 				<br />
 				<!--- Login Footer --->
 				<strong>#myFusebox.getApplicationData().defaults.trans("header_wl_login")#</strong><br />
 				#myFusebox.getApplicationData().defaults.trans("header_wl_login_desc")#<br />
-				<div style="float:left;"><textarea name="wl_login_links" id="wl_login_links" style="width:500px;height:70px;">#qry_options.wl_login_links#</textarea></div><div style="float:left;padding-left:10px;"><a href="##" onclick="usedefaults('wl_login_links');return false;">#defaultsObj.trans("use_default")#</a></div>
+				<div style="float:left;"><textarea name="wl_login_links" id="wl_login_links" style="width:500px;height:70px;">#qry_options.wl_login_links#</textarea></div><div style="float:left;padding-left:10px;"><a href="##" onclick="usedefaults('wl_login_links');return false;">#myFusebox.getApplicationData().defaults.trans("use_default")#</a></div>
 				<div style="clear:both;"></div>
 				<br>
 				<hr>
@@ -59,7 +59,7 @@
 				<!--- Main page Videos --->
 				<strong>#myFusebox.getApplicationData().defaults.trans("header_wl_main_video")#</strong><br />
 				#myFusebox.getApplicationData().defaults.trans("header_wl_main_video_desc")#<br />
-				<div style="float:left;"><textarea name="wl_main_static" id="wl_main_static" style="width:500px;height:70px;">#qry_options.wl_main_static#</textarea></div><div style="float:left;padding-left:10px;"><a href="##" onclick="usedefaults('wl_main_static');return false;">#defaultsObj.trans("use_default")#</a></div>
+				<div style="float:left;"><textarea name="wl_main_static" id="wl_main_static" style="width:500px;height:70px;">#qry_options.wl_main_static#</textarea></div><div style="float:left;padding-left:10px;"><a href="##" onclick="usedefaults('wl_main_static');return false;">#myFusebox.getApplicationData().defaults.trans("use_default")#</a></div>
 				<div style="clear:both;"></div>
 				<br>
 				<hr>
@@ -70,7 +70,7 @@
 				#myFusebox.getApplicationData().defaults.trans("header_wl_main_razunatab_text")#<br />
 				<input type="text" style="width:500px;" name="wl_razuna_tab_text" value="#qry_options.wl_razuna_tab_text#"><br />
 				#myFusebox.getApplicationData().defaults.trans("header_wl_main_razunatab_content")#<br />
-				<div style="float:left;"><textarea name="wl_razuna_tab_content" id="wl_razuna_tab_content" style="width:500px;height:70px;">#qry_options.wl_razuna_tab_content#</textarea></div><div style="float:left;padding-left:10px;"><a href="##" onclick="usedefaults('wl_razuna_tab_content');return false;">#defaultsObj.trans("use_default")#</a></div>
+				<div style="float:left;"><textarea name="wl_razuna_tab_content" id="wl_razuna_tab_content" style="width:500px;height:70px;">#qry_options.wl_razuna_tab_content#</textarea></div><div style="float:left;padding-left:10px;"><a href="##" onclick="usedefaults('wl_razuna_tab_content');return false;">#myFusebox.getApplicationData().defaults.trans("use_default")#</a></div>
 				<div style="clear:both;"></div>
 				<br>
 				<hr>
@@ -78,7 +78,7 @@
 				<!--- Feedback link --->
 				<strong>#myFusebox.getApplicationData().defaults.trans("header_wl_main_feedback")#</strong><br />
 				#myFusebox.getApplicationData().defaults.trans("header_wl_main_feedback_desc")#<br />
-				<div style="float:left;"><textarea name="wl_feedback" id="wl_feedback" style="width:500px;height:70px;">#qry_options.wl_feedback#</textarea></div><div style="float:left;padding-left:10px;"><a href="##" onclick="usedefaults('wl_feedback');return false;">#defaultsObj.trans("use_default")#</a></div>
+				<div style="float:left;"><textarea name="wl_feedback" id="wl_feedback" style="width:500px;height:70px;">#qry_options.wl_feedback#</textarea></div><div style="float:left;padding-left:10px;"><a href="##" onclick="usedefaults('wl_feedback');return false;">#myFusebox.getApplicationData().defaults.trans("use_default")#</a></div>
 				<div style="clear:both;"></div>
 				<br />
 				<!--- Dropdown menu links --->
@@ -91,7 +91,7 @@
 					<cfelse>
 						#qry_options.wl_link_search#
 					</cfif>
-				</textarea></div><div style="float:left;padding-left:10px;"><a href="##" onclick="usedefaults('wl_link_search');return false;">#defaultsObj.trans("use_default")#</a></div>
+				</textarea></div><div style="float:left;padding-left:10px;"><a href="##" onclick="usedefaults('wl_link_search');return false;">#myFusebox.getApplicationData().defaults.trans("use_default")#</a></div>
 				<div style="clear:both;"></div>
 				<br />
 				#myFusebox.getApplicationData().defaults.trans("header_wl_main_links_dd_support")#<br />
@@ -101,7 +101,7 @@
 					<cfelse>
 						#qry_options.wl_link_support#
 					</cfif>
-				</textarea></div><div style="float:left;padding-left:10px;"><a href="##" onclick="usedefaults('wl_link_support');return false;">#defaultsObj.trans("use_default")#</a></div>
+				</textarea></div><div style="float:left;padding-left:10px;"><a href="##" onclick="usedefaults('wl_link_support');return false;">#myFusebox.getApplicationData().defaults.trans("use_default")#</a></div>
 				<div style="clear:both;"></div>
 				<br />
 				#myFusebox.getApplicationData().defaults.trans("header_wl_main_links_dd_documentation")#<br />
@@ -111,15 +111,15 @@
 					<cfelse>
 						#qry_options.wl_link_doc#
 					</cfif>
-				</textarea></div><div style="float:left;padding-left:10px;"><a href="##" onclick="usedefaults('wl_link_doc');return false;">#defaultsObj.trans("use_default")#</a></div>
+				</textarea></div><div style="float:left;padding-left:10px;"><a href="##" onclick="usedefaults('wl_link_doc');return false;">#myFusebox.getApplicationData().defaults.trans("use_default")#</a></div>
 				<div style="clear:both;"></div>
 				<br>
 				<hr>
 				<br>
-				#defaultsObj.trans("wl_show_recent_updates_desc")#<br/><br/>
+				#myFusebox.getApplicationData().defaults.trans("wl_show_recent_updates_desc")#<br/><br/>
 				<strong>Show list of most recently updated assets</strong><br />
-				<input type="radio" value="true" name="wl_show_updates" <cfif qry_options.wl_show_updates NEQ '' AND qry_options.wl_show_updates> checked="checked"</cfif>> #defaultsObj.trans("show")#<br />
-				<input type="radio" value="false" name="wl_show_updates" <cfif qry_options.wl_show_updates NEQ '' AND !qry_options.wl_show_updates> checked="checked"</cfif>> #defaultsObj.trans("hide")#
+				<input type="radio" value="true" name="wl_show_updates" <cfif qry_options.wl_show_updates NEQ '' AND qry_options.wl_show_updates> checked="checked"</cfif>> #myFusebox.getApplicationData().defaults.trans("show")#<br />
+				<input type="radio" value="false" name="wl_show_updates" <cfif qry_options.wl_show_updates NEQ '' AND !qry_options.wl_show_updates> checked="checked"</cfif>> #myFusebox.getApplicationData().defaults.trans("hide")#
 				<div style="clear:both;"></div>
 				<br /><br />
 				<input type="submit" name="submitbutton" value="#myFusebox.getApplicationData().defaults.trans("save")#">
@@ -143,8 +143,8 @@
 				#myFusebox.getApplicationData().defaults.trans("header_wl_isp_desc")#
 				<br /><br />
 				<strong>Hosting Setting</strong><br />
-				<input type="radio" value="false" name="conf_isp"<cfif !application.razuna.isp> checked="checked"</cfif>> #defaultsObj.trans("hosting_setting_off")#<br />
-				<input type="radio" value="true" name="conf_isp"<cfif application.razuna.isp> checked="checked"</cfif>> #defaultsObj.trans("hosting_setting_on")#
+				<input type="radio" value="false" name="conf_isp"<cfif !application.razuna.isp> checked="checked"</cfif>> #myFusebox.getApplicationData().defaults.trans("hosting_setting_off")#<br />
+				<input type="radio" value="true" name="conf_isp"<cfif application.razuna.isp> checked="checked"</cfif>> #myFusebox.getApplicationData().defaults.trans("hosting_setting_on")#
 				<br /><br />
 				<input type="submit" name="submitbutton" value="#myFusebox.getApplicationData().defaults.trans("save")#">
 				<br /><br />
@@ -152,10 +152,10 @@
 			</div>
 			<!--- show recent updates options --->
 			<!--- <div id="wl_show_recent_updates">
-				#defaultsObj.trans("wl_show_recent_updates_desc")#<br/><br/>
+				#myFusebox.getApplicationData().defaults.trans("wl_show_recent_updates_desc")#<br/><br/>
 				<strong>Show list of most recently updated assets</strong><br />
-				<input type="radio" value="true" name="show_updates" <cfif application.razuna.show_recent_updates> checked="checked"</cfif>> #defaultsObj.trans("show")#<br />
-				<input type="radio" value="false" name="show_updates" <cfif !application.razuna.show_recent_updates> checked="checked"</cfif>> #defaultsObj.trans("hide")#
+				<input type="radio" value="true" name="show_updates" <cfif application.razuna.show_recent_updates> checked="checked"</cfif>> #myFusebox.getApplicationData().defaults.trans("show")#<br />
+				<input type="radio" value="false" name="show_updates" <cfif !application.razuna.show_recent_updates> checked="checked"</cfif>> #myFusebox.getApplicationData().defaults.trans("hide")#
 				<br /><br />
 				<input type="submit" name="submitbutton" value="#myFusebox.getApplicationData().defaults.trans("save")#">
 				<br /><br />
@@ -184,10 +184,10 @@
 			$("##wlfeedback2").css("display","");
 			$("##wlfeedback3").css("display","");
 			// $("##wlfeedback4").css("display","");
-			$("##wlfeedback").html('#defaultsObj.trans("saved_changes")#');
-			$("##wlfeedback2").html('#defaultsObj.trans("saved_changes")#');
-			$("##wlfeedback3").html('#defaultsObj.trans("saved_changes")#');
-			// $("##wlfeedback4").html('#defaultsObj.trans("saved_changes")#');
+			$("##wlfeedback").html('#myFusebox.getApplicationData().defaults.trans("saved_changes")#');
+			$("##wlfeedback2").html('#myFusebox.getApplicationData().defaults.trans("saved_changes")#');
+			$("##wlfeedback3").html('#myFusebox.getApplicationData().defaults.trans("saved_changes")#');
+			// $("##wlfeedback4").html('#myFusebox.getApplicationData().defaults.trans("saved_changes")#');
 			return false;
 		});
 		// Defaults

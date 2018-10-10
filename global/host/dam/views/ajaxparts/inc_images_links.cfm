@@ -44,7 +44,7 @@
 							<cfset args.detail = qry_detail.detail>
 							<cfset args.thefiletype = "img">
 							<cfset args.thepreview = true>
-							<cfinvoke component="global.cfc.plugins" method="getactions" theaction="show_in_direct_link" args="#args#" returnvariable="pl">
+							<cfinvoke component="global.cfc.plugins" method="getactions" theaction="show_in_direct_link" args="#args#" thestruct="#attributes#" returnvariable="pl">
 							<!--- Show plugin --->
 							<cfif structKeyExists(pl,"pview")>
 								<cfloop list="#pl.pview#" delimiters="," index="i">
@@ -98,7 +98,7 @@
 							</cfif>
 							<!--- Plugin --->
 							<cfset args.thepreview = false>
-							<cfinvoke component="global.cfc.plugins" method="getactions" theaction="show_in_direct_link" args="#args#" returnvariable="pl">
+							<cfinvoke component="global.cfc.plugins" method="getactions" theaction="show_in_direct_link" args="#args#" thestruct="#attributes#" returnvariable="pl">
 							<!--- Show plugin --->
 							<cfif structKeyExists(pl,"pview")>
 								<cfloop list="#pl.pview#" delimiters="," index="i">

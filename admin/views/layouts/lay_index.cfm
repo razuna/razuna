@@ -34,18 +34,20 @@
 <cfheader name="Expires" value="#GetHttpTimeString(DateAdd('d', 1, Now()))#">
 <cfheader name="PRAGMA" value="#GetHttpTimeString(DateAdd('d', 1, Now()))#"> --->
 <meta http-equiv="X-UA-Compatible" content="chrome=1">
-<cfheader name="Expires" value="#GetHttpTimeString(Now())#">
+<!--- <cfheader name="Expires" value="#GetHttpTimeString(Now())#">
 <cfheader name="CACHE-CONTROL" value="NO-CACHE, no-store, must-revalidate">
-<cfheader name="PRAGMA" value="#GetHttpTimeString(Now())#">
+<cfheader name="PRAGMA" value="#GetHttpTimeString(Now())#"> --->
 <link rel="SHORTCUT ICON" href="favicon.ico" />
 <script language="JavaScript" type="text/javascript">var dynpath = '#dynpath#';</script>
 <!--- CSS --->
 <link rel="stylesheet" type="text/css" href="views/layouts/login.css" />
 <link rel="stylesheet" type="text/css" href="views/layouts/error.css" />
+<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/Magnific-Popup-1.1.0/dist/magnific-popup.css" />
 <!--- JS --->
 <script type="text/javascript" src="#dynpath#/global/js/jquery-1.12.4.min.js"></script>
 <script type="text/javascript" src="#dynpath#/global/js/jquery.validate.min.js"></script>
 <script type="text/javascript" src="#dynpath#/global/js/jquery.form.js"></script>
+<script type="text/javascript" src="#dynpath#/global/js/Magnific-Popup-1.1.0/dist/jquery.magnific-popup.min.js"></script>
 <script type="text/javascript" src="js/login.js"></script>
 <script type="text/javascript" src="js/global.js"></script>
 </head>

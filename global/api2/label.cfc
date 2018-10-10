@@ -38,10 +38,10 @@
 				<!--- Get Cachetoken --->
 				<cfset var cachetoken = getcachetoken(arguments.api_key,"labels")>
 				<!--- Query --->
-				<cfquery datasource="#application.razuna.api.dsn#" name="thexml" cachedwithin="1" region="razcache">
+				<cfquery datasource="#application.razuna.datasource#" name="thexml" cachedwithin="1" region="razcache">
 				SELECT /* #cachetoken#getall */ label_id, label_text, label_path
-				FROM #application.razuna.api.prefix["#arguments.api_key#"]#labels
-				WHERE host_id = <cfqueryparam value="#application.razuna.api.hostid["#arguments.api_key#"]#" cfsqltype="cf_sql_numeric" />
+				FROM #session.hostdbprefix#labels
+				WHERE host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric" />
 				ORDER BY label_path
 				</cfquery>
 			<!--- User not admin --->
@@ -55,7 +55,7 @@
 		<!--- Return --->
 		<cfreturn thexml>
 	</cffunction>
-	
+
 	<!--- Get one labels --->
 	<cffunction name="getlabel" access="remote" output="false" returntype="query" returnformat="json">
 		<cfargument name="api_key" required="true">
@@ -73,10 +73,10 @@
 				<!--- Get Cachetoken --->
 				<cfset var cachetoken = getcachetoken(arguments.api_key,"labels")>
 				<!--- Query --->
-				<cfquery datasource="#application.razuna.api.dsn#" name="thexml" cachedwithin="1" region="razcache">
+				<cfquery datasource="#application.razuna.datasource#" name="thexml" cachedwithin="1" region="razcache">
 				SELECT /* #cachetoken#getlabel */ label_id, label_text, label_path
-				FROM #application.razuna.api.prefix["#arguments.api_key#"]#labels l
-				WHERE host_id = <cfqueryparam value="#application.razuna.api.hostid["#arguments.api_key#"]#" cfsqltype="cf_sql_numeric" />
+				FROM #session.hostdbprefix#labels l
+				WHERE host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric" />
 				AND label_id IN (<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.label_id#" list="Yes">)
 				ORDER BY label_path
 				</cfquery>
@@ -92,7 +92,7 @@
 		<!--- Return --->
 		<cfreturn thexml>
 	</cffunction>
-	
+
 	<!--- Add / Update label --->
 	<cffunction name="setlabel" access="remote" output="false" returntype="struct" returnformat="json">
 		<cfargument name="api_key" required="true">
@@ -105,10 +105,6 @@
 		<cfif thesession>
 			<!--- If user is in admin --->
 			<cfif listFind(session.thegroupofuser,"2",",") GT 0 OR listFind(session.thegroupofuser,"1",",") GT 0>
-				<!--- Set Values --->
-				<cfset session.hostdbprefix = application.razuna.api.prefix["#arguments.api_key#"]>
-				<cfset session.hostid = application.razuna.api.hostid["#arguments.api_key#"]>
-				<cfset session.theuserid = application.razuna.api.userid["#arguments.api_key#"]>
 				<!--- Set Arguments --->
 				<cfset arguments.thestruct.label_id = arguments.label_id>
 				<cfset arguments.thestruct.label_text = arguments.label_text>
@@ -116,8 +112,8 @@
 				<!--- Check label exists --->
 				<cfif arguments.label_id NEQ 0>
 					<cfset var label_exists = "">
-					<cfquery datasource="#application.razuna.api.dsn#" name="label_exists">
-					SELECT 1 FROM #application.razuna.api.prefix["#arguments.api_key#"]#labels
+					<cfquery datasource="#application.razuna.datasource#" name="label_exists">
+					SELECT 1 FROM #session.hostdbprefix#labels
 					WHERE  label_id = <cfqueryparam value="#arguments.label_id#" cfsqltype="cf_sql_varchar" />
 					</cfquery>
 					<cfif label_exists.recordcount EQ 0>
@@ -130,8 +126,8 @@
 				<!--- Check parent label exists --->
 				<cfif arguments.label_parent NEQ 0>
 					<cfset var parent_label_exists = "">
-					<cfquery datasource="#application.razuna.api.dsn#" name="parent_label_exists">
-					SELECT 1 FROM #application.razuna.api.prefix["#arguments.api_key#"]#labels
+					<cfquery datasource="#application.razuna.datasource#" name="parent_label_exists">
+					SELECT 1 FROM #session.hostdbprefix#labels
 					WHERE  label_id = <cfqueryparam value="#arguments.label_parent#" cfsqltype="cf_sql_varchar" />
 					AND label_id  <> <cfqueryparam value="#arguments.label_id#" cfsqltype="cf_sql_varchar" />
 					</cfquery>
@@ -144,7 +140,7 @@
 					<cfif arguments.label_id NEQ 0>
 						<!--- Ensure that parent label is not a child of the label to avoid circular references --->
 						<cfset var child_labels = "">
-						<cfinvoke component="global.cfc.labels" method="getchildlabels" parentid="#arguments.label_id#" returnVariable="child_labels">
+						<cfset child_labels = callFunction(comp="global.cfc.labels", func="getchildlabels", parentid=arguments.label_id)>
 						<cfif listfind(child_labels,arguments.label_parent)>
 							<cfset thexml.responsecode = 1>
 							<cfset thexml.message = "Parent label_id '#arguments.label_parent#' is currently a child of the label '#arguments.label_id#'. Please address this issue first to avoid a circular reference.">
@@ -154,7 +150,7 @@
 					</cfif>
 				</cfif>
 				<!--- call internal method --->
-				<cfinvoke component="global.cfc.labels" method="admin_update" thestruct="#arguments.thestruct#" returnVariable="lid">
+				<cfset lid = callFunction(comp="global.cfc.labels", func="admin_update", thestruct=arguments.thestruct)>
 				<!--- Return --->
 				<cfset thexml.responsecode = 0>
 				<cfset thexml.message = "Label successfully added or updated">
@@ -170,7 +166,7 @@
 		<!--- Return --->
 		<cfreturn thexml>
 	</cffunction>
-	
+
 	<!--- Remove label --->
 	<cffunction name="remove" access="remote" output="false" returntype="struct" returnformat="json">
 		<cfargument name="api_key" required="true">
@@ -181,14 +177,10 @@
 		<cfif thesession>
 			<!--- If user is in admin --->
 			<cfif listFind(session.thegroupofuser,"2",",") GT 0 OR listFind(session.thegroupofuser,"1",",") GT 0>
-				<!--- Set Values --->
-				<cfset session.hostdbprefix = application.razuna.api.prefix["#arguments.api_key#"]>
-				<cfset session.hostid = application.razuna.api.hostid["#arguments.api_key#"]>
-				<cfset session.theuserid = application.razuna.api.userid["#arguments.api_key#"]>
 				<!--- Loop over label_id and remove them --->
 				<cfloop list="#arguments.label_id#" index="i" delimiters=",">
 					<!--- Call internal function --->
-					<cfinvoke component="global.cfc.labels" method="admin_remove" id="#i#">
+					<cfset callFunction(comp="global.cfc.labels", func="admin_remove", id=i)>
 				</cfloop>
 				<!--- Return --->
 				<cfset thexml.responsecode = 0>
@@ -204,7 +196,7 @@
 		<!--- Return --->
 		<cfreturn thexml>
 	</cffunction>
-	
+
 	<!--- Set asset label --->
 	<cffunction name="setassetlabel" access="remote" output="false" returntype="struct" returnformat="json">
 		<cfargument name="api_key" required="true">
@@ -224,23 +216,23 @@
 
 				<!--- If we replace, then remove all labels for this record first --->
 				<cfif !arguments.append>
-					<cfquery datasource="#application.razuna.api.dsn#">
+					<cfquery datasource="#application.razuna.datasource#">
 					DELETE FROM ct_labels
 					WHERE ct_id_r = <cfqueryparam value="#arguments.asset_id#" cfsqltype="cf_sql_varchar" />
 					</cfquery>
 				</cfif>
 				<!--- Loop over label_id and add them --->
 				<cfloop list="#arguments.label_id#" index="i" delimiters=",">
-					<!--- Add to DB --->				
+					<!--- Add to DB --->
 					<cftry>
 						<!--- Only add label if it doesn't already exist to avoid duplicates --->
-						<cfquery datasource="#application.razuna.api.dsn#" name="checklabel">
+						<cfquery datasource="#application.razuna.datasource#" name="checklabel">
 						SELECT 1 FROM ct_labels
 						WHERE ct_id_r = <cfqueryparam value="#arguments.asset_id#" cfsqltype="cf_sql_varchar" />
 						AND ct_label_id = <cfqueryparam value="#i#" cfsqltype="cf_sql_varchar" />
 						</cfquery>
 						<cfif checklabel.recordcount EQ 0>
-							<cfquery datasource="#application.razuna.api.dsn#">
+							<cfquery datasource="#application.razuna.datasource#">
 							INSERT INTO ct_labels
 							(
 								ct_label_id,
@@ -258,13 +250,13 @@
 							</cfquery>
 						</cfif>
 						<cfcatch type="database">
-							<cfset consoleoutput(true)>
+							<cfset consoleoutput(true, true)>
 							<cfset console(cfcatch)>
 						</cfcatch>
 					</cftry>
 				</cfloop>
 				<!--- Update Dates --->
-				<cfinvoke component="global.cfc.global" method="update_dates" type="#arguments.asset_type#" fileid="#arguments.asset_id#" />
+				<cfset lid = callFunction(comp="global.cfc.global", func="update_dates", type=arguments.asset_type, fileid=arguments.asset_id)>
 				<!--- Call workflow --->
 				<cfset executeworkflow(api_key=arguments.api_key,action='on_file_edit',fileid=arguments.asset_id)>
 				<!--- Flush cache --->
@@ -285,7 +277,7 @@
 		<!--- Return --->
 		<cfreturn thexml>
 	</cffunction>
-	
+
 	<!--- Remove asset label --->
 	<cffunction name="removeassetlabel" access="remote" output="false" returntype="struct" returnformat="json">
 		<cfargument name="api_key" required="true">
@@ -302,7 +294,7 @@
 			<cfif folderaccess EQ "W" OR folderaccess EQ "X">
 				<!--- Loop over label_id and remove them --->
 				<cfloop list="#arguments.label_id#" index="i" delimiters=",">
-					<cfquery datasource="#application.razuna.api.dsn#">
+					<cfquery datasource="#application.razuna.datasource#">
 					DELETE FROM ct_labels
 					WHERE ct_label_id = <cfqueryparam value="#i#" cfsqltype="cf_sql_varchar" />
 					AND ct_id_r = <cfqueryparam value="#arguments.asset_id#" cfsqltype="cf_sql_varchar" />
@@ -328,7 +320,7 @@
 		<!--- Return --->
 		<cfreturn thexml>
 	</cffunction>
-	
+
 	<!--- get label of asset --->
 	<cffunction name="getlabelofasset" access="remote" output="false" returntype="query" returnformat="json">
 		<cfargument name="api_key" required="true">
@@ -346,14 +338,14 @@
 				<!--- Get Cachetoken --->
 				<cfset var cachetoken = getcachetoken(arguments.api_key,"labels")>
 				<!--- Query --->
-				<cfquery datasource="#application.razuna.api.dsn#" name="thexml" cachedwithin="1" region="razcache">
+				<cfquery datasource="#application.razuna.datasource#" name="thexml" cachedwithin="1" region="razcache">
 				SELECT /* #cachetoken#getlabelofasset */ l.label_id, l.label_text, l.label_path, ct.ct_id_r as assetid
-				FROM #application.razuna.api.prefix["#arguments.api_key#"]#labels l, ct_labels ct
+				FROM #session.hostdbprefix#labels l, ct_labels ct
 				WHERE ct.ct_id_r IN (<cfqueryparam value="#arguments.asset_id#" cfsqltype="cf_sql_varchar" list="Yes" />)
 				AND ct.ct_type = <cfqueryparam value="#arguments.asset_type#" cfsqltype="cf_sql_varchar" />
-				AND ct.ct_label_id <cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam value="" cfsqltype="cf_sql_varchar" />
+				AND ct.ct_label_id <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam value="" cfsqltype="cf_sql_varchar" />
 				AND l.label_id = ct.ct_label_id
-				AND l.host_id = <cfqueryparam value="#application.razuna.api.hostid["#arguments.api_key#"]#" cfsqltype="cf_sql_numeric" />
+				AND l.host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric" />
 				</cfquery>
 			<!--- No access --->
 			<cfelse>
@@ -367,7 +359,7 @@
 		<!--- Return --->
 		<cfreturn thexml>
 	</cffunction>
-	
+
 	<!--- get asset from label --->
 	<cffunction name="getassetoflabel" access="remote" output="false" returntype="Any" returnformat="json">
 		<cfargument name="api_key" required="true">
@@ -377,13 +369,9 @@
 		<cfset var thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
-			<!--- Set Values --->
-			<cfset session.hostdbprefix = application.razuna.api.prefix["#arguments.api_key#"]>
-			<cfset session.hostid = application.razuna.api.hostid["#arguments.api_key#"]>
-			<cfset session.theuserid = application.razuna.api.userid["#arguments.api_key#"]>
 			<cfset session.sortby = "name">
 			<!--- Call internal function, method labels_assets already checks proper permissions for user and returns appropriate labels--->
-			<cfinvoke component="global.cfc.labels" method="labels_assets" label_id="#arguments.label_id#" label_kind="#arguments.label_type#" fromapi="true" returnVariable="_thexml">
+			<cfset _thexml = callFunction(comp="global.cfc.labels", func="labels_assets", label_id=arguments.label_id, label_kind=arguments.label_type, fromapi="true")>
 			<!--- This hack fixes issues on the hosted with yellow screen of death --->
 			<cfquery dbtype="query" name="thexml">
 			SELECT * FROM _thexml
@@ -395,7 +383,7 @@
 		<!--- Return --->
 		<cfreturn thexml>
 	</cffunction>
-	
+
 	<!--- Search labels --->
 	<cffunction name="searchlabel" access="remote" output="false" returntype="Any" returnformat="json">
 		<cfargument name="api_key" required="true">
@@ -411,21 +399,21 @@
 				<!--- Get Cachetoken --->
 				<cfset var cachetoken = getcachetoken(arguments.api_key,"labels")>
 				<!--- Query --->
-				<cfquery datasource="#application.razuna.api.dsn#" name="qryLabels" cachedwithin="1" region="razcache">
+				<cfquery datasource="#application.razuna.datasource#" name="qryLabels" cachedwithin="1" region="razcache">
 					SELECT /* #cachetoken#searchlabela */ label_id, label_text, label_path
-					FROM #application.razuna.api.prefix["#arguments.api_key#"]#labels
-					WHERE host_id = <cfqueryparam value="#application.razuna.api.hostid["#arguments.api_key#"]#" cfsqltype="cf_sql_numeric" />
+					FROM #session.hostdbprefix#labels
+					WHERE host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric" />
 					<cfif arguments.searchfor NEQ '*'>
 						AND (label_text LIKE <cfqueryparam value="%#arguments.searchfor#%" cfsqltype="cf_sql_varchar" />
 						OR label_path LIKE <cfqueryparam value="%#arguments.searchfor#%" cfsqltype="cf_sql_varchar" />)
-					</cfif>	
+					</cfif>
 					ORDER BY label_path
 				</cfquery>
 				<!--- Get labels if more than 1000 labels --->
 				<cfif  qryLabels.RecordCount GT 1000 AND arguments.overridemax EQ 0>
 					<cfquery dbtype="query" name="q" maxrows="1000">
 						SELECT * FROM qryLabels
-					</cfquery>			
+					</cfquery>
 					<cfset thexml.responsecode = 1>
 					<cfset thexml.message = "The search returned more than a 1000 records: #qryLabels.RecordCount# records. If you still wish to continue please use the 'overridemax' parameter. Doing so may take up server resources so please do it at own risk.">
 				<cfelse>
@@ -442,5 +430,5 @@
 		<!--- Return --->
 		<cfreturn thexml>
 	</cffunction>
-	
+
 </cfcomponent>

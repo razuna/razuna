@@ -25,7 +25,7 @@
 --->
 <cfoutput><div id="lnav">
 	<ul id="nav">
-    	<li><a href="#myself#c.getsettings">#gobj.trans("nav_settings_general")#</a></li>
-		<li><a href="#myself#c.getgroups">#gobj.trans("nav_settings_groups")#</a></li>
+    	<li><a href="#myself#c.getsettings">#myFusebox.getApplicationData().defaults.trans("nav_settings_general")#</a></li>
+		<li><a href="#myself#c.getgroups">#myFusebox.getApplicationData().defaults.trans("nav_settings_groups")#</a></li>
 	</ul>
 </div></cfoutput>

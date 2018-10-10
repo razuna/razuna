@@ -24,7 +24,7 @@
 *
 --->
 <cfoutput>
-<span class="loginform_header">#defaultsObj.trans("choosehost")#</span>
+<span class="loginform_header">#myFusebox.getApplicationData().defaults.trans("choosehost")#</span>
 <br />
 <br />
 <form name="hostform" action="#self#" method="post">

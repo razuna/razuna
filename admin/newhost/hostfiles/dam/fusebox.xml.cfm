@@ -6,7 +6,7 @@
 
 	This is just a test namespace for the plugin custom attribute example
 -->
-<fusebox xmlns:test="test">
+<fusebox xmlns:razuna="razuna">
 	<circuits>
 		<!-- illustrates defaults for parent ("") and relative ("true") -->
 		<circuit alias="m" path="../../global/host/dam/model/" parent="" />
@@ -69,7 +69,7 @@
 
 	<parameters>
 		<parameter name="defaultFuseaction" value="c.login" />
-		<!-- you may want to change this to: 
+		<!-- you may want to change this to:
 		development-circuit-load, development-full-load, production -->
 		<parameter name="mode" value="production" />
 		<parameter name="conditionalParse" value="false" />
@@ -79,16 +79,16 @@
 		<parameter name="strictMode" value="true" />
 		<parameter name="errortemplatesPath" value="/fusebox5/errortemplates/" />
 		<parameter name="characterEncoding" value="utf-8" />
-		
-		<!-- 
+
+		<!--
 		<parameter name="queryStringStart" value="/" />
 		<parameter name="queryStringSeparator" value="/" />
 		<parameter name="queryStringEqual" value="/" />
 		 -->
-		
+
 		<parameter name="fuseactionVariable" value="fa" />
 		<parameter name="debug" value="false" />
-		
+
 		<!--
 			These are all default values that can be overridden:
 		<parameter name="fuseactionVariable" value="fuseaction" />
@@ -106,10 +106,10 @@
 		<appinit>
 			<fuseaction action="m.initialize"/>
 		</appinit>
-		<!--
 		<preprocess>
 			<fuseaction action="m.preprocess"/>
 		</preprocess>
+		<!--
 		<postprocess>
 			<fuseaction action="m.postprocess"/>
 		</postprocess>

@@ -33,7 +33,7 @@ function sendtobasket(theform, from){
 	var thekind = '';
    	// If we come from search we need to get the searchids again since we overwrite it with editids
    	if (typeof from !== 'undefined' && from === 'search') {
-   		theids = $('#searchlistids').val(); 
+   		theids = $('#searchlistids').val();
    		thekind = 'search';
    	};
    	// Get values
@@ -107,6 +107,9 @@ function batchaction(theform, what, kind, folder_id, theaction){
 			break;
 		case "prev":
 			showwindow('index.cfm?fa=ajax.recreate_previews&thetype=' + what, '<cfoutput>#myFusebox.getApplicationData().defaults.trans("batch_recreate_preview")#</cfoutput>', 550, 1);
+			break;
+		case "renditions":
+			showwindow('index.cfm?fa=c.create_renditions&thetype=' + what, '<cfoutput>#myFusebox.getApplicationData().defaults.trans("create_renditions")#</cfoutput>', 500, 1);
 			break;
 	}
 }

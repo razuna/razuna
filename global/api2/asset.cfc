@@ -24,7 +24,7 @@
 *
 --->
 <cfcomponent output="false" extends="authentication">
-	
+
 	<!--- Asset: Get info --->
 	<cffunction name="getasset" access="remote" output="false" returntype="query" returnformat="json">
 		<cfargument name="api_key" required="true" type="string">
@@ -46,20 +46,20 @@
 					<!--- Get Cachetoken --->
 					<cfset var cachetoken = getcachetoken(arguments.api_key,"images")>
 					<!--- Query --->
-					<cfquery datasource="#application.razuna.api.dsn#" name="qry" cachedwithin="1" region="razcache">
+					<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 					SELECT /* #cachetoken#getassetimg */
 					'img' as type,
-					i.img_id id, 
-					i.img_filename filename, 
-					i.folder_id_r folder_id, 
+					i.img_id id,
+					i.img_filename filename,
+					i.folder_id_r folder_id,
 					fo.folder_name,
 					i.img_extension extension,
-					i.img_filename_org filename_org, 
-					i.thumb_extension extension_thumb, 
-					<cfif application.razuna.api.thedatabase EQ "oracle">to_char(NVL(i.img_size, 0))<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">cast(ifnull(i.img_size, 0) AS char)<cfelseif application.razuna.api.thedatabase EQ "mssql">isnull(cast(i.img_size as varchar(100)), '0')</cfif> AS size, 
+					i.img_filename_org filename_org,
+					i.thumb_extension extension_thumb,
+					<cfif application.razuna.thedatabase EQ "oracle">to_char(NVL(i.img_size, 0))<cfelseif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">cast(ifnull(i.img_size, 0) AS char)<cfelseif application.razuna.thedatabase EQ "mssql">isnull(cast(i.img_size as varchar(100)), '0')</cfif> AS size,
 					i.img_width AS width,
 					i.img_height AS height,
-					it.img_description description, 
+					it.img_description description,
 					it.img_keywords keywords,
 					i.path_to_asset,
 					i.cloud_url,
@@ -68,41 +68,41 @@
 					i.img_create_time dateadd,
 					i.img_change_time datechange,
 					(
-						SELECT 
-							CASE 
+						SELECT
+							CASE
 								WHEN count(img_id) = 0 THEN 'false'
 								ELSE 'true'
 							END AS test
-						FROM #application.razuna.api.prefix["#arguments.api_key#"]#images isub
+						FROM #session.hostdbprefix#images isub
 						WHERE isub.img_group = i.img_id
 					) as hassubassets,
-					<cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
-						concat('#application.razuna.api.thehttp##cgi.HTTP_HOST##application.razuna.api.dynpath#/assets/',i.host_id,'/',i.path_to_asset,'/',i.img_filename_org) AS local_url_org,
-						concat('#application.razuna.api.thehttp##cgi.HTTP_HOST##application.razuna.api.dynpath#/assets/',i.host_id,'/',i.path_to_asset,'/','thumb_',i.img_id,'.',i.thumb_extension) AS local_url_thumb,
-					<cfelseif application.razuna.api.thedatabase EQ "mssql">
-						'#application.razuna.api.thehttp##cgi.HTTP_HOST##application.razuna.api.dynpath#/assets/' +  cast(i.host_id as varchar) + '/' + i.path_to_asset + '/' + i.img_filename_org AS local_url_org,
-						'#application.razuna.api.thehttp##cgi.HTTP_HOST##application.razuna.api.dynpath#/assets/' +  cast(i.host_id as varchar) + '/'+ i.path_to_asset + '/thumb_'+ i.img_id + '.' + i.thumb_extension AS local_url_thumb,
+					<cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">
+						concat('#application.razuna.thehttp##cgi.HTTP_HOST##application.razuna.dynpath#/assets/',i.host_id,'/',i.path_to_asset,'/',i.img_filename_org) AS local_url_org,
+						concat('#application.razuna.thehttp##cgi.HTTP_HOST##application.razuna.dynpath#/assets/',i.host_id,'/',i.path_to_asset,'/','thumb_',i.img_id,'.',i.thumb_extension) AS local_url_thumb,
+					<cfelseif application.razuna.thedatabase EQ "mssql">
+						'#application.razuna.thehttp##cgi.HTTP_HOST##application.razuna.dynpath#/assets/' +  cast(i.host_id as varchar) + '/' + i.path_to_asset + '/' + i.img_filename_org AS local_url_org,
+						'#application.razuna.thehttp##cgi.HTTP_HOST##application.razuna.dynpath#/assets/' +  cast(i.host_id as varchar) + '/'+ i.path_to_asset + '/thumb_'+ i.img_id + '.' + i.thumb_extension AS local_url_thumb,
 					</cfif>
-					<cfif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
+					<cfif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">
 						(
 							SELECT GROUP_CONCAT(DISTINCT ic.col_id_r ORDER BY ic.col_id_r SEPARATOR ',') AS col_id
-							FROM #application.razuna.api.prefix["#arguments.api_key#"]#collections_ct_files ic
+							FROM #session.hostdbprefix#collections_ct_files ic
 							WHERE ic.file_id_r = i.img_id
 						) AS colid
-					<cfelseif application.razuna.api.thedatabase EQ "mssql">
+					<cfelseif application.razuna.thedatabase EQ "mssql">
 						STUFF(
 							(
 								SELECT ', ' + ic.col_id_r
-								FROM #application.razuna.api.prefix["#arguments.api_key#"]#collections_ct_files ic
+								FROM #session.hostdbprefix#collections_ct_files ic
 					         	WHERE ic.file_id_r = i.img_id
 					          	FOR XML PATH ('')
 				          	)
 				          	, 1, 1, ''
 						) AS colid
-					<cfelseif application.razuna.api.thedatabase EQ "oracle">
+					<cfelseif application.razuna.thedatabase EQ "oracle">
 						(
 							SELECT wmsys.wm_concat(ic.col_id_r) AS col_id
-							FROM #application.razuna.api.prefix["#arguments.api_key#"]#collections_ct_files ic
+							FROM #session.hostdbprefix#collections_ct_files ic
 							WHERE ic.file_id_r = i.img_id
 						) AS colid
 					</cfif>
@@ -113,12 +113,12 @@
 					x.resunit AS unit,
 					i.hashtag AS md5hash,
 					i.expiry_date
-					FROM #application.razuna.api.prefix["#arguments.api_key#"]#images i 
-					LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = 1
-					LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#xmp x ON x.id_r = i.img_id
-					LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#folders fo ON fo.folder_id = i.folder_id_r AND fo.host_id = i.host_id
+					FROM #session.hostdbprefix#images i
+					LEFT JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = 1
+					LEFT JOIN #session.hostdbprefix#xmp x ON x.id_r = i.img_id
+					LEFT JOIN #session.hostdbprefix#folders fo ON fo.folder_id = i.folder_id_r AND fo.host_id = i.host_id
 					WHERE i.img_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#" list="true">)
-					AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
+					AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 					AND i.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 					</cfquery>
 				<!--- Videos --->
@@ -126,21 +126,21 @@
 					<!--- Get Cachetoken --->
 					<cfset var cachetoken = getcachetoken(arguments.api_key,"videos")>
 					<!--- Query --->
-					<cfquery datasource="#application.razuna.api.dsn#" name="qry" cachedwithin="1" region="razcache">
+					<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 					SELECT /* #cachetoken#getassetvid */
 					'vid' as type,
-					v.vid_id id, 
-					v.vid_filename filename, 
-					v.folder_id_r folder_id, 
+					v.vid_id id,
+					v.vid_filename filename,
+					v.folder_id_r folder_id,
 					fo.folder_name,
-					v.vid_extension extension, 
+					v.vid_extension extension,
 					v.vid_name_image as video_preview,
-					v.vid_name_org filename_org, 
-					v.vid_extension extension, 
-					<cfif application.razuna.api.thedatabase EQ "oracle">to_char(NVL(v.vid_size, 0))<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">cast(ifnull(v.vid_size, 0) AS char)<cfelseif application.razuna.api.thedatabase EQ "mssql">isnull(cast(v.vid_size as varchar(100)), '0')</cfif> AS size, 
+					v.vid_name_org filename_org,
+					v.vid_extension extension,
+					<cfif application.razuna.thedatabase EQ "oracle">to_char(NVL(v.vid_size, 0))<cfelseif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">cast(ifnull(v.vid_size, 0) AS char)<cfelseif application.razuna.thedatabase EQ "mssql">isnull(cast(v.vid_size as varchar(100)), '0')</cfif> AS size,
 					v.vid_width AS width,
 					v.vid_height AS height,
-					vt.vid_description description, 
+					vt.vid_description description,
 					vt.vid_keywords keywords,
 					v.path_to_asset,
 					v.cloud_url,
@@ -151,49 +151,49 @@
 					v.hashtag AS md5hash,
 					v.expiry_date,
 					(
-						SELECT 
-							CASE 
+						SELECT
+							CASE
 								WHEN count(vid_id) = 0 THEN 'false'
 								ELSE 'true'
 							END AS test
-						FROM #application.razuna.api.prefix["#arguments.api_key#"]#videos vsub
+						FROM #session.hostdbprefix#videos vsub
 						WHERE vsub.vid_group = v.vid_id
 					) as subassets,
-					<cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
-						concat('#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/',v.host_id,'/',v.path_to_asset,'/',v.vid_name_org) AS local_url_org,
-						concat('#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/',v.host_id,'/',v.path_to_asset,'/',v.vid_name_image) AS local_url_thumb,
-					<cfelseif application.razuna.api.thedatabase EQ "mssql">
-						'#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/' +  cast(v.host_id as varchar) + '/'+ v.path_to_asset + '/' + v.vid_name_org AS local_url_org,
-						'#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/' +  cast(v.host_id as varchar) + '/'+ v.path_to_asset + '/' + v.vid_name_image AS local_url_thumb,
+					<cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">
+						concat('#application.razuna.thehttp##cgi.HTTP_HOST#/#application.razuna.dynpath#/assets/',v.host_id,'/',v.path_to_asset,'/',v.vid_name_org) AS local_url_org,
+						concat('#application.razuna.thehttp##cgi.HTTP_HOST#/#application.razuna.dynpath#/assets/',v.host_id,'/',v.path_to_asset,'/',v.vid_name_image) AS local_url_thumb,
+					<cfelseif application.razuna.thedatabase EQ "mssql">
+						'#application.razuna.thehttp##cgi.HTTP_HOST#/#application.razuna.dynpath#/assets/' +  cast(v.host_id as varchar) + '/'+ v.path_to_asset + '/' + v.vid_name_org AS local_url_org,
+						'#application.razuna.thehttp##cgi.HTTP_HOST#/#application.razuna.dynpath#/assets/' +  cast(v.host_id as varchar) + '/'+ v.path_to_asset + '/' + v.vid_name_image AS local_url_thumb,
 					</cfif>
-					<cfif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
+					<cfif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">
 						(
 							SELECT GROUP_CONCAT(DISTINCT vc.col_id_r ORDER BY vc.col_id_r SEPARATOR ',') AS col_id
-							FROM #application.razuna.api.prefix["#arguments.api_key#"]#collections_ct_files vc
+							FROM #session.hostdbprefix#collections_ct_files vc
 							WHERE vc.file_id_r = v.vid_id
 						) AS colid
-					<cfelseif application.razuna.api.thedatabase EQ "mssql">
+					<cfelseif application.razuna.thedatabase EQ "mssql">
 						STUFF(
 							(
 								SELECT ', ' + vc.col_id_r
-								FROM #application.razuna.api.prefix["#arguments.api_key#"]#collections_ct_files vc
+								FROM #session.hostdbprefix#collections_ct_files vc
 					         	WHERE vc.file_id_r = v.vid_id
 					          	FOR XML PATH ('')
 				          	)
 				          	, 1, 1, ''
 						) AS colid
-					<cfelseif application.razuna.api.thedatabase EQ "oracle">
+					<cfelseif application.razuna.thedatabase EQ "oracle">
 						(
 							SELECT wmsys.wm_concat(vc.col_id_r) AS col_id
-							FROM #application.razuna.api.prefix["#arguments.api_key#"]#collections_ct_files vc
+							FROM #session.hostdbprefix#collections_ct_files vc
 							WHERE vc.file_id_r = v.vid_id
 						) AS colid
 					</cfif>
-					FROM #application.razuna.api.prefix["#arguments.api_key#"]#videos v 
-					LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#videos_text vt ON v.vid_id = vt.vid_id_r AND vt.lang_id_r = 1
-					LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#folders fo ON fo.folder_id = v.folder_id_r AND fo.host_id = v.host_id
+					FROM #session.hostdbprefix#videos v
+					LEFT JOIN #session.hostdbprefix#videos_text vt ON v.vid_id = vt.vid_id_r AND vt.lang_id_r = 1
+					LEFT JOIN #session.hostdbprefix#folders fo ON fo.folder_id = v.folder_id_r AND fo.host_id = v.host_id
 					WHERE v.vid_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#" list="true">)
-					AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
+					AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 					AND v.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 					</cfquery>
 				<!--- Audios --->
@@ -201,19 +201,19 @@
 					<!--- Get Cachetoken --->
 					<cfset var cachetoken = getcachetoken(arguments.api_key,"audios")>
 					<!--- Query --->
-					<cfquery datasource="#application.razuna.api.dsn#" name="qry" cachedwithin="1" region="razcache">
+					<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 					SELECT /* #cachetoken#getassetaud */
 					'aud' as type,
-					a.aud_id id, 
-					a.aud_name filename, 
-					a.folder_id_r folder_id, 
+					a.aud_id id,
+					a.aud_name filename,
+					a.folder_id_r folder_id,
 					fo.folder_name,
-					a.aud_extension extension, 
+					a.aud_extension extension,
 					a.aud_name_org filename_org,
-					<cfif application.razuna.api.thedatabase EQ "oracle">to_char(NVL(a.aud_size, 0))<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">cast(ifnull(a.aud_size, 0) AS char)<cfelseif application.razuna.api.thedatabase EQ "mssql">isnull(cast(a.aud_size as varchar(100)), '0')</cfif> AS size, 
+					<cfif application.razuna.thedatabase EQ "oracle">to_char(NVL(a.aud_size, 0))<cfelseif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">cast(ifnull(a.aud_size, 0) AS char)<cfelseif application.razuna.thedatabase EQ "mssql">isnull(cast(a.aud_size as varchar(100)), '0')</cfif> AS size,
 					0 AS width,
 					0 AS height,
-					aut.aud_description description, 
+					aut.aud_description description,
 					aut.aud_keywords keywords,
 					a.path_to_asset,
 					a.cloud_url,
@@ -224,48 +224,48 @@
 					a.hashtag AS md5hash,
 					a.expiry_date,
 					(
-						SELECT 
-							CASE 
+						SELECT
+							CASE
 								WHEN count(aud_id) = 0 THEN 'false'
 								ELSE 'true'
 							END AS test
-						FROM #application.razuna.api.prefix["#arguments.api_key#"]#audios asub
+						FROM #session.hostdbprefix#audios asub
 						WHERE asub.aud_group = a.aud_id
 					) as subassets,
-					<cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
-						concat('#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/',a.host_id,'/',a.path_to_asset,'/',a.aud_name_org) AS local_url_org,
-					<cfelseif application.razuna.api.thedatabase EQ "mssql">
-						'#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/' +  cast(a.host_id as varchar) + '/' + a.path_to_asset + '/' + a.aud_name_org AS local_url_org,
+					<cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">
+						concat('#application.razuna.thehttp##cgi.HTTP_HOST#/#application.razuna.dynpath#/assets/',a.host_id,'/',a.path_to_asset,'/',a.aud_name_org) AS local_url_org,
+					<cfelseif application.razuna.thedatabase EQ "mssql">
+						'#application.razuna.thehttp##cgi.HTTP_HOST#/#application.razuna.dynpath#/assets/' +  cast(a.host_id as varchar) + '/' + a.path_to_asset + '/' + a.aud_name_org AS local_url_org,
 					</cfif>
 					'' AS local_url_thumb,
-					<cfif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
+					<cfif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">
 						(
 							SELECT GROUP_CONCAT(DISTINCT ac.col_id_r ORDER BY ac.col_id_r SEPARATOR ',') AS col_id
-							FROM #application.razuna.api.prefix["#arguments.api_key#"]#collections_ct_files ac
+							FROM #session.hostdbprefix#collections_ct_files ac
 							WHERE ac.file_id_r = a.aud_id
 						) AS colid
-					<cfelseif application.razuna.api.thedatabase EQ "mssql">
+					<cfelseif application.razuna.thedatabase EQ "mssql">
 						STUFF(
 							(
 								SELECT ', ' + ac.col_id_r
-								FROM #application.razuna.api.prefix["#arguments.api_key#"]#collections_ct_files ac
+								FROM #session.hostdbprefix#collections_ct_files ac
 					         	WHERE ac.file_id_r = a.aud_id
 					          	FOR XML PATH ('')
 				          	)
 				          	, 1, 1, ''
 						) AS colid
-					<cfelseif application.razuna.api.thedatabase EQ "oracle">
+					<cfelseif application.razuna.thedatabase EQ "oracle">
 						(
 							SELECT wmsys.wm_concat(ac.col_id_r) AS col_id
-							FROM #application.razuna.api.prefix["#arguments.api_key#"]#collections_ct_files ac
+							FROM #session.hostdbprefix#collections_ct_files ac
 							WHERE ac.file_id_r = a.aud_id
 						) AS colid
 					</cfif>
-					FROM #application.razuna.api.prefix["#arguments.api_key#"]#audios a 
-					LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#audios_text aut ON a.aud_id = aut.aud_id_r AND aut.lang_id_r = 1
-					LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#folders fo ON fo.folder_id = a.folder_id_r AND fo.host_id = a.host_id
+					FROM #session.hostdbprefix#audios a
+					LEFT JOIN #session.hostdbprefix#audios_text aut ON a.aud_id = aut.aud_id_r AND aut.lang_id_r = 1
+					LEFT JOIN #session.hostdbprefix#folders fo ON fo.folder_id = a.folder_id_r AND fo.host_id = a.host_id
 					WHERE a.aud_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#" list="true">)
-					AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
+					AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 					AND a.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 					</cfquery>
 				<!--- Documents --->
@@ -273,19 +273,19 @@
 					<!--- Get Cachetoken --->
 					<cfset var cachetoken = getcachetoken(arguments.api_key,"files")>
 					<!--- Query --->
-					<cfquery datasource="#application.razuna.api.dsn#" name="qry" cachedwithin="1" region="razcache">
+					<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 					SELECT /* #cachetoken#getassetfile */
 					'doc' as type,
-					f.file_id id, 
-					f.file_name filename, 
-					f.folder_id_r folder_id, 
+					f.file_id id,
+					f.file_name filename,
+					f.folder_id_r folder_id,
 					fo.folder_name,
-					f.file_extension extension, 
-					f.file_name_org filename_org, 
-					<cfif application.razuna.api.thedatabase EQ "oracle">to_char(NVL(f.file_size, 0))<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">cast(ifnull(f.file_size, 0) AS char)<cfelseif application.razuna.api.thedatabase EQ "mssql">isnull(cast(f.file_size as varchar(100)), '0')</cfif> AS size, 
+					f.file_extension extension,
+					f.file_name_org filename_org,
+					<cfif application.razuna.thedatabase EQ "oracle">to_char(NVL(f.file_size, 0))<cfelseif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">cast(ifnull(f.file_size, 0) AS char)<cfelseif application.razuna.thedatabase EQ "mssql">isnull(cast(f.file_size as varchar(100)), '0')</cfif> AS size,
 					0 AS width,
 					0 AS height,
-					ft.file_desc description, 
+					ft.file_desc description,
 					ft.file_keywords keywords,
 					f.path_to_asset,
 					f.cloud_url,
@@ -296,42 +296,45 @@
 					'false' as subassets,
 					f.hashtag AS md5hash,
 					f.expiry_date,
-					<cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
-						concat('#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/',f.host_id,'/',f.path_to_asset,'/',f.file_name_org) AS local_url_org,
-					<cfelseif application.razuna.api.thedatabase EQ "mssql">
-						'#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/' +  cast(f.host_id as varchar) + '/'+ f.path_to_asset + '/' + f.file_name_org AS local_url_org,
+					<cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">
+						concat('#application.razuna.thehttp##cgi.HTTP_HOST#/#application.razuna.dynpath#/assets/',f.host_id,'/',f.path_to_asset,'/',f.file_name_org) AS local_url_org,
+					<cfelseif application.razuna.thedatabase EQ "mssql">
+						'#application.razuna.thehttp##cgi.HTTP_HOST#/#application.razuna.dynpath#/assets/' +  cast(f.host_id as varchar) + '/'+ f.path_to_asset + '/' + f.file_name_org AS local_url_org,
 					</cfif>
 					'' AS local_url_thumb,
-					<cfif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
+					<cfif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">
 						(
 							SELECT GROUP_CONCAT(DISTINCT fc.col_id_r ORDER BY fc.col_id_r SEPARATOR ',') AS col_id
-							FROM #application.razuna.api.prefix["#arguments.api_key#"]#collections_ct_files fc
+							FROM #session.hostdbprefix#collections_ct_files fc
 							WHERE fc.file_id_r = f.file_id
 						) AS colid
-					<cfelseif application.razuna.api.thedatabase EQ "mssql">
+					<cfelseif application.razuna.thedatabase EQ "mssql">
 						STUFF(
 							(
 								SELECT ', ' + fc.col_id_r
-								FROM #application.razuna.api.prefix["#arguments.api_key#"]#collections_ct_files fc
+								FROM #session.hostdbprefix#collections_ct_files fc
 					         	WHERE fc.file_id_r = f.file_id
 					          	FOR XML PATH ('')
 				          	)
 				          	, 1, 1, ''
 						) AS colid
-					<cfelseif application.razuna.api.thedatabase EQ "oracle">
+					<cfelseif application.razuna.thedatabase EQ "oracle">
 						(
 							SELECT wmsys.wm_concat(fc.col_id_r) AS col_id
-							FROM #application.razuna.api.prefix["#arguments.api_key#"]#collections_ct_files fc
+							FROM #session.hostdbprefix#collections_ct_files fc
 							WHERE fc.file_id_r = f.file_id
 						) AS colid
 					</cfif>
-					FROM #application.razuna.api.prefix["#arguments.api_key#"]#files f 
-					LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#files_desc ft ON f.file_id = ft.file_id_r AND ft.lang_id_r = 1
-					LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#folders fo ON fo.folder_id = f.folder_id_r AND fo.host_id = f.host_id
+					FROM #session.hostdbprefix#files f
+					LEFT JOIN #session.hostdbprefix#files_desc ft ON f.file_id = ft.file_id_r AND ft.lang_id_r = 1
+					LEFT JOIN #session.hostdbprefix#folders fo ON fo.folder_id = f.folder_id_r AND fo.host_id = f.host_id
 					WHERE f.file_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#" list="true">)
-					AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
+					AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 					AND f.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 					</cfquery>
+				<!--- ALL --->
+				<cfelseif arguments.assettype EQ "all">
+					<cfset qry = queryNew("id")>
 				</cfif>
 				<!--- Only if we found records --->
 				<cfif qry.recordcount NEQ 0>
@@ -339,7 +342,7 @@
 					<cfset q = querynew("responsecode,totalassetscount,calledwith")>
 					<cfset queryaddrow(q,1)>
 					<cfset querysetcell(q,"responsecode","0")>
-					<cfset querysetcell(q,"totalassetscount",qry.recordcount)>
+					<cfset querysetcell(q,"totalassetscount", qry.recordcount)>
 					<cfset querysetcell(q,"calledwith",arguments.assetid)>
 					<!--- Put the 2 queries together --->
 					<cfquery dbtype="query" name="thexml">
@@ -351,7 +354,7 @@
 					<cfset var thexml = querynew("responsecode,totalassetscount,calledwith")>
 					<cfset queryaddrow(thexml,1)>
 					<cfset querysetcell(thexml,"responsecode","1")>
-					<cfset querysetcell(thexml,"totalassetscount",qry.recordcount)>
+					<cfset querysetcell(thexml,"totalassetscount", 0)>
 					<cfset querysetcell(thexml,"calledwith",arguments.assetid)>
 				</cfif>
 			<!--- No access --->
@@ -366,7 +369,7 @@
 		<!--- Return --->
 		<cfreturn thexml>
 	</cffunction>
-	
+
 	<!--- Metadata: Get --->
 	<cffunction name="getmetadata" access="remote" output="false" returntype="query" returnformat="json">
 		<cfargument name="api_key" required="true">
@@ -394,9 +397,9 @@
 					<cfset var cachetoken = createuuid()>
 				</cfif>
 				<!--- Loop over the assetid --->
-				<cfquery datasource="#application.razuna.api.dsn#" name="qrymeta" cachedwithin="1" region="razcache">
+				<cfquery datasource="#application.razuna.datasource#" name="qrymeta" cachedwithin="1" region="razcache">
 				SELECT /* #cachetoken#getmetadata */ #arguments.assetmetadata#
-				FROM #application.razuna.api.prefix["#arguments.api_key#"]##thedb#
+				FROM #session.hostdbprefix##thedb#
 				WHERE #theidr# IN (<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.assetid#" list="Yes">)
 				</cfquery>
 			<!--- No access --->
@@ -411,7 +414,7 @@
 		<!--- Return --->
 		<cfreturn qrymeta>
 	</cffunction>
-	
+
 	<!--- Metadata: Add --->
 	<cffunction name="setmetadata" access="remote" output="false" returntype="struct" returnformat="json">
 		<cfargument name="api_key" required="true">
@@ -426,9 +429,6 @@
 			<cfset var folderaccess = checkFolderPerm(arguments.api_key, arguments.assetid)>
 			<!--- If user has access --->
 			<cfif folderaccess EQ "W" OR folderaccess EQ "X">
-				<cfset session.hostdbprefix = application.razuna.api.prefix["#arguments.api_key#"]>
-				<cfset session.hostid = application.razuna.api.hostid["#arguments.api_key#"]>
-				<cfset session.theuserid = application.razuna.api.userid["#arguments.api_key#"]>
 				<!--- Set db and id --->
 				<cfif arguments.assettype EQ "img">
 					<cfset var thedb = "images_text">
@@ -456,19 +456,19 @@
 				<!--- Loop over the assetid --->
 				<cfloop list="#arguments.assetid#" index="i" delimiters=",">
 					<!--- Remove all values for this record first --->
-					<cfquery datasource="#application.razuna.api.dsn#">
-					DELETE FROM #application.razuna.api.prefix["#arguments.api_key#"]##thedb#
+					<cfquery datasource="#application.razuna.datasource#">
+					DELETE FROM #session.hostdbprefix##thedb#
 					WHERE #theidr# = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#i#">
 					</cfquery>
 					<!--- the id --->
 					<cfset theid = createuuid("")>
 					<!--- Create record --->
-					<cfquery datasource="#application.razuna.api.dsn#">
-					INSERT INTO #application.razuna.api.prefix["#arguments.api_key#"]##thedb#
+					<cfquery datasource="#application.razuna.datasource#">
+					INSERT INTO #session.hostdbprefix##thedb#
 					(id_inc, host_id, lang_id_r, #theidr#)
 					VALUES (
 						<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#theid#">,
-						<cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">,
+						<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
 						<cfqueryparam cfsqltype="cf_sql_numeric" value="1">,
 						<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#i#">
 					)
@@ -476,8 +476,8 @@
 					<!--- Add keywords and description to the asset (loop over the passed array) --->
 					<cfloop index="x" from="1" to="#arrayLen(thejson)#">
 						<cfif thejson[x][1] CONTAINS "_" AND thejson[x][1] NEQ "file_name">
-							<cfquery datasource="#application.razuna.api.dsn#">
-							UPDATE #application.razuna.api.prefix["#arguments.api_key#"]##thedb#
+							<cfquery datasource="#application.razuna.datasource#">
+							UPDATE #session.hostdbprefix##thedb#
 							SET #thejson[x][1]# = <cfif #thejson[x][1]# EQ "lang_id_r"><cfqueryparam cfsqltype="cf_sql_numeric" value="#thejson[x][2]#"><cfelse><cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#thejson[x][2]#"></cfif>
 							WHERE id_inc = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#theid#">
 							</cfquery>
@@ -486,29 +486,29 @@
 					<!--- If we are a image then also loop over the XMP fields --->
 					<cfif arguments.assettype EQ "img">
 						<!--- Check if there is a record for this asset --->
-						<cfquery datasource="#application.razuna.api.dsn#" name="ishere">
+						<cfquery datasource="#application.razuna.datasource#" name="ishere">
 						SELECT id_r
-						FROM #application.razuna.api.prefix["#arguments.api_key#"]#xmp
+						FROM #session.hostdbprefix#xmp
 						WHERE asset_type = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="img">
 						AND id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#i#">
 						</cfquery>
 						<!--- If record is not here then do insert --->
-						<cfif ishere.recordcount EQ 0>	
-							<cfquery datasource="#application.razuna.api.dsn#">
-							INSERT INTO #application.razuna.api.prefix["#arguments.api_key#"]#xmp
+						<cfif ishere.recordcount EQ 0>
+							<cfquery datasource="#application.razuna.datasource#">
+							INSERT INTO #session.hostdbprefix#xmp
 							(id_r, asset_type, host_id)
 							VALUES(
 								<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#i#">,
 								<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="img">,
-								<cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
+								<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 							)
 							</cfquery>
 						</cfif>
 						<!--- Update records --->
 						<cfloop index="x" from="1" to="#arrayLen(thejson)#">
 							<cfif #thejson[x][1]# NEQ "lang_id_r" AND #thejson[x][1]# DOES NOT CONTAIN "_">
-								<cfquery datasource="#application.razuna.api.dsn#">
-								UPDATE #application.razuna.api.prefix["#arguments.api_key#"]#xmp
+								<cfquery datasource="#application.razuna.datasource#">
+								UPDATE #session.hostdbprefix#xmp
 								SET #thejson[x][1]# = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thejson[x][2]#">
 								WHERE id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#i#">
 								</cfquery>
@@ -517,17 +517,17 @@
 						<!--- Update file name --->
 						<cfloop index="x" from="1" to="#arrayLen(thejson)#">
 							<cfif thejson[x][1] EQ "file_name">
-								<cfquery datasource="#application.razuna.api.dsn#">
-								UPDATE #application.razuna.api.prefix["#arguments.api_key#"]#images
+								<cfquery datasource="#application.razuna.datasource#">
+								UPDATE #session.hostdbprefix#images
 								SET img_filename = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thejson[x][2]#">
 								WHERE img_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
 								</cfquery>
 							</cfif>
 						</cfloop>
 						<!--- Update change date --->
-						<cfquery datasource="#application.razuna.api.dsn#">
-						UPDATE #application.razuna.api.prefix["#arguments.api_key#"]#images
-						SET 
+						<cfquery datasource="#application.razuna.datasource#">
+						UPDATE #session.hostdbprefix#images
+						SET
 						img_change_time = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
 						img_change_date = <cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
 						is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
@@ -537,17 +537,17 @@
 						<!--- Update file name --->
 						<cfloop index="x" from="1" to="#arrayLen(thejson)#">
 							<cfif thejson[x][1] EQ "file_name">
-								<cfquery datasource="#application.razuna.api.dsn#">
-								UPDATE #application.razuna.api.prefix["#arguments.api_key#"]#videos
+								<cfquery datasource="#application.razuna.datasource#">
+								UPDATE #session.hostdbprefix#videos
 								SET vid_filename = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thejson[x][2]#">
 								WHERE vid_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
 								</cfquery>
 							</cfif>
 						</cfloop>
 						<!--- Update change date --->
-						<cfquery datasource="#application.razuna.api.dsn#">
-						UPDATE #application.razuna.api.prefix["#arguments.api_key#"]#videos
-						SET 
+						<cfquery datasource="#application.razuna.datasource#">
+						UPDATE #session.hostdbprefix#videos
+						SET
 						vid_change_time = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
 						vid_change_date = <cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
 						is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
@@ -557,17 +557,17 @@
 						<!--- Update file name --->
 						<cfloop index="x" from="1" to="#arrayLen(thejson)#">
 							<cfif thejson[x][1] EQ "file_name">
-								<cfquery datasource="#application.razuna.api.dsn#">
-								UPDATE #application.razuna.api.prefix["#arguments.api_key#"]#audios
+								<cfquery datasource="#application.razuna.datasource#">
+								UPDATE #session.hostdbprefix#audios
 								SET aud_name = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thejson[x][2]#">
 								WHERE aud_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
 								</cfquery>
 							</cfif>
 						</cfloop>
 						<!--- Update change date --->
-						<cfquery datasource="#application.razuna.api.dsn#">
-						UPDATE #application.razuna.api.prefix["#arguments.api_key#"]#audios
-						SET 
+						<cfquery datasource="#application.razuna.datasource#">
+						UPDATE #session.hostdbprefix#audios
+						SET
 						aud_change_time = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
 						aud_change_date = <cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
 						is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
@@ -577,17 +577,17 @@
 						<!--- Update file name --->
 						<cfloop index="x" from="1" to="#arrayLen(thejson)#">
 							<cfif thejson[x][1] EQ "file_name">
-								<cfquery datasource="#application.razuna.api.dsn#">
-								UPDATE #application.razuna.api.prefix["#arguments.api_key#"]#files
+								<cfquery datasource="#application.razuna.datasource#">
+								UPDATE #session.hostdbprefix#files
 								SET file_name = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thejson[x][2]#">
 								WHERE file_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
 								</cfquery>
 							</cfif>
 						</cfloop>
 						<!--- Update change date --->
-						<cfquery datasource="#application.razuna.api.dsn#">
-						UPDATE #application.razuna.api.prefix["#arguments.api_key#"]#files
-						SET 
+						<cfquery datasource="#application.razuna.datasource#">
+						UPDATE #session.hostdbprefix#files
+						SET
 						file_change_time = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
 						file_change_date = <cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
 						is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
@@ -614,8 +614,8 @@
 		</cfif>
 		<!--- Return --->
 		<cfreturn thexml>
-	</cffunction>	
-	
+	</cffunction>
+
     <!--- Delete --->
 	<cffunction name="remove" access="remote" output="false" returntype="struct" returnformat="json">
 		<cfargument name="api_key" required="true">
@@ -631,45 +631,22 @@
 			<cfif folderaccess EQ "W" OR folderaccess EQ "X">
 				<!--- Put values into struct to be compatible with global cfcs --->
 				<cfset orgstruct = structnew()>
-				<cfset orgstruct.hostdbprefix = application.razuna.api.prefix["#arguments.api_key#"]>
-				<cfset orgstruct.hostid = application.razuna.api.hostid["#arguments.api_key#"]>
-				<cfset orgstruct.theuserid = application.razuna.api.userid["#arguments.api_key#"]>
 				<cfset orgstruct.id = arguments.assetid>
 				<!--- Get assetpath --->
-				<cfquery datasource="#application.razuna.api.dsn#" name="qry">
+				<cfquery datasource="#application.razuna.datasource#" name="qry">
 				SELECT set2_path_to_assets
-				FROM #orgstruct.hostdbprefix#settings_2
-				WHERE set2_id = <cfqueryparam value="#application.razuna.api.setid#" cfsqltype="cf_sql_numeric">
-				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#orgstruct.hostid#">
+				FROM #session.hostdbprefix#settings_2
+				WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
 				<cfset orgstruct.assetpath = trim(qry.set2_path_to_assets)>
-				<!--- Nirvanix --->
-				<cfif application.razuna.api.storage EQ "nirvanix">
-					<cfquery datasource="#application.razuna.api.dsn#" name="orgstruct.qry_settings_nirvanix">
-					SELECT set2_nirvanix_name, set2_nirvanix_pass
-					FROM #application.razuna.api.prefix["#arguments.api_key#"]#settings_2
-					WHERE set2_id = <cfqueryparam value="#application.razuna.api.setid#" cfsqltype="cf_sql_numeric">
-					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
-					</cfquery>
-					<cfset nvx = createObject("component","global.cfc.nirvanix").init("#application.razuna.api.nvxappkey#")>
-					<cfset nvxsession = nvx.login("#orgstruct#")>
-				<!--- Amazon --->
-				<cfelseif application.razuna.api.storage EQ "amazon">
-					<cfquery datasource="#application.razuna.api.dsn#" name="qry">
-					SELECT set2_aws_bucket
-					FROM #application.razuna.api.prefix["#arguments.api_key#"]#settings_2
-					WHERE set2_id = <cfqueryparam value="#application.razuna.api.setid#" cfsqltype="cf_sql_numeric">
-					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
-					</cfquery>
-					<cfset orgstruct.awsbucket = qry.set2_aws_bucket>
-					<cfset createObject("component","global.cfc.amazon").init("#application.razuna.api.awskey#,#application.razuna.api.awskeysecret#")>
 				<!--- Akamai --->
-				<cfelseif application.razuna.api.storage EQ "akamai">
-					<cfquery datasource="#application.razuna.api.dsn#" name="qry">
+				<cfif application.razuna.storage EQ "akamai">
+					<cfquery datasource="#application.razuna.datasource#" name="qry">
 					SELECT set2_aka_url, set2_aka_img, set2_aka_vid, set2_aka_aud, set2_aka_doc
-					FROM #application.razuna.api.prefix["#arguments.api_key#"]#settings_2
-					WHERE set2_id = <cfqueryparam value="#application.razuna.api.setid#" cfsqltype="cf_sql_numeric">
-					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
+					FROM #session.hostdbprefix#settings_2
+					WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
+					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 					</cfquery>
 					<cfset orgstruct.akaurl = qry.set2_aka_url>
 					<cfset orgstruct.akaimg = qry.set2_aka_img>
@@ -677,24 +654,24 @@
 					<cfset orgstruct.akaaud = qry.set2_aka_aud>
 					<cfset orgstruct.akadoc = qry.set2_aka_doc>
 				</cfif>
-				<!--- Images --->	
-				<cfinvoke component="global.cfc.images" method="removeimagemany" thestruct="#orgstruct#" />
+				<!--- Images --->
+				<cfset callFunction(comp="global.cfc.images", func="removeimagemany", thestruct=orgstruct)>
 	            <!--- Videos --->
 	            <cfset orgstruct.id = arguments.assetid>
-				<cfinvoke component="global.cfc.videos" method="removevideomany" thestruct="#orgstruct#" />
+				<cfset callFunction(comp="global.cfc.videos", func="removeimagemany", thestruct=orgstruct)>
 				<!--- Audios --->
 				<cfset orgstruct.id = arguments.assetid>
-				<cfinvoke component="global.cfc.audios" method="removeaudiomany" thestruct="#orgstruct#" />
+				<cfset callFunction(comp="global.cfc.audios", func="removeimagemany", thestruct=orgstruct)>
 				<!--- Files --->
 				<cfset orgstruct.id = arguments.assetid>
-				<cfinvoke component="global.cfc.files" method="removefilemany" thestruct="#orgstruct#" />
+				<cfset callFunction(comp="global.cfc.files", func="removeimagemany", thestruct=orgstruct)>
 				<!--- Feedback --->
 				<cfset thexml.responsecode = 0>
 				<cfset thexml.message = "Asset(s) have been removed successfully">
-		<!---No access --->
-		<cfelse>
-			<cfset var thexml = noaccess("s")>
-		</cfif>
+			<!---No access --->
+			<cfelse>
+				<cfset var thexml = noaccess("s")>
+			</cfif>
 		<!--- No session found --->
 		<cfelse>
 			<cfset var thexml = timeout("s")>
@@ -702,7 +679,7 @@
     	<!--- Return --->
 		<cfreturn thexml>
 	</cffunction>
-    
+
     <!--- Get converted formats --->
 	<cffunction name="getrenditions" access="remote" output="false" returntype="query" returnformat="json">
 		<cfargument name="api_key" type="string" required="true">
@@ -721,21 +698,21 @@
 				<cfset var cachetokenimg = getcachetoken(arguments.api_key,"images")>
 				<cfset var cachetokenaud = getcachetoken(arguments.api_key,"audios")>
 				<!--- Query --->
-				<cfquery datasource="#application.razuna.api.dsn#" name="thexml" cachedwithin="1" region="razcache">
+				<cfquery datasource="#application.razuna.datasource#" name="thexml" cachedwithin="1" region="razcache">
 				SELECT /* #cachetokenimg#getrenditionsimg */
 				'rendition' as type,
-				i.img_id AS id, 
-				i.img_width AS width, 
-				i.img_height AS height, 
-				i.path_to_asset, 
+				i.img_id AS id,
+				i.img_width AS width,
+				i.img_height AS height,
+				i.path_to_asset,
 				i.cloud_url_org,
 				i.img_filename_org AS filename_org,
 				i.img_extension AS extension,
-				<cfif application.razuna.api.thedatabase EQ "oracle">to_char(NVL(i.img_size, 0))<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">cast(ifnull(i.img_size, 0) AS char)<cfelseif application.razuna.api.thedatabase EQ "mssql">isnull(cast(i.img_size as varchar(100)), '0')</cfif> AS size,
-				<cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
-					concat('#application.razuna.api.thehttp##cgi.HTTP_HOST##application.razuna.api.dynpath#/assets/',i.host_id,'/',i.path_to_asset,'/',i.img_filename_org) AS local_url_org,
-				<cfelseif application.razuna.api.thedatabase EQ "mssql">
-					'#application.razuna.api.thehttp##cgi.HTTP_HOST##application.razuna.api.dynpath#/assets/' +  cast(i.host_id as varchar) + '/'+ i.path_to_asset + '/' + i.img_filename_org AS local_url_org,
+				<cfif application.razuna.thedatabase EQ "oracle">to_char(NVL(i.img_size, 0))<cfelseif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">cast(ifnull(i.img_size, 0) AS char)<cfelseif application.razuna.thedatabase EQ "mssql">isnull(cast(i.img_size as varchar(100)), '0')</cfif> AS size,
+				<cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">
+					concat('#application.razuna.thehttp##cgi.HTTP_HOST##application.razuna.dynpath#/assets/',i.host_id,'/',i.path_to_asset,'/',i.img_filename_org) AS local_url_org,
+				<cfelseif application.razuna.thedatabase EQ "mssql">
+					'#application.razuna.thehttp##cgi.HTTP_HOST##application.razuna.dynpath#/assets/' +  cast(i.host_id as varchar) + '/'+ i.path_to_asset + '/' + i.img_filename_org AS local_url_org,
 				</cfif>
 				x.colorspace,
 				x.xres AS xdpi,
@@ -743,26 +720,26 @@
 				x.resunit AS unit,
 				i.hashtag AS md5hash,
 				i.img_group AS parentid
-				FROM #application.razuna.api.prefix["#arguments.api_key#"]#images i
-				LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#xmp x ON x.id_r = i.img_id
+				FROM #session.hostdbprefix#images i
+				LEFT JOIN #session.hostdbprefix#xmp x ON x.id_r = i.img_id
 				WHERE i.img_group in (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#" list="true">)
 				AND i.img_group IS NOT NULL
 				AND i.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 				UNION ALL
 				SELECT /* #cachetokenimg#getrenditionsimg */
 				'org' as type,
-				i.img_id AS id, 
-				i.img_width AS width, 
-				i.img_height AS height, 
-				i.path_to_asset, 
+				i.img_id AS id,
+				i.img_width AS width,
+				i.img_height AS height,
+				i.path_to_asset,
 				i.cloud_url_org,
 				i.img_filename_org AS filename_org,
 				i.img_extension AS extension,
-				<cfif application.razuna.api.thedatabase EQ "oracle">to_char(NVL(i.img_size, 0))<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">cast(ifnull(i.img_size, 0) AS char)<cfelseif application.razuna.api.thedatabase EQ "mssql">isnull(cast(i.img_size as varchar(100)), '0')</cfif> AS size,
-				<cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
-					concat('#application.razuna.api.thehttp##cgi.HTTP_HOST##application.razuna.api.dynpath#/assets/',i.host_id,'/',i.path_to_asset,'/',i.img_filename_org) AS local_url_org,
-				<cfelseif application.razuna.api.thedatabase EQ "mssql">
-					'#application.razuna.api.thehttp##cgi.HTTP_HOST##application.razuna.api.dynpath#/assets/' +  cast(i.host_id as varchar) + '/'+ i.path_to_asset + '/' + i.img_filename_org AS local_url_org,
+				<cfif application.razuna.thedatabase EQ "oracle">to_char(NVL(i.img_size, 0))<cfelseif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">cast(ifnull(i.img_size, 0) AS char)<cfelseif application.razuna.thedatabase EQ "mssql">isnull(cast(i.img_size as varchar(100)), '0')</cfif> AS size,
+				<cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">
+					concat('#application.razuna.thehttp##cgi.HTTP_HOST##application.razuna.dynpath#/assets/',i.host_id,'/',i.path_to_asset,'/',i.img_filename_org) AS local_url_org,
+				<cfelseif application.razuna.thedatabase EQ "mssql">
+					'#application.razuna.thehttp##cgi.HTTP_HOST##application.razuna.dynpath#/assets/' +  cast(i.host_id as varchar) + '/'+ i.path_to_asset + '/' + i.img_filename_org AS local_url_org,
 				</cfif>
 				x.colorspace,
 				x.xres AS xdpi,
@@ -770,25 +747,25 @@
 				x.resunit AS unit,
 				i.hashtag AS md5hash,
 				i.img_group AS parentid
-				FROM #application.razuna.api.prefix["#arguments.api_key#"]#images i
-				LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#xmp x ON x.id_r = i.img_id
+				FROM #session.hostdbprefix#images i
+				LEFT JOIN #session.hostdbprefix#xmp x ON x.id_r = i.img_id
 				WHERE i.img_id in (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#" list="true">)
 				AND i.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 				UNION ALL
 				SELECT /* #cachetokenimg#getrenditionsimg */
 				'thumb' AS type,
-				i.img_id AS id, 
-				i.thumb_width AS width, 
-				i.thumb_height AS height, 
-				i.path_to_asset, 
+				i.img_id AS id,
+				i.thumb_width AS width,
+				i.thumb_height AS height,
+				i.path_to_asset,
 				i.cloud_url_org,
 				i.img_filename_org AS filename_org,
 				i.thumb_extension AS extension,
-				<cfif application.razuna.api.thedatabase EQ "oracle">to_char(NVL(i.img_size, 0))<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">cast(ifnull(i.img_size, 0) AS char)<cfelseif application.razuna.api.thedatabase EQ "mssql">isnull(cast(i.img_size as varchar(100)), '0')</cfif> AS size,
-				<cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
-					concat('#application.razuna.api.thehttp##cgi.HTTP_HOST##application.razuna.api.dynpath#/assets/',i.host_id,'/',i.path_to_asset,'/','thumb_',i.img_id,'.',i.thumb_extension) AS local_url_org,
-				<cfelseif application.razuna.api.thedatabase EQ "mssql">
-					'#application.razuna.api.thehttp##cgi.HTTP_HOST##application.razuna.api.dynpath#/assets/' +  cast(i.host_id as varchar) + '/'+ i.path_to_asset + '/thumb_'+ i.img_id + '.' + i.thumb_extension AS local_url_org,
+				<cfif application.razuna.thedatabase EQ "oracle">to_char(NVL(i.img_size, 0))<cfelseif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">cast(ifnull(i.img_size, 0) AS char)<cfelseif application.razuna.thedatabase EQ "mssql">isnull(cast(i.img_size as varchar(100)), '0')</cfif> AS size,
+				<cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">
+					concat('#application.razuna.thehttp##cgi.HTTP_HOST##application.razuna.dynpath#/assets/',i.host_id,'/',i.path_to_asset,'/','thumb_',i.img_id,'.',i.thumb_extension) AS local_url_org,
+				<cfelseif application.razuna.thedatabase EQ "mssql">
+					'#application.razuna.thehttp##cgi.HTTP_HOST##application.razuna.dynpath#/assets/' +  cast(i.host_id as varchar) + '/'+ i.path_to_asset + '/thumb_'+ i.img_id + '.' + i.thumb_extension AS local_url_org,
 				</cfif>
 				x.colorspace,
 				x.xres AS xdpi,
@@ -796,25 +773,25 @@
 				x.resunit AS unit,
 				i.hashtag AS md5hash,
 				i.img_group AS parentid
-				FROM #application.razuna.api.prefix["#arguments.api_key#"]#images i
-				LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#xmp x ON x.id_r = i.img_id
+				FROM #session.hostdbprefix#images i
+				LEFT JOIN #session.hostdbprefix#xmp x ON x.id_r = i.img_id
 				WHERE i.img_id in (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#" list="true">)
 				AND i.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 				UNION ALL
 				SELECT /* #cachetokenvid#getrenditionsvid */
 				'rendition' AS type,
-				vid_id id, 
-				vid_width width, 
-				vid_height height, 
-				path_to_asset,  
+				vid_id id,
+				vid_width width,
+				vid_height height,
+				path_to_asset,
 				cloud_url_org,
 				vid_name_org filename_org,
 				vid_extension extension,
-				<cfif application.razuna.api.thedatabase EQ "oracle">to_char(NVL(vid_size, 0))<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">cast(ifnull(vid_size, 0) AS char)<cfelseif application.razuna.api.thedatabase EQ "mssql">isnull(cast(vid_size as varchar(100)), '0')</cfif> AS size,
-				<cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
-					concat('#application.razuna.api.thehttp##cgi.HTTP_HOST##application.razuna.api.dynpath#/assets/',host_id,'/',path_to_asset,'/',vid_name_org) AS local_url_org
-				<cfelseif application.razuna.api.thedatabase EQ "mssql">
-					'#application.razuna.api.thehttp##cgi.HTTP_HOST##application.razuna.api.dynpath#/assets/' +  cast(host_id as varchar) + '/'+ path_to_asset + '/' + vid_name_org AS local_url_org
+				<cfif application.razuna.thedatabase EQ "oracle">to_char(NVL(vid_size, 0))<cfelseif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">cast(ifnull(vid_size, 0) AS char)<cfelseif application.razuna.thedatabase EQ "mssql">isnull(cast(vid_size as varchar(100)), '0')</cfif> AS size,
+				<cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">
+					concat('#application.razuna.thehttp##cgi.HTTP_HOST##application.razuna.dynpath#/assets/',host_id,'/',path_to_asset,'/',vid_name_org) AS local_url_org
+				<cfelseif application.razuna.thedatabase EQ "mssql">
+					'#application.razuna.thehttp##cgi.HTTP_HOST##application.razuna.dynpath#/assets/' +  cast(host_id as varchar) + '/'+ path_to_asset + '/' + vid_name_org AS local_url_org
 				</cfif>,
 				'' AS colorspace,
 				'' AS xdpi,
@@ -822,25 +799,25 @@
 				'' AS unit,
 				hashtag AS md5hash,
 				vid_group AS parentid
-				FROM #application.razuna.api.prefix["#arguments.api_key#"]#videos
+				FROM #session.hostdbprefix#videos
 				WHERE vid_group in (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#" list="true">)
 				AND vid_group IS NOT NULL
 				AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 				UNION ALL
 				SELECT /* #cachetokenvid#getrenditionsvid */
 				'org' AS type,
-				vid_id id, 
-				vid_width width, 
-				vid_height height, 
-				path_to_asset,  
+				vid_id id,
+				vid_width width,
+				vid_height height,
+				path_to_asset,
 				cloud_url_org,
 				vid_name_org filename_org,
 				vid_extension extension,
-				<cfif application.razuna.api.thedatabase EQ "oracle">to_char(NVL(vid_size, 0))<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">cast(ifnull(vid_size, 0) AS char)<cfelseif application.razuna.api.thedatabase EQ "mssql">isnull(cast(vid_size as varchar(100)), '0')</cfif> AS size,
-				<cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
-					concat('#application.razuna.api.thehttp##cgi.HTTP_HOST##application.razuna.api.dynpath#/assets/',host_id,'/',path_to_asset,'/',vid_name_org) AS local_url_org
-				<cfelseif application.razuna.api.thedatabase EQ "mssql">
-					'#application.razuna.api.thehttp##cgi.HTTP_HOST##application.razuna.api.dynpath#/assets/'+  cast(host_id as varchar) + '/' + path_to_asset + '/' + vid_name_org AS local_url_org
+				<cfif application.razuna.thedatabase EQ "oracle">to_char(NVL(vid_size, 0))<cfelseif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">cast(ifnull(vid_size, 0) AS char)<cfelseif application.razuna.thedatabase EQ "mssql">isnull(cast(vid_size as varchar(100)), '0')</cfif> AS size,
+				<cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">
+					concat('#application.razuna.thehttp##cgi.HTTP_HOST##application.razuna.dynpath#/assets/',host_id,'/',path_to_asset,'/',vid_name_org) AS local_url_org
+				<cfelseif application.razuna.thedatabase EQ "mssql">
+					'#application.razuna.thehttp##cgi.HTTP_HOST##application.razuna.dynpath#/assets/'+  cast(host_id as varchar) + '/' + path_to_asset + '/' + vid_name_org AS local_url_org
 				</cfif>,
 				'' AS colorspace,
 				'' AS xdpi,
@@ -848,25 +825,25 @@
 				'' AS unit,
 				hashtag AS md5hash,
 				vid_group AS parentid
-				FROM #application.razuna.api.prefix["#arguments.api_key#"]#videos
+				FROM #session.hostdbprefix#videos
 				WHERE vid_id in (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#" list="true">)
 				AND vid_group IS NULL
 				AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 				UNION ALL
 				SELECT /* #cachetokenaud#getrenditionsaud */
 				'rendition' AS type,
-				aud_id id, 
-				0 AS width, 
-				0 AS height, 
-				path_to_asset, 
+				aud_id id,
+				0 AS width,
+				0 AS height,
+				path_to_asset,
 				cloud_url_org,
 				aud_name_org filename_org,
 				aud_extension extension,
-				<cfif application.razuna.api.thedatabase EQ "oracle">to_char(NVL(aud_size, 0))<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">cast(ifnull(aud_size, 0) AS char)<cfelseif application.razuna.api.thedatabase EQ "mssql">isnull(cast(aud_size as varchar(100)), '0')</cfif> AS size,
-				<cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
-					concat('#application.razuna.api.thehttp##cgi.HTTP_HOST##application.razuna.api.dynpath#/assets/',host_id,'/',path_to_asset,'/',aud_name_org) AS local_url_org
-				<cfelseif application.razuna.api.thedatabase EQ "mssql">
-					'#application.razuna.api.thehttp##cgi.HTTP_HOST##application.razuna.api.dynpath#/assets/' +  cast(host_id as varchar) + '/' + path_to_asset + '/' + aud_name_org AS local_url_org
+				<cfif application.razuna.thedatabase EQ "oracle">to_char(NVL(aud_size, 0))<cfelseif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">cast(ifnull(aud_size, 0) AS char)<cfelseif application.razuna.thedatabase EQ "mssql">isnull(cast(aud_size as varchar(100)), '0')</cfif> AS size,
+				<cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">
+					concat('#application.razuna.thehttp##cgi.HTTP_HOST##application.razuna.dynpath#/assets/',host_id,'/',path_to_asset,'/',aud_name_org) AS local_url_org
+				<cfelseif application.razuna.thedatabase EQ "mssql">
+					'#application.razuna.thehttp##cgi.HTTP_HOST##application.razuna.dynpath#/assets/' +  cast(host_id as varchar) + '/' + path_to_asset + '/' + aud_name_org AS local_url_org
 				</cfif>,
 				'' AS colorspace,
 				'' AS xdpi,
@@ -874,25 +851,25 @@
 				'' AS unit,
 				hashtag AS md5hash,
 				aud_group AS parentid
-				FROM #application.razuna.api.prefix["#arguments.api_key#"]#audios
+				FROM #session.hostdbprefix#audios
 				WHERE aud_group in (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#" list="true">)
 				AND aud_group IS NOT NULL
 				AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 				UNION ALL
 				SELECT /* #cachetokenaud#getrenditionsaud */
 				'org' AS type,
-				aud_id id, 
-				0 AS width, 
-				0 AS height, 
-				path_to_asset, 
+				aud_id id,
+				0 AS width,
+				0 AS height,
+				path_to_asset,
 				cloud_url_org,
 				aud_name_org filename_org,
 				aud_extension extension,
-				<cfif application.razuna.api.thedatabase EQ "oracle">to_char(NVL(aud_size, 0))<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">cast(ifnull(aud_size, 0) AS char)<cfelseif application.razuna.api.thedatabase EQ "mssql">isnull(cast(aud_size as varchar(100)), '0')</cfif> AS size,
-				<cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
-					concat('#application.razuna.api.thehttp##cgi.HTTP_HOST##application.razuna.api.dynpath#/assets/',host_id,'/',path_to_asset,'/',aud_name_org) AS local_url_org
-				<cfelseif application.razuna.api.thedatabase EQ "mssql">
-					'#application.razuna.api.thehttp##cgi.HTTP_HOST##application.razuna.api.dynpath#/assets/'+  cast(host_id as varchar) + '/' + path_to_asset + '/' + aud_name_org AS local_url_org
+				<cfif application.razuna.thedatabase EQ "oracle">to_char(NVL(aud_size, 0))<cfelseif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">cast(ifnull(aud_size, 0) AS char)<cfelseif application.razuna.thedatabase EQ "mssql">isnull(cast(aud_size as varchar(100)), '0')</cfif> AS size,
+				<cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">
+					concat('#application.razuna.thehttp##cgi.HTTP_HOST##application.razuna.dynpath#/assets/',host_id,'/',path_to_asset,'/',aud_name_org) AS local_url_org
+				<cfelseif application.razuna.thedatabase EQ "mssql">
+					'#application.razuna.thehttp##cgi.HTTP_HOST##application.razuna.dynpath#/assets/'+  cast(host_id as varchar) + '/' + path_to_asset + '/' + aud_name_org AS local_url_org
 				</cfif>,
 				'' AS colorspace,
 				'' AS xdpi,
@@ -900,25 +877,25 @@
 				'' AS unit,
 				hashtag AS md5hash,
 				aud_group AS parentid
-				FROM #application.razuna.api.prefix["#arguments.api_key#"]#audios
+				FROM #session.hostdbprefix#audios
 				WHERE aud_id in (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#" list="true">)
 				AND aud_group IS NULL
-				AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">	
+				AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 				UNION ALL
-				SELECT 
+				SELECT
 				'org' AS type,
-				file_id id, 
-				0 AS width, 
-				0 AS height, 
-				path_to_asset, 
+				file_id id,
+				0 AS width,
+				0 AS height,
+				path_to_asset,
 				cloud_url_org,
 				file_name_org filename_org,
 				file_extension extension,
-				<cfif application.razuna.api.thedatabase EQ "oracle">to_char(NVL(file_size, 0))<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">cast(ifnull(file_size, 0) AS char)<cfelseif application.razuna.api.thedatabase EQ "mssql">isnull(cast(file_size as varchar(100)), '0')</cfif> AS size,
-				<cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
-					concat('#application.razuna.api.thehttp##cgi.HTTP_HOST##application.razuna.api.dynpath#/assets/',host_id,'/',path_to_asset,'/',file_name_org) AS local_url_org
-				<cfelseif application.razuna.api.thedatabase EQ "mssql">
-					'#application.razuna.api.thehttp##cgi.HTTP_HOST##application.razuna.api.dynpath#/assets/' +  cast(host_id as varchar) + '/'+ path_to_asset + '/' + file_name_org AS local_url_org
+				<cfif application.razuna.thedatabase EQ "oracle">to_char(NVL(file_size, 0))<cfelseif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">cast(ifnull(file_size, 0) AS char)<cfelseif application.razuna.thedatabase EQ "mssql">isnull(cast(file_size as varchar(100)), '0')</cfif> AS size,
+				<cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">
+					concat('#application.razuna.thehttp##cgi.HTTP_HOST##application.razuna.dynpath#/assets/',host_id,'/',path_to_asset,'/',file_name_org) AS local_url_org
+				<cfelseif application.razuna.thedatabase EQ "mssql">
+					'#application.razuna.thehttp##cgi.HTTP_HOST##application.razuna.dynpath#/assets/' +  cast(host_id as varchar) + '/'+ path_to_asset + '/' + file_name_org AS local_url_org
 				</cfif>,
 				'' AS colorspace,
 				'' AS xdpi,
@@ -926,16 +903,16 @@
 				'' AS unit,
 				hashtag AS md5hash,
 				''AS parentid
-				FROM #application.razuna.api.prefix["#arguments.api_key#"]#files
+				FROM #session.hostdbprefix#files
 				WHERE file_id in (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#" list="true">)
-				AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">	
+				AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 				UNION ALL
-				SELECT 
+				SELECT
 				'rendition' AS type,
-				av_id id, 
-				0 AS width, 
-				0 AS height, 
-				'' AS path_to_asset, 
+				av_id id,
+				0 AS width,
+				0 AS height,
+				'' AS path_to_asset,
 				av_link_url AS cloud_url_org,
 				av_link_title AS filename_org,
 				av_type AS extension,
@@ -947,7 +924,7 @@
 				'' AS unit,
 				hashtag AS md5hash,
 				asset_id_r AS parentid
-				FROM #application.razuna.api.prefix["#arguments.api_key#"]#additional_versions
+				FROM #session.hostdbprefix#additional_versions
 				WHERE asset_id_r in (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#" list="true">)
 				</cfquery>
 			<!--- No access --->
@@ -990,7 +967,7 @@
 					<!--- If assetid is "all" we assume user wants to move all assets from sourcefolder to destinationfolder tbus select all file ids in this folder --->
 					<cfif arguments.assetid EQ "all">
 						<!--- Call folder CFC --->
-						<cfinvoke component="global.cfc.folders" method="getallassetsinfolder" folder_id="#arguments.source_folder#" returnvariable="qry_files_in_folder" />
+						<cfset qry_files_in_folder = callFunction(comp="global.cfc.folders", func="getallassetsinfolder", thestruct=s, folder_id=arguments.source_folder)>
 						<!--- Create a list --->
 						<cfset s.file_id = valueList(qry_files_in_folder.id)>
 					<cfelse>
@@ -1001,14 +978,13 @@
 					<!--- Chek that s.file_id is not empty --->
 					<cfif s.file_id NEQ "">
 						<!--- images --->
-						<cfinvoke component="global.cfc.images" method="movethread" thestruct="#s#" />
+						<cfset callFunction(comp="global.cfc.images", func="movethread", thestruct=s)>
 						<!--- videos --->
-						<cfinvoke component="global.cfc.videos" method="movethread" thestruct="#s#" />
+						<cfset callFunction(comp="global.cfc.videos", func="movethread", thestruct=s)>
 						<!--- audios --->
-						<cfinvoke component="global.cfc.audios" method="movethread" thestruct="#s#" />
-						<cfset s.file_id = localid>
+						<cfset callFunction(comp="global.cfc.audios", func="movethread", thestruct=s)>
 						<!--- files --->
-						<cfinvoke component="global.cfc.files" method="movethread" thestruct="#s#" />
+						<cfset callFunction(comp="global.cfc.files", func="movethread", thestruct=s)>
 					</cfif>
 					<!--- Feedback --->
 					<cfset thexml.responsecode = 0>
@@ -1025,7 +1001,7 @@
 		<!--- Return --->
 		<cfreturn thexml>
 	</cffunction>
-	
+
 	<!--- Convert assets to other formats --->
 	<cffunction name="createrenditions" access="remote" output="false" returntype="struct" returnformat="json">
 		<cfargument name="api_key" type="string" required="true">
@@ -1050,15 +1026,15 @@
 				<!--- Deserialize the JSON back into an array --->
 				<cfset thejson = DeserializeJSON(arguments.convertdata)>
 				<!--- Get assetpath --->
-				<cfquery datasource="#application.razuna.api.dsn#" name="qry">
+				<cfquery datasource="#application.razuna.datasource#" name="qry">
 					SELECT set2_path_to_assets
-					FROM #application.razuna.api.prefix["#arguments.api_key#"]#settings_2
-					WHERE set2_id = <cfqueryparam value="#application.razuna.api.setid#" cfsqltype="cf_sql_numeric">
-					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid['#arguments.api_key#']#">
+					FROM #session.hostdbprefix#settings_2
+					WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
+					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
 				<!--- Set assetpath --->
 				<cfset arguments.assetpath = trim(qry.set2_path_to_assets)>
-				<cfset arguments.thepath = expandPath("../../#application.razuna.api.host_path#/dam")>
+				<cfset arguments.thepath = expandPath("../../#session.hostpath#/dam")>
 
 				<cfif arguments.assettype eq "img">
 					<cfset var assettable = "images">
@@ -1072,20 +1048,21 @@
 					<cfreturn thexml>
 				</cfif>
 				<!--- Get group for asset --->
-				<cfquery datasource="#application.razuna.api.dsn#" name="getgrp">
+				<cfquery datasource="#application.razuna.datasource#" name="getgrp">
 					SELECT #arguments.assettype#_group
-					FROM #application.razuna.api.prefix["#arguments.api_key#"]##assettable#
+					FROM #session.hostdbprefix##assettable#
 					WHERE #arguments.assettype#_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
 				</cfquery>
 				<!--- Set the groupid variable if asset is a rendition. This will be stored in the group column for the asset later on.--->
 				<cfset var grpid= evaluate("getgrp.#arguments.assettype#_group")>
 				<cfif grpid neq "">
 					<cfset "arguments.#arguments.assettype#_group_id" = grpid>
-				</cfif>  
+				</cfif>
 
-				<cfif application.razuna.api.storage EQ "amazon">
+				<cfif application.razuna.storage EQ "amazon">
 					<cfset arguments.awsbucket = application.razuna.awsbucket >
 				</cfif>
+
 
 				<!--- Check the assettype --->
 				<cfif arguments.assettype EQ "img">
@@ -1103,9 +1080,9 @@
 					</cfloop>
 					<cfset arguments.convert_to = convertToList>
 					<!--- Get image settings --->
-					<cfinvoke component="global.cfc.settings" method="prefs_image" thestruct="#arguments#" returnvariable="arguments.qry_settings_image" />
+					<cfset arguments.qry_settings_image = callFunction(comp="global.cfc.settings", func="prefs_image", thestruct=arguments)>
 					<!--- Convert images --->
-					<cfinvoke component="global.cfc.images" method="convertImagethread" thestruct="#arguments#" returnvariable="thefileid" />
+					<cfset thefileid = callFunction(comp="global.cfc.images", func="convertImagethread", thestruct=arguments)>
 					<!--- Feedback --->
 					<cfif thefileid NEQ "">
 						<cfset thexml.responsecode = 0>
@@ -1133,9 +1110,9 @@
 						</cfif>
 					</cfloop>
 					<!--- Get audio settings --->
-					<cfinvoke component="global.cfc.settings" method="prefs_video" thestruct="#arguments#" returnvariable="arguments.qry_settings_audio" />
+					<cfset arguments.qry_settings_audio = callFunction(comp="global.cfc.settings", func="prefs_video", thestruct=arguments)>
 					<!--- Convert audios --->
-					<cfinvoke component="global.cfc.audios" method="convertaudiothread" thestruct="#arguments#" returnvariable="thefileid" />
+					<cfset thefileid =  callFunction(comp="global.cfc.audios", func="convertaudiothread", thestruct=arguments)>
 					<!--- Feedback --->
 					<cfif thefileid NEQ "">
 						<cfset thexml.responsecode = 0>
@@ -1157,9 +1134,9 @@
 					</cfloop>
 					<cfset arguments.convert_to = convertToList>
 					<!--- Get video settings --->
-					<cfinvoke component="global.cfc.settings" method="prefs_video" thestruct="#arguments#" returnvariable="arguments.qry_settings_video" />
+					<cfset arguments.qry_settings_video = callFunction(comp="global.cfc.settings", func="prefs_video", thestruct=arguments)>
 					<!--- Convert videos --->
-					<cfinvoke component="global.cfc.videos" method="convertvideo" thestruct="#arguments#" returnvariable="thefileid" />
+					<cfset thefileid = callFunction(comp="global.cfc.videos", func="convertvideo", thestruct=arguments)>
 					<!--- Feedback --->
 					<cfif thefileid NEQ "">
 						<cfset thexml.responsecode = 0>
@@ -1181,7 +1158,7 @@
 		<!--- Return --->
 		<cfreturn thexml>
 	</cffunction>
-	
+
 	<!--- Regenerate metedata for assets --->
 	<cffunction name="regeneratemetadata" access="remote" output="false" returntype="struct" returnformat="json">
 		<cfargument name="api_key" type="string" required="true">
@@ -1203,7 +1180,7 @@
 			<!--- If user has access --->
 			<cfif folderaccess EQ "W" OR folderaccess EQ "X">
 				<!--- Get exiftool.exe file path --->
-				<cfquery datasource="#application.razuna.api.dsn#" name="qryexif">
+				<cfquery datasource="#application.razuna.datasource#" name="qryexif">
 					SELECT  thepath
 					FROM tools
 					WHERE thetool = <cfqueryparam value="exiftool" cfsqltype="cf_sql_varchar">
@@ -1213,19 +1190,19 @@
 					<cfset theexif = """#qryexif.thepath#/exiftool.exe""">
 				<cfelse>
 					<!--- Create directory --->
-					<cfif !directoryExists("#application.razuna.api.thispath#/metadata")>
-						<cfdirectory action="create" directory="#application.razuna.api.thispath#/metadata" mode="775">
+					<cfif !directoryExists("#application.razuna.thispath#/metadata")>
+						<cfdirectory action="create" directory="#application.razuna.thispath#/metadata" mode="775">
 					</cfif>
 					<cfset theexif = "#qryexif.thepath#/exiftool">
 					<!--- Set scripts --->
-					<cfset thesh = "#application.razuna.api.thispath#/metadata/#arguments.newid#.sh">
+					<cfset thesh = "#application.razuna.thispath#/metadata/#arguments.newid#.sh">
 				</cfif>
 				<!--- Get assetpath --->
-				<cfquery datasource="#application.razuna.api.dsn#" name="qryassetpath">
+				<cfquery datasource="#application.razuna.datasource#" name="qryassetpath">
 					SELECT set2_path_to_assets
-					FROM #application.razuna.api.prefix["#arguments.api_key#"]#settings_2
-					WHERE set2_id = <cfqueryparam value="#application.razuna.api.setid#" cfsqltype="cf_sql_numeric">
-					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid['#arguments.api_key#']#">
+					FROM #session.hostdbprefix#settings_2
+					WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
+					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
 				<!--- Set assetpath --->
 				<cfset assetpath = trim(qryassetpath.set2_path_to_assets)>
@@ -1234,11 +1211,11 @@
 					<!--- Loop --->
 					<cfloop list="#arguments.assetid#" index="i">
 						<!--- Get details of asset --->
-						<cfquery datasource="#application.razuna.api.dsn#" name="qrydetail">
-							SELECT img_filename_org AS filename,path_to_asset,cloud_url_org 
-							FROM #application.razuna.api.prefix["#arguments.api_key#"]#images
+						<cfquery datasource="#application.razuna.datasource#" name="qrydetail">
+							SELECT img_filename_org AS filename,path_to_asset,cloud_url_org
+							FROM #session.hostdbprefix#images
 							WHERE img_id = <cfqueryparam value="#i#" cfsqltype="cf_sql_varchar">
-							AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
+							AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 						</cfquery>
 						<!--- Check success --->
 						<cfif qrydetail.RecordCount NEQ 0>
@@ -1248,15 +1225,15 @@
 							<cfset invalid_assets = listappend(invalid_assets,i)>
 						</cfif>
 						<!--- Set source --->
-						<cfif application.razuna.api.storage EQ "local">
-							<cfset thesource = "#assetpath#/#application.razuna.api.hostid['#arguments.api_key#']#/#qrydetail.path_to_asset#/#qrydetail.filename#">
+						<cfif application.razuna.storage EQ "local">
+							<cfset thesource = "#assetpath#/#session.hostid#/#qrydetail.path_to_asset#/#qrydetail.filename#">
 						<cfelse>
 							<!--- Create directory --->
-							<cfif !directoryExists("#application.razuna.api.thispath#/metadata/#i#")>
-								<cfdirectory action="create" directory="#application.razuna.api.thispath#/metadata/#i#" mode="775">
+							<cfif !directoryExists("#application.razuna.thispath#/metadata/#i#")>
+								<cfdirectory action="create" directory="#application.razuna.thispath#/metadata/#i#" mode="775">
 							</cfif>
-							<cfhttp method="get" url="#qrydetail.cloud_url_org#" file="#qrydetail.filename#" path="#application.razuna.api.thispath#/metadata/#i#">
-							<cfset thesource = "#application.razuna.api.thispath#/metadata/#i#/#qrydetail.filename#">
+							<cfhttp method="get" url="#qrydetail.cloud_url_org#" file="#qrydetail.filename#" path="#application.razuna.thispath#/metadata/#i#">
+							<cfset thesource = "#application.razuna.thispath#/metadata/#i#/#qrydetail.filename#">
 						</cfif>
 						<!--- Check windows --->
 						<cfif FindNoCase("Windows", server.os.name)>
@@ -1271,59 +1248,61 @@
 							<cffile action="delete" file="#thesh#">
 						</cfif>
 						<!--- Update metadata in images DB --->
-						<cfquery datasource="#application.razuna.api.dsn#">
-							UPDATE #application.razuna.api.prefix["#arguments.api_key#"]#images
+						<cfquery datasource="#application.razuna.datasource#">
+							UPDATE #session.hostdbprefix#images
 							SET	img_meta = <cfqueryparam value="#img_meta#" cfsqltype="cf_sql_varchar">
 							WHERE img_id = <cfqueryparam value="#i#" cfsqltype="cf_sql_varchar">
-							AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
+							AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 						</cfquery>
 						<cfset "arguments.thetools.exiftool" = qryexif.thepath>
 						<cfset arguments.thesource = thesource>
-						<cfinvoke component="global.cfc.xmp" method="xmpparse" thestruct="#arguments#" returnvariable="arguments.thexmp" />
+
+						<!--- Merge struct with default one --->
+						<cfset arguments.thexmp = callFunction(comp="global.cfc.xmp", func="xmpparse", thestruct=arguments)>
 						<!--- Store XMP values in DB --->
-						<cfquery datasource="#application.razuna.api.dsn#">
-							UPDATE #application.razuna.api.prefix["#arguments.api_key#"]#xmp
-							SET 
-									asset_type = <cfqueryparam cfsqltype="cf_sql_varchar" value="img">, 
-									subjectcode = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.iptcsubjectcode#">, 
-									creator = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.creator#">, 
-									title = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.title#">, 
-									authorsposition = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.authorstitle#">, 
-									captionwriter = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.descwriter#">, 
-									ciadrextadr = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.iptcaddress#">, 
-									category = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.category#">, 
-									supplementalcategories = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.categorysub#">, 
+						<cfquery datasource="#application.razuna.datasource#">
+							UPDATE #session.hostdbprefix#xmp
+							SET
+									asset_type = <cfqueryparam cfsqltype="cf_sql_varchar" value="img">,
+									subjectcode = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.iptcsubjectcode#">,
+									creator = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.creator#">,
+									title = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.title#">,
+									authorsposition = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.authorstitle#">,
+									captionwriter = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.descwriter#">,
+									ciadrextadr = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.iptcaddress#">,
+									category = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.category#">,
+									supplementalcategories = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.categorysub#">,
 									urgency = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.urgency#">,
-									description = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.description#">, 
-									ciadrcity = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.iptccity#">, 
-									ciadrctry = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.iptccountry#">, 
-									location = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.iptclocation#">, 
-									ciadrpcode = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.iptczip#">, 
-									ciemailwork = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.iptcemail#">, 
-									ciurlwork = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.iptcwebsite#">, 
-									citelwork = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.iptcphone#">, 
-									intellectualgenre = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.iptcintelgenre#">, 
-									instructions = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.iptcinstructions#">, 
-									source = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.iptcsource#">, 
-									usageterms = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.iptcusageterms#">, 
-									copyrightstatus = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.copystatus#">, 
-									transmissionreference = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.iptcjobidentifier#">, 
-									webstatement  = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.copyurl#">, 
-									headline = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.iptcheadline#">, 
-									datecreated = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.iptcdatecreated#">, 
-									city = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.iptcimagecity#">, 
-									ciadrregion = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.iptcimagestate#">, 
-									country = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.iptcimagecountry#">, 
-									countrycode = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.iptcimagecountrycode#">, 
-									scene = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.iptcscene#">, 
-									state = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.iptcstate#">, 
-									credit = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.iptccredit#">, 
-									rights = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.copynotice#">, 
-									colorspace = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.colorspace#">, 
-									xres = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.xres#">, 
-									yres = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.yres#">, 
-									resunit = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.resunit#">, 
-									host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
+									description = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.description#">,
+									ciadrcity = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.iptccity#">,
+									ciadrctry = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.iptccountry#">,
+									location = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.iptclocation#">,
+									ciadrpcode = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.iptczip#">,
+									ciemailwork = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.iptcemail#">,
+									ciurlwork = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.iptcwebsite#">,
+									citelwork = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.iptcphone#">,
+									intellectualgenre = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.iptcintelgenre#">,
+									instructions = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.iptcinstructions#">,
+									source = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.iptcsource#">,
+									usageterms = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.iptcusageterms#">,
+									copyrightstatus = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.copystatus#">,
+									transmissionreference = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.iptcjobidentifier#">,
+									webstatement  = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.copyurl#">,
+									headline = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.iptcheadline#">,
+									datecreated = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.iptcdatecreated#">,
+									city = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.iptcimagecity#">,
+									ciadrregion = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.iptcimagestate#">,
+									country = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.iptcimagecountry#">,
+									countrycode = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.iptcimagecountrycode#">,
+									scene = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.iptcscene#">,
+									state = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.iptcstate#">,
+									credit = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.iptccredit#">,
+									rights = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.copynotice#">,
+									colorspace = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.colorspace#">,
+									xres = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.xres#">,
+									yres = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.yres#">,
+									resunit = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.resunit#">,
+									host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 							WHERE id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#i#">
 						</cfquery>
 					</cfloop>
@@ -1332,11 +1311,11 @@
 					<!--- Loop --->
 					<cfloop list="#arguments.assetid#" index="i">
 						<!--- Get details of asset --->
-						<cfquery datasource="#application.razuna.api.dsn#" name="qrydetail">
-							SELECT vid_name_org AS filename,path_to_asset,cloud_url_org 
-							FROM #application.razuna.api.prefix["#arguments.api_key#"]#videos
+						<cfquery datasource="#application.razuna.datasource#" name="qrydetail">
+							SELECT vid_name_org AS filename,path_to_asset,cloud_url_org
+							FROM #session.hostdbprefix#videos
 							WHERE vid_id = <cfqueryparam value="#i#" cfsqltype="cf_sql_varchar">
-							AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
+							AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 						</cfquery>
 						<!--- Check success --->
 						<cfif qrydetail.RecordCount NEQ 0>
@@ -1346,15 +1325,15 @@
 							<cfset invalid_assets = listappend(invalid_assets,i)>
 						</cfif>
 						<!--- Set source --->
-						<cfif application.razuna.api.storage EQ "local">
-							<cfset thesource = "#assetpath#/#application.razuna.api.hostid['#arguments.api_key#']#/#qrydetail.path_to_asset#/#qrydetail.filename#">
+						<cfif application.razuna.storage EQ "local">
+							<cfset thesource = "#assetpath#/#session.hostid#/#qrydetail.path_to_asset#/#qrydetail.filename#">
 						<cfelse>
 							<!--- Create directory --->
-							<cfif !directoryExists("#application.razuna.api.thispath#/metadata/#i#")>
-								<cfdirectory action="create" directory="#application.razuna.api.thispath#/metadata/#i#" mode="775">
+							<cfif !directoryExists("#application.razuna.thispath#/metadata/#i#")>
+								<cfdirectory action="create" directory="#application.razuna.thispath#/metadata/#i#" mode="775">
 							</cfif>
-							<cfhttp method="get" url="#qrydetail.cloud_url_org#" file="#qrydetail.filename#" path="#application.razuna.api.thispath#/metadata/#i#">
-							<cfset thesource = "#application.razuna.api.thispath#/metadata/#i#/#qrydetail.filename#">
+							<cfhttp method="get" url="#qrydetail.cloud_url_org#" file="#qrydetail.filename#" path="#application.razuna.thispath#/metadata/#i#">
+							<cfset thesource = "#application.razuna.thispath#/metadata/#i#/#qrydetail.filename#">
 						</cfif>
 						<!--- Check windows --->
 						<cfif FindNoCase("Windows", server.os.name)>
@@ -1369,11 +1348,11 @@
 							<cffile action="delete" file="#thesh#">
 						</cfif>
 						<!--- Update metadata in videos DB --->
-						<cfquery datasource="#application.razuna.api.dsn#">
-							UPDATE #application.razuna.api.prefix["#arguments.api_key#"]#videos
+						<cfquery datasource="#application.razuna.datasource#">
+							UPDATE #session.hostdbprefix#videos
 							SET	vid_meta = <cfqueryparam value="#vid_meta#" cfsqltype="cf_sql_varchar">
 							WHERE vid_id = <cfqueryparam value="#i#" cfsqltype="cf_sql_varchar">
-							AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
+							AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 						</cfquery>
 					</cfloop>
 				<!--- AUDIOS --->
@@ -1381,11 +1360,11 @@
 					<!--- Loop --->
 					<cfloop list="#arguments.assetid#" index="i">
 						<!--- Get details of asset --->
-						<cfquery datasource="#application.razuna.api.dsn#" name="qrydetail">
-							SELECT aud_name_org AS filename,path_to_asset,cloud_url_org 
-							FROM #application.razuna.api.prefix["#arguments.api_key#"]#audios
+						<cfquery datasource="#application.razuna.datasource#" name="qrydetail">
+							SELECT aud_name_org AS filename,path_to_asset,cloud_url_org
+							FROM #session.hostdbprefix#audios
 							WHERE aud_id = <cfqueryparam value="#i#" cfsqltype="cf_sql_varchar">
-							AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
+							AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 						</cfquery>
 						<!--- Check success --->
 						<cfif qrydetail.RecordCount NEQ 0>
@@ -1395,15 +1374,15 @@
 							<cfset invalid_assets = listappend(invalid_assets,i)>
 						</cfif>
 						<!--- Set source --->
-						<cfif application.razuna.api.storage EQ "local">
-							<cfset thesource = "#assetpath#/#application.razuna.api.hostid['#arguments.api_key#']#/#qrydetail.path_to_asset#/#qrydetail.filename#">
+						<cfif application.razuna.storage EQ "local">
+							<cfset thesource = "#assetpath#/#session.hostid#/#qrydetail.path_to_asset#/#qrydetail.filename#">
 						<cfelse>
 							<!--- Create directory --->
-							<cfif !directoryExists("#application.razuna.api.thispath#/metadata/#i#")>
-								<cfdirectory action="create" directory="#application.razuna.api.thispath#/metadata/#i#" mode="775">
+							<cfif !directoryExists("#application.razuna.thispath#/metadata/#i#")>
+								<cfdirectory action="create" directory="#application.razuna.thispath#/metadata/#i#" mode="775">
 							</cfif>
-							<cfhttp method="get" url="#qrydetail.cloud_url_org#" file="#qrydetail.filename#" path="#application.razuna.api.thispath#/metadata/#i#">
-							<cfset thesource = "#application.razuna.api.thispath#/metadata/#i#/#qrydetail.filename#">
+							<cfhttp method="get" url="#qrydetail.cloud_url_org#" file="#qrydetail.filename#" path="#application.razuna.thispath#/metadata/#i#">
+							<cfset thesource = "#application.razuna.thispath#/metadata/#i#/#qrydetail.filename#">
 						</cfif>
 						<!--- Check windows --->
 						<cfif FindNoCase("Windows", server.os.name)>
@@ -1418,11 +1397,11 @@
 							<cffile action="delete" file="#thesh#">
 						</cfif>
 						<!--- Update metadata in audios DB --->
-						<cfquery datasource="#application.razuna.api.dsn#">
-							UPDATE #application.razuna.api.prefix["#arguments.api_key#"]#audios
+						<cfquery datasource="#application.razuna.datasource#">
+							UPDATE #session.hostdbprefix#audios
 							SET	aud_meta = <cfqueryparam value="#aud_meta#" cfsqltype="cf_sql_varchar">
 							WHERE aud_id = <cfqueryparam value="#i#" cfsqltype="cf_sql_varchar">
-							AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
+							AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 						</cfquery>
 					</cfloop>
 				<!--- FILES --->
@@ -1430,11 +1409,11 @@
 					<!--- Loop --->
 					<cfloop list="#arguments.assetid#" index="i">
 						<!--- Get details of asset --->
-						<cfquery datasource="#application.razuna.api.dsn#" name="qrydetail">
-							SELECT file_name_org AS filename,path_to_asset,cloud_url_org 
-							FROM #application.razuna.api.prefix["#arguments.api_key#"]#files
+						<cfquery datasource="#application.razuna.datasource#" name="qrydetail">
+							SELECT file_name_org AS filename,path_to_asset,cloud_url_org
+							FROM #session.hostdbprefix#files
 							WHERE file_id = <cfqueryparam value="#i#" cfsqltype="cf_sql_varchar">
-							AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
+							AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 						</cfquery>
 						<!--- Check success --->
 						<cfif qrydetail.RecordCount NEQ 0>
@@ -1444,15 +1423,15 @@
 							<cfset invalid_assets = listappend(invalid_assets,i)>
 						</cfif>
 						<!--- Set source --->
-						<cfif application.razuna.api.storage EQ "local">
-							<cfset thesource = "#assetpath#/#application.razuna.api.hostid['#arguments.api_key#']#/#qrydetail.path_to_asset#/#qrydetail.filename#">
+						<cfif application.razuna.storage EQ "local">
+							<cfset thesource = "#assetpath#/#session.hostid#/#qrydetail.path_to_asset#/#qrydetail.filename#">
 						<cfelse>
 							<!--- Create directory --->
-							<cfif !directoryExists("#application.razuna.api.thispath#/metadata/#i#")>
-								<cfdirectory action="create" directory="#application.razuna.api.thispath#/metadata/#i#" mode="775">
+							<cfif !directoryExists("#application.razuna.thispath#/metadata/#i#")>
+								<cfdirectory action="create" directory="#application.razuna.thispath#/metadata/#i#" mode="775">
 							</cfif>
-							<cfhttp method="get" url="#qrydetail.cloud_url_org#" file="#qrydetail.filename#" path="#application.razuna.api.thispath#/metadata/#i#">
-							<cfset thesource = "#application.razuna.api.thispath#/metadata/#i#/#qrydetail.filename#">
+							<cfhttp method="get" url="#qrydetail.cloud_url_org#" file="#qrydetail.filename#" path="#application.razuna.thispath#/metadata/#i#">
+							<cfset thesource = "#application.razuna.thispath#/metadata/#i#/#qrydetail.filename#">
 						</cfif>
 						<!--- Check windows --->
 						<cfif FindNoCase("Windows", server.os.name)>
@@ -1467,17 +1446,17 @@
 							<cffile action="delete" file="#thesh#">
 						</cfif>
 						<!--- Update metadata in files DB --->
-						<cfquery datasource="#application.razuna.api.dsn#">
-							UPDATE #application.razuna.api.prefix["#arguments.api_key#"]#files
+						<cfquery datasource="#application.razuna.datasource#">
+							UPDATE #session.hostdbprefix#files
 							SET	file_meta = <cfqueryparam value="#aud_meta#" cfsqltype="cf_sql_varchar">
 							WHERE file_id = <cfqueryparam value="#i#" cfsqltype="cf_sql_varchar">
-							AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
+							AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 						</cfquery>
 					</cfloop>
 				</cfif>
 				<!--- Remove directory --->
-				<cfif directoryExists("#application.razuna.api.thispath#/metadata")>
-					<cfdirectory action="delete" directory="#application.razuna.api.thispath#/metadata" recurse="true">
+				<cfif directoryExists("#application.razuna.thispath#/metadata")>
+					<cfdirectory action="delete" directory="#application.razuna.thispath#/metadata" recurse="true">
 				</cfif>
 				<!--- Feedback --->
 				<cfif thesuccess AND theunsuccess EQ 0>
@@ -1501,7 +1480,7 @@
 			<cfset var thexml = timeout("s")>
 		</cfif>
 		<!--- Return --->
-		<cfreturn thexml />	
+		<cfreturn thexml />
 	</cffunction>
 
 	<cffunction name="getpdfimages" returntype="query" returnformat="JSON" access="remote" hint="Returns data for PDF images that have been extracted from PDF pages">
@@ -1525,16 +1504,16 @@
 				<cfset thestruct.assetpath = sobj.assetpath()><!--- Get path of asset --->
 				<cfset thestruct.file_id = arguments.assetid><!---  Put assetid in struct to pass to main function pdfjpgs --->
 				<!--- Make query to get the Local URL for asset --->
-				<cfquery datasource="#application.razuna.api.dsn#" name="getfileinfo" cachedwithin="1" region="razcache">
-					SELECT file_extension, path_to_asset, host_id	
-					FROM #application.razuna.api.prefix["#arguments.api_key#"]#files f 
+				<cfquery datasource="#application.razuna.datasource#" name="getfileinfo" cachedwithin="1" region="razcache">
+					SELECT file_extension, path_to_asset, host_id
+					FROM #session.hostdbprefix#files f
 					WHERE f.file_id =<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
 				</cfquery>
-				
-				<cfif getfileinfo.recordcount eq 0><!--- Check if file could not be found --->	
+
+				<cfif getfileinfo.recordcount eq 0><!--- Check if file could not be found --->
 					<cfset querysetcell(theqry,"message","Asset with the given assetid could not be found. Please check assetid and try again.")>
 					<cfreturn theqry><!--- Check if file is not of type pdf --->
-				<cfelseif getfileinfo.file_extension neq 'pdf'>	
+				<cfelseif getfileinfo.file_extension neq 'pdf'>
 					<cfset querysetcell(theqry,"message","Asset has to be of type PDF")>
 					<cfreturn theqry>
 				</cfif>
@@ -1546,7 +1525,7 @@
 					</cfcatch>
 				</cftry>
 				<!--- Form the URL path to asset  --->
-				<cfset localurl = application.razuna.api.thehttp & cgi.HTTP_HOST & application.razuna.api.dynpath & "/assets/" & getfileinfo.host_id  & "/" & getfileinfo.path_to_asset & "/razuna_pdf_images/">
+				<cfset localurl = application.razuna.thehttp & cgi.HTTP_HOST & application.razuna.dynpath & "/assets/" & getfileinfo.host_id  & "/" & getfileinfo.path_to_asset & "/razuna_pdf_images/">
 				<!--- Finally query the pdf jpg information retrieved and extract the information to be returned from it --->
 				<cfquery name="theqry" dbtype="query">
 					SELECT '#arguments.assetid#' assetid, name, directory local_directory, size, '#localurl#' + name as local_url_org  FROM pdfqry.qry_pdfjpgs
@@ -1560,5 +1539,129 @@
 			<cfset theqry = timeout()>
 		</cfif>
 		<cfreturn theqry>
-	</cffunction>	    
+	</cffunction>
+
+	<!--- UPC: GET --->
+	<cffunction name="getupc" access="remote" output="false" returntype="query" returnformat="json">
+		<cfargument name="api_key" required="true">
+		<cfargument name="assetid" required="true">
+		<cfargument name="assettype" required="true">
+		<!--- Check key --->
+		<cfset var thesession = checkdb(arguments.api_key)>
+		<!--- Check to see if session is valid --->
+		<cfif thesession>
+			<cfset var qry = "">
+			<!--- Get permission for asset (folder) --->
+			<cfset var folderaccess = checkFolderPerm(arguments.api_key, arguments.assetid)>
+			<!--- If user has access --->
+			<cfif folderaccess EQ "R"  OR folderaccess EQ "W" OR folderaccess EQ "X">
+				<!--- Set db and id --->
+				<cfif arguments.assettype EQ "img">
+					<cfset var thedb = "images">
+					<cfset var theid = "img_id">
+					<cfset var theupc = "img_upc_number">
+					<cfset var cachetoken = getcachetoken(arguments.api_key,"images")>
+				<cfelseif arguments.assettype EQ "doc">
+					<cfset var thedb = "files">
+					<cfset var theid = "file_id">
+					<cfset var theupc = "file_upc_number">
+					<cfset var cachetoken = getcachetoken(arguments.api_key,"files")>
+				<cfelseif arguments.assettype EQ "vid">
+					<cfset var thedb = "videos">
+					<cfset var theid = "vid_id">
+					<cfset var theupc = "vid_upc_number">
+					<cfset var cachetoken = getcachetoken(arguments.api_key,"videos")>
+				<cfelseif arguments.assettype EQ "aud">
+					<cfset var thedb = "audios">
+					<cfset var theid = "aud_id">
+					<cfset var theupc = "aud_upc_number">
+					<cfset var cachetoken = getcachetoken(arguments.api_key,"audios")>
+				<cfelse>
+					<cfreturn noaccess()>
+				</cfif>
+				<!--- Loop over the assetid --->
+				<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
+				SELECT /* #cachetoken#getupc */ #theupc# AS upc_number, '#arguments.assettype#' AS type, #theid# AS id
+				FROM #session.hostdbprefix##thedb#
+				WHERE #theid# IN (<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.assetid#" list="Yes">)
+				</cfquery>
+			<!--- No access --->
+			<cfelse>
+				<!--- Return --->
+				<cfset var qry = noaccess()>
+			</cfif>
+		<!--- No session found --->
+		<cfelse>
+			<cfset var qry = timeout()>
+		</cfif>
+		<!--- Return --->
+		<cfreturn qry>
+	</cffunction>
+
+	<!--- UPC: GET --->
+	<cffunction name="setupc" access="remote" output="false" returntype="struct" returnformat="json">
+		<cfargument name="api_key" required="true">
+		<cfargument name="assetid" required="true">
+		<cfargument name="assettype" required="true">
+		<cfargument name="upc_number" required="true">
+		<!--- Check key --->
+		<cfset var thesession = checkdb(arguments.api_key)>
+		<!--- Check to see if session is valid --->
+		<cfif thesession>
+			<cfset var qry = "">
+			<!--- Get permission for asset (folder) --->
+			<cfset var folderaccess = checkFolderPerm(arguments.api_key, arguments.assetid)>
+			<!--- If user has access --->
+			<cfif folderaccess EQ "R"  OR folderaccess EQ "W" OR folderaccess EQ "X">
+				<!--- Set db and id --->
+				<cfif arguments.assettype EQ "img">
+					<cfset var thedb = "images">
+					<cfset var theid = "img_id">
+					<cfset var theupc = "img_upc_number">
+					<cfset var cachetoken = getcachetoken(arguments.api_key,"images")>
+				<cfelseif arguments.assettype EQ "doc">
+					<cfset var thedb = "files">
+					<cfset var theid = "file_id">
+					<cfset var theupc = "file_upc_number">
+					<cfset var cachetoken = getcachetoken(arguments.api_key,"files")>
+				<cfelseif arguments.assettype EQ "vid">
+					<cfset var thedb = "videos">
+					<cfset var theid = "vid_id">
+					<cfset var theupc = "vid_upc_number">
+					<cfset var cachetoken = getcachetoken(arguments.api_key,"videos")>
+				<cfelseif arguments.assettype EQ "aud">
+					<cfset var thedb = "audios">
+					<cfset var theid = "aud_id">
+					<cfset var theupc = "aud_upc_number">
+					<cfset var cachetoken = getcachetoken(arguments.api_key,"audios")>
+				<cfelse>
+					<!--- Feedback --->
+					<cfset thexml.responsecode = 0>
+					<cfset thexml.message = "You did not provide a valid file type">
+				</cfif>
+				<!--- Loop over the assetid --->
+				<cfloop list="#arguments.assetid#" index="i" delimiters=",">
+					<!--- Loop over the assetid --->
+					<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
+					UPDATE #session.hostdbprefix##thedb#
+					SET #theupc# = <cfqueryparam value="#arguments.upc_number#" cfsqltype="cf_sql_varchar">
+					WHERE #theid# =  <cfqueryparam value="#i#" cfsqltype="cf_sql_varchar">
+					</cfquery>
+				</cfloop>
+				<!--- Feedback --->
+				<cfset thexml.responsecode = 0>
+				<cfset thexml.message = "UPC number was successfully updated">
+			<!--- No access --->
+			<cfelse>
+				<!--- Return --->
+				<cfset var thexml = noaccess('s')>
+			</cfif>
+		<!--- No session found --->
+		<cfelse>
+			<cfset var thexml = timeout('s')>
+		</cfif>
+		<!--- Return --->
+		<cfreturn thexml>
+	</cffunction>
+
 </cfcomponent>

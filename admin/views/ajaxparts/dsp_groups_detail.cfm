@@ -28,11 +28,11 @@
 		<form name="grpedit" id="grpedit">
 		<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
 			<tr>
-				<th colspan="2">#defaultsObj.trans("groups_edit")#</th>
+				<th colspan="2">#myFusebox.getApplicationData().defaults.trans("groups_edit")#</th>
 			</tr>
 			<tr>
 				<td width="100%"><input type="text" size="40" name="grpname" id="grpname" value="#qry_detail.grp_name#" /></td>
-				<td width="1%" nowrap="true"><input type="Submit" name="Saveme" value="#defaultsObj.trans("save")#" class="button" /></td>
+				<td width="1%" nowrap="true"><input type="Submit" name="Saveme" value="#myFusebox.getApplicationData().defaults.trans("save")#" class="button" /></td>
 			</tr>
 			<tr>
 				<td colspan="2"><div id="grp_feedback" style="color:green;font-weight:bold;"></td>

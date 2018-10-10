@@ -5,13 +5,26 @@
 -->
 <circuit access="internal">
 
-	<!--
-		Example model fuseaction that just references an action fuse.
-		Model fuseactions should only reference actions and queries.
-
-	<fuseaction name="getTime">
-		<include template="act_get_time" />
-	</fuseaction>-->
+	<fuseaction name="preprocess">
+		<set name="attributes.razuna" value="#structnew()#" />
+		<set name="attributes.razuna.application" value="#structnew()#" />
+		<set name="attributes.razuna.session" value="#structnew()#" />
+		<set name="attributes.razuna.application.datasource" value="#application.razuna.datasource#" />
+		<set name="attributes.razuna.application.thedatabase" value="#application.razuna.thedatabase#" />
+		<set name="attributes.razuna.application.storage" value="#application.razuna.storage#" />
+		<set name="attributes.razuna.application.setid" value="#application.razuna.setid#" />
+		<set name="attributes.razuna.application.theschema" value="#application.razuna.theschema#" />
+		<set name="attributes.razuna.application.awskey" value="#application.razuna.awskey#" />
+		<set name="attributes.razuna.application.awskeysecret" value="#application.razuna.awskeysecret#" />
+		<set name="attributes.razuna.application.awslocation" value="#application.razuna.awslocation#" />
+		<set name="attributes.razuna.application.awstenaneonebucket" value="#application.razuna.awstenaneonebucket#" />
+		<set name="attributes.razuna.application.awstenaneonebucketname" value="#application.razuna.awstenaneonebucketname#" />
+		<set name="attributes.razuna.application.isp" value="#application.razuna.isp#" />
+		<set name="attributes.razuna.application.rfs" value="#application.razuna.rfs#" />
+		<set name="attributes.razuna.application.s3ds" value="#application.razuna.s3ds#" />
+		<set name="attributes.razuna.session" value="#session#" />
+		<!-- <include template="t" /> -->
+	</fuseaction>
 
 	<!--
 		This is executed at application startup (from <appinit>) and
@@ -117,10 +130,6 @@
 			<argument name="dsn" value="#application.razuna.datasource#" />
 			<argument name="database" value="#application.razuna.thedatabase#" />
 		</instantiate>
-		<!-- Nirvanix -->
-		<!-- <instantiate class="nirvanix" object="myFusebox.getApplicationData().nirvanix" overwrite="true">
-			<argument name="appkey" value="#application.razuna.nvxappkey#" />
-		</instantiate> -->
 		<!-- Amazon -->
 		<instantiate class="amazon" object="myFusebox.getApplicationData().amazon" overwrite="true">
 		</instantiate>

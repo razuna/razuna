@@ -31,13 +31,13 @@
 				<!--- Page --->
 				<li><a href="##plugins">Plugins</a></li>
 				<!--- Host Plugins --->
-				<li><a href="##plugins_hosts" onclick="loadcontent('plugins_hosts','#myself#c.plugins_hosts');">#defaultsObj.trans("plugins_hosts_tab")#</a></li>
+				<li><a href="##plugins_hosts" onclick="loadcontent('plugins_hosts','#myself#c.plugins_hosts');">#myFusebox.getApplicationData().defaults.trans("plugins_hosts_tab")#</a></li>
 			</ul>
 			<!--- Plugins Main page --->
 			<div id="plugins">
 				<table width="700" border="0" cellspacing="0" cellpadding="0" class="grid">
 					<tr>
-						<td colspan="2" align="right"><a href="##" onclick="$('##plugin_upload').slideToggle('slow');return false;">#defaultsObj.trans("add_new")#</a></td>
+						<td colspan="2" align="right"><a href="##" onclick="$('##plugin_upload').slideToggle('slow');return false;">#myFusebox.getApplicationData().defaults.trans("add_new")#</a></td>
 					</tr>
 					<tr>
 						<td colspan="2">
@@ -49,11 +49,11 @@
 					</tr>
 					<tr>
 						<th>Plugin</th>
-						<th>#defaultsObj.trans("desc")#</th>
+						<th>#myFusebox.getApplicationData().defaults.trans("desc")#</th>
 					</tr>
 					<cfloop query="qry_plugins">
 						<tr>
-							<td nowrap="nowrap" valign="top"><strong>#p_name#</strong><br /><cfif p_active><a href="##" onclick="loadcontent('rightside','#myself#c.plugins_onoff&active=false&pid=#p_id#');">#defaultsObj.trans("deactivate")#</a><cfelse><a href="##" onclick="loadcontent('rightside','#myself#c.plugins_onoff&active=true&pid=#p_id#');">#defaultsObj.trans("activate")#</a> | <a href="##" onclick="showwindow('#myself#ajax.remove_record&what=plugins&id=#p_id#&loaddiv=rightside','#defaultsObj.trans("remove_selected")#',400,1);return false">Delete</a></cfif></td>
+							<td nowrap="nowrap" valign="top"><strong>#p_name#</strong><br /><cfif p_active><a href="##" onclick="loadcontent('rightside','#myself#c.plugins_onoff&active=false&pid=#p_id#');">#myFusebox.getApplicationData().defaults.trans("deactivate")#</a><cfelse><a href="##" onclick="loadcontent('rightside','#myself#c.plugins_onoff&active=true&pid=#p_id#');">#myFusebox.getApplicationData().defaults.trans("activate")#</a> | <a href="##" onclick="showwindow('#myself#ajax.remove_record&what=plugins&id=#p_id#&loaddiv=rightside','#myFusebox.getApplicationData().defaults.trans("remove_selected")#',400,1);return false">Delete</a></cfif></td>
 							<td valign="top">#p_description#</td>
 						</tr>
 					</cfloop>

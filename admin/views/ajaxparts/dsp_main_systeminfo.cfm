@@ -27,31 +27,31 @@
 	<cfoutput>
 		<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
 			<tr>
-				<td width="100%">#defaultsObj.trans("database_in_use")#</td>
+				<td width="100%">#myFusebox.getApplicationData().defaults.trans("database_in_use")#</td>
 				<td width="1%" nowrap>#application.razuna.thedatabase#</td>
 			</tr>
 			<tr>
-				<td width="100%">#defaultsObj.trans("storage_container")#</td>
+				<td width="100%">#myFusebox.getApplicationData().defaults.trans("storage_container")#</td>
 				<td width="1%" nowrap>#application.razuna.storage#</td>
 			</tr>
 			<tr>
-				<td width="100%">#defaultsObj.trans("server_platform")#</td>
+				<td width="100%">#myFusebox.getApplicationData().defaults.trans("server_platform")#</td>
 				<td width="1%" nowrap>#server.OS.Name#</td>
 			</tr>
 			<tr>
-				<td width="100%">#defaultsObj.trans("server_platform_version")#</td>
+				<td width="100%">#myFusebox.getApplicationData().defaults.trans("server_platform_version")#</td>
 				<td width="1%" nowrap>#server.os.version#</td>
 			</tr>
 			<tr>
-				<td width="100%">#defaultsObj.trans("coldfusion_product")#</td>
+				<td width="100%">#myFusebox.getApplicationData().defaults.trans("coldfusion_product")#</td>
 				<td width="1%" nowrap>#server.ColdFusion.ProductName#</td>
 			</tr>
 			<tr>
-				<td width="100%">#defaultsObj.trans("coldfusion_version")#</td>
+				<td width="100%">#myFusebox.getApplicationData().defaults.trans("coldfusion_version")#</td>
 				<td width="1%" nowrap><cfif server.ColdFusion.ProductName CONTAINS "bluedragon">#server.bluedragon.edition#<cfelse>#server.ColdFusion.ProductVersion#</cfif></td>
 			</tr>
 			<tr>
-				<td width="100%">#defaultsObj.trans("server_url")#</td>
+				<td width="100%">#myFusebox.getApplicationData().defaults.trans("server_url")#</td>
 				<td width="1%" nowrap>#cgi.HTTP_HOST#</td>
 			</tr>
 		</table>

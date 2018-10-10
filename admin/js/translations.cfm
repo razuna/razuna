@@ -1,12 +1,12 @@
 <script language="javascript">
 	function transsearch(){
 		if (document.getElementById('trans_id').value == "" && document.getElementById('trans_text').value == ""){
-			alert('<cfoutput>#defaultsObj.trans("one_field_fill")#</cfoutput>');
+			alert('<cfoutput>#myFusebox.getApplicationData().defaults.trans("one_field_fill")#</cfoutput>');
 			return false;
 		}
 		else {
 		// Disable Button
-		document.tsearch.Button.value = "<cfoutput>#defaultsObj.trans("please_wait")#...</cfoutput>";
+		document.tsearch.Button.value = "<cfoutput>#myFusebox.getApplicationData().defaults.trans("please_wait")#...</cfoutput>";
 		document.tsearch.Button.disabled = true;
 		// Show the div
 		document.getElementById('tresults').style.visibility = "visible";
@@ -18,7 +18,7 @@
 	}
 
 	function thedelaytrans(){
-		document.tsearch.Button.value = "<cfoutput>#defaultsObj.trans("user_search")#</cfoutput>";
+		document.tsearch.Button.value = "<cfoutput>#myFusebox.getApplicationData().defaults.trans("user_search")#</cfoutput>";
         document.tsearch.Button.disabled = false;
 	}
 </script>
@@ -27,7 +27,7 @@
 	function updatetransdiv(){
 		// Show the div
 		document.getElementById('updatetext').style.visibility = "visible";
-		document.getElementById('updatetext').innerHTML='<cfoutput>#defaultsObj.trans("success")#</cfoutput>';
+		document.getElementById('updatetext').innerHTML='<cfoutput>#myFusebox.getApplicationData().defaults.trans("success")#</cfoutput>';
 	}
 </script>
 

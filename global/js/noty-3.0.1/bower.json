@@ -1,0 +1,20 @@
+{
+  "name": "noty",
+  "description": "Noty - notification plugin",
+  "license": "MIT",
+  "homepage": "http://ned.im/noty",
+  "main": "dist/noty.js",
+  "keywords": [
+    "noty",
+    "notification",
+    "alert",
+    "confirmation"
+  ],
+  "ignore": [
+    "node_modules",
+    "tests"
+  ],
+  "authors": [
+    "Nedim Arabacı <nedimarabaci@gmail.com>"
+  ]
+}

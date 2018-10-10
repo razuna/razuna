@@ -136,7 +136,7 @@ documentation is available at bjork.net (cf_sourcebrowser)
 --->
 
 <cfcomponent displayName="CFMXMappingsCFC" output="false" 
-	hint="CF-MX mapping editor"
+	
 	lastUpdated="2002-08-30"
 	author="Jochem van Dieten"
 	authorEmail="jochem@vandieten.net"
@@ -191,9 +191,9 @@ documentation is available at bjork.net (cf_sourcebrowser)
 	<!---                         GET MAPPING DIRECTORY-PATH                                    --->
 	<!--- ************************************************************************************* --->
 	<cffunction name="getMappingPath" access="public" output="false" returnType="string"
-		hint="Returns the path of a mapping or an empty string if not found.">
+		>
 		<cfargument name="mapping" type="string" required="true"
-			hint="The mapping for which to search. Starts with a slash, no trailing slash.">
+			>
 			<cflock name="serviceFactory" type="exclusive" timeout="10">
 				<cfif StructKeyExists(this.mappings,fixpath(mapping))>
 					<cfreturn this.mappings[fixPath(mapping)]>
@@ -207,11 +207,11 @@ documentation is available at bjork.net (cf_sourcebrowser)
 	<!---                         ADD A NEW MAPPING  [CHANGE AN EXISTING MAPPING]               --->
 	<!--- ************************************************************************************* --->
 	<cffunction name="addMapping" access="public" output="false" returnType="boolean"
-		hint="Adds the mapping defined by the mapping and path attributes. Returns true if set successful.">
+		>
 		<cfargument name="mapping" type="string" required="true"
-			hint="The mapping to add. Starts with a slash (/), no trailing slash.">
+			>
 		<cfargument name="path" type="string" required="true"
-			hint="The absolute path of the mapping to add. Trailing (back)slash required.">
+			>
 
 		<!--- Insure the mapping contains only characters the administrator considers valid.
 			Otherwise, we could put something in here, that we couldn't EDIT (in the Administrator) later. --->
@@ -229,9 +229,9 @@ documentation is available at bjork.net (cf_sourcebrowser)
 	<!---                         DELETE A MAPPING                                              --->
 	<!--- ************************************************************************************* --->
 	<cffunction name="deleteMapping" access="public" output="false" returnType="boolean"
-		hint="Deletes the mapping defined by the mapping attribute.">
+		>
 		<cfargument name="mapping" type="string" required="true"
-			hint="The mapping to delete. Starts with a slash (/), no trailing slash.">
+			>
 
 		<cflock name="serviceFactory" type="exclusive" timeout="10">
 			<cfreturn StructDelete(this.mappings, fixPath(mapping), TRUE)>
@@ -243,7 +243,7 @@ documentation is available at bjork.net (cf_sourcebrowser)
 	<!---                         GET ALL MAPPINGS                                              --->
 	<!--- ************************************************************************************* --->
 	<cffunction name="showMappings" access="public" output="false" returntype="struct"
-		hint="Returns all defined mappings in a structure.">
+		>
 
 		<cflock name="serviceFactory" type="exclusive" timeout="10">
 			<cfreturn this.mappings>

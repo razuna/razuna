@@ -25,8 +25,16 @@
 --->
 <cfcomponent output="false" extends="extQueryCaching">
 
-	<!--- Settings Object --->
-	<cfobject component="global.cfc.settings" name="settingsObj">
+	<cffunction name="init" returntype="api" access="public" output="false">
+		<cfreturn this />
+	</cffunction>
+
+	<cffunction name="getStruct" access="public" returntype="struct">
+		<cfset var _s = structNew()>
+		<cfset _s.razuna.application = application.razuna>
+		<cfset _s.razuna.session = session>
+		<cfreturn _s>
+	</cffunction>
 
 	<!--- Add action --->
 	<cffunction name="add_action" access="public" returntype="void">
@@ -35,18 +43,19 @@
 		<cfargument name="comp" type="string" required="true" />
 		<cfargument name="func" type="string" required="true" />
 		<cfargument name="args" type="string" required="false" default="" />
+		<cfargument name="thestruct" type="struct">
 		<!--- Query any same action first --->
-		<cfquery datasource="#application.razuna.datasource#" name="qryp">
+		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qryp">
 		DELETE FROM plugins_actions
 		WHERE p_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.pid#">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 		AND action = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.action#">
 		AND comp = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.comp#">
 		AND func = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.func#">
 		AND args = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.args#">
 		</cfquery>
 		<!--- Add this action to DB --->
-		<cfquery datasource="#application.razuna.datasource#">
+		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
 		INSERT INTO plugins_actions
 		(action, comp, func, args, p_id, host_id)
 		VALUES(
@@ -55,11 +64,11 @@
 			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.func#">,
 			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.args#">,
 			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.pid#">,
-			<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 		)
 		</cfquery>
 		<!--- Reset cache --->
-		<cfset resetcachetoken("settings")>
+		<cfset resetcachetoken(type="settings", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 	</cffunction>
 
 	<!--- Del action --->
@@ -69,11 +78,12 @@
 		<cfargument name="comp" type="string" required="false" default="" />
 		<cfargument name="func" type="string" required="false" default="" />
 		<cfargument name="args" type="string" required="false" default="" />
+		<cfargument name="thestruct" type="struct" required="true">
 		<!--- DB --->
-		<cfquery datasource="#application.razuna.datasource#">
+		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
 		DELETE FROM plugins_actions
 		WHERE p_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.pid#">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 		<cfif arguments.action NEQ "">
 			AND action = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.action#">
 		</cfif>
@@ -88,27 +98,27 @@
 		</cfif>
 		</cfquery>
 		<!--- Reset cache --->
-		<cfset resetcachetoken("settings")>
+		<cfset resetcachetoken(type="settings", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 	</cffunction>
 
 	<!--- Get datasource --->
 	<cffunction name="getDatasource" access="public" returntype="String">
-		<cfreturn settingsObj.get_global().conf_datasource />
+		<cfreturn application.razuna.datasource />
 	</cffunction>
 
 	<!--- Get database --->
 	<cffunction name="getDatabase" access="public" returntype="String">
-		<cfreturn settingsObj.get_global().conf_database />
+		<cfreturn application.razuna.thedatabase />
 	</cffunction>
 
 	<!--- Get schema --->
 	<cffunction name="getSchema" access="public" returntype="String">
-		<cfreturn settingsObj.get_global().conf_schema />
+		<cfreturn application.razuna.schema />
 	</cffunction>
 
 	<!--- Get storage --->
 	<cffunction name="getStorage" access="public" returntype="String">
-		<cfreturn settingsObj.get_global().conf_storage />
+		<cfreturn application.razuna.storage />
 	</cffunction>
 
 	<!--- Get Sessions --->
@@ -120,10 +130,10 @@
 	<cffunction name="getHost" access="public" returntype="query">
 		<cfargument name="id" type="numeric" required="true" />
 		<!--- Param --->
-		<cfset var s = structNew()>
-		<cfset s.host_id = arguments.id>
+		<cfset var _s = getStruct()>
+		<cfset _s.host_id = arguments.id>
 		<!--- Call host details --->
-		<cfinvoke component="hosts" method="getdetail" thestruct="#s#" returnvariable="qryhost" />
+		<cfinvoke component="hosts" method="getdetail" thestruct="#_s#" returnvariable="qryhost" />
 		<cfreturn qryhost />
 	</cffunction>
 
@@ -134,50 +144,59 @@
 
 	<!--- Get HostDBPrefix --->
 	<cffunction name="getHostPrefix" access="public" returntype="String">
-		<cfreturn session.HostDBPrefix />
+		<cfreturn session.hostdbprefix />
 	</cffunction>
 
 	<!--- Get Groups --->
 	<cffunction name="getGroups" access="public" returntype="query">
-		<cfinvoke component="groups" method="getall" returnvariable="qrygrp" />
+		<cfset var _s = getStruct()>
+		<cfinvoke component="groups" method="getall" thestruct="#_s#" returnvariable="qrygrp" />
 		<cfreturn qrygrp />
 	</cffunction>
 
 	<!--- Get Users --->
 	<cffunction name="getUsers" access="public" returntype="query">
-		<cfinvoke component="users" method="getall" returnvariable="qryusers" />
+		<cfset var _s = getStruct()>
+		<cfinvoke component="users" method="getall" thestruct="#_s#" returnvariable="qryusers" />
 		<cfreturn qryusers />
 	</cffunction>
 
 	<!--- Get Users --->
 	<cffunction name="getUser" access="public" returntype="query">
 		<cfargument name="user_id" type="string" required="true" />
-		<cfinvoke component="users" method="details" thestruct="#arguments#" returnvariable="qryuser" />
+		<!--- Param --->
+		<cfset var _s = getStruct()>
+		<cfset _s.user_id = arguments.user_id>
+		<cfinvoke component="users" method="details" thestruct="#_s#" returnvariable="qryuser" />
 		<cfreturn qryuser />
 	</cffunction>
 
 	<!--- Get Users of Groups --->
 	<cffunction name="getUsersOfGroups" access="public" returntype="query">
 		<cfargument name="thewho" type="string" required="true" />
-		<cfinvoke component="groups_users" method="getUsersOfGroups" grp_id="#arguments.thewho#" returnvariable="qrygrp" />
+		<cfset var _s = getStruct()>
+		<cfinvoke component="groups_users" method="getUsersOfGroups" grp_id="#arguments.thewho#" thestruct="#_s#" returnvariable="qrygrp" />
 		<cfreturn qrygrp />
 	</cffunction>
 
 	<!--- Get UploadTemplates --->
 	<cffunction name="getUploadTemplates" access="public" returntype="query">
-		<cfinvoke component="global" method="upl_templates" theactive="true" returnvariable="qryuptemp" />
+		<cfset var _s = getStruct()>
+		<cfinvoke component="global" method="upl_templates" theactive="true" thestruct="#_s#" returnvariable="qryuptemp" />
 		<cfreturn qryuptemp />
 	</cffunction>
 
 	<!--- Get Labels --->
 	<cffunction name="getLabels" access="public" returntype="query">
-		<cfinvoke component="labels" method="labels_dropdown" returnvariable="qrylabels" />
+		<cfset var _s = getStruct()>
+		<cfinvoke component="labels" method="labels_dropdown" thestruct="#_s#" returnvariable="qrylabels" />
 		<cfreturn qrylabels />
 	</cffunction>
 
 	<!--- Get CustomFields --->
 	<cffunction name="getCustomFields" access="public" returntype="query">
-		<cfinvoke component="custom_fields" method="get" fieldsenabled="true" returnvariable="qrycf" />
+		<cfset var _s = getStruct()>
+		<cfinvoke component="custom_fields" method="get" fieldsenabled="true" thestruct="#_s#" returnvariable="qrycf" />
 		<cfreturn qrycf />
 	</cffunction>
 
@@ -185,17 +204,20 @@
 	<cffunction name="getCustomFieldsValues" access="public" returntype="query">
 		<cfargument name="fileid" type="string" required="true" />
 		<!--- Param --->
-		<cfset var s = structNew()>
-		<cfset s.file_id = arguments.fileid>
+		<cfset var _s = getStruct()>
+		<cfset _s.file_id = arguments.fileid>
 		<!--- Call method --->
-		<cfinvoke component="custom_fields" method="gettextvalues" thestruct="#s#" returnvariable="qrycfv" />
+		<cfinvoke component="custom_fields" method="gettextvalues" thestruct="#_s#" returnvariable="qrycfv" />
 		<cfreturn qrycfv />
 	</cffunction>
 
 	<!--- Set CustomFields --->
 	<cffunction name="setCustomField" access="public" returntype="void">
 		<cfargument name="thestruct" type="struct" required="true" />
-		<cfinvoke component="custom_fields" method="savevalues" thestruct="#arguments.thestruct#" />
+		<!--- Param --->
+		<cfset var _s = getStruct()>
+		<cfset _s.thestruct = arguments.thestruct>
+		<cfinvoke component="custom_fields" method="savevalues" thestruct="#_s#" />
 		<cfreturn />
 	</cffunction>
 
@@ -215,8 +237,6 @@
 			<!--- Get id from config file --->
 			<cfset var plugID = getProfileString("#thepath#/plugins/#arguments.pluginname#/config/config.ini", "information", "id")>
 			<cfcatch type="any">
-				<!--- <cfset cfcatch.custom_message = "Error in function api.getMyID">
-				<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/> --->
 			</cfcatch>
 		</cftry>
 		<cfreturn plugID />
@@ -246,102 +266,110 @@
 			<cfinvokeargument name="thepath" value="#arguments.thepath#">
 			<cfinvokeargument name="sendaszip" value="#arguments.sendaszip#">
 			<cfinvokeargument name="userid" value="#arguments.userid#">
+			<cfinvokeargument name="thestruct" value="#getStruct()#">
 		</cfinvoke>
 	</cffunction>
 
 	<!--- Get Name of Folder --->
 	<cffunction name="getFolderName" access="public" returntype="string">
 		<cfargument name="folderid" type="string" required="true" />
-		<cfinvoke component="folders" method="getfoldername" folder_id="#arguments.folderid#" returnvariable="fn" />
+		<cfset var _s = getStruct()>
+		<cfinvoke component="folders" method="getfoldername" folder_id="#arguments.folderid#" thestruct="#_s#" returnvariable="fn" />
 		<cfreturn fn />
 	</cffunction>
 
 	<!--- Add labels --->
 	<cffunction name="addLabels" access="public" returntype="void">
-		<cfargument name="labelids" type="string" required="true" hint="This is a list of the labeids" />
-		<cfargument name="fileid" type="string" required="true" hint="ID of asset" />
-		<cfargument name="type" type="string" required="true" hint="Type of asset" />
+		<cfargument name="labelids" type="string" required="true" />
+		<cfargument name="fileid" type="string" required="true" />
+		<cfargument name="type" type="string" required="true" />
+		<cfset var _s = getStruct()>
 		<!--- Params --->
-		<cfset arguments.labels = arguments.labelids>
-		<cfset arguments.thetype = arguments.type>
+		<cfset _s.labels = arguments.labelids>
+		<cfset _s.thetype = arguments.type>
+		<cfset _s.fileid = arguments.fileid>
 		<!--- Call function --->
-		<cfinvoke component="labels" method="label_add_all" thestruct="#arguments#" />
+		<cfinvoke component="labels" method="label_add_all" thestruct="#_s#" />
 	</cffunction>
 
 	<!--- Execute upload Template --->
 	<cffunction name="execUploadTemplate" access="public" returntype="void">
-		<cfargument name="utid" type="string" required="true" hint="ID of the upload template" />
-		<cfargument name="fileid" type="string" required="true" hint="ID of asset" />
-		<cfargument name="type" type="string" required="true" hint="Type of asset" />
-		<cfargument name="args" type="struct" required="true" hint="Structure" />
+		<cfargument name="utid" type="string" required="true" />
+		<cfargument name="fileid" type="string" required="true" />
+		<cfargument name="type" type="string" required="true" />
+		<cfargument name="args" type="struct" required="true" />
+		<cfset var _s = getStruct()>
 		<!--- Params --->
-		<cfset arguments.upl_template = arguments.utid>
-		<cfset arguments.file_id = arguments.fileid>
-		<cfset arguments.upltemptype = arguments.type>
-		<cfset StructAppend(arguments,arguments.args,"false")>
+		<cfset _s.upl_template = arguments.utid>
+		<cfset _s.file_id = arguments.fileid>
+		<cfset _s.upltemptype = arguments.type>
+		<cfset StructAppend(_s,arguments.args,"false")>
 		<!--- Call function --->
-		<cfinvoke component="assets" method="process_upl_template" thestruct="#arguments#">
+		<cfinvoke component="assets" method="process_upl_template" thestruct="#_s#">
 	</cffunction>
 
 	<!--- Move File --->
 	<cffunction name="moveFile" access="public" returntype="void">
-		<cfargument name="folderid" type="string" required="true" hint="ID of the folder" />
-		<cfargument name="fileid" type="string" required="true" hint="ID of asset" />
-		<cfargument name="type" type="string" required="true" hint="Type of asset" />
+		<cfargument name="folderid" type="string" required="true" />
+		<cfargument name="fileid" type="string" required="true" />
+		<cfargument name="type" type="string" required="true" />
+		<cfset var _s = getStruct()>
 		<!--- Params --->
-		<cfset arguments.folder_id = arguments.folderid>
+		<cfset _s.folder_id = arguments.folderid>
 		<!--- Images --->
 		<cfif arguments.type EQ "img">
 			<!--- Params --->
-			<cfset arguments.img_id = arguments.fileid>
+			<cfset _s.img_id = arguments.fileid>
 			<!--- Call function --->
-			<cfinvoke component="images" method="move" thestruct="#arguments#">
+			<cfinvoke component="images" method="move" thestruct="#_s#">
 		<!--- Videos --->
 		<cfelseif arguments.type EQ "vid">
 			<!--- Params --->
-			<cfset arguments.vid_id = arguments.fileid>
+			<cfset _s.vid_id = arguments.fileid>
 			<!--- Call function --->
-			<cfinvoke component="videos" method="move" thestruct="#arguments#">
+			<cfinvoke component="videos" method="move" thestruct="#_s#">
 		<!--- Audios --->
 		<cfelseif arguments.type EQ "aud">
 			<!--- Params --->
-			<cfset arguments.aud_id = arguments.fileid>
+			<cfset _s.aud_id = arguments.fileid>
 			<!--- Call function --->
-			<cfinvoke component="audios" method="move" thestruct="#arguments#">
+			<cfinvoke component="audios" method="move" thestruct="#_s#">
 		<!--- Docs --->
 		<cfelseif arguments.type EQ "doc">
 			<!--- Params --->
-			<cfset arguments.doc_id = arguments.fileid>
+			<cfset _s.doc_id = arguments.fileid>
 			<!--- Call function --->
-			<cfinvoke component="files" method="move" thestruct="#arguments#">
+			<cfinvoke component="files" method="move" thestruct="#_s#">
 		</cfif>
 	</cffunction>
 
 	<!--- Set Metadata --->
 	<cffunction name="setMetadata" access="public" returntype="void">
-		<cfargument name="fileid" type="string" required="true" hint="ID of asset can be a list" />
-		<cfargument name="type" type="string" required="true" hint="Type of asset" />
-		<cfargument name="metadata" type="string" required="true" hint="Metadata as a list separated with a ;" />
+		<cfargument name="fileid" type="string" required="true" />
+		<cfargument name="type" type="string" required="true" />
+		<cfargument name="metadata" type="string" required="true" />
+		<cfset var _s = getStruct()>
 		<!--- Call function --->
-		<cfinvoke component="xmp" method="setMetadata" fileid="#arguments.fileid#" type="#arguments.type#" metadata="#arguments.metadata#">
+		<cfinvoke component="xmp" method="setMetadata" fileid="#arguments.fileid#" type="#arguments.type#" metadata="#arguments.metadata#" thestruct="#_s#">
 	</cffunction>
 
 	<!--- Set Custom Metadata --->
 	<cffunction name="setMetadataCustom" access="public" returntype="void">
-		<cfargument name="fileid" type="string" required="true" hint="ID of asset can be a list" />
-		<cfargument name="type" type="string" required="true" hint="Type of asset" />
-		<cfargument name="metadata" type="string" required="true" hint="Metadata as a list separated with a ;" />
+		<cfargument name="fileid" type="string" required="true" />
+		<cfargument name="type" type="string" required="true" />
+		<cfargument name="metadata" type="string" required="true" />
+		<cfset var _s = getStruct()>
 		<!--- Call function --->
-		<cfinvoke component="xmp" method="setMetadataCustom" fileid="#arguments.fileid#" type="#arguments.type#" metadata="#arguments.metadata#">
+		<cfinvoke component="xmp" method="setMetadataCustom" fileid="#arguments.fileid#" type="#arguments.type#" metadata="#arguments.metadata#" thestruct="#_s#">
 	</cffunction>
 
 	<!--- Get Description, keywords and raw metadata --->
 	<cffunction name="getMetadataOfFile" access="public" returntype="struct">
-		<cfargument name="fileid" type="string" required="true" hint="ID of asset can be a list" />
-		<cfargument name="type" type="string" required="true" hint="Type of asset" />
+		<cfargument name="fileid" type="string" required="true" />
+		<cfargument name="type" type="string" required="true" />
 		<!--- Params --->
-		<cfset var s = structNew()>
-		<cfset s.file_id = arguments.fileid>
+		<cfset var _s = getStruct()>
+		<cfset _s.file_id = arguments.fileid>
 		<cfset var qry = queryNew("id")>
 		<cfset queryAddRow(qry)>
 		<cfset querySetCell(qry, "id", arguments.fileid)>
@@ -349,25 +377,25 @@
 		<!--- Images --->
 		<cfif arguments.type EQ "img">
 			<!--- Call function --->
-			<cfinvoke component="images" method="gettext" qry="#qry#" returnvariable="r.metadata">
-			<cfinvoke component="images" method="getrawmetadata" qry="#qry#" returnvariable="r.rawmetadata">
-			<cfinvoke component="xmp" method="readxmpdb" thestruct="#s#" returnvariable="r.xmpmetadata">
+			<cfinvoke component="images" method="gettext" qry="#qry#" thestruct="#_s#" returnvariable="r.metadata">
+			<cfinvoke component="images" method="getrawmetadata" qry="#qry#" thestruct="#_s#" returnvariable="r.rawmetadata">
+			<cfinvoke component="xmp" method="readxmpdb" thestruct="#_s#" returnvariable="r.xmpmetadata">
 		<!--- Videos --->
 		<cfelseif arguments.type EQ "vid">
 			<!--- Call function --->
-			<cfinvoke component="videos" method="gettext" qry="#qry#" returnvariable="r.metadata">
-			<cfinvoke component="videos" method="getrawmetadata" qry="#qry#" returnvariable="r.rawmetadata">
+			<cfinvoke component="videos" method="gettext" qry="#qry#" thestruct="#_s#" returnvariable="r.metadata">
+			<cfinvoke component="videos" method="getrawmetadata" qry="#qry#" thestruct="#_s#" returnvariable="r.rawmetadata">
 		<!--- Audios --->
 		<cfelseif arguments.type EQ "aud">
 			<!--- Call function --->
-			<cfinvoke component="audios" method="gettext" qry="#qry#" returnvariable="r.metadata">
-			<cfinvoke component="audios" method="getrawmetadata" qry="#qry#" returnvariable="r.rawmetadata">
+			<cfinvoke component="audios" method="gettext" qry="#qry#" thestruct="#_s#" returnvariable="r.metadata">
+			<cfinvoke component="audios" method="getrawmetadata" qry="#qry#" thestruct="#_s#" returnvariable="r.rawmetadata">
 		<!--- Docs --->
 		<cfelseif arguments.type EQ "doc">
 			<!--- Call function --->
-			<cfinvoke component="files" method="gettext" qry="#qry#" returnvariable="r.metadata">
-			<cfinvoke component="files" method="getrawmetadata" qry="#qry#" returnvariable="r.rawmetadata">
-			<cfinvoke component="files" method="getpdfxmp" thestruct="#s#" returnvariable="r.xmpmetadata">
+			<cfinvoke component="files" method="gettext" qry="#qry#" thestruct="#_s#" returnvariable="r.metadata">
+			<cfinvoke component="files" method="getrawmetadata" qry="#qry#" thestruct="#_s#" returnvariable="r.rawmetadata">
+			<cfinvoke component="files" method="getpdfxmp" thestruct="#_s#" returnvariable="r.xmpmetadata">
 		</cfif>
 		<!--- Return --->
 		<cfreturn r />
@@ -375,7 +403,7 @@
 
 	<!--- Get temp files --->
 	<cffunction name="getFilesTemp" access="public" returntype="query">
-		<cfargument name="fileid" type="string" required="true" hint="ID of asset can be a list" />
+		<cfargument name="fileid" type="string" required="true" />
 		<!--- Param --->
 		<cfset var qry = "">
 		<!--- Query --->
@@ -398,7 +426,7 @@
 
 	<!--- Get Description, keywords and raw metadata --->
 	<cffunction name="getFile" access="public" returntype="query">
-		<cfargument name="fileid" type="string" required="true" hint="ID of asset can be a list" />
+		<cfargument name="fileid" type="string" required="true" />
 		<!--- Param --->
 		<cfset var qry = "">
 		<!--- Query --->
@@ -501,6 +529,7 @@
 		<cfargument name="thetype" type="string" required="true" />
 		<cfargument name="workflow" type="string" required="true" />
 		<cfargument name="folderid" type="string" required="true" />
+		<cfargument name="thestruct" type="Struct">
 		<!-- Variables for workflow -->
 		<cfset var s = {}>
 		<cfset s.fileid = arguments.fileid>
@@ -509,9 +538,9 @@
 		<cfset s.comingfrom = cgi.http_referer>
 		<!--- Loop over fileid and execute workflow for each file --->
 		<cfset s.folder_action = true>
-		<cfinvoke component="plugins" method="getactions" theaction="#arguments.workflow#" args="#s#" />
+		<cfinvoke component="plugins" method="getactions" theaction="#arguments.workflow#" args="#s#" thestruct="#arguments.thestruct#" />
 		<cfset s.folder_action = false>
-		<cfinvoke component="plugins" method="getactions" theaction="#arguments.workflow#" args="#s#" />
+		<cfinvoke component="plugins" method="getactions" theaction="#arguments.workflow#" args="#s#" thestruct="#arguments.thestruct#" />
 		<!--- Return --->
 		<cfreturn />
 	</cffunction>
@@ -519,9 +548,10 @@
 	<!--- Update Dates on files --->
 	<cffunction name="updateDate" access="public" returntype="void">
 		<cfargument name="fileid" type="string" required="true" />
-		<cfargument name="type" type="string" required="true" hint="Type of asset" />
+		<cfargument name="type" type="string" required="true" />
+		<cfset var _s = getStruct()>
 		<!--- Call function --->
-		<cfinvoke component="global" method="update_dates" fileid="#arguments.fileid#" type="#arguments.type#" />
+		<cfinvoke component="global" method="update_dates" fileid="#arguments.fileid#" type="#arguments.type#" thestruct="#_s#" />
 	</cffunction>
 
 </cfcomponent>

@@ -26,7 +26,7 @@
 <cfoutput>
 	<!--- Get LDAP User list --->
 	<cfset attributes.showerr = true>
-	<cfinvoke component="global.cfc.settings" method="get_ad_server_userlist"  returnvariable="results"  thestruct="#attributes#">
+	<cfinvoke component="global.cfc.settings" method="get_ad_server_userlist" returnvariable="results" thestruct="#attributes#">
 	<!--- Create a new three-column query, specifying the column data types --->
 	<form  name="ad_user_form" id="ad_user_form" action="#self#" method="post" >
 		<input type="hidden" name="#theaction#" value="c.ad_server_users_save">
@@ -56,7 +56,7 @@
 					<input type="hidden" name="user_phone_2_#currentrow#" class="#currentrow#" value="#homePhone#" disabled="disabled">
 					<input type="hidden" name="user_mobile_#currentrow#" class="#currentrow#" value="#mobile#" disabled="disabled">
 					<input type="hidden" name="user_fax_#currentrow#" class="#currentrow#" value="#facsimileTelephoneNumber#" disabled="disabled">
-					<cfinvoke component="global.cfc.users" method="check_email"  returnvariable="qCheckUser"  email=#mail# >
+					<cfinvoke component="global.cfc.users" method="check_email" returnvariable="qCheckUser" email=#mail# thestruct="#attributes#">
 					<tr>
 						<td valign="top" nowrap width="5%"><cfif qCheckUser.recordcount EQ 0 AND results.mail NEQ ""><input type="checkbox" name="ad_users" class="ad_users" id="ad_users" value="#currentrow#" /></cfif></td>
 						<td valign="top" nowrap width="20%">#SamAccountname#</td>
@@ -98,21 +98,21 @@
 					</cfloop>
 				}
 		});
-		
-		//Form data posted based on the checkbox checked values  
+
+		//Form data posted based on the checkbox checked values
 		$(".ad_users").on("change", function() {
 			if($(this).prop("checked")) {
-				 $('.'+$(this).val()).attr('disabled',false);		
+				 $('.'+$(this).val()).attr('disabled',false);
 			} else {
-				 $('.'+$(this).val()).attr('disabled',true);		
+				 $('.'+$(this).val()).attr('disabled',true);
 			}
 		});
-		 
+
 		$('##add').on('click', function () {
-			// Form url and post data	    
+			// Form url and post data
 			var url = formaction("ad_user_form");
 			var items = formserialize("ad_user_form");
-			
+
 			// Submit Form
 			$.ajax({
 				type: "POST",
@@ -122,7 +122,7 @@
 					destroywindow(1);
 					loadcontent('admin_users', '#myself#c.users');
 			   	}
-			});	   
+			});
 		});
 	</script>
 </cfoutput>

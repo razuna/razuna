@@ -33,7 +33,7 @@ VALUES(
 )
 </cfquery>
 <!--- Flush Cache --->
-<cfinvoke component="extQueryCaching" method="resetcachetoken" type="logs" />
+<cfinvoke component="extQueryCaching" method="resetcachetoken" type="logs" hostid="#session.hostid#" thestruct="#attributes#" />
 <!--- eMail --->
 <cfif cgi.http_host CONTAINS "razuna.com" OR cgi.http_host CONTAINS "razunabd.local">
 <cfmail to="bugs@razuna.com" from="server@razuna.com" subject="Razuna Error: #cgi.server_name# - #error.message#" type="html">

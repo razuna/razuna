@@ -89,7 +89,7 @@
 				<div>
 					<h3>#name#</h3>
 					<p>
-						Added on: #dateformat(date_create, "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(date_create, "HH:mm")#
+						Added on: #dateformat(date_create, "#myFusebox.getApplicationData().defaults.getdateformat(thestruct=attributes)#")# #timeformat(date_create, "HH:mm")#
 					</p>
 					<p>
 						By user: #user_first_name# #user_last_name#
@@ -110,7 +110,7 @@
 					AND file_id = '#id#'
 					</cfquery>
 					<cfif _approved.recordcount NEQ 0>
-						<strong>You already approved this file on #dateformat(_approved.approval_date, "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(_approved.approval_date, "HH:mm")#. Looks like we are waiting on others to approve, too.</strong>
+						<strong>You already approved this file on #dateformat(_approved.approval_date, "#myFusebox.getApplicationData().defaults.getdateformat(thestruct=attributes)#")# #timeformat(_approved.approval_date, "HH:mm")#. Looks like we are waiting on others to approve, too.</strong>
 					<cfelse>
 						<button class="awesome big green" onclick="approve_file('#id#', '#kind#')">Approve</button>
 						<button class="awesome big red" onclick="showwindow('#myself##xfa.reject#&file_id=#id#&file_type=#kind#&file_owner=#file_owner#','',600,1);return false;">Reject</button>

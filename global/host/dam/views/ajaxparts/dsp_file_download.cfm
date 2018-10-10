@@ -24,6 +24,7 @@
 *
 --->
 <!--- Define variables --->
+<!--- <cfdump var="#attributes#"> --->
 <cfoutput>
 	<table border="0" cellpadding="5" cellspacing="5" width="100%" class="grid">
 		<!--- Images --->

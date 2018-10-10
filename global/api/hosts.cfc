@@ -32,7 +32,7 @@
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
 			<!--- Query for the sysadmingroup --->
-			<cfquery datasource="#application.razuna.api.dsn#" name="qryuser">
+			<cfquery datasource="#application.razuna.datasource#" name="qryuser">
 			SELECT groupofuser
 			FROM webservices
 			WHERE sessiontoken = <cfqueryparam value="#arguments.sessiontoken#" cfsqltype="cf_sql_varchar">
@@ -41,7 +41,7 @@
 			<!--- If user is in sysadmin --->
 			<cfif qryuser.recordcount NEQ 0>
 				<!--- Query --->
-				<cfquery datasource="#application.razuna.api.dsn#" name="qry">
+				<cfquery datasource="#application.razuna.datasource#" name="qry">
 				SELECT host_id, host_name, host_path, host_db_prefix, host_shard_group
 				FROM hosts
 				</cfquery>

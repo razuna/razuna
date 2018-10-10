@@ -6,13 +6,15 @@ if (isIE()) {
 }
 
 function callMasonry() {
-	$('.grid-masonry').imagesLoaded( function() {
+	// $('.grid-masonry').imagesLoaded( function() {
 		$('.grid-masonry').masonry({
 			itemSelector: '.grid-masonry-item',
 			horizontalOrder: true,
-			percentPosition: true
+			percentPosition: true,
+			transitionDuration: '0.2s',
+			// columnWidth: '.grid-sizer',
 		});
-	});
+	// });
 }
 
 function clearMasonry() {
@@ -34,12 +36,13 @@ function isIE() {
 }
 
 // Show Window
-function showwindow(theurl,thetitle,thew,thewin) {
+function showwindow(theurl,thetitle,thew,thewin,postdata) {
+	if ( ! postdata ) postdata = null;
 	destroywindow(thewin);
 	// Clear the content of the window and show the loading gif
 	$('#thewindowcontent' + thewin).html('<img src="' + dynpath + '/global/host/dam/images/loading.gif" width="16" height="16" border="0" style="padding:10px;">');
 	// Load Content into Dialog
-	$('#thewindowcontent' + thewin).load(theurl).dialog({
+	$('#thewindowcontent' + thewin).load(theurl, postdata).dialog({
 		// RAZ-2718 Decode User's first and last name for title
 		title: unescape(thetitle),
 		modal: true,
@@ -65,7 +68,7 @@ function destroywindow(numb) {
 }
 // Load Content with JQuery
 function loadcontent(ele,url){
-	$("body").append('<div id="bodyoverlay"><img src="' + dynpath + '/global/host/dam/images/loading-bars.gif" border="0" style="padding:10px;"></div>');
+	$("body").append('<div id="bodyoverlay"><img src="' + dynpath + '/global/host/dam/images/loading-bars.gif" border="0"></div>');
 	// Load the page
 	$("#" + ele).load(url, function() {
 		$("#bodyoverlay").remove();
@@ -73,7 +76,7 @@ function loadcontent(ele,url){
 }
 // Load overlay
 function loadoverlay(){
-	$("body").append('<div id="bodyoverlay"><img src="' + dynpath + '/global/host/dam/images/loading-bars.gif" border="0" style="padding:10px;"></div>');
+	$("body").append('<div id="bodyoverlay"><img src="' + dynpath + '/global/host/dam/images/loading-bars.gif" border="0"></div>');
 }
 // Form: Get Action URL
 function formaction(theid) {
@@ -84,6 +87,19 @@ function formaction(theid) {
 function formserialize(theid) {
 	var theser = $('#' + theid).serialize();
 	return theser;
+}
+
+// Check if any form values are empty
+function formEmptyValues(items) {
+	var _empty = true;
+	var _values = items.split('&');
+	$.each(_values, function(i, v) {
+		var _v = v.split('=');
+		// if value is there
+		if ( _v[1] ) _empty = false;
+	});
+	// Return
+	return _empty;
 }
 
 // Jump to a folder and refresh left side
@@ -114,6 +130,11 @@ function clickcbk(theform,thefield,which) {
 	else{
 		document.forms[theform].elements[thefield][which].checked = false;
 	}
+}
+function clickcbk2(the_checkbox) {
+	var _elem = $('#' + the_checkbox);
+	if (_elem.is(":checked")) return _elem.prop('checked', false);
+	return _elem.prop('checked', true);
 }
 // Remove Record
 function removerecord(what,id){
@@ -153,7 +174,6 @@ function gotos(gotourl){
 function toggleDiv(mydiv){
 	//alert(document.getElementById(mydiv));
 	var t = document.getElementById(mydiv);
-	
 	if(t.style.display == "none"){
 		t.style.display = "";
 	}else{
@@ -296,7 +316,7 @@ function enablefromselectable(myform) {
 	if (n > 0 && isclosed) {
 		$("#folderselection" + myform).slideToggle('fast');
 		$("#folderselectionb" + myform).slideToggle('fast');
-		
+
 	}
 	if (n === 0 && !isclosed) {
 		$("#folderselection" + myform).slideToggle('fast');
@@ -307,13 +327,13 @@ function enablefromselectable(myform) {
 	$("#selectstoreb" + myform).css("display","none");
 }
 function enablesubserver(myform) {
-	var valid = true;   
+	var valid = true;
 	var checkBoxes = false;
 	var checkboxChecked = false;
-	
+
 	for (var i=0, j=document.forms[myform].elements.length; i<j; i++) {
 		myType = document.forms[myform].elements[i].type;
-		
+
 	if (myType == 'checkbox') {
 			checkBoxes = true;
 			if (document.forms[myform].elements[i].checked) checkboxChecked = true;
@@ -329,42 +349,31 @@ function enablesubserver(myform) {
 }
 function validateValues() {
 	var valid = true;
-		
+
 	var checkBoxes = false;
 	var checkboxChecked = false;
-	
+
 	for (var i=0, j=document.forms[myform].elements.length; i<j; i++) {
 		myType = document.forms[myform].elements[i].type;
-		
+
 		if (myType == 'checkbox') {
 			checkBoxes = true;
 			if (document.forms[myform].elements[i].checked) checkboxChecked = true;
 		}
-		
+
 	}
 
 	if (checkBoxes && !checkboxChecked) valid = false;
 
 	if (!valid)
-	return valid;    
+	return valid;
 }
-// If clicked in the document then close any dropdown menu with the class ddicon
-$(document).bind('click', function(e) {
-	var $clicked=$(e.target);
-	/* if($clicked.is('.ddselection_header') || $clicked.parents().is('.ddselection_header') || $clicked.is('.ddicon')) */
-	if($clicked.is('.ddicon') || $clicked.parents().is('.ddselection_header')) {
-		//alert('inside');
-	}
-	else {
-		//alert('outside');
-		$('.ddselection_header').hide();
-	}
-});
+
 // Simply JS to check radio button for group permissions
 // Check radio box
-	function checkradio(thisid){
-		$('#per_' + thisid).prop('checked','checked');
-	}
+function checkradio(thisid){
+	$('#per_' + thisid).prop('checked','checked');
+}
 // Flash footer_tabs
 function flash_footer(text){
 	$.sticky(text);
@@ -432,7 +441,7 @@ function checkentry(){
 		}
 		else {
 			// Show loading bar
-			$("body").append('<div id="bodyoverlay"><img src="' + dynpath + '/global/host/dam/images/loading-bars.gif" border="0" style="padding:10px;"></div>');
+			$("body").append('<div id="bodyoverlay"><img src="' + dynpath + '/global/host/dam/images/loading-bars.gif" border="0"></div>');
 			// We are now using POST for the search field (much more compatible then a simple load for foreign chars)
 			$('#rightside').load('index.cfm?fa=c.search_simple', { searchtext: encodeURIComponent(theentry), folder_id: thefolderid, thetype: thetype }, function(){
 				$("#bodyoverlay").remove();
@@ -514,8 +523,11 @@ function CheckAll(myform,folderid,thediv,thekind) {
 	// Remove ui-selected class
 	$('.assetbox').removeClass('ui-selected');
 	// Decide if this is from the search
-	if(folderid != 'x'){
-		$('#div_forall').load('index.cfm?fa=c.store_file_all&folder_id=' + folderid + '&thekind=' + thekind );
+	if (folderid !== 'x' && thekind !== 'labels'){
+		$('#div_forall').load('index.cfm?fa=c.store_file_all&folder_id=' + folderid + '&thekind=' + thekind + '&label_id=' + folderid );
+	}
+	else if (thekind === 'labels'){
+		$('#div_forall').load('index.cfm?fa=c.store_file_all&folder_id=0&thekind=' + thekind + '&label_id=' + folderid );
 	}
 	else{
 		// Get the ids from the hidden field
@@ -709,7 +721,7 @@ function set3gp(theform){
 		break;
 		case 12:
 		document.forms[theform].convert_width_3gp.value = '1408';
-		document.forms[theform].convert_height_3gp.value = '1152';	
+		document.forms[theform].convert_height_3gp.value = '1152';
 		break;
 	}
 	switch(thissize){
@@ -758,7 +770,7 @@ function set3gp_additional(theform,index){
 		break;
 		case 12:
 		document.forms[theform]["convert_width_3gp_"+index].value = '1408';
-		document.forms[theform]["convert_height_3gp_"+index].value = '1152';	
+		document.forms[theform]["convert_height_3gp_"+index].value = '1152';
 		break;
 	}
 	switch(thissize){
@@ -817,7 +829,7 @@ function changeFormat(theform,inpheight,inpwidth,outheight,outwidth,ydpi,xdpi,in
 				document.forms[theform].elements[outheight].style.display='none';
 				document.forms[theform].elements[inheight].style.display='';
 
-				var widthinches = Math.round(inpwidth.value / xdpi*100)/100; 
+				var widthinches = Math.round(inpwidth.value / xdpi*100)/100;
 				document.forms[theform].elements[inwidth].value = widthinches;
 
 				document.forms[theform].elements[outwidth].style.display='none';
@@ -1030,7 +1042,7 @@ function updategrp(grpid){
 		var upc_folder = 'false';
 	}
 	else {
-		var upc_folder = $('input:radio[name=edit_upc_folder_structure]:checked').val(); 
+		var upc_folder = $('input:radio[name=edit_upc_folder_structure]:checked').val();
 	}
 	if(checkgrp=="")
 	{
@@ -1055,7 +1067,7 @@ function showConnectDetail(kind) {
 	// Show lower part
 	$("#task_lower_part").css('display','');
 	// Evaluate
-	if (method == "server") { 
+	if (method == "server") {
 		$("#detailsServer_"+kind).css('display','block');
 		$("#detailsMail_"+kind).css('display','none');
 		$("#detailsFtp_"+kind).css('display','none');
@@ -1105,27 +1117,27 @@ function showConnectDetail(kind) {
 // Frequency: One-Time, Recurring, Daily
 function showFrequencyDetail(kind) {
 	var frequency = $("#frequency option:selected").val();
-	if (frequency == "1") { 
-		document.getElementById("detailsOneTime_"+kind).style.display = "block"; 
-		document.getElementById("detailsRecurring_"+kind).style.display = "none"; 
-		document.getElementById("detailsDaily_"+kind).style.display = "none"; 
+	if (frequency == "1") {
+		document.getElementById("detailsOneTime_"+kind).style.display = "block";
+		document.getElementById("detailsRecurring_"+kind).style.display = "none";
+		document.getElementById("detailsDaily_"+kind).style.display = "none";
 	}
 	else if (frequency == "2") {
-		document.getElementById("detailsOneTime_"+kind).style.display = "none"; 
-		document.getElementById("detailsRecurring_"+kind).style.display = "block"; 
-		document.getElementById("detailsDaily_"+kind).style.display = "none"; 
+		document.getElementById("detailsOneTime_"+kind).style.display = "none";
+		document.getElementById("detailsRecurring_"+kind).style.display = "block";
+		document.getElementById("detailsDaily_"+kind).style.display = "none";
 	}
 	else if (frequency == "3") {
-		document.getElementById("detailsOneTime_"+kind).style.display = "none"; 
-		document.getElementById("detailsRecurring_"+kind).style.display = "none"; 
-		document.getElementById("detailsDaily_"+kind).style.display = "block"; 
+		document.getElementById("detailsOneTime_"+kind).style.display = "none";
+		document.getElementById("detailsRecurring_"+kind).style.display = "none";
+		document.getElementById("detailsDaily_"+kind).style.display = "block";
 	}
 }
 // Check and fix time
-function fixTime(fld) 
-{ // tenacious time correction 
-	if(!fld.value.length||fld.disabled) return true; // blank fields are the domain of requireValue 
-	var hour= 0; 
+function fixTime(fld)
+{ // tenacious time correction
+	if(!fld.value.length||fld.disabled) return true; // blank fields are the domain of requireValue
+	var hour= 0;
 	var mins= 0;
 	val= fld.value;
 	var dt= new Date('1/1/2000 ' + val);
@@ -1156,7 +1168,7 @@ function hidewinscheduler(){
 }
 // Open FTP connection and show its folder structure
 function openFtp(kind) {
-	if (kind == "Upd") var nr = 1; 
+	if (kind == "Upd") var nr = 1;
 	else var nr = 0;
 
 	var ftpServer = document.getElementsByName("ftpServer")[nr].value;
@@ -1172,7 +1184,7 @@ function openFtp(kind) {
 }
 // Open eMail connection and show possible messages
 function openMail(kind) {
-	if (kind == "Upd") var nr = 1; 
+	if (kind == "Upd") var nr = 1;
 	else var nr = 0;
 
 	var mailPop  = document.getElementsByName("mailPop")[nr].value;
@@ -1186,7 +1198,7 @@ function openMail(kind) {
 	}
 }
 
-// CUSTOM FIELDS 
+// CUSTOM FIELDS
 
 // Add a new field
 function customfieldadd(){
@@ -1223,44 +1235,7 @@ function customfieldupdate(){
 function reloadfields(){
 	loadcontent('thefields','index.cfm?fa=c.custom_fields_existing');
 }
-// On document ready
-$(document).ready(function() {
-	// Detect Firebug
-	// if (window.console && (window.console.firebug || window.console.exception)) {
-	// 	//Firebug is enabled
-	// 	$("#firebugalert").css({'display':'','padding':'10px','background-color':'#FFFFE0','color':'#900','font-weight':'bold','text-align':'center'});
-	// 	$("#firebugalert").html('Hi there, Developer. The Firebug extension can significantly degrade the performance of Razuna. We recommend that you disable it for Razuna!');
-	// 	$("#firebugalert").after('<div style="clear:both;"></div>');
-	// }
-	// Account window
-	function showaccount(){
-		win = window.open('','myWin','toolbars=0,location=1,status=1,scrollbars=1,directories=0,width=650,height=600');
-		document.form_account.target='myWin';
-		document.form_account.submit();
-	}
-	// Store the value of the input field
-	var theval = $('#simplesearchtext').val();
-	// If user click on the quick search field we hide the text
-	$('#simplesearchtext').click(function(){
-		// Get the value of the entry field
-		var theentrynow = $('#simplesearchtext').val();
-		if (theentrynow == 'Quick Search'){
-			$('#simplesearchtext').val('');
-		}
-	});
-	// If the value field is empty restore the value field
-	$('#simplesearchtext').blur(function(){
-		// Get the current value of the field
-		var thevalnow = $('#simplesearchtext').val();
-		// If the current value is empty then restore it with the default value
-		if ( thevalnow === '') {
-			$('#simplesearchtext').val(theval);
-		}
-	});
-});
-
-// FOLDER 
-
+// FOLDER
 function loadfolderpage(theid){
 	loadcontent('properties','index.cfm?fa=c.folder_edit&folder_id=' + theid + '&theid=' + theid);
 }
@@ -1295,10 +1270,10 @@ function searchadv_files(theform, thefa, folderid) {
 		// 	$('#content_search_all').css('display','');
 		// 	// Remove tab (in case there is one already)
 		// 	removeTab('tabsfolder_tab','content_search_all');
-			
+
 		// 	// Create new tab
 		// 	addTab($('#tabsfolder_tab'), 'content_search_all' , 'Search Results');
-			
+
 		// 	// Select tab
 		// 	var index = $('#tabsfolder_tab div.ui-tabs-panel').length-1;
 		// 	$('#tabsfolder_tab').tabs({ active: index }).tabs( "refresh" );
@@ -1337,10 +1312,10 @@ function searchadv_videos(theform, thefa, folderid) {
 		// 	$('#content_search_all').css('display','');
 		// 	// Remove tab (in case there is one already)
 		// 	removeTab('tabsfolder_tab','content_search_all');
-			
+
 		// 	// Create new tab
 		// 	addTab($('#tabsfolder_tab'), 'content_search_all' , 'Search Results');
-			
+
 		// 	// Select tab
 		// 	var index = $('#tabsfolder_tab div.ui-tabs-panel').length-1;
 		// 	$('#tabsfolder_tab').tabs({ active: index }).tabs( "refresh" );
@@ -1381,10 +1356,10 @@ function searchadv_images(theform, thefa, folderid) {
 		// 	$('#content_search_all').css('display','');
 		// 	// Remove tab (in case there is one already)
 		// 	removeTab('tabsfolder_tab','content_search_all');
-			
+
 		// 	// Create new tab
 		// 	addTab($('#tabsfolder_tab'), 'content_search_all' , 'Search Results');
-			
+
 		// 	// Select tab
 		// 	var index = $('#tabsfolder_tab div.ui-tabs-panel').length-1;
 		// 	$('#tabsfolder_tab').tabs({ active: index }).tabs( "refresh" );
@@ -1423,10 +1398,10 @@ function searchadv_audios(theform, thefa, folderid) {
 		// 	$('#content_search_all').css('display','');
 		// 	// Remove tab (in case there is one already)
 		// 	removeTab('tabsfolder_tab','content_search_all');
-			
+
 		// 	// Create new tab
 		// 	addTab($('#tabsfolder_tab'), 'content_search_all' , 'Search Results');
-			
+
 		// 	// Select tab
 		// 	var index = $('#tabsfolder_tab div.ui-tabs-panel').length-1;
 		// 	$('#tabsfolder_tab').tabs({ active: index }).tabs( "refresh" );
@@ -1457,7 +1432,7 @@ function searchadv_all(theform, thefa) {
 	else {
 		// If we come from a folder search we direct into the folder view
 		// if (folderid == '0'){
-		
+
 		var thediv = '#rightside';
 
 		// Get folderid
@@ -1470,14 +1445,14 @@ function searchadv_all(theform, thefa) {
 		// 	$('#content_search_all').css('display','');
 		// 	// Remove tab (in case there is one already)
 		// 	removeTab('tabsfolder_tab','content_search_all');
-			
+
 		// 	// Create new tab
 		// 	addTab($('#tabsfolder_tab'), 'content_search_all' , 'Search Results');
-			
+
 		// 	// Select tab
 		// 	var index = $('#tabsfolder_tab div.ui-tabs-panel').length-1;
 		// 	$('#tabsfolder_tab').tabs({ active: index }).tabs( "refresh" );
-			
+
 		// }
 		// Fire search
 		$('#loading_searchadv').html('<img src="' + dynpath + '/global/host/dam/images/loading-bars.gif" border="0" style="padding:0px;">');
@@ -1494,7 +1469,7 @@ function addTab(tabs, id, label){
 	tabs.find( ".ui-tabs-nav" ).append( li );
 	tabs.append( "<div id='" + id + "'><p></p></div>" );
 	tabs.tabs( "refresh" );
-} 
+}
 
 function removeTab(tabContainerID,tabID){
 	$('#'+tabContainerID+' li a[href="#'+tabID+'"]').remove();
@@ -1847,7 +1822,7 @@ function subadvfieldsimg(theform,searchtext){
 	}
 	else {
 		var searchtext = searchtext + rights;
-	}	
+	}
 	return searchtext;
 }
 // Focus tree
@@ -1877,11 +1852,11 @@ function razunatreefocusdelay(folderid){
 function toggleslide(theclickid,thefield){
 	$('#' + theclickid).slideToggle('fast');
 	$('#' + thefield).select();
-	$('#' + thefield).click(function(){ 
-		this.select(); 
+	$('#' + thefield).click(function(){
+		this.select();
 	});
-	$('#' + thefield + 'd').click(function(){ 
-		this.select(); 
+	$('#' + thefield + 'd').click(function(){
+		this.select();
 	});
 };
 function SetVideo(source, title) {
@@ -1909,7 +1884,7 @@ function SetVideo(source, title) {
 		}
 	});
 	// $('.ui-widget-overlay').click(function(){
-		
+
 	// 	$('#introRazVideo').attr('src','');
 	// 	$('#videoPlayerDiv').dialog('destroy');
 	// });
@@ -2008,21 +1983,6 @@ function switchmainselection(thetype,thelinktext){
 	// Change the link text itself
 	$('#mainsectionchooser').text(thelinktext);
 }
-// Image Tooltip
-$(document).tooltip({
-	items: "[img-tt]",
-	show: { delay: 800 },
-	content: function() {
-		 var element = $( this );
-		 var theimg = element.attr("src");
-		 return "<img src='" + theimg + "' border='0' style='max-width:400px;max-height:400px;'>";
-	},
-	position: {
-		my: "center bottom",
-		at: "center top",
-		collision: "flipfit"
-	}
-});
 // Remove label while click on X
 function removeLabel(assetID,assetType,labelID,aHrefElement,text){
 	//console.log(aHrefElement);
@@ -2037,5 +1997,122 @@ function removeLabel(assetID,assetType,labelID,aHrefElement,text){
 function isValidLabel(labelName){
 	var exp = new RegExp(/^[^a-zA-Z0-9]/g);
 	return !exp.test($('#'+labelName).val());
-		
 }
+
+// Editor
+function loadEditor(div, buttons, editor_options) {
+	// Accept options else create default ones
+	var _options = {};
+	_options.height = editor_options && editor_options.height ? editor_options.height : 200;
+	_options.zindex = editor_options && editor_options.zindex ? editor_options.zindex : 1;
+	_options.theme = editor_options && editor_options.theme ? editor_options.theme : 'gray';
+	_options.background = editor_options && editor_options.background ? editor_options.background : '#fff';
+	_options.linebreakertags = editor_options && editor_options.linebreakertags ? editor_options.linebreakertags : ['table', 'hr', 'iframe', 'form', 'dl'];
+	_options.multiline = editor_options && typeof editor_options.multiline !== 'undefined' ? editor_options.multiline : true;
+	_options.iframe = editor_options && typeof editor_options.iframe !== 'undefined' ? editor_options.iframe : false;
+	// Var
+	var _buttons = '';
+	// For news in admin
+	if (buttons === 'news') {
+		_buttons = ['insertImage','insertVideo','insertLink','|','undo','redo','|','bold','italic','underline','strikeThrough','insertHR','color','|', 'fontFamily', 'fontSize', 'paragraphFormat','align','formatOL','formatUL','outdent','indent', 'quote','selectAll','insertTable','spellChecker','clearFormatting', 'html','|','fullscreen'];
+	}
+	// Initialize Editor
+	$('#' + div).froalaEditor({
+		key: '9Rd1Rb1MKF1AKUBWBOR==',
+		imageInsertButtons: ['imageBack', '|', 'imageByURL'],
+		videoInsertButtons: ['videoBack', '|', 'videoByURL', 'videoEmbed'],
+		// initOnClick: true,
+		spellcheck: true,
+		imageMaxSize: 1024 * 1024 * 25,
+		fileMaxSize: 1024 * 1024 * 25,
+		toolbarInline: false,
+		toolbarSticky: true,
+		pastePlain: false,
+		htmlAllowComments: true,
+		htmlUntouched: true,
+		imageDefaultAlign: 'left',
+		imageDefaultWidth: 0,
+		// htmlRemoveTags: ['script', 'style', 'iframe', 'object', 'embed', 'applet', 'link', 'form', 'bgsound'],
+		heightMin: _options.height,
+		theme: _options.theme,
+		multiLine: _options.multiline,
+		iframe: _options.iframe,
+		zIndex: _options.zindex,
+		lineBreakerTags: _options.linebreakertags,
+		placeholderText: '',
+		tabSpaces: 4,
+		// shortcutsEnabled: true,
+		enter: $.FroalaEditor.ENTER_BR,
+		toolbarButtons: _buttons,
+		toolbarButtonsMD: _buttons,
+		toolbarButtonsSM: _buttons,
+		toolbarButtonsXS: _buttons,
+	});
+}
+
+// On document ready
+$(document).ready(function() {
+	// Account window
+	function showaccount(){
+		win = window.open('','myWin','toolbars=0,location=1,status=1,scrollbars=1,directories=0,width=650,height=600');
+		document.form_account.target='myWin';
+		document.form_account.submit();
+	}
+	// Store the value of the input field
+	var theval = $('#simplesearchtext').val();
+	// If user click on the quick search field we hide the text
+	$('#simplesearchtext').click(function(){
+		// Get the value of the entry field
+		var theentrynow = $('#simplesearchtext').val();
+		if (theentrynow == 'Quick Search'){
+			$('#simplesearchtext').val('');
+		}
+	});
+	// If the value field is empty restore the value field
+	$('#simplesearchtext').blur(function(){
+		// Get the current value of the field
+		var thevalnow = $('#simplesearchtext').val();
+		// If the current value is empty then restore it with the default value
+		if ( thevalnow === '') {
+			$('#simplesearchtext').val(theval);
+		}
+	});
+	// Image Tooltip
+	$(document).tooltip({
+		items: "[img-tt]",
+		show: { delay: 800 },
+		content: function() {
+			 var element = $( this );
+			 var theimg = element.attr("src");
+			 return "<img src='" + theimg + "' border='0' style='max-width:400px;max-height:400px;'>";
+		},
+		position: {
+			my: "center bottom",
+			at: "center top",
+			collision: "flipfit"
+		}
+	});
+	// If clicked in the document then close any dropdown menu with the class ddicon
+	$(document).bind('click', function(e) {
+		var $clicked=$(e.target);
+		/* if($clicked.is('.ddselection_header') || $clicked.parents().is('.ddselection_header') || $clicked.is('.ddicon')) */
+		if($clicked.is('.ddicon') || $clicked.parents().is('.ddselection_header')) {
+			//alert('inside');
+		}
+		else {
+			//alert('outside');
+			$('.ddselection_header').hide();
+		}
+	});
+
+	// Notification
+	Noty.overrideDefaults({
+		theme: 'bootstrap-v3',
+		type: 'warning',
+		queue: 'global',
+		timeout: 5000,
+		progressBar: true,
+		closeWith: ['click', 'button']
+	});
+
+});

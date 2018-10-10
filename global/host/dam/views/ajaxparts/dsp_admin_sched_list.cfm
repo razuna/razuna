@@ -31,7 +31,7 @@
 		<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
 			<tr>
 				<th colspan="4">
-					<div style="float:right;"><a href="##" onclick="showwindow('#myself#c.scheduler_detail&add=T&sched_id=0','#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_new")#',650,1);">#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_new")#</a></div>
+					<div style="float:right;"><a href="##" onclick="showwindow('#myself#c.scheduler_detail&add=T&sched_id=0','#Encodeforjavascript(myFusebox.getApplicationData().defaults.trans("scheduled_uploads_new"))#',650,1);">#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_new")#</a></div>
 				</th>
 			</tr>
 			<tr>
@@ -50,7 +50,7 @@
 			<!--- Loop over all scheduled events in database table --->
 			<cfloop query="qry_sched">
 				<tr class="list">
-					<td nowrap="true"><a href="##" onclick="showwindow('#myself#c.scheduler_detail&sched_id=#sched_id#','#sched_name#',650,1);">#sched_name#</a></td>
+					<td nowrap="true"><a href="##" onclick="showwindow('#myself#c.scheduler_detail&sched_id=#sched_id#','#Encodeforjavascript(sched_name)#',650,1);">#sched_name#</a></td>
 					<td nowrap="true">#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_#sched_method#")#</td>
 					<td nowrap="true" align="center"><a href="##" onclick="showwindow('#myself#c.scheduler_log&sched_id=#sched_id#','#myFusebox.getApplicationData().defaults.trans("log")#: #sched_name#',650,1);">#myFusebox.getApplicationData().defaults.trans("log")#</a></td>
 					<td nowrap="true">
@@ -69,6 +69,12 @@
 			<cfset attributes.bot = "true">
 			<cfinclude template="dsp_admin_sched_backnext.cfm">
 		</table>
+
+		<div style="clear:both;padding-bottom:25px;"></div>
+
+		
+
+
 		<div id="sched_status" style="float:left;margin:10px;color:green;visibility:hidden;"></div>
 	</cfif>
 </cfoutput>

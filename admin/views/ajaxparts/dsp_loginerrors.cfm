@@ -27,7 +27,7 @@
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
 	<cfif attributes.loginerror EQ "T">
 		<tr>
-	        <td class="alert">#defaultsObj.trans("login_error")#</td>
+	        <td class="alert">#myFusebox.getApplicationData().defaults.trans("login_error")#</td>
 		</tr>
 	</cfif>
 	<cfif attributes.nohost EQ "T">

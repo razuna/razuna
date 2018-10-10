@@ -71,17 +71,17 @@
 						<div id="tab_intro">
 							<table width="100%" border="0" cellpadding="0" cellspacing="0" class="tablepanel">
 								<tr>
-									<th>#defaultsObj.trans("welcome_to_ecp")#</th>
+									<th>#myFusebox.getApplicationData().defaults.trans("welcome_to_ecp")#</th>
 								</tr>
 								<tr>
-									<td>#defaultsObj.trans("welcome_text")#</td>
+									<td>#myFusebox.getApplicationData().defaults.trans("welcome_text")#</td>
 								</tr>
 							</table>
 						</div>
 						<br>
 						<div id="tabs_main_setup">
 							<ul>
-								<li><a href="##check">#defaultsObj.trans("installation_checklist")#</a></li>
+								<li><a href="##check">#myFusebox.getApplicationData().defaults.trans("installation_checklist")#</a></li>
 								<li><a href="##sysinfo">System Information</a></li>
 							</ul>
 							<div id="check"><img src="images/loading.gif" border="0" style="padding:10px;"></div>
@@ -91,31 +91,31 @@
 										<th colspan="2">Your Razuna Setup</th>
 									</tr>
 									<tr>
-										<td width="100%">#defaultsObj.trans("database_in_use")#</td>
+										<td width="100%">#myFusebox.getApplicationData().defaults.trans("database_in_use")#</td>
 										<td width="1%" nowrap>#application.razuna.thedatabase#</td>
 									</tr>
 									<tr>
-										<td width="100%">#defaultsObj.trans("storage_container")#</td>
+										<td width="100%">#myFusebox.getApplicationData().defaults.trans("storage_container")#</td>
 										<td width="1%" nowrap>#application.razuna.storage#</td>
 									</tr>
 									<tr>
-										<td width="100%">#defaultsObj.trans("server_platform")#</td>
+										<td width="100%">#myFusebox.getApplicationData().defaults.trans("server_platform")#</td>
 										<td width="1%" nowrap>#server.OS.Name#</td>
 									</tr>
 									<tr>
-										<td width="100%">#defaultsObj.trans("server_platform_version")#</td>
+										<td width="100%">#myFusebox.getApplicationData().defaults.trans("server_platform_version")#</td>
 										<td width="1%" nowrap>#server.os.version#</td>
 									</tr>
 									<tr>
-										<td width="100%">#defaultsObj.trans("coldfusion_product")#</td>
+										<td width="100%">#myFusebox.getApplicationData().defaults.trans("coldfusion_product")#</td>
 										<td width="1%" nowrap>#server.ColdFusion.ProductName#</td>
 									</tr>
 									<tr>
-										<td width="100%">#defaultsObj.trans("coldfusion_version")#</td>
+										<td width="100%">#myFusebox.getApplicationData().defaults.trans("coldfusion_version")#</td>
 										<td width="1%" nowrap><cfif server.ColdFusion.ProductName CONTAINS "bluedragon">#server.bluedragon.edition#<cfelse>#server.ColdFusion.ProductVersion#</cfif></td>
 									</tr>
 									<tr>
-										<td width="100%">#defaultsObj.trans("server_url")#</td>
+										<td width="100%">#myFusebox.getApplicationData().defaults.trans("server_url")#</td>
 										<td width="1%" nowrap>#cgi.HTTP_HOST#</td>
 									</tr>
 									<tr>
@@ -133,19 +133,19 @@
 									</tr>
 									<tr>
 										<td width="100%">SystemMemory Total</td>
-										<td width="1%" nowrap>#int(defaultsObj.converttomb(variables.mem.total))# MB</td>
+										<td width="1%" nowrap>#int(myFusebox.getApplicationData().defaults.converttomb(variables.mem.total))# MB</td>
 									</tr>
 									<tr>
 										<td width="100%">SystemMemory Free</td>
-										<td width="1%" nowrap>#int(defaultsObj.converttomb(variables.mem.free))# MB</td>
+										<td width="1%" nowrap>#int(myFusebox.getApplicationData().defaults.converttomb(variables.mem.free))# MB</td>
 									</tr>
 									<tr>
 										<td width="100%">SystemMemory Max</td>
-										<td width="1%" nowrap>#int(defaultsObj.converttomb(variables.mem.max))# MB</td>
+										<td width="1%" nowrap>#int(myFusebox.getApplicationData().defaults.converttomb(variables.mem.max))# MB</td>
 									</tr>
 									<tr>
 										<td width="100%">SystemMemory Used</td>
-										<td width="1%" nowrap>#int(defaultsObj.converttomb(variables.mem.used))# MB</td>
+										<td width="1%" nowrap>#int(myFusebox.getApplicationData().defaults.converttomb(variables.mem.used))# MB</td>
 									</tr>
 								</table>
 							</div>
@@ -169,12 +169,12 @@
 						<div id="tabs_main_support">
 						<!-- the tabs -->
 						<ul class="tabs">
-							<li><a href="##raztools">Add-Ons</a></li>
+							<!--- <li><a href="##raztools">Add-Ons</a></li> --->
 							<li><a href="##support">Support</a></li>
-							<li><a href="##blog" onclick="loadcontent('blog','#myself#c.mainblog');">Blog</a></li>
+							<!--- <li><a href="##blog" onclick="loadcontent('blog','#myself#c.mainblog');">Blog</a></li> --->
 						</ul>
 						<!-- tab "panes" -->
-						<div class="pane" id="raztools">
+						<!--- <div class="pane" id="raztools">
 							<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
 								<tr>
 									<td>Hi there. Thank you for using Razuna. In order for you to enjoy Razuna even more we have some additional tools for you available.</td>
@@ -198,7 +198,7 @@
 									<td>Razuna features a extensive API for you to expand on and access your assets Head over to our <a href="http://razuna.org/getinvolved/developers" target="_blank">Developer section</a> or directly to the <a href="http://wiki.razuna.com/display/ecp/API+Developer+Guide" target="_blank">API guide</a>. </a></td>
 								</tr>
 							</table>
-						</div>
+						</div> --->
 						<div class="pane" id="support">
 							<table width="100%" border="0" cellspacing="0" cellpadding="0">
 								<cfif NOT application.razuna.isp>
@@ -206,7 +206,7 @@
 										<th>Razuna Support</th>
 									</tr>
 									<tr>
-										<td>#defaultsObj.trans("support_desc")#</td>
+										<td>#myFusebox.getApplicationData().defaults.trans("support_desc")#</td>
 									</tr>
 								</cfif>
 								<tr>
@@ -226,7 +226,7 @@
 								</tr>
 							</table>
 						</div>
-						<div class="pane" id="blog"><img src="images/loading.gif" border="0" style="padding:10px;"></div>
+						<!--- <div class="pane" id="blog"><img src="images/loading.gif" border="0" style="padding:10px;"></div> --->
 					</div>
 					</td>
 				</tr>

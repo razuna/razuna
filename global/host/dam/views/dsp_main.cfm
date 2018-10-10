@@ -30,7 +30,7 @@
 <cfset session.folder_redirect_id = "0">
 <!--- Check re-direct folders to ensure user has access to it and it's a valid folder. Find the first good match and set that as re-direct folder --->
 <cfloop list="#redirectfolders#" index="redirect_folder_id">
-	<cfif myFusebox.getApplicationData().folders.checkfolder(redirect_folder_id)>
+	<cfif myFusebox.getApplicationData().folders.checkfolder(folder_id=redirect_folder_id, thestruct=attributes)>
 		<cfset session.folder_redirect_id = redirect_folder_id>
 		<cfset session.do_folder_redirect = true>
 		<cfbreak>
@@ -38,7 +38,7 @@
 </cfloop>
 
 <!--- If group re-direction is not set but global re-direction is then make re-direct folder as the set global folder --->
-<cfif session.folder_redirect_id EQ "0" AND cs.folder_redirect NEQ "0" AND myFusebox.getApplicationData().folders.checkfolder(cs.folder_redirect)>
+<cfif session.folder_redirect_id EQ "0" AND cs.folder_redirect NEQ "0" AND myFusebox.getApplicationData().folders.checkfolder(folder_id=cs.folder_redirect, thestruct=attributes)>
 	<cfset session.do_folder_redirect = true>
 	<cfset session.folder_redirect_id = cs.folder_redirect>
 </cfif>
@@ -48,7 +48,7 @@
 		<cfif !session.do_folder_redirect OR attributes.redirectmain> 
 			<!--- Show if Firebug is enabled --->
 			<div id="firebugalert" style="display:none;" class="box-dotted"></div>
-			
+
 			<!--- Storage Check --->
 			<!--- <cfif application.razuna.storage EQ "nirvanix" AND attributes.nvxsession EQ 0>
 				<div style="padding:10px;background-color:##FFFFE0;color:##900;" class="box-dotted">
@@ -124,7 +124,7 @@
 										<!--- Loop over all assets log entries in database table --->
 										<cfloop query="attributes.qry_log" endrow="50">
 											<tr class="list" >
-												<td nowrap="true" valign="top">#dateformat(log_timestamp, "#myFusebox.getApplicationData().defaults.getdateformat()#")#</td>
+												<td nowrap="true" valign="top">#dateformat(log_timestamp, "#myFusebox.getApplicationData().defaults.getdateformat(thestruct=attributes)#")#</td>
 												<td nowrap="true" valign="top">#timeFormat(log_timestamp, 'HH:mm:ss')#</td>
 												<td valign="top">#log_desc#</td>
 												<td nowrap="true" align="center" valign="top">#log_action#</td>
@@ -139,7 +139,7 @@
 					</td>
 					<td width="1%" valign="top" nowrap="nowrap">
 						<!--- If the top part is hidden then admin functions are here and the search also --->
-						<cfif !cs.show_top_part>						
+						<cfif !cs.show_top_part>
 							<!--- Search here --->
 							<div id="tab_search">
 								<div class="panelsnew">
@@ -181,88 +181,48 @@
 								</div>
 							</cfif>
 						</cfif>
-						
-						<!--- Announcement for ISP --->
-						<cfif cgi.http_host CONTAINS "razuna.com">
-							<div class="panelsnew">
-								<h1>Razuna Announcements</h1>
-								<cfloop query="attributes.qry_news">
-									<cfif currentrow EQ 1><h2>#news_title#</h2><cfelse><a href="##" onclick="$('##slidenews#currentrow#').toggle('blind','slow');">#news_title#</a><br /></cfif>
-									<cfif currentrow EQ 1>
-										<span class="announcements">#news_text##news_text_long#</p>
-										<br /><br />
-									<cfelse>
-										<div id="slidenews#currentrow#" style="display:none;">
-											#news_text##news_text_long#
-											<br />
-										</div>
-									</cfif>
-								</cfloop>
-							</div>
-							<br />
-						</cfif>
 						<!--- If WL we show the news section here --->
 						<cfif application.razuna.whitelabel>
+							<!--- <cfdump var="#attributes.qry_news#">
+							<cfabort> --->
+							<!--- Announcement from backend --->
 							<div class="panelsnew">
 								<!--- System News --->
-								<cfif isArray(attributes.qry_news) AND arrayisempty(attributes.qry_news) AND attributes.qry_news.news.recordcount NEQ 0>
+								<cfif attributes.qry_news.news.recordcount>
 									<h1>System News</h1>
-								</cfif>
-								<!--- News --->
-								<cfif attributes.wl_news_rss EQ "">
 									<cfloop query="attributes.qry_news.news">
-										<cfif currentrow EQ 1><h2>#news_title#</h2><cfelse><a href="##" onclick="$('##sysslidenews#currentrow#').toggle('blind','slow');">#news_title#</a><br /></cfif>
-										<cfif currentrow EQ 1>
-											<span class="announcements">#news_text#</p>
-											<br /><br />
-										<cfelse>
-											<div id="sysslidenews#currentrow#" style="display:none;">
-												#news_text#
-												<br />
-											</div>
-										</cfif>
+										<div class="news">
+											<h2>#news_title#</h2>
+											<p>#news_excerpt#
+											<cfif news_text NEQ "">
+												<p><a href="##news-frontpage-popup-#news_id#" class="open-news-popup">Read more...</a></p>
+											</cfif>
+											</p>
+										</div>
+										<div id="news-frontpage-popup-#news_id#" class="white-popup mfp-hide">
+											#news_text#
+										</div>
 									</cfloop>
-									<cfif isArray(attributes.qry_news) AND NOT arrayisempty(attributes.qry_news) AND attributes.qry_news.news.recordcount NEQ 0>
-										<br>
-									</cfif>
-								<!--- RSS --->
-								<cfelse>
-									<cfif isArray(attributes.qry_news) AND arrayisempty(attributes.qry_news)>
-										<h2>Connection to the news is currently not available</h2>
-									<cfelse>
-										<cfloop index="x" from="1" to="#arrayLen(attributes.qry_news)#">
-											<a href="#attributes.qry_news[x].link#" target="_blank">#attributes.qry_news[x].title#</a><br />
-										</cfloop>
-										<br>
-									</cfif>
 								</cfif>
-								<!--- Host News --->
-								<cfif isArray(attributes.qry_news) AND NOT arrayisempty(attributes.qry_news) AND attributes.qry_news.news_host.recordcount NEQ 0>
+							</div>
+							<div class="panelsnew" style="padding-top:0;">
+								<cfif attributes.qry_news.news_host.recordcount>
+									<!--- Host News --->
 									<h1>News</h1>
-								</cfif>
-								<!--- News --->
-								<cfif attributes.wl_news_rss EQ "">
+									<!--- News --->
 									<cfloop query="attributes.qry_news.news_host">
-										<cfif currentrow EQ 1><h2>#news_title#</h2><cfelse><a href="##" onclick="$('##slidenews#currentrow#').toggle('blind','slow');">#news_title#</a><br /></cfif>
-										<cfif currentrow EQ 1>
-											<span class="announcements">#news_text#</p>
-											<br /><br />
-										<cfelse>
-											<div id="slidenews#currentrow#" style="display:none;">
-												#news_text#
-												<br />
-											</div>
-										</cfif>
+										<div class="news">
+											<h2>#news_title#</h2>
+											<p>#news_excerpt#
+											<cfif news_text NEQ "">
+												<p><a href="##news-frontpage-popup-#news_id#" class="open-news-popup">Read more...</a></p>
+											</cfif>
+											</p>
+										</div>
+										<div id="news-frontpage-popup-#news_id#" class="white-popup mfp-hide">
+											#news_text#
+										</div>
 									</cfloop>
-								<!--- RSS --->
-								<cfelse>
-									<cfif isArray(attributes.qry_news) AND arrayisempty(attributes.qry_news)>
-										<h2>Connection to the news is currently not available</h2>
-									<cfelse>
-										<cfloop index="x" from="1" to="#arrayLen(attributes.qry_news)#">
-											<a href="#attributes.qry_news[x].link#" target="_blank">#attributes.qry_news[x].title#</a><br />
-										</cfloop>
-									</cfif>
 								</cfif>
 							</div>
 						</cfif>
@@ -287,6 +247,14 @@
 	<cfif attributes.goto EQ "approval">
 		$('#rightside').load('index.cfm?fa=c.staging');
 	</cfif>
+	$(function() {
+		$('.open-news-popup').magnificPopup({
+			type: 'inline',
+			preloader: false,
+			alignTop: true,
+			midClick: true // Allow opening popup on middle mouse click. Always set it to true if you don't provide alternative source in href.
+		});
+	})
 </script>
 <!--- JS: FOLDERS --->
 <cfinclude template="../js/folders.cfm" runonce="true">

@@ -104,14 +104,14 @@
 								<!--- Restore selected files in the trash ---> 
 								<a href="##" onclick="showwindow('#myself#c.restore_selected_col_files&type=restoreselectedcolfiles','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;">
 									<div style="float:left;">
-										<img src="#dynpath#/global/host/dam/images/icon_restore.png" width="16" height="16" border="0" style="padding-right:3px;" />
+										<span class="fa fa-refresh fa-lg">
 									</div>
 									<div style="float:left;padding-right:5px;padding-top:1px;">#myFusebox.getApplicationData().defaults.trans("restore_selected_items")#</div>
 								</a>
 								<!--- Remove selected files in the trash --->
 								<a href="##" onclick="showwindow('#myself#ajax.collections_del_item&loaddiv=files&what=col_selected_files&loaddiv=files&selected=true&fromtrash=true','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#">
 									<div style="float:left;">
-										<img src="#dynpath#/global/host/dam/images/cross_big_new.png" width="16" height="16" border="0" style="padding-right:3px;" />
+										<span class="fa fa-trash-o fa-lg"></span>
 									</div>
 									<div style="float:left;padding-right:5px;padding-top:1px;">#myFusebox.getApplicationData().defaults.trans("trash_Delete_Permanently")#</div>
 								</a>
@@ -182,9 +182,9 @@
 												<cfset url_restore = "ajax.restore_collection&id=#id#&what=collection_file&loaddiv=files&col_id=#col_id#&many=F&kind=#kind#&file_id=#id#">
 												<cfset url_remove = "ajax.collections_del_item&id=#file_id#&what=collection_item&loaddiv=files&col_id=#col_id#&folder_id=#folder_id#&order=#col_item_order#&showsubfolders=#attributes.showsubfolders#">
 												<!--- restore the file --->
-												<a href="##" onclick="showwindow('#myself##url_restore#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("restore")#"><img src="#dynpath#/global/host/dam/images/icon_restore.png" width="16" height="16" border="0"  /></a>
+												<a href="##" onclick="showwindow('#myself##url_restore#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("restore")#"><span class="fa fa-refresh fa-lg"></a>
 												<!--- remove the file --->
-												<a href="##" onclick="showwindow('#myself##url_remove#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#"><img src="#dynpath#/global/host/dam/images/cross_big_new.png" width="16" height="16" border="0" /></a>
+												<a href="##" onclick="showwindow('#myself##url_remove#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#"><span class="fa fa-trash-o fa-lg"></span></a>
 											</div>
 										</cfif>
 									</div>

@@ -99,7 +99,7 @@
 						<td valign="top"><cfif asset_dl OR qry_widget.widget_dl_org eq 't'><a href="#myself#c.serve_file&file_id=#attributes.file_id#&type=aud" target="_blank">#myFusebox.getApplicationData().defaults.trans("download")#</a><cfelse>Not available</cfif></td>
 					</tr>
 				</cfif>
-			</cfloop>			
+			</cfloop>
 			<!--- Show converted --->
 			<cfloop query="attributes.qry_related">
 				<cfset theid = aud_id>

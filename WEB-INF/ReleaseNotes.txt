@@ -5,6 +5,20 @@ http://openbd.org/
 https://github.com/OpenBD/openbd-core
 __________________________________
 
+- Allow leading character wildcard in Lucene search
+- Added support for creating, verifying, and decoding JWT (JSON Web Tokens)
+- #43: support for pretty printing in Console() output
+- Fixed #42: S3GetUrl default expiration date updated for AWS signature v4
+- Fixed #39: Console function now supports up to 10 arguments
+- Fixed #41: Returnformat in cfscript was case sensitive #41
+- Fixed #40: minor issue with htmlCodeFormat
+- Fixed #38: updated Console to output if running on localhost
+- Fixed output of year with DateFormat "short" mask
+- Fixed issue #34: isValid() not returning valid for .education
+- introduced Redis based implementation for caching
+- added new AmazonLambdaExecute/AmazonLambdaExecuteAsync functions
+- upgraded Mongo driver to 3.5
+- fixed memcached query caching connection leakage
 - added support for queryall in salesforce query function
 - fixed honouring charset for http body in CFHTTP
 - ternary operator bug #31

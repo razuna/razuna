@@ -27,27 +27,27 @@
 	<table width="700" border="0" cellspacing="0" cellpadding="0" class="grid">
 	<!--- Path to assets but only if we are not on Oracle --->
 	<tr>
-		<th colspan="2">#defaultsObj.trans("path_to_assets")#</th>
+		<th colspan="2">#myFusebox.getApplicationData().defaults.trans("path_to_assets")#</th>
 	</tr>
 	<tr>
-		<td colspan="2">#defaultsObj.trans("path_to_assets_desc")#</td>
+		<td colspan="2">#myFusebox.getApplicationData().defaults.trans("path_to_assets_desc")#</td>
 	</tr>
 	<tr>
-		<td>#defaultsObj.trans("path_to_assets")#</td>
+		<td>#myFusebox.getApplicationData().defaults.trans("path_to_assets")#</td>
 		<td><input type="text" name="set2_path_to_assets" size="60" class="text" value="#prefs.set2_path_to_assets#"></td>
 	</tr>
 		<!---
 <tr>
-			<td>#defaultsObj.trans("admin_prefs_asset_path_webroot")#</td>
-			<td valign="top"><input type="radio" name="set2_path_to_assets_webroot" value="t"<cfif prefs.set2_path_to_assets_webroot EQ "t"> checked="checked"</cfif>> #defaultsObj.trans("yes")# <input type="radio" name="set2_path_to_assets_webroot" value="f"<cfif prefs.set2_path_to_assets_webroot EQ "f"> checked="checked"</cfif>> #defaultsObj.trans("no")#</td>
+			<td>#myFusebox.getApplicationData().defaults.trans("admin_prefs_asset_path_webroot")#</td>
+			<td valign="top"><input type="radio" name="set2_path_to_assets_webroot" value="t"<cfif prefs.set2_path_to_assets_webroot EQ "t"> checked="checked"</cfif>> #myFusebox.getApplicationData().defaults.trans("yes")# <input type="radio" name="set2_path_to_assets_webroot" value="f"<cfif prefs.set2_path_to_assets_webroot EQ "f"> checked="checked"</cfif>> #myFusebox.getApplicationData().defaults.trans("no")#</td>
 		</tr>
 --->
 	<!--- Logo for Intranet --->
 	<!--- <tr>
-	<th colspan="2" class="textbold">#defaultsObj.trans("intranet_logo")#</th>
+	<th colspan="2" class="textbold">#myFusebox.getApplicationData().defaults.trans("intranet_logo")#</th>
 	</tr>
 	<tr>
-	<td colspan="2">#defaultsObj.trans("intranet_logo_desc")#</td>
+	<td colspan="2">#myFusebox.getApplicationData().defaults.trans("intranet_logo_desc")#</td>
 	</tr>
 	<tr>
 		<td valign="top">Logo</td>
@@ -63,71 +63,71 @@
 	</tr> --->
 	<!--- Directories
 	<tr>
-	<th colspan="2">#defaultsObj.trans("directories")#</th>
+	<th colspan="2">#myFusebox.getApplicationData().defaults.trans("directories")#</th>
 	</tr>
 	<tr>
-	<td valign="top" colspan="2">#defaultsObj.trans("directories_desc")#</td>
+	<td valign="top" colspan="2">#myFusebox.getApplicationData().defaults.trans("directories_desc")#</td>
 	</tr>
 	<tr>
-	<td valign="top">#defaultsObj.trans("path_incoming")#</td>
-	<td valign="top"><input type="text" name="folder_in" size="60" class="text" value="#prefs.set2_ora_path_incoming#"><br /><em>#defaultsObj.trans("path_incoming_desc")#</em></td>
+	<td valign="top">#myFusebox.getApplicationData().defaults.trans("path_incoming")#</td>
+	<td valign="top"><input type="text" name="folder_in" size="60" class="text" value="#prefs.set2_ora_path_incoming#"><br /><em>#myFusebox.getApplicationData().defaults.trans("path_incoming_desc")#</em></td>
 	</tr>
 	<tr>
-	<td valign="top">#defaultsObj.trans("path_incoming")# BATCH</td>
-	<td valign="top"><input type="text" name="folder_in_batch" size="60" class="text" value="#prefs.set2_ora_path_incoming_batch#"><br /><em>#defaultsObj.trans("path_incoming_batch_desc")#</em></td>
+	<td valign="top">#myFusebox.getApplicationData().defaults.trans("path_incoming")# BATCH</td>
+	<td valign="top"><input type="text" name="folder_in_batch" size="60" class="text" value="#prefs.set2_ora_path_incoming_batch#"><br /><em>#myFusebox.getApplicationData().defaults.trans("path_incoming_batch_desc")#</em></td>
 	</tr>
 	<tr>
-	<td valign="top">#defaultsObj.trans("path_outgoing")#</td>
-	<td valign="top"><input type="text" name="folder_out" size="60" class="text" value="#prefs.set2_ora_path_outgoing#"><br /><em>#defaultsObj.trans("path_outgoing_desc")#</em></td>
+	<td valign="top">#myFusebox.getApplicationData().defaults.trans("path_outgoing")#</td>
+	<td valign="top"><input type="text" name="folder_out" size="60" class="text" value="#prefs.set2_ora_path_outgoing#"><br /><em>#myFusebox.getApplicationData().defaults.trans("path_outgoing_desc")#</em></td>
 	</tr>
 	 --->
 	<!--- ORDER BEFORE DOWNLOAD
 	<tr>
-	<th colspan="2" class="textbold">#defaultsObj.trans("intranet_download_general")#</th>
+	<th colspan="2" class="textbold">#myFusebox.getApplicationData().defaults.trans("intranet_download_general")#</th>
 	</tr>
 	<tr>
-	<td colspan="2">#defaultsObj.trans("intranet_download_general_desc")#</td>
+	<td colspan="2">#myFusebox.getApplicationData().defaults.trans("intranet_download_general_desc")#</td>
 	</tr>
 	<tr>
-	<td>#defaultsObj.trans("intranet_download_general_radio")#</td>
-	<td><input type="radio" name="set2_intranet_gen_download" value="T"<cfif #prefs.set2_intranet_gen_download# EQ "T"> checked</cfif> /> #defaultsObj.trans("yes")# <input type="radio" name="set2_intranet_gen_download" value="F"<cfif #prefs.set2_intranet_gen_download# EQ "F"> checked</cfif> /> #defaultsObj.trans("no")#</td>
+	<td>#myFusebox.getApplicationData().defaults.trans("intranet_download_general_radio")#</td>
+	<td><input type="radio" name="set2_intranet_gen_download" value="T"<cfif #prefs.set2_intranet_gen_download# EQ "T"> checked</cfif> /> #myFusebox.getApplicationData().defaults.trans("yes")# <input type="radio" name="set2_intranet_gen_download" value="F"<cfif #prefs.set2_intranet_gen_download# EQ "F"> checked</cfif> /> #myFusebox.getApplicationData().defaults.trans("no")#</td>
 	</tr>
 	 --->
 	<!--- Download Permissions
 	<tr>
-	<th colspan="2" class="textbold">#defaultsObj.trans("intranet_download_doc")#</th>
+	<th colspan="2" class="textbold">#myFusebox.getApplicationData().defaults.trans("intranet_download_doc")#</th>
 	</tr>
 	<tr>
-	<td colspan="2">#defaultsObj.trans("intranet_download_doc_desc")#</td>
+	<td colspan="2">#myFusebox.getApplicationData().defaults.trans("intranet_download_doc_desc")#</td>
 	</tr>
 	<tr>
-	<td>#defaultsObj.trans("intranet_download_doc_radio")#</td>
-	<td><input type="radio" name="set2_doc_download" value="T"<cfif #prefs.set2_doc_download# EQ "T"> checked</cfif> /> #defaultsObj.trans("yes")# <input type="radio" name="set2_doc_download" value="F"<cfif #prefs.set2_doc_download# EQ "F"> checked</cfif> /> #defaultsObj.trans("no")#</td>
+	<td>#myFusebox.getApplicationData().defaults.trans("intranet_download_doc_radio")#</td>
+	<td><input type="radio" name="set2_doc_download" value="T"<cfif #prefs.set2_doc_download# EQ "T"> checked</cfif> /> #myFusebox.getApplicationData().defaults.trans("yes")# <input type="radio" name="set2_doc_download" value="F"<cfif #prefs.set2_doc_download# EQ "F"> checked</cfif> /> #myFusebox.getApplicationData().defaults.trans("no")#</td>
 	</tr>
 	<tr>
-	<th colspan="2" class="textbold">#defaultsObj.trans("intranet_download_img")#</th>
+	<th colspan="2" class="textbold">#myFusebox.getApplicationData().defaults.trans("intranet_download_img")#</th>
 	</tr>
 	<tr>
-	<td colspan="2">#defaultsObj.trans("intranet_download_img_desc")#</td>
+	<td colspan="2">#myFusebox.getApplicationData().defaults.trans("intranet_download_img_desc")#</td>
 	</tr>
 	<tr>
-	<td>#defaultsObj.trans("intranet_download_img_radio")#</td>
-	<td><input type="radio" name="set2_img_download_org" value="T"<cfif #prefs.set2_img_download_org# EQ "T"> checked</cfif> /> #defaultsObj.trans("yes")# <input type="radio" name="set2_img_download_org" value="F"<cfif #prefs.set2_img_download_org# EQ "F"> checked</cfif> /> #defaultsObj.trans("no")#</td>
+	<td>#myFusebox.getApplicationData().defaults.trans("intranet_download_img_radio")#</td>
+	<td><input type="radio" name="set2_img_download_org" value="T"<cfif #prefs.set2_img_download_org# EQ "T"> checked</cfif> /> #myFusebox.getApplicationData().defaults.trans("yes")# <input type="radio" name="set2_img_download_org" value="F"<cfif #prefs.set2_img_download_org# EQ "F"> checked</cfif> /> #myFusebox.getApplicationData().defaults.trans("no")#</td>
 	</tr>
 	 --->
 	<!--- email settings for new registration from site --->
 	<!--- <tr>
-	<th colspan="2" class="textbold">#defaultsObj.trans("intranet_new_registration")#</th>
+	<th colspan="2" class="textbold">#myFusebox.getApplicationData().defaults.trans("intranet_new_registration")#</th>
 	</tr>
 	<tr>
-	<td colspan="2">#defaultsObj.trans("intranet_new_registration_desc")#</td>
+	<td colspan="2">#myFusebox.getApplicationData().defaults.trans("intranet_new_registration_desc")#</td>
 	</tr>
 	<tr>
-	<td>#defaultsObj.trans("intranet_new_registration_emails")#</td>
-	<td valign="top"><input type="text" name="set2_intranet_reg_emails" size="60" value="#prefs.set2_intranet_reg_emails#" /><br /><i>#defaultsObj.trans("multiple_emails")#</i></td>
+	<td>#myFusebox.getApplicationData().defaults.trans("intranet_new_registration_emails")#</td>
+	<td valign="top"><input type="text" name="set2_intranet_reg_emails" size="60" value="#prefs.set2_intranet_reg_emails#" /><br /><i>#myFusebox.getApplicationData().defaults.trans("multiple_emails")#</i></td>
 	</tr>
 	<tr>
-	<td>#defaultsObj.trans("intranet_new_registration_email_subject")#</td>
+	<td>#myFusebox.getApplicationData().defaults.trans("intranet_new_registration_email_subject")#</td>
 	<td><input type="text" name="set2_intranet_reg_emails_sub" size="60" value="#prefs.set2_intranet_reg_emails_sub#" /></td>
 	</tr>
 	</table> --->

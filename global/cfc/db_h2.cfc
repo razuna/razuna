@@ -24,11 +24,11 @@
 *
 --->
 <cfcomponent output="false">
-	
+
 	<!--- Setup the DB if DB is not here --->
 	<cffunction name="setup" access="public" output="false">
 		<cfargument name="thestruct" type="Struct">
-		
+
 		<!--- If we come from import then dont do this --->
 		<cfif NOT structkeyexists(arguments.thestruct,"fromimport")>
 			<!--- Create the DB on the filesystem --->
@@ -52,23 +52,23 @@
 				<cfinvokeargument name="maxconnections" value="24" />
 			</cfinvoke>
 		</cfif>
-		
+
 		<!---  --->
 		<!--- START: CREATE TABLES --->
 		<!---  --->
-		
+
 		<!--- CREATE SEQUENCES
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		CREATE TABLE sequences 
+		CREATE TABLE sequences
 		(
-			theid		VARCHAR(100), 
+			theid		VARCHAR(100),
 			thevalue	BIGINT NOT NULL,
 			CONSTRAINT SEQUENCES_PK PRIMARY KEY (theid)
-		) 
+		)
 		</cfquery>
 		 --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		CREATE TABLE cache 
+		CREATE TABLE cache
 		(
 			cache_token varchar(100) DEFAULT NULL,
 			cache_type varchar(20) DEFAULT NULL,
@@ -77,27 +77,27 @@
 		</cfquery>
 		<!--- CREATE MODULES --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		CREATE TABLE modules 
+		CREATE TABLE modules
 		(
-			MOD_ID 			BIGINT NOT NULL, 
-			MOD_NAME 		VARCHAR(50) NOT NULL, 
-			MOD_SHORT 		VARCHAR(3) NOT NULL, 
-			MOD_HOST_ID 	BIGINT DEFAULT NULL, 
-			CONSTRAINT MODULES_PK PRIMARY KEY (MOD_ID), 
+			MOD_ID 			BIGINT NOT NULL,
+			MOD_NAME 		VARCHAR(50) NOT NULL,
+			MOD_SHORT 		VARCHAR(3) NOT NULL,
+			MOD_HOST_ID 	BIGINT DEFAULT NULL,
+			CONSTRAINT MODULES_PK PRIMARY KEY (MOD_ID),
 			CONSTRAINT MODULES_UK1 UNIQUE (MOD_NAME, MOD_SHORT, MOD_HOST_ID)
 		)
 		</cfquery>
 		<!--- CREATE PERMISSION --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		CREATE TABLE permissions 
+		CREATE TABLE permissions
 		(
-			PER_ID 			BIGINT NOT NULL, 
-			PER_KEY  		VARCHAR(50) NOT NULL, 
-			PER_HOST_ID 	BIGINT DEFAULT NULL, 
-			PER_ACTIVE 		BIGINT DEFAULT 1 NOT NULL, 
+			PER_ID 			BIGINT NOT NULL,
+			PER_KEY  		VARCHAR(50) NOT NULL,
+			PER_HOST_ID 	BIGINT DEFAULT NULL,
+			PER_ACTIVE 		BIGINT DEFAULT 1 NOT NULL,
 			PER_MOD_ID 		BIGINT NOT NULL,
 			PER_LEVEL		VARCHAR(10),
-			CONSTRAINT PERMISSIONS_PK PRIMARY KEY (PER_ID), 
+			CONSTRAINT PERMISSIONS_PK PRIMARY KEY (PER_ID),
 			CONSTRAINT PERMISSIONS_FK_MODULES FOREIGN KEY (PER_MOD_ID)
 			REFERENCES modules (MOD_ID)
 		)
@@ -105,24 +105,24 @@
 		<!--- CREATE GROUPS --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE groups
-		(	
-			GRP_ID 				VARCHAR(100) NOT NULL, 
-			GRP_NAME 			VARCHAR(50), 
-			GRP_HOST_ID 		BIGINT DEFAULT NULL, 
-			GRP_MOD_ID 			BIGINT NOT NULL, 
+		(
+			GRP_ID 				VARCHAR(100) NOT NULL,
+			GRP_NAME 			VARCHAR(50),
+			GRP_HOST_ID 		BIGINT DEFAULT NULL,
+			GRP_MOD_ID 			BIGINT NOT NULL,
 			GRP_TRANSLATION_KEY VARCHAR(50),
 			UPC_SIZE 			VARCHAR(2) DEFAULT NULL,
 			UPC_FOLDER_FORMAT	VARCHAR(5) DEFAULT 'false',
 			FOLDER_SUBSCRIBE	VARCHAR(5) DEFAULT 'false',
 			FOLDER_REDIRECT VARCHAR(100),
-			CONSTRAINT GROUPS_PK PRIMARY KEY (GRP_ID), 
+			CONSTRAINT GROUPS_PK PRIMARY KEY (GRP_ID),
 			CONSTRAINT GROUPS_FK_MODULES FOREIGN KEY (GRP_MOD_ID)
 			REFERENCES modules (MOD_ID)
 		)
 		</cfquery>
 		<!--- CREATE HOSTS --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		CREATE TABLE hosts 
+		CREATE TABLE hosts
 		(
 		  HOST_ID           BIGINT NOT NULL,
 		  HOST_NAME         VARCHAR(100),
@@ -138,7 +138,7 @@
 		</cfquery>
 		<!--- CREATE USERS --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		CREATE TABLE users 
+		CREATE TABLE users
 		(
 		  USER_ID              VARCHAR(100) NOT NULL,
 		  USER_LOGIN_NAME      VARCHAR(50) NOT NULL,
@@ -176,12 +176,12 @@
 		<!--- CREATE CT_GROUPS_USERS --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE ct_groups_users
-		(	
-		CT_G_U_GRP_ID 		VARCHAR(100) NOT NULL, 
+		(
+		CT_G_U_GRP_ID 		VARCHAR(100) NOT NULL,
 		CT_G_U_USER_ID 		VARCHAR(100) NOT NULL,
 		rec_uuid			VARCHAR(100),
 		PRIMARY KEY (rec_uuid),
-		CONSTRAINT CT_GROUPS_USERS_UK1 UNIQUE (CT_G_U_GRP_ID, CT_G_U_USER_ID), 
+		CONSTRAINT CT_GROUPS_USERS_UK1 UNIQUE (CT_G_U_GRP_ID, CT_G_U_USER_ID),
 		CONSTRAINT CT_GROUPS_USERS_GROUPS_FK1 FOREIGN KEY (CT_G_U_GRP_ID)
 		REFERENCES groups (GRP_ID)
 		)
@@ -189,19 +189,19 @@
 		<!--- CREATE CT_GROUPS_PERMISSIONS --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE ct_groups_permissions
-		(	
-		CT_G_P_PER_ID 		BIGINT NOT NULL, 
-		CT_G_P_GRP_ID 		VARCHAR(100) NOT NULL, 
-		CONSTRAINT CT_GROUPS_PERMISSIONS_UK1 UNIQUE (CT_G_P_PER_ID, CT_G_P_GRP_ID), 
+		(
+		CT_G_P_PER_ID 		BIGINT NOT NULL,
+		CT_G_P_GRP_ID 		VARCHAR(100) NOT NULL,
+		CONSTRAINT CT_GROUPS_PERMISSIONS_UK1 UNIQUE (CT_G_P_PER_ID, CT_G_P_GRP_ID),
 		CONSTRAINT CT_GROUPS_PERMISSIONS_FK2 FOREIGN KEY (CT_G_P_PER_ID)
-		REFERENCES permissions (PER_ID), 
+		REFERENCES permissions (PER_ID),
 		CONSTRAINT CT_GROUPS_PERMISSIONS_FK1 FOREIGN KEY (CT_G_P_GRP_ID)
 		REFERENCES groups (GRP_ID)
 		)
 		</cfquery>
 		<!--- CREATE LOG_ACTIONS --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		CREATE TABLE log_actions 
+		CREATE TABLE log_actions
 		(
 		  LOG_ACT_ID    BIGINT,
 		  LOG_ACT_TEXT  VARCHAR(200),
@@ -210,7 +210,7 @@
 		</cfquery>
 		<!--- CREATE CT_USERS_HOSTS --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		CREATE TABLE ct_users_hosts 
+		CREATE TABLE ct_users_hosts
 		(
 		  CT_U_H_USER_ID  VARCHAR(100),
 		  CT_U_H_HOST_ID  BIGINT,
@@ -220,7 +220,7 @@
 		</cfquery>
 		<!--- CREATE USERS_LOGIN --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		CREATE TABLE users_login 
+		CREATE TABLE users_login
 		(
 		  USER_LOGIN_ID         BIGINT NOT NULL,
 		  USER_ID               VARCHAR(100),
@@ -233,7 +233,7 @@
 		</cfquery>
 		<!--- CREATE WISDOM --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		CREATE TABLE wisdom 
+		CREATE TABLE wisdom
 		(
 		  WIS_ID      BIGINT,
 		  WIS_TEXT    VARCHAR(3000),
@@ -268,16 +268,16 @@
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE ct_users_remoteusers
 		(
-		   	CT_U_RU_ID                BIGINT NOT NULL, 
-			CT_U_RU_USER_ID           VARCHAR(100) NOT NULL, 
-			CT_U_RU_REMOTE_URL        VARCHAR(4000) NOT NULL, 
-			CT_U_RU_REMOTE_USER_ID    VARCHAR(100) NOT NULL, 
-			CT_U_RU_REMOTE_USER_NAME  VARCHAR(4000) NOT NULL, 
-			CT_U_RU_REMOTE_USER_EMAIL VARCHAR(4000), 
-			CT_U_RU_REMOTE_CONFIRMED  BIGINT DEFAULT 0 NOT NULL, 
-			CT_U_RU_UUID              VARCHAR(4000) NOT NULL, 
-			CT_U_RU_VALIDUNTIL        DATE, 
-			CT_U_RU_CONFIRMED         BIGINT DEFAULT 0 NOT NULL, 
+		   	CT_U_RU_ID                BIGINT NOT NULL,
+			CT_U_RU_USER_ID           VARCHAR(100) NOT NULL,
+			CT_U_RU_REMOTE_URL        VARCHAR(4000) NOT NULL,
+			CT_U_RU_REMOTE_USER_ID    VARCHAR(100) NOT NULL,
+			CT_U_RU_REMOTE_USER_NAME  VARCHAR(4000) NOT NULL,
+			CT_U_RU_REMOTE_USER_EMAIL VARCHAR(4000),
+			CT_U_RU_REMOTE_CONFIRMED  BIGINT DEFAULT 0 NOT NULL,
+			CT_U_RU_UUID              VARCHAR(4000) NOT NULL,
+			CT_U_RU_VALIDUNTIL        DATE,
+			CT_U_RU_CONFIRMED         BIGINT DEFAULT 0 NOT NULL,
 		CONSTRAINT CT_USERS_REMOTEUSERS_PK PRIMARY KEY (CT_U_RU_ID),
 		CONSTRAINT CT_USERS_REMOTEUSERS_UK1 UNIQUE (CT_U_RU_USER_ID, CT_U_RU_REMOTE_URL, CT_U_RU_REMOTE_USER_ID),
 		CONSTRAINT CT_USERS_REMOTEUSERS_UK2 UNIQUE (CT_U_RU_UUID),
@@ -289,10 +289,10 @@
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE webservices
 		(
-			SESSIONTOKEN 	VARCHAR(100), 
+			SESSIONTOKEN 	VARCHAR(100),
 			TIMEOUT 		TIMESTAMP,
 			GROUPOFUSER		VARCHAR(2000),
-			USERID			VARCHAR(100), 
+			USERID			VARCHAR(100),
 		CONSTRAINT WEBSERVICES_PK PRIMARY KEY (SESSIONTOKEN)
 		)
 		</cfquery>
@@ -373,7 +373,7 @@
 			PRIMARY KEY (p_id)
 		)
 		</cfquery>
-		
+
 		<!--- plugins_actions --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE plugins_actions
@@ -406,12 +406,14 @@
 			news_title		varchar(500),
 			news_active		varchar(6),
 			news_text		clob,
+			news_excerpt	varchar(2000),
+			news_frontpage	boolean default '0',
 			news_date		varchar(20),
 			host_id 		bigint default 0,
 			PRIMARY KEY (news_id)
 		)
 		</cfquery>
-		
+
 		<!--- ct_aliases --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE ct_aliases
@@ -425,22 +427,23 @@
 
 		<!--- folder_subscribe_groups --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		CREATE TABLE #arguments.thestruct.host_db_prefix#folder_subscribe_groups 
+		CREATE TABLE #arguments.thestruct.host_db_prefix#folder_subscribe_groups
 		(
 			folder_id 		varchar(100) DEFAULT NULL,
 			group_id 		varchar(100) DEFAULT NULL
-		) 
+		)
 		</cfquery>
 
 		<!--- Lucene --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		CREATE TABLE lucene 
+		CREATE TABLE lucene
 		(
 			id 				varchar(100) DEFAULT NULL,
 			type 			varchar(10) DEFAULT NULL,
 			host_id 		bigint DEFAULT NULL,
+			time_stamp 		timestamp,
 			PRIMARY KEY (id)
-		) 
+		)
 		</cfquery>
 
 		<!--- api_basket --->
@@ -449,7 +452,7 @@
 		basket_id 	varchar(100) DEFAULT NULL,
 		asset_id 	varchar(100) DEFAULT NULL,
 		date_added 	timestamp NULL DEFAULT NULL,
-		asset_type 	varchar(10) DEFAULT 'org'	
+		asset_type 	varchar(10) DEFAULT 'org'
 		)
 		</cfquery>
 
@@ -459,8 +462,8 @@
 		<cfif NOT structkeyexists(arguments.thestruct,"fromimport")>
 			<!---  --->
 			<!--- START: INSERT VALUES --->
-			<!--- 
-			
+			<!---
+
 			<cfquery datasource="#arguments.thestruct.dsn#">
 			INSERT INTO sequences
 			(theid, thevalue)
@@ -631,7 +634,7 @@
 			<cfquery datasource="#arguments.thestruct.dsn#">
 			INSERT INTO options
 			(opt_id, opt_value, rec_uuid)
-			VALUES ('conf_db_type', '#session.firsttime.database_type#', '#createuuid()#')
+			VALUES ('conf_db_type', '#arguments.thestruct.razuna.session.firsttime.database_type#', '#createuuid()#')
 			</cfquery>
 			<!--- USERS --->
 			<cfquery datasource="#arguments.thestruct.dsn#">
@@ -693,124 +696,124 @@
 			</cfquery>
 			<!--- WISDOM --->
 			<cfquery datasource="#arguments.thestruct.dsn#">
-			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
-			2, 'In giving advice, seek to help, not please, your friend.', 'Solon'); 
-			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
+			2, 'In giving advice, seek to help, not please, your friend.', 'Solon');
+			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 			3, 'A friend is one to whom you can pour out the contents of your heart, chaff and grain alike. Knowning that the gentlest of hands will take and sift it, keep what is worth keeping, and with a breath of kindness, blow the rest away.'
-			, 'Anonymous'); 
-			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+			, 'Anonymous');
+			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 			4, 'The most exciting phrase to hear in science, the one that heralds new discoveries, is not "Eureka" (I found it!) but "That''s funny ..."'
-			, 'Isaac Asimov'); 
-			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+			, 'Isaac Asimov');
+			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 			5, 'Everyone should carefully observe which way his heart draws him, and then choose that way with all his strength!'
-			, 'Hasidic saying'); 
-			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
-			6, 'Mend your speech a little, lest it may mar your fortunes.', 'Shakespeare, King Lear'); 
-			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+			, 'Hasidic saying');
+			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
+			6, 'Mend your speech a little, lest it may mar your fortunes.', 'Shakespeare, King Lear');
+			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 			7, 'In preparing for battle I have always found that plans are useless, but planning is indispensable.'
-			, 'Dwight D. Eisenhower'); 
-			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
-			8, 'It''s all right to aim high if you have plenty of ammunition.', 'Hawley R. Everhart'); 
-			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+			, 'Dwight D. Eisenhower');
+			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
+			8, 'It''s all right to aim high if you have plenty of ammunition.', 'Hawley R. Everhart');
+			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 			10, 'A great civilization is not concurred from without until it has destroyed itself from within.'
-			, 'Will Durant'); 
-			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+			, 'Will Durant');
+			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 			11, 'Travel far enough away, my friend, and you''ll discover something of great beauty: your self'
-			, 'Cirque du Soleil'); 
-			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+			, 'Cirque du Soleil');
+			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 			1, 'There are Painters who transform the sun to a yellow spot, but there are others who with the help of their art and their intelligence, transform a yellow spot into the sun.'
-			, 'Pablo Picasso'); 
-			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+			, 'Pablo Picasso');
+			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 			9, 'The significant problems we have cannot be solved at the same level of thinking with which we created them.'
-			, 'Albert Einstein'); 
-			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+			, 'Albert Einstein');
+			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 			12, 'Acquaintance, n.: A person whom we know well enough to borrow from, but not well enough to lend to. '
-			, 'Ambrose Bierce'); 
-			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
-			13, 'The best investment is in the tools of one''s trade.', 'Benjamin Franklin'); 
-			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
-			14, 'We all agree that your theory is crazy -- but is it crazy enough?', 'Niels Bohr'); 
-			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
-			15, 'Genius without education is like silver in the mine.', 'Benjamin Franklin'); 
-			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
-			16, 'Anybody can sympathise with the sufferings of a friend, but it requires a very fine nature to sympathise with a friend''s success.', 'Oscar Wilde'); 
-			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
-			17, 'Absurdity, n.: A statement or belief manifestly incosistent with one''s own.', 'Ambrose Bierce'); 
-			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+			, 'Ambrose Bierce');
+			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
+			13, 'The best investment is in the tools of one''s trade.', 'Benjamin Franklin');
+			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
+			14, 'We all agree that your theory is crazy -- but is it crazy enough?', 'Niels Bohr');
+			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
+			15, 'Genius without education is like silver in the mine.', 'Benjamin Franklin');
+			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
+			16, 'Anybody can sympathise with the sufferings of a friend, but it requires a very fine nature to sympathise with a friend''s success.', 'Oscar Wilde');
+			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
+			17, 'Absurdity, n.: A statement or belief manifestly incosistent with one''s own.', 'Ambrose Bierce');
+			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 			18, 'There''s no trick to being a humorist when you have the whole government working for you.', 'Will Rogers');
-			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
-			19, 'The real question is not whether machines think but whether men do. The mystery which surrounds a thinking machine already surrounds a thinking man.', 'B.F.Skinner'); 
-			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
+			19, 'The real question is not whether machines think but whether men do. The mystery which surrounds a thinking machine already surrounds a thinking man.', 'B.F.Skinner');
+			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 			20, 'That we must all die, we always knew; I wish I had remembered it sooner.', 'Samuel Johnson');
-			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 			21, 'The key to living well is first to will that which is necessary and then to love that which is willed.', 'Irving Yalom');
-			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 			22, 'Always tell the truth. You will gratify some people and astonish the rest.', 'Mark Twain');
-			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 			23, 'See everything. Ignore a lot. Improve a little.', 'Pope John Paul II');
-			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 			24, 'Resentment is like taking poison and hoping the other person dies.', 'St. Augustine');
-			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 			25, 'Hope is definitely not the same thing as optimism. It is not the conviction that something will turn out well, but the certainty that something makes sense, regardless of how it turns out.', 'Vaclav Havel');
-			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 			26, 'We must never be ashamed of our tears, they are rain from heaven washing the dust from our hard hearts.', 'Charles Dickens');
-			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 			27, 'Our business in life is not to succeed, but to continue to fail in good spirits.', 'Robert Louis Stevenson');
-			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 			28, 'Be who you are and say what you feel because the people who mind don''t matter and the people who matter don''t mind.', 'Theodor Geisel');
-			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 			29, 'It is well to remember that the entire universe, with one trifling exception, is composed of others.', 'John Andrew Holmes');
-			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 			30, 'Fail to honor people, they fail to honor you.', 'Lao Tzu');
-			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 			31, 'You can leave anything out, as long as you know what it is.', 'Ernest Hemingway');
-			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 			32, 'The future is here. It''s just not evenly distributed yet.', 'William Gibson');
-			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 			33, 'The future always comes too fast and in the wrong order.', 'Alvin Toffler');
-			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 			34, 'There will always be people who are ahead of the curve, and people who are behind the curve. But knowledge moves the curve.', 'Bill James');
-			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 			35, 'History is a wave that moves through time slightly faster than we do.', 'Kim Stanley Robinson');
-			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 			36, 'Inspiration is for amateurs. I just get to work.', 'Chuck Close');
-			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 			37, 'The best and most beautiful things in the world cannot be seen or even touched. They must be felt with the heart.', 'Hellen Keller');
-			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 			38, 'Small opportunities are often the beginning of great enterprises.', 'Demosthenes');
-			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 			39, 'Simplicity is the utlimate sophistication.', 'Leonardo da Vinci');
-			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 			40, 'A journey of thousand miles begins with a single step.', 'Lao tzu');
-			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 			41, 'What we think, we become.', 'Buddha');
-			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 			42, 'Great minds discuss ideas. Average minds discuss events. Small minds discuss people.', 'Eleanor Roosevelt');
-			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 			43, 'Forget the place you are trying to get and see the beauty in right now', 'Some wise person');
-			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 			44, 'All that we are, is the result of our thoughts.', 'Buddha');
-			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 			45, 'Logic will get you from A to B. Imagination will take you everywhere.', 'Albert Einstein');
-			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 			46, 'Do not dwell on who let you down, cherish those whoe hold you up.', 'Unknown');
-			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 			47, 'People are made to be loved and things are made to be used. The confusion in this world is that people are used and things are loved!', 'Unknown');
-			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 			48, 'Make peace with your past so it will not destroy your present.', 'Paulo Coelho');
-			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 			49, 'Obstacles are those frightful things you see when you take your eyes off your goal.', 'Henry Ford');
-			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 			50, 'I feel like I can not feel.', 'Salvador Dali');
-			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 			51, 'To avoid criticism, do nothing, say nothing, and be nothing.', 'Elbert Hubbard');
-			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 			52, 'I am not upset that you lied to me, I am upset that from now on I can not believe you anymore.', 'Friedrich Nietzsche');
-			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 			53, 'Successful and great people are ordinary people with extraordinary determination.', 'Robert Schuller');
-			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 			54, 'Everything has beauty, but not everyone sees it.', 'Confucius');
-			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES (
 			55, 'Wanting to be someone else is a waste of the person you are.', 'Kurt Cobain');
 			</cfquery>
 			<!--- FILE TYPES --->
@@ -932,12 +935,13 @@
 		DROP ALL OBJECTS
 		</cfquery> --->
 	</cffunction>
-	
+
 	<!--- Create Host Remote --->
 	<cffunction name="create_host_remote" access="remote" output="false">
 		<cfargument name="dsn" type="string" required="true">
 		<cfargument name="theschema" type="string" required="true">
 		<cfargument name="host_db_prefix" type="string" required="true">
+		<cfargument name="thestruct" type="struct" required="true" />
 		<!--- Params --->
 		<cfset arguments.thestruct = structnew()>
 		<cfset arguments.thestruct.dsn = arguments.dsn>
@@ -948,7 +952,7 @@
 		<!--- CREATE THE INDEXES --->
 		<cfinvoke method="create_indexes" thestruct="#arguments.thestruct#">
 	</cffunction>
-	
+
 	<!--- Create Host --->
 	<cffunction name="create_host" access="public" output="false">
 		<cfargument name="thestruct" type="Struct">
@@ -957,24 +961,24 @@
 		<!--- CREATE THE INDEXES --->
 		<cfinvoke method="create_indexes" thestruct="#arguments.thestruct#">
 	</cffunction>
-	
+
 	<!--- Create Tables --->
 	<cffunction name="create_tables" access="public" output="false">
 		<cfargument name="thestruct" type="Struct">
-		
+
 		<!--- ASSETS_TEMP --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		CREATE TABLE #arguments.thestruct.host_db_prefix#assets_temp 
+		CREATE TABLE #arguments.thestruct.host_db_prefix#assets_temp
 		(
-			TEMPID 			VARCHAR(200), 
-			FILENAME 		VARCHAR(500), 
-			EXTENSION 		VARCHAR(20), 
-			DATE_ADD 		TIMESTAMP, 
-			FOLDER_ID		VARCHAR(100), 
-			WHO				VARCHAR(100), 
-			FILENAMENOEXT	VARCHAR(500), 
-			PATH 			VARCHAR(2000), 
-			MIMETYPE		VARCHAR(200), 
+			TEMPID 			VARCHAR(200),
+			FILENAME 		VARCHAR(500),
+			EXTENSION 		VARCHAR(20),
+			DATE_ADD 		TIMESTAMP,
+			FOLDER_ID		VARCHAR(100),
+			WHO				VARCHAR(100),
+			FILENAMENOEXT	VARCHAR(500),
+			PATH 			VARCHAR(2000),
+			MIMETYPE		VARCHAR(200),
 			THESIZE			VARCHAR(100),
 			GROUPID			VARCHAR(100),
 			SCHED_ACTION	INT,
@@ -986,10 +990,10 @@
 			CONSTRAINT #arguments.thestruct.host_db_prefix#ASSETSTEMP PRIMARY KEY (TEMPID)
 		)
 		</cfquery>
-		
+
 		<!--- XMP --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		CREATE TABLE #arguments.thestruct.host_db_prefix#xmp 
+		CREATE TABLE #arguments.thestruct.host_db_prefix#xmp
 		(
 			id_r					VARCHAR(100),
 			asset_type				varchar(10),
@@ -1032,9 +1036,9 @@
 			yres					varchar(30),
 			resunit					varchar(20),
 			HOST_ID				BIGINT
-		)  
+		)
 		</cfquery>
-		
+
 		<!--- CART --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.host_db_prefix#cart
@@ -1050,7 +1054,7 @@
 		  CART_FILE_TYPE    	VARCHAR(5),
 		  cart_order_email 		varchar(150),
 		  cart_order_message 	varchar(2000),
-		  cart_order_done 		varchar(1), 
+		  cart_order_done 		varchar(1),
 		  cart_order_date 		timestamp,
 		  cart_order_user_r 	VARCHAR(100),
 		  cart_order_artofimage	CLOB,
@@ -1060,7 +1064,7 @@
 		  HOST_ID				BIGINT
 		)
 		</cfquery>
-				
+
 		<!--- FOLDERS --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.host_db_prefix#folders
@@ -1100,7 +1104,7 @@
 		  REFERENCES hosts (HOST_ID) ON DELETE CASCADE
 		)
 		</cfquery>
-		
+
 		<!--- FOLDERS DESC --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.host_db_prefix#folders_desc
@@ -1130,7 +1134,7 @@
 		REFERENCES hosts (HOST_ID) ON DELETE CASCADE
 		)
 		</cfquery>
-		
+
 		<!--- FOLDERS GROUPS --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.host_db_prefix#folders_groups
@@ -1145,7 +1149,7 @@
 		REFERENCES hosts (HOST_ID) ON DELETE CASCADE
 		)
 		</cfquery>
-		
+
 		<!--- FILES --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.host_db_prefix#files
@@ -1181,14 +1185,14 @@
 		  CLOUD_URL_EXP		   BIGINT,
 		  IN_TRASH		   	   VARCHAR(2) DEFAULT 'F',
 		  IS_INDEXED		   VARCHAR(1) DEFAULT 0,
-		  FILE_UPC_NUMBER      VARCHAR(15), 
+		  FILE_UPC_NUMBER      VARCHAR(15),
 		  EXPIRY_DATE DATE,
 		CONSTRAINT #arguments.thestruct.host_db_prefix#FILE_PK PRIMARY KEY (FILE_ID),
 		CONSTRAINT #arguments.thestruct.host_db_prefix#FILE_FK_HOST FOREIGN KEY (HOST_ID)
 		REFERENCES hosts (HOST_ID) ON DELETE CASCADE
 		)
 		</cfquery>
-		
+
 		<!--- FILES DESC --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.host_db_prefix#files_desc
@@ -1202,7 +1206,7 @@
 		  PRIMARY KEY (ID_INC)
 		)
 		</cfquery>
-		
+
 		<!--- IMAGES --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.host_db_prefix#images
@@ -1269,7 +1273,7 @@
 		REFERENCES hosts (HOST_ID) ON DELETE CASCADE
 		)
 		</cfquery>
-		
+
 		<!--- IMAGES TEXT --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.host_db_prefix#images_text
@@ -1283,20 +1287,20 @@
 		  PRIMARY KEY (ID_INC)
 		)
 		</cfquery>
-		
+
 		<!--- LOG ASSETS --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.host_db_prefix#log_assets
 		(
-		  LOG_ID			VARCHAR(100) NOT NULL, 
-		  LOG_USER			VARCHAR(100), 
-		  LOG_ACTION		VARCHAR(100), 
-		  LOG_DATE			DATE, 
-		  LOG_TIME			TIMESTAMP, 
-		  LOG_DESC			VARCHAR(4000), 
-		  LOG_FILE_TYPE		VARCHAR(5), 
-		  LOG_BROWSER		VARCHAR(500), 
-		  LOG_IP			VARCHAR(200), 
+		  LOG_ID			VARCHAR(100) NOT NULL,
+		  LOG_USER			VARCHAR(100),
+		  LOG_ACTION		VARCHAR(100),
+		  LOG_DATE			DATE,
+		  LOG_TIME			TIMESTAMP,
+		  LOG_DESC			VARCHAR(4000),
+		  LOG_FILE_TYPE		VARCHAR(5),
+		  LOG_BROWSER		VARCHAR(500),
+		  LOG_IP			VARCHAR(200),
 		  LOG_TIMESTAMP		TIMESTAMP,
 		  HOST_ID			BIGINT,
 		  ASSET_ID_R		VARCHAR(100),
@@ -1304,44 +1308,44 @@
 		  CONSTRAINT #arguments.thestruct.host_db_prefix#LOG_ASSETS_PK PRIMARY KEY (LOG_ID)
 		)
 		</cfquery>
-		
+
 		<!--- LOG FOLDERS --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.host_db_prefix#log_folders
 		(
-		  LOG_ID			VARCHAR(100) NOT NULL, 
-		  LOG_USER			VARCHAR(100), 
-		  LOG_ACTION		VARCHAR(100), 
-		  LOG_DATE			DATE, 
-		  LOG_TIME			TIMESTAMP, 
-		  LOG_DESC			VARCHAR(4000), 
-		  LOG_BROWSER		VARCHAR(500), 
-		  LOG_IP			VARCHAR(200), 
+		  LOG_ID			VARCHAR(100) NOT NULL,
+		  LOG_USER			VARCHAR(100),
+		  LOG_ACTION		VARCHAR(100),
+		  LOG_DATE			DATE,
+		  LOG_TIME			TIMESTAMP,
+		  LOG_DESC			VARCHAR(4000),
+		  LOG_BROWSER		VARCHAR(500),
+		  LOG_IP			VARCHAR(200),
 		  LOG_TIMESTAMP		TIMESTAMP,
-		  HOST_ID			BIGINT, 
+		  HOST_ID			BIGINT,
 		  CONSTRAINT #arguments.thestruct.host_db_prefix#LOG_FOLDERS_PK PRIMARY KEY (LOG_ID)
 		)
 		</cfquery>
-		
+
 		<!--- LOG USERS --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.host_db_prefix#log_users
 		(
-		  LOG_ID			VARCHAR(100) NOT NULL, 
-		  LOG_USER			VARCHAR(100), 
-		  LOG_ACTION		VARCHAR(100), 
-		  LOG_DATE			DATE, 
-		  LOG_TIME			TIMESTAMP, 
-		  LOG_DESC			VARCHAR(4000), 
-		  LOG_BROWSER		VARCHAR(500), 
-		  LOG_IP			VARCHAR(200), 
+		  LOG_ID			VARCHAR(100) NOT NULL,
+		  LOG_USER			VARCHAR(100),
+		  LOG_ACTION		VARCHAR(100),
+		  LOG_DATE			DATE,
+		  LOG_TIME			TIMESTAMP,
+		  LOG_DESC			VARCHAR(4000),
+		  LOG_BROWSER		VARCHAR(500),
+		  LOG_IP			VARCHAR(200),
 		  LOG_TIMESTAMP		TIMESTAMP,
 		  LOG_SECTION		VARCHAR(10),
 		  HOST_ID			BIGINT,
 		  CONSTRAINT #arguments.thestruct.host_db_prefix#LOG_USERS_PK PRIMARY KEY (LOG_ID)
 		)
 		</cfquery>
-		
+
 		<!--- LOG SEARCH --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.host_db_prefix#log_search
@@ -1354,13 +1358,13 @@
 		  LOG_FOUNDITEMS	BIGINT,
 		  LOG_SEARCH_FROM	VARCHAR(50),
 		  LOG_TIMESTAMP		TIMESTAMP,
-		  LOG_BROWSER		VARCHAR(500), 
+		  LOG_BROWSER		VARCHAR(500),
 		  LOG_IP			VARCHAR(200),
-		  HOST_ID			BIGINT, 
+		  HOST_ID			BIGINT,
 		CONSTRAINT #arguments.thestruct.host_db_prefix#LOG_SEARCH_PK PRIMARY KEY (LOG_ID)
 		)
 		</cfquery>
-				
+
 		<!--- SETTINGS --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.host_db_prefix#settings
@@ -1374,7 +1378,7 @@
 		REFERENCES hosts (HOST_ID) ON DELETE CASCADE
 		)
 		</cfquery>
-		
+
 		<!--- SETTINGS 2 --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.host_db_prefix#settings_2
@@ -1481,7 +1485,7 @@
 		  REFERENCES hosts (HOST_ID) ON DELETE CASCADE
 		)
 		</cfquery>
-		
+
 		<!--- TEMP --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.host_db_prefix#temp
@@ -1491,7 +1495,7 @@
 		  HOST_ID		BIGINT
 		)
 		</cfquery>
-		
+
 		<!--- COLLECTIONS --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.host_db_prefix#collections
@@ -1521,7 +1525,7 @@
 		REFERENCES hosts (HOST_ID) ON DELETE CASCADE
 		)
 		</cfquery>
-		
+
 		<!--- COLLECTIONS TEXT --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.host_db_prefix#collections_text
@@ -1538,7 +1542,7 @@
 			REFERENCES #arguments.thestruct.host_db_prefix#collections (COL_ID) ON DELETE CASCADE
 		)
 		</cfquery>
-		
+
 		<!--- COLLECTIONS FILES CROSS TABLE --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.host_db_prefix#collections_ct_files
@@ -1554,7 +1558,7 @@
 		  PRIMARY KEY (rec_uuid)
 		)
 		</cfquery>
-		
+
 		<!--- COLLECTIONS GROUPS --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.host_db_prefix#collections_groups
@@ -1569,7 +1573,7 @@
 		  REFERENCES #arguments.thestruct.host_db_prefix#collections (col_id) ON DELETE CASCADE
 		)
 		</cfquery>
-		
+
 		<!--- USER FAVORITES --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.host_db_prefix#users_favorites
@@ -1586,7 +1590,7 @@
 			  REFERENCES users (USER_ID) ON DELETE SET NULL
 		)
 		</cfquery>
-		
+
 		<!--- VIDEOS --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.host_db_prefix#videos
@@ -1649,7 +1653,7 @@
 		REFERENCES hosts (HOST_ID) ON DELETE CASCADE
 		)
 		</cfquery>
-		
+
 		<!--- VIDEOS TEXT --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.host_db_prefix#videos_text
@@ -1664,7 +1668,7 @@
 		  PRIMARY KEY (ID_INC)
 		)
 		</cfquery>
-		
+
 		<!--- SCHEDULES --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.host_db_prefix#schedules
@@ -1706,7 +1710,7 @@
 			REFERENCES users (USER_ID) ON DELETE SET NULL
 		)
 		</cfquery>
-		
+
 		<!--- SCHEDULES_LOG --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.host_db_prefix#schedules_log
@@ -1725,15 +1729,15 @@
 		REFERENCES #arguments.thestruct.host_db_prefix#schedules (SCHED_ID) ON DELETE CASCADE
 		)
 		</cfquery>
-		
+
 		<!--- CUSTOM FIELDS --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.host_db_prefix#custom_fields
 		(
-			cf_id 			VARCHAR(100), 
-			cf_type	 		VARCHAR(20), 
-			cf_order 		bigint, 
-			cf_enabled 		VARCHAR(2), 
+			cf_id 			VARCHAR(100),
+			cf_type	 		VARCHAR(20),
+			cf_order 		bigint,
+			cf_enabled 		VARCHAR(2),
 			cf_show			VARCHAR(10),
 			cf_group 		VARCHAR(100),
 			cf_select_list	VARCHAR(4000),
@@ -1747,8 +1751,8 @@
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.host_db_prefix#custom_fields_text
 		(
-			cf_id_r			VARCHAR(100), 
-			lang_id_r 		bigint, 
+			cf_id_r			VARCHAR(100),
+			lang_id_r 		bigint,
 			cf_text			VARCHAR(500),
 			HOST_ID			BIGINT,
 			rec_uuid			VARCHAR(100),
@@ -1759,8 +1763,8 @@
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.host_db_prefix#custom_fields_values
 		(
-			cf_id_r			VARCHAR(100), 
-			asset_id_r 		VARCHAR(100), 
+			cf_id_r			VARCHAR(100),
+			asset_id_r 		VARCHAR(100),
 			cf_value		VARCHAR(4000),
 			HOST_ID			BIGINT,
 			rec_uuid			VARCHAR(100),
@@ -1768,7 +1772,7 @@
 			CONSTRAINT #arguments.thestruct.host_db_prefix#cf_values FOREIGN KEY (cf_id_r) REFERENCES #arguments.thestruct.host_db_prefix#custom_fields (cf_id) ON DELETE CASCADE
 		)
 		</cfquery>
-		
+
 		<!--- COMMENTS --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.host_db_prefix#comments
@@ -1783,7 +1787,7 @@
 			CONSTRAINT #arguments.thestruct.host_db_prefix#comments_pk PRIMARY KEY (COM_ID)
 		)
 		</cfquery>
-		
+
 		<!--- Versions --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.host_db_prefix#versions
@@ -1816,7 +1820,7 @@
 			PRIMARY KEY (rec_uuid)
 		)
 		</cfquery>
-		
+
 		<!--- TRANSLATIONS --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.host_db_prefix#languages
@@ -1826,11 +1830,11 @@
 			lang_active		VARCHAR(2) default 'f',
 			host_id			BIGINT,
 			rec_uuid		VARCHAR(100),
-			CONSTRAINT HOSTID_LANGID UNIQUE (HOST_ID, LANG_ID), 
+			CONSTRAINT HOSTID_LANGID UNIQUE (HOST_ID, LANG_ID),
 			PRIMARY KEY (rec_uuid)
 		)
 		</cfquery>
-		
+
 		<!--- AUDIOS --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.host_db_prefix#audios
@@ -1873,7 +1877,7 @@
 			CONSTRAINT #arguments.thestruct.host_db_prefix#audios_FK1 FOREIGN KEY (HOST_ID) REFERENCES hosts (HOST_ID) ON DELETE CASCADE
 		)
 		</cfquery>
-		
+
 		<!--- AUDIOS TEXT --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.host_db_prefix#audios_text
@@ -1887,7 +1891,7 @@
 			PRIMARY KEY (ID_INC)
 		)
 		</cfquery>
-		
+
 		<!--- SHARE OPTIONS --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.host_db_prefix#share_options
@@ -1905,7 +1909,7 @@
 			PRIMARY KEY (rec_uuid)
 		)
 		</cfquery>
-		
+
 		<!--- ERRORS --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.host_db_prefix#errors
@@ -1918,10 +1922,10 @@
 			CONSTRAINT #arguments.thestruct.host_db_prefix#errors_PK PRIMARY KEY (id)
 		)
 		</cfquery>
-		
+
 		<!--- Upload Templates --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		CREATE TABLE #arguments.thestruct.host_db_prefix#upload_templates 
+		CREATE TABLE #arguments.thestruct.host_db_prefix#upload_templates
 		(
 		  	upl_temp_id			varchar(100) NOT NULL,
 		  	upl_date_create 	timestamp NULL DEFAULT NULL,
@@ -1934,7 +1938,7 @@
 		  	PRIMARY KEY (upl_temp_id)
 		)
 		</cfquery>
-		
+
 		<!--- Upload Templates Values --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.host_db_prefix#upload_templates_val
@@ -1946,13 +1950,13 @@
 		  	upl_temp_format		varchar(10) DEFAULT NULL,
 		  	host_id				BIGINT DEFAULT NULL,
 		  	rec_uuid			VARCHAR(100),
-		  	PRIMARY KEY (rec_uuid)	
+		  	PRIMARY KEY (rec_uuid)
 		)
 		</cfquery>
-		
+
 		<!--- CREATE WIDGETS --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		CREATE TABLE #arguments.thestruct.host_db_prefix#widgets 
+		CREATE TABLE #arguments.thestruct.host_db_prefix#widgets
 		(
 		  widget_id				varchar(100),
 		  col_id_r				varchar(100),
@@ -1969,7 +1973,7 @@
 		  PRIMARY KEY (widget_id)
 		)
 		</cfquery>
-		
+
 		<!--- Additional Versions --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.host_db_prefix#additional_versions (
@@ -1989,7 +1993,7 @@
 		  PRIMARY KEY (av_id)
 		)
 		</cfquery>
-		
+
 		<!--- Files XMP --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.host_db_prefix#files_xmp (
@@ -2004,7 +2008,7 @@
 		  PRIMARY KEY (asset_id_r)
 		)
 		</cfquery>
-		
+
 		<!--- Labels --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.host_db_prefix#labels (
@@ -2018,7 +2022,7 @@
   		PRIMARY KEY (label_id)
 		)
 		</cfquery>
-		
+
 		<!--- Import Templates --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.host_db_prefix#import_templates (
@@ -2033,7 +2037,7 @@
   		PRIMARY KEY (imp_temp_id)
 		)
 		</cfquery>
-		
+
 		<!--- Import Templates Values --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.host_db_prefix#import_templates_val (
@@ -2046,7 +2050,7 @@
   		PRIMARY KEY (rec_uuid)
 		)
 		</cfquery>
-		
+
 		<!--- Customization --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.host_db_prefix#custom (
@@ -2055,20 +2059,20 @@
 		host_id				bigint
 		)
 		</cfquery>
-		
+
 		<!--- RAZ-2831 : Metadata export template --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.host_db_prefix#export_template (
 	  	exp_id				varchar(100),
 		exp_field			varchar(200),
-		exp_value			varchar(2000),
+		exp_value			CLOB,
 		exp_timestamp		timestamp, 
 		user_id				varchar(100),
 		host_id				bigint,
 		PRIMARY KEY (exp_id)
 		)
 		</cfquery>
-		
+
 		<!--- Social accounts --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.host_db_prefix#users_accounts (
@@ -2114,7 +2118,7 @@
 
 		<!--- Smart Folders --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		CREATE TABLE #arguments.thestruct.host_db_prefix#smart_folders 
+		CREATE TABLE #arguments.thestruct.host_db_prefix#smart_folders
 		(
 			sf_id 			varchar(100),
 			sf_name 		varchar(500),
@@ -2140,7 +2144,7 @@
 			PRIMARY KEY (sf_id_r)
 		)
 		</cfquery>
-		
+
 		<!--- Folder subscribe --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.host_db_prefix#folder_subscribe
@@ -2154,12 +2158,13 @@
 			asset_keywords				varchar(3) DEFAULT 'F',
 			asset_description			varchar(3) DEFAULT 'F',
 			auto_entry	varchar(5) DEFAULT 'false',
-			 PRIMARY KEY (fs_id)
+			PRIMARY KEY (fs_id)
 		)
 		</cfquery>
 
+		<!--- Approval --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		CREATE TABLE #arguments.thestruct.host_db_prefix#approval 
+		CREATE TABLE #arguments.thestruct.host_db_prefix#approval
 		(
 			approval_enabled		boolean default '0',
 			approval_folders 		varchar(2000) default null,
@@ -2169,21 +2174,64 @@
 			approval_group_2_all 	boolean default '0',
 			host_id 				bigint default null,
 			approval_folders_all 	boolean default '0'
-		) 
+		)
 		</cfquery>
 
+		<!--- Approval --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		CREATE TABLE #arguments.thestruct.host_db_prefix#approval_done 
+		CREATE TABLE #arguments.thestruct.host_db_prefix#approval_done
 		(
 			user_id 		varchar(100) default null,
 			approval_date 	timestamp null default null,
 			file_id 		varchar(100) default null
-		) 
+		)
+		</cfquery>
+
+		<!--- UPC --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE #arguments.thestruct.host_db_prefix#upc_template (
+		upc_temp_id 		varchar(100),
+  		upc_date_create	 	timestamp,
+  		upc_date_update		timestamp,
+  		upc_who				varchar(100),
+  		upc_active 			varchar(1) DEFAULT '0',
+  		host_id				bigint,
+  		upc_name			varchar(200),
+  		upc_description 	varchar(2000),
+  		PRIMARY KEY (upc_temp_id)
+		)
+		</cfquery>
+
+		<!--- UPC --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE #arguments.thestruct.host_db_prefix#upc_template_val (
+  		upc_temp_id_r		varchar(100),
+  		rec_uuid			varchar(100),
+  		upc_field			varchar(200),
+  		upc_is_original		boolean default '0',
+  		host_id				bigint,
+  		PRIMARY KEY (upc_temp_id_r)
+		)
+		</cfquery>
+
+		<!--- Task scripts --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE #arguments.thestruct.host_db_prefix#scheduled_scripts (
+  		id_name				varchar(200),
+  		value				varchar(2000),
+  		date_added			timestamp,
+  		sched_id			varchar(100),
+  		host_id				bigint,
+  		KEY scripts_id (id_name),
+  		KEY scripts_host_id (host_id),
+  		KEY scripts_date_added (date_added),
+  		KEY scripts_sched_id (sched_id)
+		)
 		</cfquery>
 
 
 	</cffunction>
-	
+
 	<!--- Create Indexes --->
 	<cffunction name="create_indexes" access="public" output="false">
 		<cfargument name="thestruct" type="Struct">
@@ -2261,7 +2309,7 @@
 		CREATE INDEX #arguments.thestruct.host_db_prefix#fg_grpid ON #arguments.thestruct.host_db_prefix#folders_groups(grp_id_r);
 		CREATE INDEX #arguments.thestruct.host_db_prefix#fg_grpperm ON #arguments.thestruct.host_db_prefix#folders_groups(GRP_PERMISSION);
 		CREATE INDEX #arguments.thestruct.host_db_prefix#fg_hostid ON #arguments.thestruct.host_db_prefix#folders_groups(HOST_ID);
-		CREATE INDEX #arguments.thestruct.host_db_prefix#fg_fidr ON #arguments.thestruct.host_db_prefix#folders_groups(folder_id_r);		
+		CREATE INDEX #arguments.thestruct.host_db_prefix#fg_fidr ON #arguments.thestruct.host_db_prefix#folders_groups(folder_id_r);
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE INDEX #arguments.thestruct.host_db_prefix#files_hostid ON #arguments.thestruct.host_db_prefix#files(HOST_ID);
@@ -2458,11 +2506,12 @@
 
 		<cfreturn />
 	</cffunction>
-	
+
 	<!--- Clear database completely --->
 	<cffunction name="clearall" access="public" output="false">
+		<cfargument name="thestruct" type="struct" required="true" />
 		<!--- Query Tables --->
-		<cfquery datasource="#session.firsttime.database#" name="qrytables">
+		<cfquery datasource="#arguments.thestruct.razuna.session.firsttime.database#" name="qrytables">
 		SELECT lower(table_name) as thetable
 		FROM information_schema.tables
 		WHERE table_catalog = 'RAZUNA'
@@ -2472,42 +2521,42 @@
 		<!--- Loop and drop tables --->
 		<cfloop query="qrytables">
 			<cftry>
-				<cfquery datasource="#session.firsttime.database#">
+				<cfquery datasource="#arguments.thestruct.razuna.session.firsttime.database#">
 				ALTER TABLE #thetable# SET REFERENTIAL_INTEGRITY false
 				</cfquery>
-				<cfquery datasource="#session.firsttime.database#">
+				<cfquery datasource="#arguments.thestruct.razuna.session.firsttime.database#">
 				DROP TABLE #thetable#
 				</cfquery>
 				<cfcatch type="any"></cfcatch>
 			</cftry>
 		</cfloop>
 		<!--- Query Sequences --->
-		<cfquery datasource="#session.firsttime.database#" name="qryseq">
+		<cfquery datasource="#arguments.thestruct.razuna.session.firsttime.database#" name="qryseq">
 		SELECT sequence_name as theseq
 		FROM information_schema.sequences
 		WHERE IS_GENERATED = false
 		</cfquery>
 		<!--- Loop over Sequences and remove them --->
 		<cfloop query="qryseq">
-			<cfquery datasource="#session.firsttime.database#">
+			<cfquery datasource="#arguments.thestruct.razuna.session.firsttime.database#">
 			DROP SEQUENCE #theseq#
 			</cfquery>
 		</cfloop>
 		<cfreturn />
 	</cffunction>
-	
+
 	<!--- OPENBD CONFIG INTERACTION --->
-	
-	<cffunction name="bdgetConfig" access="private" output="false" returntype="struct" hint="Returns a struct representation of the OpenBD server configuration (bluedragon.xml)">
+
+	<cffunction name="bdgetConfig" access="private" output="false" returntype="struct" >
 		<cfset var admin = "" />
 			<cflock scope="Server" type="readonly" timeout="5">
 				<cfset admin = createObject("java", "com.naryx.tagfusion.cfm.engine.cfEngine").getConfig().getCFMLData() />
 			</cflock>
 		<cfreturn admin.server />
 	</cffunction>
-	
-	<cffunction name="bdsetConfig" access="private" output="false" returntype="void" hint="Sets the server configuration and tells OpenBD to refresh its settings">
-		<cfargument name="currentConfig" type="struct" required="true" hint="The configuration struct, which is a struct representation of bluedragon.xml" />
+
+	<cffunction name="bdsetConfig" access="private" output="false" returntype="void" >
+		<cfargument name="currentConfig" type="struct" required="true"  />
 			<!--- Initialize Var --->
 			<cfset admin = structnew()>
 			<cflock scope="Server" type="exclusive" timeout="5">
@@ -2518,9 +2567,9 @@
 				<cfset success = createObject("java", "com.naryx.tagfusion.cfm.engine.cfEngine").writeXmlFile(xmlConfig) />
 			</cflock>
 	</cffunction>
-	
-	<cffunction name="bddatasourceExists" access="public" output="false" returntype="boolean" hint="Returns a boolean indicating whether or not a datasource with the specified name exists">
-		<cfargument name="dsn" type="string" required="true" hint="The datasource name to check" />
+
+	<cffunction name="bddatasourceExists" access="public" output="false" returntype="boolean" >
+		<cfargument name="dsn" type="string" required="true"  />
 		<cfset var dsnExists = true />
 		<cfset var localConfig = bdgetConfig() />
 		<cfset var i = 0 />
@@ -2539,40 +2588,40 @@
 		</cfif>
 		<cfreturn dsnExists />
 	</cffunction>
-	
-	<cffunction name="BDsetDatasource" access="public" output="false" returntype="void" hint="Creates or updates a datasource">
-		<cfargument name="name" type="string" required="true" hint="OpenBD Datasource Name" />
-		<cfargument name="databasename" type="string" required="false" default="" hint="Database name on the database server" />
-		<cfargument name="server" type="string" required="false" default="" hint="Database server host name or IP address" />
-		<cfargument name="port"	type="numeric" required="false" default="0" hint="Port that is used to access the database server" />
-		<cfargument name="username" type="string" required="false" default="" hint="Database username" />
-		<cfargument name="password" type="string" required="false" default="" hint="Database password" />
-		<cfargument name="hoststring" type="string" required="false" default="" hint="JDBC URL for 'other' database types. Databasename, server, and port arguments are ignored if a hoststring is provided." />
-		<cfargument name="description" type="string" required="false" default="" hint="A description of this data source" />
-		<cfargument name="initstring" type="string" required="false" default="" hint="Additional initialization settings" />
-		<cfargument name="connectiontimeout" type="numeric" required="false" default="120" hint="Number of seconds OpenBD maintains an unused connection before it is destroyed" />
-		<cfargument name="connectionretries" type="numeric" required="false" default="0" hint="Number of connection retry attempts to make" />
-		<cfargument name="logintimeout" type="numeric" required="false" default="120" hint="Number of seconds before OpenBD times out the data source connection login attempt" />
-		<cfargument name="maxconnections" type="numeric" required="false" default="3" hint="Maximum number of simultaneous database connections" />
-		<cfargument name="perrequestconnections" type="boolean" required="false" default="false" hint="Indication of whether or not to pool connections" />
-		<cfargument name="sqlselect" type="boolean" required="false" default="true" hint="Allow SQL SELECT statements from this datasource" />
-		<cfargument name="sqlinsert" type="boolean" required="false" default="true" hint="Allow SQL INSERT statements from this datasource" />
-		<cfargument name="sqlupdate" type="boolean" required="false" default="true" hint="Allow SQL UPDATE statements from this datasource" />
-		<cfargument name="sqldelete" type="boolean" required="false" default="true" hint="Allow SQL DELETE statements from this datasource" />
-		<cfargument name="sqlstoredprocedures" type="boolean" required="false" default="true" hint="Allow SQL stored procedure calls from this datasource" />
-		<cfargument name="drivername" type="string" required="false" default="" hint="JDBC driver class to use" />
-		<cfargument name="action" type="string" required="false" default="create" hint="Action to take on the datasource (create or update)" />
-		<cfargument name="existingDatasourceName" type="string" required="false" default="" hint="The existing (old) datasource name so we know what to delete if this is an update" />
-		<cfargument name="verificationQuery" type="string" required="false" default="" hint="Custom verification query for 'other' driver types" />
-		
+
+	<cffunction name="BDsetDatasource" access="public" output="false" returntype="void" >
+		<cfargument name="name" type="string" required="true"  />
+		<cfargument name="databasename" type="string" required="false" default=""  />
+		<cfargument name="server" type="string" required="false" default=""  />
+		<cfargument name="port"	type="numeric" required="false" default="0"  />
+		<cfargument name="username" type="string" required="false" default=""  />
+		<cfargument name="password" type="string" required="false" default=""  />
+		<cfargument name="hoststring" type="string" required="false" default=""  />
+		<cfargument name="description" type="string" required="false" default=""  />
+		<cfargument name="initstring" type="string" required="false" default=""  />
+		<cfargument name="connectiontimeout" type="numeric" required="false" default="120"  />
+		<cfargument name="connectionretries" type="numeric" required="false" default="0"  />
+		<cfargument name="logintimeout" type="numeric" required="false" default="120"  />
+		<cfargument name="maxconnections" type="numeric" required="false" default="3"  />
+		<cfargument name="perrequestconnections" type="boolean" required="false" default="false"  />
+		<cfargument name="sqlselect" type="boolean" required="false" default="true"  />
+		<cfargument name="sqlinsert" type="boolean" required="false" default="true"  />
+		<cfargument name="sqlupdate" type="boolean" required="false" default="true"  />
+		<cfargument name="sqldelete" type="boolean" required="false" default="true"  />
+		<cfargument name="sqlstoredprocedures" type="boolean" required="false" default="true"  />
+		<cfargument name="drivername" type="string" required="false" default=""  />
+		<cfargument name="action" type="string" required="false" default="create"  />
+		<cfargument name="existingDatasourceName" type="string" required="false" default=""  />
+		<cfargument name="verificationQuery" type="string" required="false" default=""  />
+
 		<cfset var localConfig = bdgetConfig() />
 		<cfset var datasourceSettings = structNew() />
-		
+
 		<!--- make sure configuration structure exists, otherwise build it --->
 		<cfif (NOT StructKeyExists(localConfig, "cfquery")) OR (NOT StructKeyExists(localConfig.cfquery, "datasource"))>
 			<cfset localConfig.cfquery.datasource = ArrayNew(1) />
 		</cfif>
-		
+
 		<!--- if the datasource already exists and this isn't an update, throw an error --->
 		<cfif bddatasourceExists(arguments.name) EQ "false">
 			<!--- build up the universal datasource settings --->
@@ -2603,5 +2652,5 @@
 			</cfscript>
 		</cfif>
 	</cffunction>
-		
+
 </cfcomponent>

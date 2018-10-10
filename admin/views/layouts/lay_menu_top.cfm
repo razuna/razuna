@@ -36,11 +36,6 @@
 		<td width="1%" nowrap="true"><input type="text" size="25" name="searchfor"> Search</td>
 	</tr>
 	</table>
-	<!--- <ul id="nav">
-    	<li><a href="#myself#v.main">#gobj.trans("nav_desktop")#</a></li>
-		<li></li>
-		<li></li>
-	</ul> --->
 </div>
 </cfoutput>
 

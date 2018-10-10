@@ -33,7 +33,7 @@
 		<cfargument name="passhashed" type="numeric">
 		<cftry>
 			<!--- Remove records which are older then now minus 40 minutes --->
-			<cfquery datasource="#application.razuna.api.dsn#">
+			<cfquery datasource="#application.razuna.datasource#">
 			DELETE FROM webservices
 			WHERE timeout < <cfqueryparam value="#DateAdd("n", -40, now())#" cfsqltype="cf_sql_timestamp">
 			</cfquery>
@@ -44,7 +44,7 @@
 				<cfset var thepass = hash(arguments.pass, "MD5", "UTF-8")>
 			</cfif>
 			<!--- Query --->
-			<cfquery datasource="#application.razuna.api.dsn#" name="qry">
+			<cfquery datasource="#application.razuna.datasource#" name="qry">
 			SELECT u.user_id, gu.ct_g_u_grp_id grpid
 			FROM users u, ct_users_hosts ct, ct_groups_users gu
 			WHERE (
@@ -68,7 +68,7 @@
 				<cfset var response = 0>
 				<cfset var thetoken = createuuid("")>
 				<!--- Append to DB --->
-				<cfquery datasource="#application.razuna.api.dsn#">
+				<cfquery datasource="#application.razuna.datasource#">
 				INSERT INTO webservices
 				(sessiontoken, timeout, groupofuser, userid)
 				VALUES(
@@ -79,15 +79,15 @@
 				)
 				</cfquery>
 				<!--- Get Host prefix --->
-				<cfquery datasource="#application.razuna.api.dsn#" name="pre">
+				<cfquery datasource="#application.razuna.datasource#" name="pre">
 				SELECT host_shard_group
 				FROM hosts
 				WHERE host_id = <cfqueryparam value="#arguments.hostid#" cfsqltype="cf_sql_numeric">
 				</cfquery>
 				<!--- Set Host information --->
-				<cfset application.razuna.api.prefix[#thetoken#] = pre.host_shard_group>
-				<cfset application.razuna.api.hostid[#thetoken#] = arguments.hostid>
-				<cfset application.razuna.api.userid[#thetoken#] = qry.user_id>
+				<cfset application.razuna.prefix[#thetoken#] = pre.host_shard_group>
+				<cfset application.razuna.hostid[#thetoken#] = arguments.hostid>
+				<cfset application.razuna.userid[#thetoken#] = qry.user_id>
 			<!--- Not found --->
 			<cfelse>
 				<cfset var response = 1>
@@ -114,7 +114,7 @@
 	<cffunction name="checkdb" access="public" output="false">
 		<cfargument name="sessiontoken" type="string">
 		<!--- Query --->
-		<cfquery datasource="#application.razuna.api.dsn#" name="qry">
+		<cfquery datasource="#application.razuna.datasource#" name="qry">
 		SELECT sessiontoken, timeout
 		FROM webservices
 		WHERE sessiontoken = <cfqueryparam value="#arguments.sessiontoken#" cfsqltype="cf_sql_varchar">
@@ -124,7 +124,7 @@
 			<!--- Set --->
 			<cfset var status = true>
 			<!--- Update DB --->
-			<cfquery datasource="#application.razuna.api.dsn#">
+			<cfquery datasource="#application.razuna.datasource#">
 			UPDATE webservices
 			SET timeout = <cfqueryparam value="#DateAdd("n", 30, now())#" cfsqltype="cf_sql_timestamp">
 			WHERE sessiontoken = <cfqueryparam value="#arguments.sessiontoken#" cfsqltype="cf_sql_varchar">
@@ -135,7 +135,7 @@
 			<cfset var status = false>
 			<!--- Remove DB --->
 			<cfthread>
-				<cfquery datasource="#application.razuna.api.dsn#">
+				<cfquery datasource="#application.razuna.datasource#">
 				DELETE FROM webservices
 				WHERE timeout < <cfqueryparam value="#DateAdd("n", -31, now())#" cfsqltype="cf_sql_timestamp">
 				</cfquery>
@@ -167,7 +167,7 @@
 		<cftry>
 			<!--- Remove records which are older then now minus 40 minutes --->
 			<cfthread>
-				<cfquery datasource="#application.razuna.api.dsn#">
+				<cfquery datasource="#application.razuna.datasource#">
 				DELETE FROM webservices
 				WHERE timeout < <cfqueryparam value="#DateAdd("n", -40, now())#" cfsqltype="cf_sql_timestamp">
 				</cfquery>
@@ -175,7 +175,7 @@
 			<!--- Query for the hostname --->
 			<cfset thecount = findoneof(".",arguments.hostname) - 1>
 			<cfset thesubdomain = mid(arguments.hostname,1,thecount)>
-			<cfquery datasource="#application.razuna.api.dsn#" name="thehost">
+			<cfquery datasource="#application.razuna.datasource#" name="thehost">
 			SELECT host_id, host_name, host_db_prefix, host_type, host_shard_group
 			FROM hosts
 			WHERE host_name = <cfqueryparam cfsqltype="cf_sql_varchar" value="#thesubdomain#">
@@ -193,7 +193,7 @@
 				<cfset var thepass = hash(arguments.pass, "MD5", "UTF-8")>
 			</cfif>
 			<!--- Query --->
-			<cfquery datasource="#application.razuna.api.dsn#" name="qry">
+			<cfquery datasource="#application.razuna.datasource#" name="qry">
 			SELECT u.user_id, gu.ct_g_u_grp_id grpid
 			FROM users u, ct_users_hosts ct, ct_groups_users gu
 			WHERE (
@@ -216,7 +216,7 @@
 				<cfset var response = 0>
 				<cfset var thetoken = createuuid("")>
 				<!--- Append to DB --->
-				<cfquery datasource="#application.razuna.api.dsn#">
+				<cfquery datasource="#application.razuna.datasource#">
 				INSERT INTO webservices
 				(sessiontoken, timeout, groupofuser, userid)
 				VALUES(
@@ -227,9 +227,9 @@
 				)
 				</cfquery>
 				<!--- Set Host information --->
-				<cfset application.razuna.api.prefix[#thetoken#] = thehost.host_shard_group>
-				<cfset application.razuna.api.hostid[#thetoken#] = thehostid>
-				<cfset application.razuna.api.userid[#thetoken#] = qry.user_id>
+				<cfset application.razuna.prefix[#thetoken#] = thehost.host_shard_group>
+				<cfset application.razuna.hostid[#thetoken#] = thehostid>
+				<cfset application.razuna.userid[#thetoken#] = qry.user_id>
 			<!--- Not found --->
 			<cfelse>
 				<cfset var response = 1>

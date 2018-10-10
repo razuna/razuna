@@ -33,19 +33,19 @@
 		
 		<!--- Set HTTP or HTTPS --->
 		<cfif cgi.HTTPS EQ "on" OR cgi.http_x_https EQ "on">
-			<cfset application.razuna.api.thehttp = "https://">
+			<cfset application.razuna.thehttp = "https://">
 		<cfelse>
-			<cfset application.razuna.api.thehttp = "http://">
+			<cfset application.razuna.thehttp = "http://">
 		</cfif>
 		
-		<cfset application.razuna.api.theurl = "#application.razuna.api.thehttp#" & cgi.http_host & "/assets/">
-		<cfset application.razuna.api.thispath = ExpandPath(".")>
+		<cfset application.razuna.theurl = "#application.razuna.thehttp#" & cgi.http_host & "/assets/">
+		<cfset application.razuna.thispath = ExpandPath(".")>
 		
 		<!--- Dynamic path --->
 		<cfif listfirst(cgi.SCRIPT_NAME,"/") EQ "razuna">
-			<cfset application.razuna.api.dynpath = "/razuna">
+			<cfset application.razuna.dynpath = "/razuna">
 		<cfelse>
-			<cfset application.razuna.api.dynpath = "">
+			<cfset application.razuna.dynpath = "">
 		</cfif>
 		
 		<!--- Get config values --->

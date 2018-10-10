@@ -26,10 +26,10 @@
 <cfoutput>
 	<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 		<tr>
-			<td>#defaultsObj.trans("header_backup_restore_desc")#</td>
+			<td>#myFusebox.getApplicationData().defaults.trans("header_backup_restore_desc")#</td>
 		</tr>
 		<tr>
-			<td style="background-color:yellow;font-weight:bold;">During a Backup or Restore operation your server will become unresponsive to any requests! Do these operation when no one is accessing your server.</td>
+			<td style="background-color:yellow;font-weight:bold;">During a Backup or Restore operation your server will become unresponsive to any requests! Do these operation when no one is accessing your server.<p>We highly recommend to NOT use the backup option here, but instead use the native backup option for your database, e.g. mysqldump.</td>
 		</tr>
 		<tr>
 			<td class="list"></td>
@@ -41,8 +41,8 @@
 			<th>Backup</th>
 		</tr>
 		<tr>
-			<td>#defaultsObj.trans("admin_maintenance_backup_desc2")#<br />
-			<cfif !application.razuna.isp>#defaultsObj.trans("admin_maintenance_backup_desc3")#<br /></cfif>
+			<td>#myFusebox.getApplicationData().defaults.trans("admin_maintenance_backup_desc2")#<br />
+			<cfif !application.razuna.isp>#myFusebox.getApplicationData().defaults.trans("admin_maintenance_backup_desc3")#<br /></cfif>
 			<br />
 			<!--- Backup to: <input type="radio" name="tofiletype" id="tofiletype" value="raz" checked="checked"> Razuna format &mdash; Export to:<input type="radio" name="tofiletype" id="tofiletype" value="sql"> SQL file <input type="radio" name="tofiletype" id="tofiletype" value="xml"> XML file ---> <input type="button" name="backup" value="Backup Database Now" class="button" onclick="dobackup();"><div id="backup_progress"></div><div id="backup_dummy"></div></td>
 		</tr>
@@ -70,10 +70,10 @@
 	<!--- Restore --->
 	<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 		<tr>
-			<th colspan="3">#defaultsObj.trans("admin_maintenance_restore_desc")#</th>
+			<th colspan="3">#myFusebox.getApplicationData().defaults.trans("admin_maintenance_restore_desc")#</th>
 		</tr>
 		<tr>
-			<td colspan="3">#defaultsObj.trans("admin_maintenance_restore_desc2")#</td>
+			<td colspan="3">#myFusebox.getApplicationData().defaults.trans("admin_maintenance_restore_desc2")#</td>
 		</tr>
 		<tr>
 			<td><strong>Backup Date</strong></td>
@@ -84,7 +84,7 @@
 			<tr>
 				<td>#dateformat(back_date,"mmmm dd yyyy")#, #timeformat(back_date,"HH:mm:ss")#</td>
 				<td><a href="##" onclick="confirmrestore('#back_id#');">Restore</a></td>
-				<td><a href="##" onclick="showwindow('#myself#ajax.remove_record&what=prefs_backup&id=#back_id#&loaddiv=backrest','#defaultsObj.trans("remove_selected")#',400,1);return false">Remove</a></td>
+				<td><a href="##" onclick="showwindow('#myself#ajax.remove_record&what=prefs_backup&id=#back_id#&loaddiv=backrest','#myFusebox.getApplicationData().defaults.trans("remove_selected")#',400,1);return false">Remove</a></td>
 			</tr>
 		</cfloop>
 		<tr>
@@ -94,7 +94,7 @@
 	<div id="dummy_maintenance"></div>
 	<!--- Div for hidden window for deleting --->
 	<div id="dialog-confirm-restore" style="display:none;">
-		<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 100px 0;"></span>#defaultsObj.trans("restore_warning")#
+		<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 100px 0;"></span>#myFusebox.getApplicationData().defaults.trans("restore_warning")#
 		</p>
 	</div>
 	<!--- Load Progress --->
@@ -108,7 +108,7 @@
 		function doschedbackup(){
 			var schedback = $('input:radio[name=schedback]:checked').val();
 			loadcontent('dummy_maintenance','#myself#c.prefs_sched_backup&sched=' + schedback);
-			$('##schedback_dummy').html('<span style="font-weight:bold;color:green;">#defaultsObj.trans("success")#</span>');
+			$('##schedback_dummy').html('<span style="font-weight:bold;color:green;">#myFusebox.getApplicationData().defaults.trans("success")#</span>');
 		}
 		// Do Restore from filesystem
 		function dorestore(backid){

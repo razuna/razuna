@@ -26,9 +26,7 @@
 		<class alias="settings" classpath="global.cfc.settings" type="component" constructor="init"/>
 		<class alias="folders" classpath="global.cfc.folders" type="component" constructor="init"/>
 		<class alias="modules" classpath="global.cfc.modules" type="component" constructor="init"/>
-		<class alias="rssparser" classpath="global.cfc.rssparser" type="component" constructor="init"/>
 		<class alias="update" classpath="global.cfc.update" type="component" constructor="init"/>
-		<!-- <class alias="nirvanix" classpath="global.cfc.nirvanix" type="component" constructor="init"/> -->
 		<class alias="defaults" classpath="global.cfc.defaults" type="component" constructor="init"/>
 		<class alias="backuprestore" classpath="global.cfc.backuprestore" type="component" constructor="init"/>
 		<class alias="amazon" classpath="global.cfc.amazon" type="component" constructor="init"/>
@@ -79,10 +77,10 @@
 		<appinit>
 			<fuseaction action="m.initialize"/>
 		</appinit>
-		<!--
 		<preprocess>
 			<fuseaction action="m.preprocess"/>
 		</preprocess>
+		<!--
 		<postprocess>
 			<fuseaction action="m.postprocess"/>
 		</postprocess>

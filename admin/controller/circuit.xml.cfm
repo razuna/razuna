@@ -20,8 +20,8 @@
 		<set name="attributes.pathoneup" value="#pathoneup#" />
 	 	<set name="attributes.pathhere" value="#thispath#" />
 		<!-- CFC: Check db connection and setup the db for first time
-		<invoke object="myFusebox.getApplicationData().hosts" methodcall="checkdb(attributes)" returnvariable="status" /> -->
-		<if condition="application.razuna.firsttime">
+		<invoke object="myFusebox.getApplicationData().hosts" methodcall="checkdb(thestruct=attributes)" returnvariable="status" /> -->
+		<if condition="attributes.firsttime EQ 't'">
 			<true>
 				<set name="attributes.firsttime" value="T" />
 				<set name="attributes.host_lang" value="1" />
@@ -36,6 +36,12 @@
 			<false>
 				<!-- CFC: check if db update is there -->
 				<do action="update" />
+				<!-- news -->
+				<if condition="application.razuna.whitelabel">
+					<true>
+						<invoke object="myFusebox.getApplicationData().settings" methodcall="get_news_frontpage(thestruct=attributes)" returnvariable="attributes.qry_news" />
+					</true>
+				</if>
 				<!-- Show login page -->
 				<do action="v.login" />
 			</false>
@@ -48,11 +54,7 @@
 	 	<if condition="application.razuna.storage EQ 'nirvanix'">
 			<true>
 				<!-- Get username and password from nirvanix settings -->
-				<invoke object="myFusebox.getApplicationData().settings" methodcall="prefs_storage()" returnvariable="attributes.qry_settings_nirvanix" />
-				<!-- Get session token -->
-				<invoke object="myFusebox.getApplicationData().Nirvanix" methodcall="login(attributes)" returnvariable="attributes.nvxsession" />
-				<!-- Set child name -->
-				<set name="attributes.nvxname" value="#attributes.qry_settings_nirvanix.set2_nirvanix_name#" />
+				<invoke object="myFusebox.getApplicationData().settings" methodcall="prefs_storage(thestruct=attributes)" returnvariable="attributes.qry_settings_nirvanix" />
 			</true>
 		</if>
 	</fuseaction>
@@ -65,14 +67,14 @@
 		<set name="attributes.rem_login" value="F" overwrite="false" />
 		<set name="attributes.loginto" value="admin" overwrite="false" />
 		<!-- Check the user and let him in ot nor -->
-		<invoke object="myFusebox.getApplicationData().Login" methodcall="login(attributes)" returnvariable="logindone" />
+		<invoke object="myFusebox.getApplicationData().Login" methodcall="login(thestruct=attributes)" returnvariable="logindone" />
 		<!-- Log this action -->
 		<if condition="logindone.notfound EQ 'F'">
     		<true>
 				<!-- check groups -->
-				<invoke object="myFusebox.getApplicationData().groups" methodcall="getdetail('SystemAdmin')" returnvariable="qry_sysadmingrp" />
-				<invoke object="myFusebox.getApplicationData().groups" methodcall="getdetail('Administrator')" returnvariable="qry_admingrp" />
-				<invoke object="myFusebox.getApplicationData().groups_users" methodcall="getGroupsOfUser(logindone.qryuser.user_id)" returnvariable="qry_groups_user" />
+				<invoke object="myFusebox.getApplicationData().groups" methodcall="getdetail(grp_name='SystemAdmin', thestruct=attributes)" returnvariable="qry_sysadmingrp" />
+				<invoke object="myFusebox.getApplicationData().groups" methodcall="getdetail(grp_name='Administrator', thestruct=attributes)" returnvariable="qry_admingrp" />
+				<invoke object="myFusebox.getApplicationData().groups_users" methodcall="getGroupsOfUser(user_id=logindone.qryuser.user_id, thestruct=attributes)" returnvariable="qry_groups_user" />
 				<!-- <relocate url="#myself#c.choosehost" /> -->
 				<do action="choosehost" />
 			</true>
@@ -86,7 +88,7 @@
 	<fuseaction name="choosehost">
 		<!-- Check in how many hosts this user is in -->
 		<set name="attributes.user_id" value="#session.theuserid#" />
-		<invoke object="myFusebox.getApplicationData().users" methodcall="userhosts(attributes)" returnvariable="userhosts" />
+		<invoke object="myFusebox.getApplicationData().users" methodcall="userhosts(thestruct=attributes)" returnvariable="userhosts" />
 		<!-- Params -->
 		<set name="session.hostdbprefix" value="#userhosts.host_shard_group#" />
 		<set name="session.hostid" value="#userhosts.host_id#" />
@@ -101,7 +103,7 @@
 	-->
 	<fuseaction name="sethost">
 		<!-- Get the host settings -->
-		<invoke object="myFusebox.getApplicationData().Hosts" methodcall="getdetail(attributes)" returnvariable="qry_host" />
+		<invoke object="myFusebox.getApplicationData().Hosts" methodcall="getdetail(thestruct=attributes)" returnvariable="qry_host" />
 		<!-- Set Sessions -->
 		<set name="session.hostdbprefix" value="#qry_host.host_shard_group#" />
 		<set name="session.hostid" value="#qry_host.host_id#" />
@@ -131,15 +133,15 @@
 	 -->
 	 <fuseaction name="main">
 	 	<!-- Get the host settings
-		<invoke object="myFusebox.getApplicationData().Settings" methodcall="allsettings_2()" returnvariable="thisurl" /> -->
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="allsettings_2(thestruct=attributes)" returnvariable="thisurl" /> -->
 		<!-- Get Wisdom phrases -->
-		<invoke object="myFusebox.getApplicationData().global" methodcall="wisdom()" returnvariable="wisdom" />
+		<invoke object="myFusebox.getApplicationData().global" methodcall="wisdom(thestruct=attributes)" returnvariable="wisdom" />
 		<!-- Get all hosts -->
-		<invoke object="myFusebox.getApplicationData().global" methodcall="allhosts()" returnvariable="qry_allhosts" />
+		<invoke object="myFusebox.getApplicationData().global" methodcall="allhosts(thestruct=attributes)" returnvariable="qry_allhosts" />
 		<!-- CFC: Check for application setup -->
-		<invoke object="myFusebox.getApplicationData().settings" methodcall="applicationcheck()" returnvariable="appcheck" />
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="applicationcheck(thestruct=attributes)" returnvariable="appcheck" />
 		<!-- CFC: Check if a new version is available -->
-		<invoke object="myFusebox.getApplicationData().update" methodcall="check_update()" returnvariable="newversion" />
+		<invoke object="myFusebox.getApplicationData().update" methodcall="check_update(thestruct=attributes)" returnvariable="newversion" />
 		<!-- Show main page -->
 	 	<do action="v.main" />
 	 </fuseaction>
@@ -148,8 +150,8 @@
 	 -->
 	 <fuseaction name="mainchecklist">
 		<!-- Check for installation reuqirements -->
-		<invoke object="myFusebox.getApplicationData().Settings" methodcall="allsettings_2()" returnvariable="chklist_settings" />
-		<invoke object="myFusebox.getApplicationData().Settings" methodcall="get_tools()" returnvariable="tools" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="allsettings_2(thestruct=attributes)" returnvariable="chklist_settings" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="get_tools(thestruct=attributes)" returnvariable="tools" />
 		<!-- Show main page -->
 	 	<do action="ajax.mainchecklist" />
 	 </fuseaction>
@@ -157,8 +159,6 @@
 		INDEXPAGE: Blog
 	 -->
 	 <fuseaction name="mainblog">
-		<!-- CFC: Parse RSS Feed -->
-		<invoke object="myFusebox.getApplicationData().rssparser" methodcall="rssparse('http://blog.razuna.com/feed',10)" returnvariable="blogss" />
 		<!-- Show main page -->
 	 	<do action="ajax.mainblog" />
 	 </fuseaction>
@@ -181,7 +181,7 @@
 		<set name="attributes.emailnotfound" value="F" overwrite="false" />
 		<set name="attributes.passsend" value="F" overwrite="false" />
 		<!-- Check the email address of the user -->
-		<invoke object="myFusebox.getApplicationData().Login" methodcall="sendpassword(attributes.email)" returnvariable="status" />
+		<invoke object="myFusebox.getApplicationData().Login" methodcall="sendpassword(email=attributes.email, thestruct=attributes)" returnvariable="status" />
 		<!-- If the user is found an email has been sent thus return to the main layout with a message -->
 		<if condition="status.notfound EQ 'F'">
     		<true>
@@ -198,7 +198,7 @@
 		User switches language
 	 -->
 	<fuseaction name="switchlang">
-		<invoke object="myFusebox.getApplicationData().global" methodcall="switchlang(attributes.thelang)" />
+		<invoke object="myFusebox.getApplicationData().global" methodcall="switchlang(thelang=attributes.thelang, thestruct=attributes)" />
 		<!-- <set name="attributes.to" value="" /> -->
 		<if condition="attributes.to EQ 'index'">
     		<true>
@@ -226,12 +226,12 @@
 	 -->
 	 <fuseaction name="languages">
 		<!-- Get languages -->
-		<invoke object="myFusebox.getApplicationData().defaults" methodcall="getlangs()" returnvariable="qry_langs" />
+		<invoke object="myFusebox.getApplicationData().defaults" methodcall="getlangs(thestruct=attributes)" returnvariable="qry_langs" />
 	</fuseaction>
 
 	<!-- Get Path to Assets -->
 	<fuseaction name="assetpath">
-		<invoke object="myFusebox.getApplicationData().settings" method="assetpath" returnvariable="attributes.assetpath" />
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="assetpath(thestruct=attributes)" returnvariable="attributes.assetpath" />
 	</fuseaction>
 
 	<!--  -->
@@ -265,12 +265,12 @@
 				<set name="session.firsttime.db_pass" value="razunabd" />
 				<set name="session.firsttime.database_type" value="h2" />
 				<!-- CFC: Check if there is a DB Connection -->
-				<invoke object="myFusebox.getApplicationData().global" methodcall="checkdatasource()" returnvariable="thedsnarray" />
+				<invoke object="myFusebox.getApplicationData().global" methodcall="checkdatasource(thestruct=attributes)" returnvariable="thedsnarray" />
 				<!-- If there is no H2 datasource then create it -->
 				<if condition="#arrayisempty(thedsnarray)#">
 					<true>
 						<!-- CFC: Add the datasource -->
-						<invoke object="myFusebox.getApplicationData().global" methodcall="setdatasource()" />
+						<invoke object="myFusebox.getApplicationData().global" methodcall="setdatasource(thestruct=attributes)" />
 					</true>
 				</if>
 			</true>
@@ -281,7 +281,7 @@
 	<!-- paths app check -->
 	<fuseaction name="check_paths">
 		<!-- CFC: Check paths -->
-		<invoke object="myFusebox.getApplicationData().settings" methodcall="checkapp(attributes)" />
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="checkapp(thestruct=attributes)" />
 	</fuseaction>
 	<!-- user account -->
 	<fuseaction name="first_time_account">
@@ -311,7 +311,7 @@
 				<set name="attributes.db_user" value="razuna" />
 				<set name="attributes.db_pass" value="razunabd" />
 				<!-- CFC: Check if there is a DB Connection -->
-				<invoke object="myFusebox.getApplicationData().global" methodcall="checkdatasource()" returnvariable="thedsnarray" />
+				<invoke object="myFusebox.getApplicationData().global" methodcall="checkdatasource(thestruct=attributes)" returnvariable="thedsnarray" />
 				<!-- If there is no H2 datasource then create it -->
 				<if condition="arrayisempty(thedsnarray)">
 					<true>
@@ -324,7 +324,7 @@
 						<set name="session.firsttime.db_pass" value="razunabd" />
 						<set name="session.firsttime.database_type" value="h2" />
 						<!-- CFC: Add the datasource -->
-						<invoke object="myFusebox.getApplicationData().global" methodcall="setdatasource()" />
+						<invoke object="myFusebox.getApplicationData().global" methodcall="setdatasource(thestruct=attributes)" />
 					</true>
 				</if>
 				<!-- Show -->
@@ -340,7 +340,7 @@
 				<set name="session.firsttime.db_user" value="" />
 				<set name="session.firsttime.db_pass" value="" />
 				<!-- CFC: Check if there is a DB Connection -->
-				<invoke object="myFusebox.getApplicationData().global" methodcall="checkdatasource()" returnvariable="thedsnarray" />
+				<invoke object="myFusebox.getApplicationData().global" methodcall="checkdatasource(thestruct=attributes)" returnvariable="thedsnarray" />
 				<!-- Show -->
 				<do action="ajax.first_time_database_config" />
 			</false>
@@ -356,9 +356,9 @@
 		<set name="session.firsttime.db_user" value="#attributes.db_user#" />
 		<set name="session.firsttime.db_pass" value="#attributes.db_pass#" />
 		<!-- CFC: Add the datasource -->
-		<invoke object="myFusebox.getApplicationData().global" methodcall="setdatasource()" />
+		<invoke object="myFusebox.getApplicationData().global" methodcall="setdatasource(thestruct=attributes)" />
 		<!-- CFC: Check if there is a DB Connection -->
-		<invoke object="myFusebox.getApplicationData().global" methodcall="verifydatasource()" returnvariable="theconnection" />
+		<invoke object="myFusebox.getApplicationData().global" methodcall="verifydatasource(thestruct=attributes)" returnvariable="theconnection" />
 		<!-- Show -->
 		<do action="ajax.first_time_database_check" />
 	</fuseaction>
@@ -367,7 +367,7 @@
 		<!-- Params -->
 		<set name="attributes.hostid" value="0" />
 		<!-- CFC -->
-		<invoke object="myFusebox.getApplicationData().Settings" methodcall="get_backup(attributes.hostid)" returnvariable="qry_backup" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="get_backup(hostid=attributes.hostid, thestruct=attributes)" returnvariable="qry_backup" />
 		<!-- Show -->
 		<do action="ajax.first_time_database_restore" />
 	</fuseaction>
@@ -478,21 +478,21 @@
 		<set name="attributes.conf_datasource" value="#session.firsttime.database_type#" />
 		<set name="attributes.conf_storage" value="local" />
 		<!-- Remove all data in the db, in case it is here -->
-		<invoke object="myFusebox.getApplicationData().hosts" methodcall="cleardb(thedatabase=session.firsttime.database_type)" />
+		<invoke object="myFusebox.getApplicationData().hosts" methodcall="cleardb(thestruct=attributes)" />
 		<!-- Setup & create host & add host -->
-		<invoke object="myFusebox.getApplicationData().hosts" methodcall="setupdb(attributes)" />
+		<invoke object="myFusebox.getApplicationData().hosts" methodcall="setupdb(thestruct=attributes)" />
 		<!-- Save general settings -->
-		<invoke object="myFusebox.getApplicationData().settings" methodcall="update_global(attributes)" />
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="update_global(thestruct=attributes)" />
 		<!-- Save tools settings -->
-		<invoke object="myFusebox.getApplicationData().settings" methodcall="update_tools(attributes)" />
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="update_tools(thestruct=attributes)" />
 		<!-- CFC: Set internal firsttime value to false -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="firsttime_false('false')" />
 		<!-- CFC: Set update db -->
-		<invoke object="myFusebox.getApplicationData().update" methodcall="setoptionupdate()" />
+		<invoke object="myFusebox.getApplicationData().update" methodcall="setoptionupdate(thestruct=attributes)" />
 		<!-- Set H2 db path -->
 		<set name="attributes.db_path" value="#expandpath('..')#db" />
 		<!-- Setup search server -->
-		<invoke object="myFusebox.getApplicationData().settings" methodcall="indexingDbInfoPrepare(db_path=attributes.db_path)" />
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="indexingDbInfoPrepare(db_path=attributes.db_path, thestruct=attributes)" />
 		<!-- Set vars for razuna_client datasource -->
 		<set name="session.firsttime.database" value="razuna_client" />
 		<set name="session.firsttime.database_type" value="mysql" />
@@ -503,7 +503,7 @@
 		<set name="session.firsttime.db_pass" value="D63E61251" />
 		<set name="session.firsttime.db_action" value="create" />
 		<!-- CFC: Add the datasource -->
-		<invoke object="myFusebox.getApplicationData().global" methodcall="setdatasource()" />
+		<invoke object="myFusebox.getApplicationData().global" methodcall="setdatasource(thestruct=attributes)" />
 	</fuseaction>
 
 	<!-- Call firsttime run -->
@@ -521,7 +521,7 @@
 		<set name="attributes.name" value="#attributes.user_login_name#" />
 		<set name="attributes.pass" value="#attributes.user_pass#" />
 		<!-- CFC: Add Host -->
-		<invoke object="myFusebox.getApplicationData().hosts" methodcall="add(attributes)" />
+		<invoke object="myFusebox.getApplicationData().hosts" methodcall="add(thestruct=attributes)" />
 		<!-- Show confirmation -->
 		<do action="ajax.first_time_done" />
 		<!-- <set name="attributes.firsttime" value="F" />
@@ -542,44 +542,44 @@
 		<!-- Assetpath -->
 		<set name="attributes.pathoneup" value="#pathoneup#" />
 		<!-- CFC: Get all plugins -->
-		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getall(attributes.pathoneup)" returnvariable="qry_plugins" />
+		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getall(pathoneup=attributes.pathoneup, thestruct=attributes)" returnvariable="qry_plugins" />
 		<!-- Show -->
 		<do action="ajax.plugins" />
 	</fuseaction>
 	<!-- Activate/Deactivate -->
 	<fuseaction name="plugins_onoff">
 		<!-- CFC: Activate or not -->
-		<invoke object="myFusebox.getApplicationData().plugins" methodcall="setactive(attributes.pid,attributes.active,'#pathoneup#')" />
+		<invoke object="myFusebox.getApplicationData().plugins" methodcall="setactive(attributes.pid,attributes.active,'#pathoneup#', attributes)" />
 		<!-- Reload the page -->
 		<do action="plugins" />
 	</fuseaction>
 	<!-- remove -->
 	<fuseaction name="plugins_remove">
 		<!-- CFC: Activate or not -->
-		<invoke object="myFusebox.getApplicationData().plugins" methodcall="remove(attributes.id)" />
+		<invoke object="myFusebox.getApplicationData().plugins" methodcall="remove(p_id=attributes.id, thestruct=attributes)" />
 		<!-- Reload the page -->
 		<do action="plugins" />
 	</fuseaction>
 	<!-- Get Plugins Host -->
 	<fuseaction name="plugins_hosts">
 		<!-- Get all hosts -->
-		<invoke object="myFusebox.getApplicationData().global" methodcall="allhosts()" returnvariable="qry_allhosts" />
+		<invoke object="myFusebox.getApplicationData().global" methodcall="allhosts(thestruct=attributes)" returnvariable="qry_allhosts" />
 		<!-- CFC: Get all plugins from DB only -->
-		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getalldb(active='true')" returnvariable="qry_plugins" />
+		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getalldb(active='true', thestruct=attributes)" returnvariable="qry_plugins" />
 		<!-- CFC: Get all plugins who are selected for the hosts -->
-		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getpluginshosts()" returnvariable="qry_plugins_hosts" />
+		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getpluginshosts(thestruct=attributes)" returnvariable="qry_plugins_hosts" />
 		<!-- Show -->
 		<do action="ajax.plugins_hosts" />
 	</fuseaction>
 	<!-- Get Plugins Host -->
 	<fuseaction name="plugins_hosts_saves">
 		<!-- CFC: Save host plugins -->
-		<invoke object="myFusebox.getApplicationData().plugins" methodcall="setpluginshosts(attributes)" />
+		<invoke object="myFusebox.getApplicationData().plugins" methodcall="setpluginshosts(thestruct=attributes)" />
 	</fuseaction>
 	<!-- Get Plugins Host -->
 	<fuseaction name="plugins_upload">
 		<!-- CFC: Save host plugins -->
-		<invoke object="myFusebox.getApplicationData().plugins" methodcall="upload(attributes)" />
+		<invoke object="myFusebox.getApplicationData().plugins" methodcall="upload(thestruct=attributes)" />
 		<do action="ajax.plugins_upload" />
 	</fuseaction>
 
@@ -596,18 +596,18 @@
 		<!-- XFA -->
 		<xfa name="rto" value="c.prefs" />
 		<!-- Get all hosts -->
-		<invoke object="myFusebox.getApplicationData().global" methodcall="allhosts()" returnvariable="qry_allhosts" />
+		<invoke object="myFusebox.getApplicationData().global" methodcall="allhosts(thestruct=attributes)" returnvariable="qry_allhosts" />
 		<!-- Show -->
 		<do action="ajax.prefs" />
 	</fuseaction>
 	<!-- Pref Global -->
 	<fuseaction name="prefs_global">
 		<!-- CFC: Load all the preferences -->
-		<invoke object="myFusebox.getApplicationData().Settings" methodcall="allsettings()" returnvariable="qry_allsettings" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="allsettings(thestruct=attributes)" returnvariable="qry_allsettings" />
 		<!-- CFC -->
-		<invoke object="myFusebox.getApplicationData().Settings" methodcall="prefs_global()" returnvariable="prefs" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="prefs_global(thestruct=attributes)" returnvariable="prefs" />
 		<!-- CFC: Get Languages -->
-		<invoke object="myFusebox.getApplicationData().Settings" methodcall="lang_get()" returnvariable="qry_langs" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="lang_get(thestruct=attributes)" returnvariable="qry_langs" />
 		<!-- Show -->
 		<do action="ajax.prefs_global" />
 	</fuseaction>
@@ -616,7 +616,7 @@
 		<!-- Languages -->
 		<do action="languages" />
 		<!-- CFC -->
-		<invoke object="myFusebox.getApplicationData().Settings" methodcall="prefs_meta()" returnvariable="prefs" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="prefs_meta(thestruct=attributes)" returnvariable="prefs" />
 		<!-- Show -->
 		<do action="ajax.prefs_meta" />
 	</fuseaction>
@@ -625,14 +625,14 @@
 		<!-- Languages -->
 		<do action="languages" />
 		<!-- CFC -->
-		<invoke object="myFusebox.getApplicationData().Settings" methodcall="prefs_dam()" returnvariable="prefs" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="prefs_dam(thestruct=attributes)" returnvariable="prefs" />
 		<!-- Show -->
 		<do action="ajax.prefs_dam" />
 	</fuseaction>
 	<!-- Pref Website -->
 	<fuseaction name="prefs_web">
 		<!-- CFC -->
-		<invoke object="myFusebox.getApplicationData().Settings" methodcall="prefs_web()" returnvariable="prefs" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="prefs_web(thestruct=attributes)" returnvariable="prefs" />
 		<!-- Show -->
 		<do action="ajax.prefs_web" />
 	</fuseaction>
@@ -641,7 +641,7 @@
 		<!-- Variables -->
 		<set name="set2_create_imgfolders_where" value="0" overwrite="false" />
 		<!-- CFC -->
-		<invoke object="myFusebox.getApplicationData().Settings" methodcall="prefs_image()" returnvariable="prefs" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="prefs_image(thestruct=attributes)" returnvariable="prefs" />
 		<!-- Show -->
 		<do action="ajax.prefs_image" />
 	</fuseaction>
@@ -650,23 +650,23 @@
 		<!-- Variables -->
 		<set name="set2_create_vidfolders_where" value="0" overwrite="false" />
 		<!-- CFC -->
-		<invoke object="myFusebox.getApplicationData().Settings" methodcall="prefs_video()" returnvariable="prefs" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="prefs_video(thestruct=attributes)" returnvariable="prefs" />
 		<!-- Show -->
 		<do action="ajax.prefs_video" />
 	</fuseaction>
 	<!-- Pref Oracle -->
 	<fuseaction name="prefs_oracle">
 		<!-- CFC -->
-		<invoke object="myFusebox.getApplicationData().Settings" methodcall="prefs_oracle()" returnvariable="prefs" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="prefs_oracle(thestruct=attributes)" returnvariable="prefs" />
 		<!-- Show -->
 		<do action="ajax.prefs_oracle" />
 	</fuseaction>
 	<!-- Save preferences -->
 	<fuseaction name="prefs_save">
 		<!-- CFC: Save Langs -->
-		<invoke object="myFusebox.getApplicationData().Settings" methodcall="lang_save(attributes)" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="lang_save(thestruct=attributes)" />
 		<!-- CFC: Save preferences -->
-		<invoke object="myFusebox.getApplicationData().Settings" methodcall="update(attributes)" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="update(thestruct=attributes)" />
 		<!-- <do action="prefs" /> -->
 	</fuseaction>
 	<!-- Image Upload -->
@@ -678,10 +678,10 @@
 				<!-- CFC: If we want to upload the watermark file take another method -->
 				<if condition="#attributes.thefield# EQ 'set2_watermark'">
 					<true>
-						<invoke object="myFusebox.getApplicationData().settings" methodcall="upload_watermark(attributes)" returnvariable="result" />
+						<invoke object="myFusebox.getApplicationData().settings" methodcall="upload_watermark(thestruct=attributes)" returnvariable="result" />
 					</true>
 					<false>
-						<invoke object="myFusebox.getApplicationData().settings" methodcall="upload(attributes)" returnvariable="result" />
+						<invoke object="myFusebox.getApplicationData().settings" methodcall="upload(thestruct=attributes)" returnvariable="result" />
 					</false>
 				</if>
 			</true>
@@ -692,7 +692,7 @@
 	<!-- Pref Storage -->
 	<fuseaction name="prefs_storage">
 		<!-- CFC -->
-		<invoke object="myFusebox.getApplicationData().Settings" methodcall="prefs_storage()" returnvariable="prefs" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="prefs_storage(thestruct=attributes)" returnvariable="prefs" />
 		<!-- Show -->
 		<do action="ajax.prefs_storage" />
 	</fuseaction>
@@ -703,24 +703,24 @@
 		<set name="attributes.qry_settings_nirvanix.set2_nirvanix_pass" value="#attributes.nvxpass#" />
 		<set name="attributes.nvxappkey" value="#application.razuna.nvxappkey#" />
 		<!-- CFC -->
-		<invoke object="myFusebox.getApplicationData().Nirvanix" methodcall="validate(attributes)" />
+		<invoke object="myFusebox.getApplicationData().Nirvanix" methodcall="validate(thestruct=attributes)" />
 	</fuseaction>
 	<!-- Update Languages from XML -->
 	<fuseaction name="prefs_update_langs">
 		<!-- CFC: Get path of this host -->
-		<invoke object="myFusebox.getApplicationData().defaults" methodcall="hostpath()" returnvariable="hostpath" />
+		<invoke object="myFusebox.getApplicationData().defaults" methodcall="hostpath(thestruct=attributes)" returnvariable="hostpath" />
 		<!-- Create path -->
 		<set name="attributes.thepath" value="#pathoneup##hostpath#/dam" />
 		<set name="attributes.fromadmin" value="T" />
 		<!-- CFC -->
-		<invoke object="myFusebox.getApplicationData().Settings" methodcall="lang_get_langs(attributes)" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="lang_get_langs(thestruct=attributes)" />
 		<!-- Show -->
 		<do action="prefs_global" />
 	</fuseaction>
 	<!-- User changes database (reset to firsttime) -->
 	<fuseaction name="prefs_change_db">
 		<!-- CFC -->
-		<invoke object="myFusebox.getApplicationData().settings" methodcall="firsttime_false('true')" />
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="firsttime_false(theboolean='true', thestruct=attributes)" />
 		<!-- Relocate to index page -->
 		<do action="ajax.redirector" />
 	</fuseaction>
@@ -738,42 +738,42 @@
 	<!-- Load preferences -->
 	<fuseaction name="prefs_global_main">
 		<!-- CFC -->
-		<invoke object="myFusebox.getApplicationData().Settings" methodcall="prefs_taskserver()" returnvariable="qry_taskserver" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="prefs_taskserver(thestruct=attributes)" returnvariable="qry_taskserver" />
 		<!-- Show -->
 		<do action="ajax.prefs_global_main" />
 	</fuseaction>
 	<!-- Pref Types -->
 	<fuseaction name="prefs_types">
 		<!-- CFC -->
-		<invoke object="myFusebox.getApplicationData().Settings" methodcall="prefs_types()" returnvariable="prefs" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="prefs_types(thestruct=attributes)" returnvariable="prefs" />
 		<!-- Show -->
 		<do action="ajax.prefs_types" />
 	</fuseaction>
 	<!-- Add Pref Types -->
 	<fuseaction name="prefs_types_add">
 		<!-- CFC: Add type -->
-		<invoke object="myFusebox.getApplicationData().Settings" methodcall="prefs_types_add(attributes)" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="prefs_types_add(thestruct=attributes)" />
 		<!-- Show -->
 		<do action="prefs_types" />
 	</fuseaction>
 	<!-- Remove Pref Types -->
 	<fuseaction name="prefs_types_del">
 		<!-- CFC: Add type -->
-		<invoke object="myFusebox.getApplicationData().Settings" methodcall="prefs_types_del(attributes)" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="prefs_types_del(thestruct=attributes)" />
 		<!-- Show -->
 		<do action="prefs_types" />
 	</fuseaction>
 	<!-- Update Pref Types -->
 	<fuseaction name="prefs_types_up">
 		<!-- CFC: Add type -->
-		<invoke object="myFusebox.getApplicationData().Settings" methodcall="prefs_types_update(attributes)" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="prefs_types_update(thestruct=attributes)" />
 		<!-- Show -->
 		<do action="prefs_types" />
 	</fuseaction>
 	<!-- Pref Storage -->
 	<fuseaction name="prefs_global_storage">
 		<!-- CFC -->
-		<invoke object="myFusebox.getApplicationData().Settings" methodcall="get_global()" returnvariable="gprefs" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="get_global(thestruct=attributes)" returnvariable="gprefs" />
 		<!-- Show -->
 		<do action="ajax.prefs_global_storage" />
 	</fuseaction>
@@ -784,14 +784,14 @@
 		<set name="attributes.qry_settings_nirvanix.set2_nirvanix_pass" value="#attributes.nvxpass#" />
 		<set name="attributes.nvxappkey" value="#attributes.nvxkey#" />
 		<!-- CFC -->
-		<invoke object="myFusebox.getApplicationData().Nirvanix" methodcall="validate(attributes)" />
+		<invoke object="myFusebox.getApplicationData().Nirvanix" methodcall="validate(thestruct=attributes)" />
 	</fuseaction>
 	<!-- Validate: Amazon -->
 	<fuseaction name="prefs_aws_validate">
 		<!-- Params -->
 		<set name="application.razuna.awskeysecret" value="#attributes.awskeysecret#" />
 		<!-- CFC -->
-		<invoke object="myFusebox.getApplicationData().amazon" methodcall="validate(attributes)" />
+		<invoke object="myFusebox.getApplicationData().amazon" methodcall="validate(thestruct=attributes)" />
 	</fuseaction>
 	<!-- Validate: Amazon Bucket -->
 	<fuseaction name="prefs_aws_bucket_validate">
@@ -801,14 +801,14 @@
 	<!-- Save preferences -->
 	<fuseaction name="prefs_global_save">
 		<!-- CFC: Save preferences -->
-		<invoke object="myFusebox.getApplicationData().Settings" methodcall="update_global(attributes)" />
-		<invoke object="myFusebox.getApplicationData().Settings" methodcall="update_tools(attributes)" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="update_global(thestruct=attributes)" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="update_tools(thestruct=attributes)" />
 		<!-- <do action="prefs" /> -->
 	</fuseaction>
 	<!-- Pref DB -->
 	<fuseaction name="prefs_global_db">
 		<!-- CFC -->
-		<invoke object="myFusebox.getApplicationData().Settings" methodcall="get_global()" returnvariable="gprefs" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="get_global(thestruct=attributes)" returnvariable="gprefs" />
 		<!-- Show -->
 		<do action="ajax.prefs_global_db" />
 	</fuseaction>
@@ -826,9 +826,9 @@
 		<!-- Assetpath -->
 		<do action="assetpath" />
 		<!-- CFC -->
-		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('sched_backup')" returnvariable="qry_setinterval" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting(thefield='sched_backup', thestruct=attributes)" returnvariable="qry_setinterval" />
 		<!-- CFC -->
-		<invoke object="myFusebox.getApplicationData().Settings" methodcall="get_backup(attributes.hostid)" returnvariable="qry_backup" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="get_backup(hostid=attributes.hostid, thestruct=attributes)" returnvariable="qry_backup" />
 		<!-- Show -->
 		<do action="ajax.prefs_backup_restore" />
 	</fuseaction>
@@ -840,7 +840,7 @@
 		<!-- Assetpath -->
 		<set name="attributes.assetpath" value="#thispath#" />
 		<!-- Backup tables and data to razuna_backup H2 database -->
-		<invoke object="myFusebox.getApplicationData().backuprestore" methodcall="backuptodb(attributes)" />
+		<invoke object="myFusebox.getApplicationData().backuprestore" methodcall="backuptodb(thestruct=attributes)" />
 	</fuseaction>
 	<!-- Run backup from scheduled task -->
 	<fuseaction name="runschedbackup">
@@ -848,7 +848,7 @@
 		<set name="attributes.admin" value="T" />
 		<set name="attributes.hostid" value="0" />
 		<!-- CFC: Backup -->
-		<invoke object="myFusebox.getApplicationData().backuprestore" methodcall="backuptodbthread(attributes)" />
+		<invoke object="myFusebox.getApplicationData().backuprestore" methodcall="backuptodbthread(thestruct=attributes)" />
 	</fuseaction>
 	<!-- Restore from filesystem -->
 	<fuseaction name="prefs_restore_do">
@@ -858,7 +858,7 @@
 		<!-- Assetpath -->
 		<set name="attributes.assetpath" value="#thispath#" />
 		<!-- CFC: Restore -->
-		<invoke object="myFusebox.getApplicationData().backuprestore" methodcall="restorexml(attributes)" />
+		<invoke object="myFusebox.getApplicationData().backuprestore" methodcall="restorexml(thestruct=attributes)" />
 	</fuseaction>
 	<!-- Restore from upload -->
 	<fuseaction name="prefs_restore_upload">
@@ -871,32 +871,32 @@
 		<!-- Action: Storage -->
 		<do action="storage" />
 		<!-- CFC: Do the upload -->
-		<invoke object="myFusebox.getApplicationData().backuprestore" methodcall="uploadxml(attributes)" returnvariable="upxml" />
+		<invoke object="myFusebox.getApplicationData().backuprestore" methodcall="uploadxml(thestruct=attributes)" returnvariable="upxml" />
 		<!-- Set Params correctly -->
 		<set name="attributes.uploadpath" value="#upxml.uploadpath#" />
 		<set name="attributes.thebackupfile" value="#upxml.thebackupfile#" />
 		<set name="attributes.theuploadxml" value="#upxml.theuploadxml#" />
 		<!-- CFC: Do the restore -->
-		<invoke object="myFusebox.getApplicationData().backuprestore" methodcall="restorexml(attributes)" />
+		<invoke object="myFusebox.getApplicationData().backuprestore" methodcall="restorexml(thestruct=attributes)" />
 	</fuseaction>
 	<!-- Pref Tools -->
 	<fuseaction name="prefs_global_tools">
 		<!-- CFC -->
-		<invoke object="myFusebox.getApplicationData().Settings" methodcall="get_tools()" returnvariable="thetools" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="get_tools(thestruct=attributes)" returnvariable="thetools" />
 		<!-- Show -->
 		<do action="ajax.prefs_global_tools" />
 	</fuseaction>
 	<!-- Remove Backup DB -->
 	<fuseaction name="prefs_backup_remove">
 		<!-- CFC: Restore -->
-		<invoke object="myFusebox.getApplicationData().Settings" methodcall="drop_backup(attributes)" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="drop_backup(thestruct=attributes)" />
 		<!-- Show -->
 		<do action="prefs_backup_restore" />
 	</fuseaction>
 	<!-- Pref Backup -->
 	<fuseaction name="prefs_sched_backup">
 		<!-- Set schedule -->
-		<invoke object="myFusebox.getApplicationData().backuprestore" methodcall="setschedbackup(attributes.sched)" />
+		<invoke object="myFusebox.getApplicationData().backuprestore" methodcall="setschedbackup(interval=attributes.sched, thestruct=attributes)" />
 	</fuseaction>
 	<!--  -->
 	<!-- END: GLOBAL PREFERENCES -->
@@ -916,26 +916,26 @@
 		<set name="session.trans_id" value="#attributes.trans_id#" />
 		<set name="session.trans_text" value="#attributes.trans_text#" />
 		<!-- CFC -->
-		<invoke object="myFusebox.getApplicationData().settings" methodcall="translationsearch(attributes)" returnvariable="searchresults" />
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="translationsearch(thestruct=attributes)" returnvariable="searchresults" />
 		<!-- Show -->
 		<do action="ajax.translations_results" />
 	</fuseaction>
 	<!-- Load detail translations -->
 	<fuseaction name="translation_detail">
 		<!-- CFC -->
-		<invoke object="myFusebox.getApplicationData().settings" methodcall="translationdetail(attributes)" returnvariable="result" />
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="translationdetail(thestruct=attributes)" returnvariable="result" />
 		<!-- Show -->
 		<do action="ajax.translations_detail" />
 	</fuseaction>
 	<!-- Update translations -->
 	<fuseaction name="translation_update">
 		<!-- CFC -->
-		<invoke object="myFusebox.getApplicationData().settings" methodcall="translationupdate(attributes)" />
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="translationupdate(thestruct=attributes)" />
 	</fuseaction>
 	<!-- Remove translations -->
 	<fuseaction name="translation_remove">
 		<!-- CFC -->
-		<invoke object="myFusebox.getApplicationData().settings" methodcall="translationremove(attributes)" />
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="translationremove(thestruct=attributes)" />
 		<!-- Set the session into attributes -->
 		<set name="attributes.trans_id" value="#session.trans_id#" />
 		<set name="attributes.trans_text" value="#session.trans_text#" />
@@ -945,7 +945,7 @@
 	<!-- Add translations -->
 	<fuseaction name="translation_add">
 		<!-- CFC -->
-		<invoke object="myFusebox.getApplicationData().settings" methodcall="translationadd(attributes)" />
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="translationadd(thestruct=attributes)" />
 	</fuseaction>
 
 	<!--  -->
@@ -964,16 +964,16 @@
 		<set name="attributes.rowmax" value="30" />
 		<set name="attributes.rowmin" value="0" />
 		<!-- Get all hosts -->
-		<invoke object="myFusebox.getApplicationData().global" methodcall="allhosts()" returnvariable="qry_allhosts" />
+		<invoke object="myFusebox.getApplicationData().global" methodcall="allhosts(thestruct=attributes)" returnvariable="qry_allhosts" />
 		<!-- CFC: Get all users -->
-		<invoke object="myFusebox.getApplicationData().users" methodcall="getall(attributes)" returnvariable="qry_users" />
+		<invoke object="myFusebox.getApplicationData().users" methodcall="getall(thestruct=attributes)" returnvariable="qry_users" />
 		<!-- Show  -->
 		<do action="ajax.users" />
 	</fuseaction>
 	<!-- Users Search -->
 	<fuseaction name="users_search">
 		<!-- CFC: Search users -->
-		<invoke object="myFusebox.getApplicationData().users" methodcall="quicksearch(attributes)" returnvariable="qry_users" />
+		<invoke object="myFusebox.getApplicationData().users" methodcall="quicksearch(thestruct=attributes)" returnvariable="qry_users" />
 		<!-- Show  -->
 		<do action="ajax.users_search" />
 	</fuseaction>
@@ -981,14 +981,15 @@
 	<fuseaction name="users_detail">
 		<set name="attributes.add" value="F" overwrite="false" />
 		<!-- CFC: Get the user -->
-		<invoke object="myFusebox.getApplicationData().users" methodcall="details(attributes)" returnvariable="qry_detail" />
+		<invoke object="myFusebox.getApplicationData().users" methodcall="details(thestruct=attributes)" returnvariable="qry_detail" />
 		<!-- Get all hosts -->
-		<invoke object="myFusebox.getApplicationData().global" methodcall="allhosts()" returnvariable="qry_allhosts" />
+		<invoke object="myFusebox.getApplicationData().global" methodcall="allhosts(thestruct=attributes)" returnvariable="qry_allhosts" />
 		<!-- Get Admin groups of this user and put into list -->
 		<invoke object="myFusebox.getApplicationData().groups_users" method="getGroupsOfUser" returnvariable="qry_usergroup">
 			<argument name="user_id" value="#attributes.user_id#" />
 			<argument name="mod_short" value="adm" />
 			<argument name="host_id" value="#session.hostid#" />
+			<argument name="thestruct" value="#attributes#" />
 		</invoke>
 		<set name="grpnrlist" value="#valuelist(qry_usergroup.grp_id)#" />
 		<!-- Get DAM groups of this user and put into list -->
@@ -996,22 +997,25 @@
 			<argument name="user_id" value="#attributes.user_id#" />
 			<argument name="mod_short" value="ecp" />
 			<argument name="host_id" value="#session.hostid#" />
+			<argument name="thestruct" value="#attributes#" />
 		</invoke>
 		<set name="webgrpnrlist" value="#valuelist(qry_usergroupdam.grp_id)#" />
 		<!-- Get hosts of this user and put into list -->
-		<invoke object="myFusebox.getApplicationData().users" methodcall="userhosts(attributes)" returnvariable="qry_userhosts" />
+		<invoke object="myFusebox.getApplicationData().users" methodcall="userhosts(thestruct=attributes)" returnvariable="qry_userhosts" />
 		<set name="hostlist" value="#valuelist(qry_userhosts.host_id)#" />
 		<!-- CFC: Get DAM groups -->
 		<invoke object="myFusebox.getApplicationData().groups" method="getall" returnvariable="qry_groups">
 			<argument name="thestruct" value="#attributes#" />
 			<argument name="mod_short" value="ecp" />
 			<argument name="host_id" value="#session.hostid#" />
+			<argument name="thestruct" value="#attributes#" />
 		</invoke>
 		<!-- CFC: Get Admin groups -->
 		<invoke object="myFusebox.getApplicationData().groups" method="getall" returnvariable="qry_groups_admin">
 			<argument name="thestruct" value="#attributes#" />
 			<argument name="mod_short" value="adm" />
 			<argument name="host_id" value="#session.hostid#" />
+			<argument name="thestruct" value="#attributes#" />
 		</invoke>
 		<!-- Show -->
 		<do action="ajax.users_detail" />
@@ -1022,55 +1026,55 @@
 		<if condition="#attributes.user_id# EQ 0">
 			<true>
 				<!-- CFC: Add user to db -->
-				<invoke object="myFusebox.getApplicationData().users" methodcall="add(attributes)" returnvariable="attributes.newid" />
+				<invoke object="myFusebox.getApplicationData().users" methodcall="add(thestruct=attributes)" returnvariable="attributes.newid" />
 				<!-- CFC: Insert user to groups -->
-				<invoke object="myFusebox.getApplicationData().groups_users" methodcall="addtogroups(attributes)" />
+				<invoke object="myFusebox.getApplicationData().groups_users" methodcall="addtogroups(thestruct=attributes)" />
 				<!-- CFC: Get all modules -->
-				<invoke object="myFusebox.getApplicationData().modules" methodcall="getIdStruct()" returnvariable="attributes.module_id_struct" />
+				<invoke object="myFusebox.getApplicationData().modules" methodcall="getIdStruct(thestruct=attributes)" returnvariable="attributes.module_id_struct" />
 			</true>
 			<false>
 				<set name="attributes.newid" value="#attributes.user_id#" />
 				<!-- CFC: Get all modules -->
-				<invoke object="myFusebox.getApplicationData().modules" methodcall="getIdStruct()" returnvariable="attributes.module_id_struct" />
+				<invoke object="myFusebox.getApplicationData().modules" methodcall="getIdStruct(thestruct=attributes)" returnvariable="attributes.module_id_struct" />
 				<!-- CFC: Insert user to groups -->
-				<invoke object="myFusebox.getApplicationData().groups_users" methodcall="addtogroups(attributes)" />
+				<invoke object="myFusebox.getApplicationData().groups_users" methodcall="addtogroups(thestruct=attributes)" />
 				<!-- CFC: Update the user -->
-				<invoke object="myFusebox.getApplicationData().users" methodcall="update(attributes)" />
+				<invoke object="myFusebox.getApplicationData().users" methodcall="update(thestruct=attributes)" />
 			</false>
 		</if>
 	</fuseaction>
 	<!-- Delete -->
 	<fuseaction name="users_remove">
 		<!-- CFC: Delete user -->
-		<invoke object="myFusebox.getApplicationData().users" methodcall="delete(attributes)" />
+		<invoke object="myFusebox.getApplicationData().users" methodcall="delete(thestruct=attributes)" />
 		<!-- CFC: Delete user groups -->
 		<set name="attributes.newid" value="#attributes.id#" />
-		<invoke object="myFusebox.getApplicationData().groups_users" methodcall="deleteUser(attributes)" />
+		<invoke object="myFusebox.getApplicationData().groups_users" methodcall="deleteUser(thestruct=attributes)" />
 		<!-- Show  -->
 		<do action="users" />
 	</fuseaction>
 
 	<!-- Remove users coming from the select -->
 	<fuseaction name="users_remove_select">
-		<invoke object="myFusebox.getApplicationData().users" methodcall="delete_selects(attributes)" />
+		<invoke object="myFusebox.getApplicationData().users" methodcall="delete_selects(thestruct=attributes)" />
 	</fuseaction>
 
 	<!-- Send email to selected users -->
 	<fuseaction name="send_useremails">
-		<invoke object="myFusebox.getApplicationData().users" methodcall="send_emails(attributes)" />
+		<invoke object="myFusebox.getApplicationData().users" methodcall="send_emails(thestruct=attributes)" />
 	</fuseaction>
 
 	<!-- Check for the email -->
 	<fuseaction name="checkemail">
 		<!-- CFC: Check -->
-		<invoke object="myFusebox.getApplicationData().users" methodcall="check(attributes)" returnvariable="qry_check" />
+		<invoke object="myFusebox.getApplicationData().users" methodcall="check(thestruct=attributes)" returnvariable="qry_check" />
 		<!-- Show -->
 		<!-- <do action="ajax.users_check" /> -->
 	</fuseaction>
 	<!-- Check for the user name -->
 	<fuseaction name="checkusername">
 		<!-- CFC: Check -->
-		<invoke object="myFusebox.getApplicationData().users" methodcall="check(attributes)" returnvariable="qry_check" />
+		<invoke object="myFusebox.getApplicationData().users" methodcall="check(thestruct=attributes)" returnvariable="qry_check" />
 		<!-- Show -->
 		<!-- <do action="ajax.users_check" /> -->
 	</fuseaction>
@@ -1079,7 +1083,7 @@
 		<!-- Param -->
 		<set name="attributes.reset" value="false" overwrite="false" />
 		<!-- CFC: Check API key -->
-		<invoke object="myFusebox.getApplicationData().users" methodcall="getapikey(attributes.user_id,attributes.reset)" returnvariable="qry_api_key" />
+		<invoke object="myFusebox.getApplicationData().users" methodcall="getapikey(attributes.user_id, attributes.reset, attributes)" returnvariable="qry_api_key" />
 		<!-- Show -->
 		<do action="ajax.users_api" />
 	</fuseaction>
@@ -1097,7 +1101,7 @@
 		<!-- XFA -->
 		<xfa name="rto" value="c.groups" />
 		<!-- Get all hosts -->
-		<invoke object="myFusebox.getApplicationData().global" methodcall="allhosts()" returnvariable="qry_allhosts" />
+		<invoke object="myFusebox.getApplicationData().global" methodcall="allhosts(thestruct=attributes)" returnvariable="qry_allhosts" />
 		<!-- Show -->
 		<do action="ajax.groups" />
 	</fuseaction>
@@ -1115,30 +1119,30 @@
 	<!-- Groups Add -->
 	<fuseaction name="groups_add">
 		<!-- CFC: Get mod id from modules -->
-		<invoke object="myFusebox.getApplicationData().modules" methodcall="getid('#attributes.kind#')" returnvariable="attributes.modules_dam_id" />
+		<invoke object="myFusebox.getApplicationData().modules" methodcall="getid(mod_short=attributes.kind, thestruct=attributes)" returnvariable="attributes.modules_dam_id" />
 		<!-- CFC: Add the new group -->
-		<invoke object="myFusebox.getApplicationData().groups" methodcall="insertRecord(attributes)" />
+		<invoke object="myFusebox.getApplicationData().groups" methodcall="insertRecord(thestruct=attributes)" />
 		<!-- Show -->
 		<do action="groups_list" />
 	</fuseaction>
 	<!-- Groups Detail -->
 	<fuseaction name="groups_detail">
 		<!-- CFC: Get details -->
-		<invoke object="myFusebox.getApplicationData().groups" methodcall="getdetailedit(attributes)" returnvariable="qry_detail" />
+		<invoke object="myFusebox.getApplicationData().groups" methodcall="getdetailedit(thestruct=attributes)" returnvariable="qry_detail" />
 		<!-- Show -->
 		<do action="ajax.groups_detail" />
 	</fuseaction>
 	<!-- Groups Update -->
 	<fuseaction name="groups_update">
 		<!-- CFC: Update -->
-		<invoke object="myFusebox.getApplicationData().groups" methodcall="update(attributes)" />
+		<invoke object="myFusebox.getApplicationData().groups" methodcall="update(thestruct=attributes)" />
 		<!-- Show -->
 		<do action="groups_list" />
 	</fuseaction>
 	<!-- Groups Remove -->
 	<fuseaction name="groups_remove">
 		<!-- CFC: Update -->
-		<invoke object="myFusebox.getApplicationData().groups" methodcall="remove(attributes)" />
+		<invoke object="myFusebox.getApplicationData().groups" methodcall="remove(thestruct=attributes)" />
 		<!-- Show -->
 		<do action="groups_list" />
 	</fuseaction>
@@ -1161,7 +1165,7 @@
 		<set name="attributes.offset" value="0" overwrite="false" />
 		<set name="session.offset" value="#attributes.offset#" />
 		<!-- CFC: Get all hosts -->
-		<invoke object="myFusebox.getApplicationData().hosts" methodcall="getall()" returnvariable="qry_hostslist" />
+		<invoke object="myFusebox.getApplicationData().hosts" methodcall="getall(thestruct=attributes)" returnvariable="qry_hostslist" />
 		<!-- Show -->
 		<do action="ajax.hosts_list" />
 	</fuseaction>
@@ -1169,48 +1173,45 @@
 	<fuseaction name="hosts_add">
 		<set name="attributes.firsttime" value="F" />
 		<!-- CFC: Add Host -->
-		<invoke object="myFusebox.getApplicationData().hosts" methodcall="add(attributes)" />
+		<invoke object="myFusebox.getApplicationData().hosts" methodcall="add(thestruct=attributes)" />
 	</fuseaction>
 	<!-- Detail -->
 	<fuseaction name="hosts_detail">
 		<!-- CFC: Get host -->
-		<invoke object="myFusebox.getApplicationData().hosts" methodcall="getdetail(attributes)" returnvariable="qry_hostsdetail" />
+		<invoke object="myFusebox.getApplicationData().hosts" methodcall="getdetail(thestruct=attributes)" returnvariable="qry_hostsdetail" />
 		<!-- Show -->
 		<do action="ajax.hosts_detail" />
 	</fuseaction>
 	<!-- Host Size -->
 	<fuseaction name="hosts_detail_size">
-		<invoke object="myFusebox.getApplicationData().hosts" methodcall="gethostsize(attributes.host_id)" returnvariable="hostsize" />
+		<invoke object="myFusebox.getApplicationData().hosts" methodcall="gethostsize(host_id=attributes.host_id, thestruct=attributes)" returnvariable="hostsize" />
 		<!-- Show -->
 		<do action="ajax.hosts_detail_size" />
 	</fuseaction>
 	<!-- Detail -->
 	<fuseaction name="hosts_update">
 		<!-- CFC: Update host -->
-		<invoke object="myFusebox.getApplicationData().hosts" methodcall="update(attributes)" />
+		<invoke object="myFusebox.getApplicationData().hosts" methodcall="update(thestruct=attributes)" />
 	</fuseaction>
 	<!-- Remove -->
 	<fuseaction name="hosts_remove">
 		<set name="attributes.theschema" value="#application.razuna.theschema#" />
-		<set name="attributes.dsn" value="#application.razuna.datasource#" />
-		<set name="attributes.database" value="#application.razuna.thedatabase#" />
-		<set name="attributes.storage" value="#application.razuna.storage#" />
 		<!-- CFC: Remove host -->
-		<invoke object="myFusebox.getApplicationData().hosts" methodcall="remove(attributes)" />
+		<invoke object="myFusebox.getApplicationData().hosts" methodcall="remove(thestruct=attributes)" />
 		<!-- Show -->
 		<do action="hosts_list" />
 	</fuseaction>
 	<!-- Recreate -->
 	<fuseaction name="hosts_recreate">
 		<!-- CFC: Recreate host -->
-		<invoke object="myFusebox.getApplicationData().hosts" methodcall="hostupdate(attributes)" />
+		<invoke object="myFusebox.getApplicationData().hosts" methodcall="hostupdate(thestruct=attributes)" />
 		<!-- Show -->
 		<do action="hosts_list" />
 	</fuseaction>
 	<!-- Check for the hostname -->
 	<fuseaction name="hosts_checkhostname">
 		<!-- CFC: Check -->
-		<invoke object="myFusebox.getApplicationData().hosts" methodcall="checkname(attributes)" returnvariable="qry_check" />
+		<invoke object="myFusebox.getApplicationData().hosts" methodcall="checkname(thestruct=attributes)" returnvariable="qry_check" />
 		<!-- Show -->
 		<do action="ajax.hosts_checkhostname" />
 	</fuseaction>
@@ -1240,21 +1241,21 @@
 	<!-- Load list of hosts -->
 	<fuseaction name="hostlist">
 		<!-- CFC: Get List of Hosts -->
-		<invoke object="myFusebox.getApplicationData().admin" methodcall="hostlist()" returnvariable="hostlist" />
+		<invoke object="myFusebox.getApplicationData().admin" methodcall="hostlist(thestruct=attributes)" returnvariable="hostlist" />
 		<!-- Show list of hosts -->
 		<do action="ajax.hosts_list" />
 	</fuseaction>
 	<!-- Add a new host -->
 	<fuseaction name="newhost">
 		<!-- CFC: Get List of Hosts -->
-		<invoke object="myFusebox.getApplicationData().hosts" methodcall="add(attributes)" />
+		<invoke object="myFusebox.getApplicationData().hosts" methodcall="add(thestruct=attributes)" />
 		<!-- Show list of hosts -->
 		<do action="hostlist" />
 	</fuseaction>
 	<!-- Delete host -->
 	<fuseaction name="delhost">
 		<!-- CFC: Delete host -->
-		<invoke object="myFusebox.getApplicationData().admin" methodcall="delete(attributes)" />
+		<invoke object="myFusebox.getApplicationData().admin" methodcall="delete(thestruct=attributes)" />
 		<!-- Show list of hosts -->
 		<do action="hostlist" />
 	</fuseaction>
@@ -1275,7 +1276,7 @@
 		<!-- Param -->
 		<set name="attributes.firsttime" value="T" overwrite="false" />
 		<!-- CFC: Check if there is an update for this DB -->
-		<invoke object="myFusebox.getApplicationData().update" methodcall="update_for()" returnvariable="session.updatedb" />
+		<invoke object="myFusebox.getApplicationData().update" methodcall="update_for(thestruct=attributes)" returnvariable="session.updatedb" />
 		<!-- Show -->
 		<if condition="session.updatedb">
 			<true>
@@ -1299,11 +1300,11 @@
 		<set name="session.firsttime.db_pass" value="D63E61251" />
 		<set name="session.firsttime.db_action" value="create" />
 		<!-- CFC: Add the datasource -->
-		<invoke object="myFusebox.getApplicationData().global" methodcall="setdatasource()" />
+		<invoke object="myFusebox.getApplicationData().global" methodcall="setdatasource(thestruct=attributes)" />
 		<!-- CFC: Get all Hosts -->
-		<invoke object="myFusebox.getApplicationData().global" methodcall="allhosts()" returnvariable="attributes.qryhosts" />
+		<invoke object="myFusebox.getApplicationData().global" methodcall="allhosts(thestruct=attributes)" returnvariable="attributes.qryhosts" />
 		<!-- CFC: Do the DB update -->
-		<invoke object="myFusebox.getApplicationData().update" methodcall="update_do(attributes)" />
+		<invoke object="myFusebox.getApplicationData().update" methodcall="update_do(thestruct=attributes)" />
 		<!-- Show -->
 		<do action="v.update" />
 	</fuseaction>
@@ -1319,7 +1320,7 @@
 	<!-- Random Password -->
 	<fuseaction name="randompass">
 		<!-- CFC: Random Password -->
-		<invoke object="myFusebox.getApplicationData().Login" methodcall="randompass()" returnvariable="attributes.thepass" />
+		<invoke object="myFusebox.getApplicationData().Login" methodcall="randompass(thestruct=attributes)" returnvariable="attributes.thepass" />
 		<!-- Show -->
 		<do action="ajax.randompass" />
 	</fuseaction>
@@ -1331,9 +1332,9 @@
 	<!-- Load -->
 	<fuseaction name="prefs_renf">
 		<!-- Global -->
-		<invoke object="myFusebox.getApplicationData().Settings" methodcall="get_global()" returnvariable="gprefs" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="get_global(thestruct=attributes)" returnvariable="gprefs" />
 		<!-- CFC: Check if there is an update for this DB -->
-		<invoke object="myFusebox.getApplicationData().rfs" methodcall="rfs_get_all()" returnvariable="qry_rfs" />
+		<invoke object="myFusebox.getApplicationData().rfs" methodcall="rfs_get_all(thestruct=attributes)" returnvariable="qry_rfs" />
 		<!-- Show -->
 		<do action="ajax.prefs_rendf" />
 	</fuseaction>
@@ -1346,19 +1347,19 @@
 			</true>
 		</if>
 		<!-- CFC: Check if there is an update for this DB -->
-		<invoke object="myFusebox.getApplicationData().rfs" methodcall="rfs_get_detail(attributes.rfs_id)" returnvariable="qry_rfs" />
+		<invoke object="myFusebox.getApplicationData().rfs" methodcall="rfs_get_detail(rfs_id=attributes.rfs_id, thestruct=attributes)" returnvariable="qry_rfs" />
 		<!-- Show -->
 		<do action="ajax.prefs_rendf_add" />
 	</fuseaction>
 	<!-- Server Save -->
 	<fuseaction name="prefs_renf_add">
 		<!-- Save -->
-		<invoke object="myFusebox.getApplicationData().rfs" methodcall="rfs_update(attributes)" />
+		<invoke object="myFusebox.getApplicationData().rfs" methodcall="rfs_update(thestruct=attributes)" />
 	</fuseaction>
 	<!-- Server Remove -->
 	<fuseaction name="rfs_remove">
 		<!-- Save -->
-		<invoke object="myFusebox.getApplicationData().rfs" methodcall="rfs_remove(attributes)" />
+		<invoke object="myFusebox.getApplicationData().rfs" methodcall="rfs_remove(thestruct=attributes)" />
 		<!-- Show -->
 		<do action="prefs_renf" />
 	</fuseaction>
@@ -1373,7 +1374,7 @@
 		<set name="application.razuna.show_recent_updates" value="false" overwrite="false" />
 		<set name="attributes.pathoneup" value="#pathoneup#" />
 		<!-- Get options -->
-		<invoke object="myFusebox.getApplicationData().Settings" methodcall="get_options()" returnvariable="qry_options" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="get_options(thestruct=attributes)" returnvariable="qry_options" />
 		<!-- Check if CSS directory exists -->
 		<invoke object="myFusebox.getApplicationData().Settings" methodcall="get_css(attributes.pathoneup)" />
 		<!-- Show -->
@@ -1382,16 +1383,16 @@
 	<!-- Save -->
 	<fuseaction name="pref_global_wl_save">
 		<!-- Save WL -->
-		<invoke object="myFusebox.getApplicationData().Settings" methodcall="set_options(attributes)" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="set_options(thestruct=attributes)" />
 		<!-- Save CSS -->
 		<invoke object="myFusebox.getApplicationData().Settings" methodcall="set_css(attributes.wl_thecss,pathoneup)" />
 	</fuseaction>
 	<!-- News -->
 	<fuseaction name="wl_news">
 		<!-- Get options for rss -->
-		<invoke object="myFusebox.getApplicationData().Settings" methodcall="get_options_one('wl_news_rss')" returnvariable="attributes.rss" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="get_options_one(id='wl_news_rss', thestruct=attributes)" returnvariable="attributes.rss" />
 		<!-- Get news -->
-		<invoke object="myFusebox.getApplicationData().Settings" methodcall="get_news()" returnvariable="qry_news" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="get_news(thestruct=attributes)" returnvariable="qry_news" />
 		<!-- Show -->
 		<do action="ajax.wl_news" />
 	</fuseaction>
@@ -1406,19 +1407,19 @@
 			</true>
 		</if>
 		<!-- Get record -->
-		<invoke object="myFusebox.getApplicationData().Settings" methodcall="get_news_edit(attributes)" returnvariable="qry_news_edit" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="get_news_edit(thestruct=attributes)" returnvariable="qry_news_edit" />
 		<!-- Show -->
 		<do action="ajax.wl_news_edit" />
 	</fuseaction>
 	<!-- Save news -->
 	<fuseaction name="wl_news_save">
 		<!-- save record -->
-		<invoke object="myFusebox.getApplicationData().Settings" methodcall="set_news_edit(attributes)" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="set_news_edit(thestruct=attributes)" />
 	</fuseaction>
 	<!-- Remove news -->
 	<fuseaction name="wl_news_remove">
 		<!-- save record -->
-		<invoke object="myFusebox.getApplicationData().Settings" methodcall="del_news(attributes.news_id)" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="del_news(new_id=attributes.news_id, thestruct=attributes)" />
 	</fuseaction>
 
 	<fuseaction name="debug">
@@ -1428,25 +1429,25 @@
 	<!-- Run Folder subscribe schedule tasks -->
 	<fuseaction name="folder_subscribe_task">
 		<!-- CFC: Get the Schedule -->
-		<invoke object="myFusebox.getApplicationData().scheduler" methodcall="folder_subscribe_task()" returnvariable="thetask" />
+		<invoke object="myFusebox.getApplicationData().scheduler" methodcall="folder_subscribe_task(thestruct=attributes)" returnvariable="thetask" />
 	</fuseaction>
 
 	<!-- Schedule asset expiry task -->
 	<fuseaction name="w_asset_expiry_task">
 		<!-- CFC: Run task -->
-		<invoke object="myFusebox.getApplicationData().scheduler" methodcall="asset_expiry_task()"/>
+		<invoke object="myFusebox.getApplicationData().scheduler" methodcall="asset_expiry_task(thestruct=attributes)"/>
 	</fuseaction>
 
 	<!-- Schedule FTP task -->
 	<fuseaction name="w_ftp_notifications_task">
 		<!-- CFC: Run task -->
-		<invoke object="myFusebox.getApplicationData().scheduler" methodcall="ftp_notifications_task()"/>
+		<invoke object="myFusebox.getApplicationData().scheduler" methodcall="ftp_notifications_task(thestruct=attributes)"/>
 	</fuseaction>
 
 	<!-- Search Server DB Connection -->
 	<fuseaction name="prefs_indexing_db">
 		<!-- CFC: Get values -->
-		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_options()" returnvariable="qry_options" />
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_options(thestruct=attributes)" returnvariable="qry_options" />
 		<!-- Show -->
 		<do action="ajax.prefs_indexing_db" />
 	</fuseaction>
@@ -1456,7 +1457,7 @@
 		<!-- Set H2 db path -->
 		<set name="attributes.db_path" value="#expandpath('..')#db" />
 		<!-- CFC: Save values and call remote server -->
-		<invoke object="myFusebox.getApplicationData().settings" methodcall="indexingDbInfo(attributes)" />
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="indexingDbInfo(thestruct=attributes)" />
 	</fuseaction>
 
 </circuit>

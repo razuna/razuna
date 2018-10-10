@@ -47,7 +47,7 @@
 		<cfif login>
 			<cftry>
 				<!--- Query root folders --->
-				<cfquery datasource="#application.razuna.api.dsn#" name="qry_root">
+				<cfquery datasource="#application.razuna.datasource#" name="qry_root">
 				SELECT folder_id, folder_name, concat(folder_name) as path
 				FROM #session.hostdbprefix#folders
 				WHERE in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
@@ -101,14 +101,14 @@
 				<cfset arguments.qry_root_name = "#arguments.qry_root_name#/">
 			</cfif>
 			<!--- Get next children --->
-			<cfquery datasource="#application.razuna.api.dsn#" name="qry_children">
+			<cfquery datasource="#application.razuna.datasource#" name="qry_children">
 			SELECT folder_id, folder_name, concat('#arguments.qry_root_name##folder_name#','/',folder_name) as path
 			FROM #session.hostdbprefix#folders
 			WHERE in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			AND (folder_is_collection IS NULL OR folder_is_collection = '')
 			AND folder_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#folder_id#">
-			AND folder_id_r <cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "db2"><><cfelse>!=</cfif> folder_id
+			AND folder_id_r <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> folder_id
 			ORDER BY folder_name
 			</cfquery>
 			<!--- If more found then call this function again --->
@@ -161,7 +161,7 @@
 						<cfset querysetcell(thexml, "type", x.type)>
 						<cfset querysetcell(thexml, "status", true)>
 						<cfcatch>
-							<cfset consoleoutput(true)>
+							<cfset consoleoutput(true, true)>
 							<cfset console(cfcatch)>
 							<!--- Add our own tags to the query --->
 							<cfset thexml = querynew("filename, type, status")>
@@ -223,7 +223,7 @@
 						<cfset querysetcell(thexml, "type", x.type)>
 						<cfset querysetcell(thexml, "status", true)>
 						<cfcatch>
-							<cfset consoleoutput(true)>
+							<cfset consoleoutput(true, true)>
 							<cfset console(cfcatch)>
 							<!--- Add our own tags to the query --->
 							<cfset thexml = querynew("asset_id, type, status")>

@@ -44,7 +44,7 @@
 			<cftransaction>
 				<cfloop list="#arguments.asset_id#" index="assetid" delimiters=",">
 					<!--- Check if we already have the same id of the same basket id--->
-					<cfquery datasource="#application.razuna.api.dsn#" name="qry">
+					<cfquery datasource="#application.razuna.datasource#" name="qry">
 					SELECT asset_id
 					FROM api_basket
 					WHERE asset_id = <cfqueryparam value="#assetid#" cfsqltype="cf_sql_varchar">
@@ -53,7 +53,7 @@
 					</cfquery>
 					<!--- if not found insert --->
 					<cfif qry.recordcount EQ 0>
-						<cfquery datasource="#application.razuna.api.dsn#" name="qry">
+						<cfquery datasource="#application.razuna.datasource#" name="qry">
 						INSERT INTO api_basket
 						(basket_id, asset_id, date_added, asset_type)
 						VALUES (
@@ -68,7 +68,7 @@
 			</cftransaction>
 			<!--- Remove records that are older than 72 hours --->
 			<cftransaction>
-				<cfquery datasource="#application.razuna.api.dsn#">
+				<cfquery datasource="#application.razuna.datasource#">
 				DELETE FROM api_basket
 				WHERE date_added < <cfqueryparam value="#removetime#" cfsqltype="cf_sql_timestamp">
 				</cfquery>
@@ -95,7 +95,7 @@
 			<!--- Local vars --->
 			<cfset var qry = '' />
 			<!--- Query--->
-			<cfquery datasource="#application.razuna.api.dsn#" name="qry">
+			<cfquery datasource="#application.razuna.datasource#" name="qry">
 			SELECT asset_id, asset_type
 			FROM api_basket
 			WHERE basket_id = <cfqueryparam value="#arguments.basket_id#" cfsqltype="cf_sql_varchar">
@@ -120,7 +120,7 @@
 			<cfset var qry = '' />
 			<cfset var responsecode = 0 />
 			<!--- Query--->
-			<cfquery datasource="#application.razuna.api.dsn#" name="qry">
+			<cfquery datasource="#application.razuna.datasource#" name="qry">
 			DELETE FROM api_basket
 			WHERE basket_id = <cfqueryparam value="#arguments.basket_id#" cfsqltype="cf_sql_varchar">
 			</cfquery>
@@ -148,7 +148,7 @@
 			<cfset var qry = '' />
 			<cfset var responsecode = 0 />
 			<!--- Query all asset_ids with same basket id--->
-			<cfquery datasource="#application.razuna.api.dsn#">
+			<cfquery datasource="#application.razuna.datasource#">
 			DELETE FROM api_basket
 			WHERE basket_id = <cfqueryparam value="#arguments.basket_id#" cfsqltype="cf_sql_varchar">
 			AND asset_id = <cfqueryparam value="#arguments.asset_id#" cfsqltype="cf_sql_varchar">
@@ -233,7 +233,7 @@
 		<!--- Create directory --->
 		<cfdirectory action="create" directory="#tmpdir#" mode="775" />
 		<!--- Get all files in basket --->
-		<cfquery datasource="#application.razuna.api.dsn#" name="qry">
+		<cfquery datasource="#application.razuna.datasource#" name="qry">
 		SELECT asset_id, asset_type
 		FROM api_basket
 		WHERE basket_id = <cfqueryparam value="#arguments.basket_id#" cfsqltype="cf_sql_varchar">
@@ -271,11 +271,11 @@
 		<!--- Get Cachetoken --->
 		<cfset var cachetoken = getcachetoken(arguments.api_key,"files")>
 		<!--- Query --->
-		<cfquery datasource="#application.razuna.api.dsn#" name="qry" cachedwithin="1" region="razcache">
+		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 		SELECT /* #cachetoken#getFiles */ file_extension as extension, file_name as filename, file_name_org as filenameorg, link_kind, link_path_url, path_to_asset, cloud_url_org
-		FROM #application.razuna.api.prefix["#arguments.api_key#"]#files
+		FROM #session.hostdbprefix#files
 		WHERE file_id = <cfqueryparam value="#arguments.asset_id#" cfsqltype="cf_sql_varchar">
-		AND host_id = <cfqueryparam value="#application.razuna.api.hostid["#arguments.api_key#"]#" cfsqltype="cf_sql_numeric">
+		AND host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric">
 		</cfquery>
 		<!--- If record is found --->
 		<cfif qry.recordcount NEQ 0>
@@ -283,7 +283,7 @@
 				<!--- Get file from storage --->
 			 <cfinvoke method="getFromStorage" api_key="#arguments.api_key#" pathtoasset="#qry.path_to_asset#" filenameorg="#qry.filenameorg#" filename="#qry.filename#" tmpdir="#arguments.tmpdir#" linkkind="#qry.link_kind#" linkpathurl="#qry.link_path_url#" />
 			 	<cfcatch type="any">
-			 		<cfset consoleoutput(true)>
+			 		<cfset consoleoutput(true, true)>
 					<cfset console(cfcatch)>
 				</cfcatch>
 			</cftry>
@@ -302,11 +302,11 @@
 		<!--- Get Cachetoken --->
 		<cfset var cachetoken = getcachetoken(arguments.api_key,"videos")>
 		<!--- Query --->
-		<cfquery datasource="#application.razuna.api.dsn#" name="qry" cachedwithin="1" region="razcache">
+		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 		SELECT /* #cachetoken#getVideos */ vid_extension as extension, vid_filename as filename, vid_name_org as filenameorg, link_kind, link_path_url, path_to_asset, cloud_url_org
-		FROM #application.razuna.api.prefix["#arguments.api_key#"]#videos
+		FROM #session.hostdbprefix#videos
 		WHERE vid_id = <cfqueryparam value="#arguments.asset_id#" cfsqltype="cf_sql_varchar">
-		AND host_id = <cfqueryparam value="#application.razuna.api.hostid["#arguments.api_key#"]#" cfsqltype="cf_sql_numeric">
+		AND host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric">
 		</cfquery>
 		<!--- If record is found --->
 		<cfif qry.recordcount NEQ 0>
@@ -314,7 +314,7 @@
 				<!--- Get file from storage --->
 			 <cfinvoke method="getFromStorage" api_key="#arguments.api_key#" pathtoasset="#qry.path_to_asset#" filenameorg="#qry.filenameorg#" filename="#qry.filename#" tmpdir="#arguments.tmpdir#" linkkind="#qry.link_kind#" linkpathurl="#qry.link_path_url#" />
 			 	<cfcatch type="any">
-			 		<cfset consoleoutput(true)>
+			 		<cfset consoleoutput(true, true)>
 					<cfset console(cfcatch)>
 				</cfcatch>
 			</cftry>
@@ -332,11 +332,11 @@
 		<!--- Get Cachetoken --->
 		<cfset var cachetoken = getcachetoken(arguments.api_key,"audios")>
 		<!--- Query --->
-		<cfquery datasource="#application.razuna.api.dsn#" name="qry" cachedwithin="1" region="razcache">
+		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 		SELECT /* #cachetoken#getAudios */ aud_extension as extension, aud_name as filename, aud_name_org as filenameorg, link_kind, link_path_url, path_to_asset, cloud_url_org
-		FROM #application.razuna.api.prefix["#arguments.api_key#"]#audios
+		FROM #session.hostdbprefix#audios
 		WHERE aud_id = <cfqueryparam value="#arguments.asset_id#" cfsqltype="cf_sql_varchar">
-		AND host_id = <cfqueryparam value="#application.razuna.api.hostid["#arguments.api_key#"]#" cfsqltype="cf_sql_numeric">
+		AND host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric">
 		</cfquery>
 		<!--- If record is found --->
 		<cfif qry.recordcount NEQ 0>
@@ -344,7 +344,7 @@
 				<!--- Get file from storage --->
 			 <cfinvoke method="getFromStorage" api_key="#arguments.api_key#" pathtoasset="#qry.path_to_asset#" filenameorg="#qry.filenameorg#" filename="#qry.filename#" tmpdir="#arguments.tmpdir#" linkkind="#qry.link_kind#" linkpathurl="#qry.link_path_url#" />
 			 	<cfcatch type="any">
-			 		<cfset consoleoutput(true)>
+			 		<cfset consoleoutput(true, true)>
 					<cfset console(cfcatch)>
 				</cfcatch>
 			</cftry>
@@ -363,11 +363,11 @@
 		<!--- Get Cachetoken --->
 		<cfset var cachetoken = getcachetoken(arguments.api_key,"images")>
 		<!--- Query --->
-		<cfquery datasource="#application.razuna.api.dsn#" name="qry" cachedwithin="1" region="razcache">
+		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 		SELECT /* #cachetoken#getImages#arguments.asset_type# */ img_extension as extension, img_filename as filename, img_filename_org as filenameorg, link_kind, link_path_url, path_to_asset, cloud_url_org
-		FROM #application.razuna.api.prefix["#arguments.api_key#"]#images
+		FROM #session.hostdbprefix#images
 		WHERE img_id = <cfqueryparam value="#arguments.asset_id#" cfsqltype="cf_sql_varchar">
-		AND host_id = <cfqueryparam value="#application.razuna.api.hostid["#arguments.api_key#"]#" cfsqltype="cf_sql_numeric">
+		AND host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric">
 		</cfquery>
 		<!--- If record is found --->
 		<cfif qry.recordcount NEQ 0>
@@ -382,7 +382,7 @@
 				<!--- Get file from storage --->
 			 <cfinvoke method="getFromStorage" api_key="#arguments.api_key#" pathtoasset="#qry.path_to_asset#" filenameorg="#qry.filenameorg#" filename="#qry.filename#" tmpdir="#arguments.tmpdir#" linkkind="#qry.link_kind#" linkpathurl="#qry.link_path_url#" />
 			 	<cfcatch type="any">
-			 		<cfset consoleoutput(true)>
+			 		<cfset consoleoutput(true, true)>
 					<cfset console(cfcatch)>
 				</cfcatch>
 			</cftry>
@@ -407,8 +407,8 @@
 		<!--- Local --->
 		<cfif application.razuna.storage EQ "local" AND arguments.linkkind EQ "">
 			<!--- Copy file --->
-			<cfthread name="#ttd#" intstruct="#arguments#">
-				<cffile action="copy" source="#attributes.intstruct.assetspath#/#application.razuna.api.hostid["#attributes.intstruct.api_key#"]#/#attributes.intstruct.pathtoasset#/#attributes.intstruct.filenameorg#" destination="#attributes.intstruct.tmpdir#/#attributes.intstruct.filename#" mode="775">
+			<cfthread name="#ttd#" intstruct="#arguments#" hostid="#session.hostid#">
+				<cffile action="copy" source="#attributes.intstruct.assetspath#/#attributes.hostid#/#attributes.intstruct.pathtoasset#/#attributes.intstruct.filenameorg#" destination="#attributes.intstruct.tmpdir#/#attributes.intstruct.filename#" mode="775">
 			</cfthread>
 		<!--- Amazon --->
 		<cfelseif application.razuna.storage EQ "amazon" AND arguments.linkkind EQ "">
@@ -418,13 +418,9 @@
 					<cfinvokeargument name="key" value="/#attributes.intstruct.pathtoasset#/#attributes.intstruct.filenameorg#">
 					<cfinvokeargument name="theasset" value="#attributes.intstruct.tmpdir#/#attributes.intstruct.filename#">
 					<cfinvokeargument name="awsbucket" value="#application.razuna.awsbucket#">
+					<cfinvokeargument name="thestruct" value="#setStruct(attributes.instruct)#">
 				</cfinvoke>
 			</cfthread>
-			<!--- Akamai --->
-			<!--- <cfelseif application.razuna.storage EQ "akamai" AND arguments.linkkind EQ "">
-				<cfthread name="#ttd#" intstruct="#arguments.thestruct#">
-					<cfhttp url="#attributes.intstruct.akaurl##attributes.intstruct.akadoc#/#attributes.intstruct.thename#" file="#attributes.intstruct.thename#" path="#attributes.intstruct.newpath#"></cfhttp>
-				</cfthread> --->
 			<!--- If this is a URL we write a file in the directory with the PATH --->
 			<cfelseif arguments.linkkind EQ "url">
 				<cfthread name="#ttd#" intstruct="#arguments#">

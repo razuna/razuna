@@ -25,9 +25,9 @@
 --->
 <cfoutput>
 	<form id="form_account">
-		<span class="loginform_header">#defaultsObj.trans("header_first_time_database_config")#</span>
+		<span class="loginform_header">#myFusebox.getApplicationData().defaults.trans("header_first_time_database_config")#</span>
 		<br />
-		#defaultsObj.trans("header_first_time_database_config_desc")#
+		#myFusebox.getApplicationData().defaults.trans("header_first_time_database_config_desc")#
 		<br />
 		<br />
 		<!--- If datasource is found then insert the values into the session. Doing it in FB did somehow not work --->
@@ -73,11 +73,11 @@
 		<br />
 		<input name="db_schema" id="db_schema" type="text" class="text" size="30" value="#session.firsttime.db_schema#">
 		<br />
-		<strong>#defaultsObj.trans("username")#</strong> 
+		<strong>#myFusebox.getApplicationData().defaults.trans("username")#</strong> 
 		<br />
 		<input name="db_user" id="db_user" type="text" class="text" size="30" value="#session.firsttime.db_user#">
 		<br />
-		<strong>#defaultsObj.trans("password")#</strong>
+		<strong>#myFusebox.getApplicationData().defaults.trans("password")#</strong>
 		<br />
 		<input name="db_pass" id="db_pass" type="password" size="30" class="text" value="#session.firsttime.db_pass#">
 		<br />
@@ -86,10 +86,10 @@
 		<div id="divcheckdb" style="display:hidden"></div>
 		<div>
 			<div style="float:left;padding:20px 0px 0px 0px;">
-				<input type="button" id="next" value="#defaultsObj.trans("back")#" onclick="loadcontent('load_steps','#myself#c.first_time_database');" class="button">
+				<input type="button" id="next" value="#myFusebox.getApplicationData().defaults.trans("back")#" onclick="loadcontent('load_steps','#myself#c.first_time_database');" class="button">
 			</div>
 			<div div="contbutton" style="float:right;padding:20px 0px 0px 0px;">
-				<input type="button" id="nextdb" value="#defaultsObj.trans("continue")#" onclick="checkform();" class="button" style="display:none;">
+				<input type="button" id="nextdb" value="#myFusebox.getApplicationData().defaults.trans("continue")#" onclick="checkform();" class="button" style="display:none;">
 			</div>
 		</div>
 	</form>

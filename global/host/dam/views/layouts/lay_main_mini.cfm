@@ -30,9 +30,9 @@
 <head>
 <title>Razuna Enterprise Digital Asset Management</title>
 <meta http-equiv="content-type" content="text/html;charset=utf-8" />
-<cfheader name="Expires" value="#GetHttpTimeString(Now())#">
+<!--- <cfheader name="Expires" value="#GetHttpTimeString(Now())#">
 <cfheader name="CACHE-CONTROL" value="NO-CACHE, no-store, must-revalidate">
-<cfheader name="PRAGMA" value="#GetHttpTimeString(Now())#">
+<cfheader name="PRAGMA" value="#GetHttpTimeString(Now())#"> --->
 <cfheader name="P3P" value="CP=\\\"IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT\\\"">
 <script type="text/javascript">var dynpath = '#dynpath#';</script>
 <!--- CSS --->

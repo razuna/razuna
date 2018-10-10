@@ -30,35 +30,37 @@
 
 <!--- GET THE CATEGORIES AND SUBCATEGORIES OF THIS HOST --->
 <!--- *IMPLEMENT THE INTERFACE* --->
-<cffunction hint="GET THE CATEGORIES AND SUBCATEGORIES OF THIS HOST" name="getTree" output="false" access="public" returntype="query">
-	<cfargument name="id" required="yes" type="string" hint="folder_id">
-	<cfargument name="max_level_depth" default="0" required="false" type="numeric" hint="0 or negative numbers stand for all levels">
+<cffunction name="getTree" output="false" access="public" returntype="query">
+	<cfargument name="id" required="yes" type="string">
+	<cfargument name="max_level_depth" default="0" required="false" type="numeric">
 	<cfargument name="ColumnList" required="false" type="string" default="c.cat_id, c.cat_order, c.cat_online, c.cat_level, c.cat_id_r, cn.cat_name">
+	<cfargument name="thestruct" type="struct" required="true" />
 	<!--- this function implements only the interface & uses getTreeBy...()  --->
-	<cfreturn getTreeByLang(id=Arguments.id, max_level_depth=Arguments.max_level_depth, ColumnList=Arguments.ColumnList, lang=1) />
+	<cfreturn getTreeByLang(id=Arguments.id, max_level_depth=Arguments.max_level_depth, ColumnList=Arguments.ColumnList, lang=1, thestruct=arguments.thestruct) />
 </cffunction>
 
 <!--- getTreeByLang : GET THE CATEGORIES AND SUBCATEGORIES OF THIS HOST --->
 <!--- *IMPLEMENT INTERFACE* --->
-<cffunction hint="GET THE CATEGORIES AND SUBCATEGORIES OF THIS HOST" name="getTreeByLang" output="false" access="public" returntype="query">
-	<cfargument name="id" required="yes" type="string" hint="cat_id">
-	<cfargument name="max_level_depth" default="0" required="false" type="numeric" hint="0 or negative numbers stand for all levels">
+<cffunction name="getTreeByLang" output="false" access="public" returntype="query">
+	<cfargument name="id" required="yes" type="string">
+	<cfargument name="max_level_depth" default="0" required="false" type="numeric">
 	<cfargument name="ColumnList" required="false" type="string" default="c.cat_id, c.cat_order, c.cat_online, c.cat_level, c.cat_id_r, cn.cat_name">
 	<cfargument name="lang" required="yes" type="numeric">
 	<cfargument name="cat_type" required="no" type="string" default="img">
+	<cfargument name="thestruct" type="struct" required="true" />
 	<!--- init internal vars --->
 	<cfset var f_1 = 0>
 	<cfset var qSub = 0>
 	<cfset var qRet = 0>
 	<!--- Do the select --->
-	<cfquery datasource="#variables.dsn#" name="f_1">
+	<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="f_1">
 		SELECT #Arguments.ColumnList#
-		FROM #session.hostdbprefix#img_categories c
-		INNER JOIN #session.hostdbprefix#img_categories_names cn ON c.cat_id = cn.cat_id_r
+		FROM #arguments.thestruct.razuna.session.hostdbprefix#img_categories c
+		INNER JOIN #arguments.thestruct.razuna.session.hostdbprefix#img_categories_names cn ON c.cat_id = cn.cat_id_r
 		WHERE <cfif Arguments.id gt 0>
 						c.cat_id_r = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.id#">
 						AND
-						c.cat_id_r <cfif application.razuna.thedatabase EQ "mysql"><><cfelse>!=</cfif> c.cat_id
+						c.cat_id_r <cfif arguments.thestruct.razuna.application.thedatabase EQ "mysql"><><cfelse>!=</cfif> c.cat_id
 					<!--- root level --->
 					<cfelse>
 						c.cat_id_r = c.cat_id
@@ -91,6 +93,7 @@
 				<cfinvokeargument name="ColumnList" value="#Arguments.ColumnList#">
 				<cfinvokeargument name="lang" value="#Arguments.lang#">
 				<cfinvokeargument name="cat_type" value="#Arguments.cat_type#">
+				<cfinvokeargument name="thestruct" value="#arguments.thestruct#">
 			</cfinvoke>
 		</cfif>
 		<!--- Put together the query --->

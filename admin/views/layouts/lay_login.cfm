@@ -32,11 +32,25 @@
 		<div id="outer">
 			<div id="loginform">
 	</cfif>
+		<!--- News --->
+		<cfif ! application.razuna.firsttime AND structKeyExists(attributes, "qry_news") AND attributes.qry_news.recordcount>
+			<div style="text-align:center" class="news_frontpage">
+				<h2>#attributes.qry_news.news_title#</h2>
+				<p>#attributes.qry_news.news_excerpt#
+				<cfif attributes.qry_news.news_text NEQ "">
+					<p><a href="##news-frontpage-popup" class="open-news-popup">Read more...</a></p>
+				</cfif>
+				</p>
+			</div>
+			<div id="news-frontpage-popup" class="white-popup mfp-hide">
+				#attributes.qry_news.news_text#
+			</div>
+		</cfif>
 	    #body#
 	  	</div>
 	<cfif NOT application.razuna.firsttime>
 	  	<div id="loginformfooter">
-		<a href="http://www.razuna.com" target="_blank">Razuna</a> #settingsObj.getconfig("version")#
+		<a href="http://www.razuna.com" target="_blank">Razuna</a> #myFusebox.getApplicationData().settings.getconfig("version")#
 		<br>Licenced under <a href="http://www.razuna.org/whatisrazuna/licensing" target="_blank">AGPL</a>
 		<br><a href="http://razuna.com" target="_blank">Razuna Website</a>
 		<br><a href="http://blog.razuna.com" target="_blank">Razuna Blog</a>
@@ -44,3 +58,13 @@
 	</cfif>
 	</div>
 </cfoutput>
+<script>
+	$(function() {
+		$('.open-news-popup').magnificPopup({
+			type: 'inline',
+			preloader: false,
+			alignTop: true,
+			midClick: true // Allow opening popup on middle mouse click. Always set it to true if you don't provide alternative source in href.
+		});
+	})
+</script>

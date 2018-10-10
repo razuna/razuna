@@ -26,10 +26,10 @@
 <cfoutput>
 	<table border="0" cellpadding="5" cellspacing="5" width="100%">
 		<tr>
-			<td style="padding-top:10px;">#defaultsObj.trans("update_host_manually")#</td>
+			<td style="padding-top:10px;">#myFusebox.getApplicationData().defaults.trans("update_host_manually")#</td>
 		</tr>
 		<tr>
-			<td align="right" style="padding-top:10px;"><input type="button" name="remove" value="#defaultsObj.trans("update_host_manually_desc")#" onclick="destroywindow(1);loadinggif('hostslist');loadcontent('hostslist','#myself#c.hosts_recreate&host_id=#attributes.host_id#&pathoneup=#urlencodedformat(pathoneup)#&pathhere=#urlencodedformat(thisPath)#');" class="button"></td>
+			<td align="right" style="padding-top:10px;"><input type="button" name="remove" value="#myFusebox.getApplicationData().defaults.trans("update_host_manually_desc")#" onclick="destroywindow(1);loadinggif('hostslist');loadcontent('hostslist','#myself#c.hosts_recreate&host_id=#attributes.host_id#&pathoneup=#urlencodedformat(pathoneup)#&pathhere=#urlencodedformat(thisPath)#');" class="button"></td>
 		</tr>
 	</table>
 </cfoutput>

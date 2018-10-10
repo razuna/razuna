@@ -444,6 +444,14 @@
 	<fuseaction name="scheduler_detail">
   		<include template="dsp_admin_sched_detail" />
 	</fuseaction>
+	<!-- ADMIN: Scheduler Detail Script -->
+	<fuseaction name="scheduler_script_detail">
+  		<include template="dsp_admin_sched_detail_script" />
+	</fuseaction>
+	<!-- ADMIN: Scheduler Detail Script search previw -->
+	<fuseaction name="scheduler_script_preview_search">
+  		<include template="dsp_admin_sched_detail_script_search" />
+	</fuseaction>
 	<!-- ADMIN: Scheduler Status -->
 	<fuseaction name="scheduler_status">
   		<include template="dsp_admin_sched_status" />
@@ -925,6 +933,15 @@
 		<include template="dsp_admin_approval" />
 	</fuseaction>
 
+	<!-- Admin UPC -->
+	<fuseaction name="admin_upc">
+		<include template="dsp_admin_settings_upc" />
+	</fuseaction>
+	<!-- Admin UPC Template -->
+	<fuseaction name="admin_upc_template">
+		<include template="dsp_admin_upc_template" />
+	</fuseaction>
+
 	<!-- Staging -->
 	<fuseaction name="staging">
 		<include template="dsp_staging" />
@@ -948,6 +965,10 @@
 	</fuseaction>
 	<fuseaction name="wl_news_edit">
 		<include template="dsp_wl_news_edit" />
+	</fuseaction>
+
+	<fuseaction name="create_renditions">
+		<include template="dsp_create_renditions" />
 	</fuseaction>
 
 	<!-- Just for Json output -->

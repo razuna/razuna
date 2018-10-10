@@ -13,7 +13,6 @@ module.exports = function(grunt) {
 			},
 			vendors: {
 				src: [
-					'./global/js/jquery-1.12.4.min.js',
 					'./global/js/jquery.validate.min.js',
 					'./global/js/jquery.form.min.js',
 					'./global/js/jquery-ui-1.12.1.custom/jquery-ui.min.js',
@@ -26,31 +25,35 @@ module.exports = function(grunt) {
 					'./global/js/jquery.formparams.js',
 					'./global/js/jquery.lazyload.min.js',
 					'./global/js/jquery.scrollstop.js',
-					'./global/js/markitup/markitup/jquery.markitup.js',
-					'./global/js/markitup/markitup/sets/html/set.js',
 					'./global/js/masonry.pkgd.min.js',
 					'./global/js/imagesloaded.pkgd.min.js',
+					'./global/js/editor/js/froala_editor.pkgd.min.js',
+					'./global/js/Magnific-Popup-1.1.0/dist/jquery.magnific-popup.min.js',
+					'./global/js/noty-3.0.1/lib/noty.min.js'
 				],
 				dest: './global/dist/vendors_<%= pkg.script_version %>.js'
 			},
 			app: {
 				src: [
-					'./global/host/dam/js/global.js'
+					'./node_modules/popper.js/dist/umd/popper.js',
+					'./node_modules/bootstrap/dist/js/bootstrap.js',
+					'./global/host/dam/js/global.js',
 				],
 				dest: './global/dist/app_<%= pkg.script_version %>.js'
 			},
 			login: {
 				src: [
-					'./global/js/jquery-1.12.4.min.js',
+					'./node_modules/popper.js/dist/umd/popper.js',
+					'./node_modules/bootstrap/dist/js/bootstrap.js',
 					'./global/js/jquery.validate.min.js',
 					'./global/js/jquery.form.min.js',
+					'./global/js/Magnific-Popup-1.1.0/dist/jquery.magnific-popup.min.js',
 					'./global/host/dam/js/login.js',
 				],
-				dest: './global/dist/login_<%= pkg.script_version %>.js'
+				dest: './global/dist/app_login_<%= pkg.script_version %>.js'
 			},
 			upload: {
 				src: [
-					'./global/js/jquery-1.12.4.min.js',
 					'./global/js/plupload/plupload.full.js',
 					'./global/js/plupload/jquery.plupload.queue/jquery.plupload.queue.js',
 					'./global/js/jquery-ui-1.12.1.custom/jquery-ui.min.js',
@@ -65,26 +68,30 @@ module.exports = function(grunt) {
 					baseDir: './global/dist/fonts',
 				}
 			},
-			// login_css: {
-			// 	src: [
-			// 		'./global/bootstrap/css/bootstrap.min.css',
-			// 		'./global/js/jasny-bootstrap-3.1.3-dist/jasny-bootstrap/css/jasny-bootstrap.min.css',
-			// 		'./global/stylesheets/app/main.css'
-			// 	],
-			// 	dest: './global/dist/app_login_<%= pkg.script_version %>.css'
-			// },
+			login_css: {
+				src: [
+					'./node_modules/bootstrap/dist/css/bootstrap.min.css',
+					'./global/js/Magnific-Popup-1.1.0/dist/magnific-popup.css',
+					'./global/host/dam/views/layouts/main.css'
+				],
+				dest: './global/dist/app_login_<%= pkg.script_version %>.css'
+			},
 			main_css: {
 				src: [
+					'./node_modules/bootstrap/dist/css/bootstrap.css',
 					'./global/js/jquery-ui-1.12.1.custom/jquery-ui.min.css',
 					'./global/js/jquery-ui-1.12.1.custom/jquery-ui.theme.min.css',
-					'./global/js/chosen/chosen.css',
+					'./global/stylesheets/font-awesome-4.7.0/css/font-awesome.min.css',
 					'./global/videoplayer/css/multiple-instances.css',
 					'./global/js/tag/css/jquery.tagit.css',
 					'./global/host/dam/views/layouts/tagit.css',
+					'./global/js/chosen/chosen.css',
 					'./global/js/notification/sticky.min.css',
-					'./global/js/markitup/markitup/skins/simple/style.css',
-					'./global/js/markitup/markitup/sets/html/style.css',
+					'./global/js/editor/css/froala_editor.pkgd.min.css',
+					'./global/js/editor/css/froala_style.min.css',
+					'./global/js/Magnific-Popup-1.1.0/dist/magnific-popup.css',
 					'./global/stylesheets/helpmonks-jstree-theme/style.css',
+					'./global/js/noty-3.0.1/lib/noty.css',
 					'./global/host/dam/views/layouts/main.css',
 				],
 				dest: './global/dist/app_<%= pkg.script_version %>.css'
@@ -98,19 +105,19 @@ module.exports = function(grunt) {
 				files: [
 					// {
 					// 	expand: true,
-					// 	cwd: './global/stylesheets',
+					// 	cwd: './public/stylesheets',
 					// 	src: ['*.css', '!*.min.css', '!radio-checkbox.css', '!notes-theme.css', '!editor.css'],
-					// 	dest: './global/dist',
+					// 	dest: './public/dist',
 					// 	ext: '.min.css'
 					// },
 					{
 						src: './global/js/plupload/jquery.plupload.queue/css/jquery.plupload.queue.css',
 						dest: './global/dist/upload_<%= pkg.script_version %>.min.css',
 					},
-					{
-						src: './global/host/dam/views/layouts/main.css',
-						dest: './global/dist/main_<%= pkg.script_version %>.min.css',
-					},
+					// {
+					// 	src: './global/host/dam/views/layouts/main.css',
+					// 	dest: './global/dist/main_<%= pkg.script_version %>.min.css',
+					// },
 					{
 						expand: true,
 						cwd: './global/dist',
@@ -153,7 +160,7 @@ module.exports = function(grunt) {
 				files: {
 					'./global/dist/app_<%= pkg.script_version %>.min.js': ['<%= concat.app.dest %>'],
 					'./global/dist/vendors_<%= pkg.script_version %>.min.js': ['<%= concat.vendors.dest %>'],
-					'./global/dist/login_<%= pkg.script_version %>.min.js': ['<%= concat.login.dest %>'],
+					'./global/dist/app_login_<%= pkg.script_version %>.min.js': ['<%= concat.login.dest %>'],
 					'./global/dist/upload_<%= pkg.script_version %>.min.js': ['<%= concat.upload.dest %>'],
 				}
 			}
@@ -209,7 +216,14 @@ module.exports = function(grunt) {
 						cwd: './global/js/chosen',
 						src: '*.png',
 						dest: './global/dist/images'
-					}
+					},
+					{
+						nonull: true,
+						expand: true,
+						cwd: './global/stylesheets/font-awesome-4.7.0/fonts/',
+						src: '*',
+						dest: './global/dist/fonts/'
+					},
 				]
 			},
 			dev: {
@@ -264,7 +278,7 @@ module.exports = function(grunt) {
 	});
 
 	// Load the plugin that provides the "uglify" task.
-	grunt.loadNpmTasks('grunt-contrib-uglify');
+	grunt.loadNpmTasks('grunt-contrib-uglify-es');
 	grunt.loadNpmTasks('grunt-contrib-concat');
 	grunt.loadNpmTasks('grunt-contrib-cssmin');
 	grunt.loadNpmTasks('grunt-contrib-copy');

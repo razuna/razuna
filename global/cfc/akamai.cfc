@@ -24,7 +24,7 @@
 *
 --->
 <cfcomponent output="false">
-	
+
 	<!--- INIT --->
 	<cffunction name="init" returntype="akamai" access="public" output="false">
 		<!--- Return --->
@@ -48,7 +48,7 @@
 		<!--- Path to executable --->
 		<cfset var exe = "#expandPath("../")#akamai/perl/">
 		<!--- Write Execute --->
-		<cfset var thef = "cd #exe# && #theperl# #exe#akam-edge-auth-url.pl #arguments.thestruct.thetype#/#arguments.thestruct.thefilename# uploadkey 10000 #application.razuna.akatoken#">
+		<cfset var thef = "cd #exe# && #theperl# #exe#akam-edge-auth-url.pl #arguments.thestruct.thetype#/#arguments.thestruct.thefilename# uploadkey 10000 #arguments.thestruct.razuna.application.akatoken#">
 		<!--- Write script --->
 		<cffile action="write" file="#getTempDirectory()##tid#" output="#thef#" mode="777" />
 		<!--- Execute --->
@@ -98,7 +98,7 @@
 		<!--- Return --->
 		<cfreturn />
 	</cffunction>
-	
+
 	<!--- Download --->
 	<cffunction name="delete" access="public" output="true">
 		<cfargument name="theasset" type="string" required="true" />
@@ -132,5 +132,5 @@
 		<!--- Return --->
 		<cfreturn />
 	</cffunction>
-	
+
 </cfcomponent>

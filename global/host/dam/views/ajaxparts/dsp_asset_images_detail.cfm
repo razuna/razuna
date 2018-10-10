@@ -251,11 +251,11 @@
 							</tr>
 							<tr>
 								<td nowrap="true">#myFusebox.getApplicationData().defaults.trans("date_created")#</td>
-								<td>#dateformat(qry_detail.detail.img_create_time, "#myFusebox.getApplicationData().defaults.getdateformat()#")#</td>
+								<td>#dateformat(qry_detail.detail.img_create_time, "#myFusebox.getApplicationData().defaults.getdateformat(thestruct=attributes)#")#</td>
 							</tr>
 							<tr>
 								<td nowrap="true" valign="top">#myFusebox.getApplicationData().defaults.trans("date_changed")#</td>
-								<td valign="top">#dateformat(qry_detail.detail.img_change_time, "#myFusebox.getApplicationData().defaults.getdateformat()#")#</td>
+								<td valign="top">#dateformat(qry_detail.detail.img_change_time, "#myFusebox.getApplicationData().defaults.getdateformat(thestruct=attributes)#")#</td>
 							</tr>
 							<tr>
 								<td nowrap="true">#myFusebox.getApplicationData().defaults.trans("located_in")#</td>
@@ -447,11 +447,11 @@
 	// Load renditions
 	function loadren() {
 		<cfif qry_detail.detail.link_kind NEQ "url">
-			$('##relatedimages').load('#myself#c.images_detail_related&file_id=#attributes.file_id#&what=images&loaddiv=#attributes.loaddiv#&folder_id=#qry_detail.detail.folder_id_r#&s=#qry_detail.detail.shared#');
+			$('##relatedimages').load('#myself#c.images_detail_related&file_id=#attributes.file_id#&what=images&loaddiv=#attributes.loaddiv#&folder_id=#qry_detail.detail.folder_id_r#&s=#qry_detail.detail.shared#', function() { $("##bodyoverlay").remove(); });
 		</cfif>
-		$('##additionalversions').load('#myself#c.av_load&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#');
+		$('##additionalversions').load('#myself#c.av_load&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#', function() { $("##bodyoverlay").remove(); });
 		<cfif cs.tab_additional_renditions>
-			$('##moreversions').load('#myself#c.adi_versions&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#&type=#attributes.cf_show#');
+			$('##moreversions').load('#myself#c.adi_versions&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#&type=#attributes.cf_show#', function() { $("##bodyoverlay").remove(); });
 		</cfif>
 	}
 

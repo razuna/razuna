@@ -26,7 +26,7 @@
 <cfoutput>
 	<table width="100%" border="0" cellspacing="0" cellpadding="0" style="border: 1px solid ##BEBEBE;">
 		<tr>
-			<td align="center" width="100%" style="padding:10px;background-color:##FFFFE0;">#defaultsObj.trans("warning_tenant_settings")#</td>
+			<td align="center" width="100%" style="padding:10px;background-color:##FFFFE0;">#myFusebox.getApplicationData().defaults.trans("warning_tenant_settings")#</td>
 		</tr>
 	</table>
 	<br />
@@ -37,10 +37,10 @@
 		<div id="tabs_prefs">
 			<ul>
 				<li><a href="##pglobal" onclick="savesettings();">Mail Settings</a></li>
-				<li><a href="##pmeta" onclick="savesettings();loadcontent('pmeta','#myself#c.prefs_meta');">#defaultsObj.trans("header_title_meta")#</a></li>
-				<li><a href="##pdam" onclick="savesettings();loadcontent('pdam','#myself#c.prefs_dam');">#defaultsObj.trans("storage_location")#</a></li>
-				<!--- <li><a href="##pimage" onclick="savesettings();loadcontent('pimage','#myself#c.prefs_image');">#defaultsObj.trans("image_settings")#</a></li>
-				<li><a href="##pvideo" onclick="savesettings();loadcontent('pvideo','#myself#c.prefs_video');">#defaultsObj.trans("video_settings_global")#</a></li> --->
+				<li><a href="##pmeta" onclick="savesettings();loadcontent('pmeta','#myself#c.prefs_meta');">#myFusebox.getApplicationData().defaults.trans("header_title_meta")#</a></li>
+				<li><a href="##pdam" onclick="savesettings();loadcontent('pdam','#myself#c.prefs_dam');">#myFusebox.getApplicationData().defaults.trans("storage_location")#</a></li>
+				<!--- <li><a href="##pimage" onclick="savesettings();loadcontent('pimage','#myself#c.prefs_image');">#myFusebox.getApplicationData().defaults.trans("image_settings")#</a></li>
+				<li><a href="##pvideo" onclick="savesettings();loadcontent('pvideo','#myself#c.prefs_video');">#myFusebox.getApplicationData().defaults.trans("video_settings_global")#</a></li> --->
 				<!--- If Nirvanix enabled --->
 				<cfif application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "akamai">
 					<li><a href="##pstorage" onclick="savesettings();loadcontent('pstorage','#myself#c.prefs_storage');">Cloud Storage</a></li>
@@ -58,7 +58,7 @@
 		<br>
 		<div id="settingsfeedback" style="display:none;float:left;font-weight:bold;color:green;"></div>
 		<div style="text-align:right;padding-top:5px;padding-bottom:10px;float:right;">
-			<input type="submit" name="savebutton" value="#defaultsObj.trans("save")#" class="button" /> 
+			<input type="submit" name="savebutton" value="#myFusebox.getApplicationData().defaults.trans("save")#" class="button" /> 
 		</div>
 	</form>
 
@@ -84,7 +84,7 @@
 			savesettings();
 			// Display saved message
 			$("##settingsfeedback").css("display","");
-			$("##settingsfeedback").html('#defaultsObj.trans("saved_changes")#');
+			$("##settingsfeedback").html('#myFusebox.getApplicationData().defaults.trans("saved_changes")#');
 			$("##settingsfeedback").animate({opacity: 1.0}, 3000).fadeTo("slow", 0);
 			return false;
 		});

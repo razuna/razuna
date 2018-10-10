@@ -37,14 +37,21 @@
 				<input type="text" name="aws_bucket_name_#counter#" id="aws_bucket_name_#counter#" value="<cfloop query="qry_s3"><cfif set_id EQ "aws_bucket_name_#counter#">#set_pref#</cfif></cfloop>" style="width:150px;" placeholder="Bucket Name">
 				<select name="aws_bucket_location_#counter#" id="aws_bucket_location_#counter#" style="width:200px;">
 					<option value="us-east"<cfloop query="qry_s3"><cfif set_id EQ "aws_bucket_location_#counter#" AND set_pref EQ "us-east"> selected="selected"</cfif></cfloop>>US Standard</option>
+					<option value="us-east-2"<cfloop query="qry_s3"><cfif set_id EQ "aws_bucket_location_#counter#" AND set_pref EQ "us-east-2"> selected="selected"</cfif></cfloop>>US East (Ohio)</option>
 					<option value="us-west-2"<cfloop query="qry_s3"><cfif set_id EQ "aws_bucket_location_#counter#" AND set_pref EQ "us-west-2"> selected="selected"</cfif></cfloop>>US West (Oregon)</option>
-					<option value="us-west-1"<cfloop query="qry_s3"><cfif set_id EQ "aws_bucket_location_#counter#" AND set_pref EQ "us-west-1"> selected="selected"</cfif></cfloop>>US West (Northern California)</option>
+					<option value="us-west-1"<cfloop query="qry_s3"><cfif set_id EQ "aws_bucket_location_#counter#" AND set_pref EQ "us-west-1"> selected="selected"</cfif></cfloop>>US West (N. California)</option>
+					<option value="ca-central-1"<cfloop query="qry_s3"><cfif set_id EQ "aws_bucket_location_#counter#" AND set_pref EQ "ca-central-1"> selected="selected"</cfif></cfloop>>Canada (Central)</option>
 					<option value="EU"<cfloop query="qry_s3"><cfif set_id EQ "aws_bucket_location_#counter#" AND set_pref EQ "eu"> selected="selected"</cfif></cfloop>>EU (Ireland)</option>
 					<option value="eu-central-1"<cfloop query="qry_s3"><cfif set_id EQ "aws_bucket_location_#counter#" AND set_pref EQ "eu-central-1"> selected="selected"</cfif></cfloop>>EU (Frankfurt)</option>
+					<option value="eu-west-2"<cfloop query="qry_s3"><cfif set_id EQ "aws_bucket_location_#counter#" AND set_pref EQ "eu-west-2"> selected="selected"</cfif></cfloop>>EU (London)</option>
+					<option value="eu-west-3"<cfloop query="qry_s3"><cfif set_id EQ "aws_bucket_location_#counter#" AND set_pref EQ "eu-west-3"> selected="selected"</cfif></cfloop>>EU (Paris)</option>
 					<option value="ap-southeast-1"<cfloop query="qry_s3"><cfif set_id EQ "aws_bucket_location_#counter#" AND set_pref EQ "ap-southeast-1"> selected="selected"</cfif></cfloop>>Asia Pacific (Singapore)</option>
 					<option value="ap-northeast-1"<cfloop query="qry_s3"><cfif set_id EQ "aws_bucket_location_#counter#" AND set_pref EQ "ap-northeast-1"> selected="selected"</cfif></cfloop>>Asia Pacific (Tokyo)</option>
 					<option value="ap-northeast-2"<cfloop query="qry_s3"><cfif set_id EQ "aws_bucket_location_#counter#" AND set_pref EQ "ap-northeast-2"> selected="selected"</cfif></cfloop>>Asia Pacific (Seoul)</option>
+					<option value="ap-south-1"<cfloop query="qry_s3"><cfif set_id EQ "aws_bucket_location_#counter#" AND set_pref EQ "ap-south-1"> selected="selected"</cfif></cfloop>>Asia Pacific (Mumbai)</option>
 					<option value="sa-east-1"<cfloop query="qry_s3"><cfif set_id EQ "aws_bucket_location_#counter#" AND set_pref EQ "sa-east-1"> selected="selected"</cfif></cfloop>>South America (Sao Paulo)</option>
+					<option value="cn-north-1"<cfloop query="qry_s3"><cfif set_id EQ "aws_bucket_location_#counter#" AND set_pref EQ "cn-north-1"> selected="selected"</cfif></cfloop>>China (Beijing)</option>
+					<option value="cn-northwest-1"<cfloop query="qry_s3"><cfif set_id EQ "aws_bucket_location_#counter#" AND set_pref EQ "cn-northwest-1"> selected="selected"</cfif></cfloop>>China (Ningxia)</option>
 				</select>
 			</div>
 		</cfloop>
@@ -56,14 +63,21 @@
 		    	<input type="text" name="aws_bucket_name_1" id="aws_bucket_name_1" value="" style="width:150px;" placeholder="Bucket Name">
 		    	<select name="aws_bucket_location_1" id="aws_bucket_location_1" style="width:200px;">
 		    		<option value="us-east" selected="selected">US Standard</option>
+		    		<option value="us-east-2">US East (Ohio)</option>
 		    		<option value="us-west-2">US West (Oregon)</option>
 		    		<option value="us-west-1">US West (Northern California)</option>
+		    		<option value="ca-central-1">Canada (Central)</option>
 		    		<option value="EU">EU (Ireland)</option>
 		    		<option value="eu-central-1">EU (Frankfurt)</option>
+		    		<option value="eu-west-2">EU (London)</option>
+		    		<option value="eu-west-3">EU (Paris)</option>
 		    		<option value="ap-southeast-1">Asia Pacific (Singapore)</option>
 		    		<option value="ap-northeast-1">Asia Pacific (Tokyo)</option>
 		    		<option value="ap-northeast-2">Asia Pacific (Seoul)</option>
+		    		<option value="ap-south-1">Asia Pacific (Mumbai)</option>
 		    		<option value="sa-east-1">South America (Sao Paulo)</option>
+		    		<option value="cn-north-1">China (Beijing)</option>
+					<option value="cn-northwest-1">China (Ningxia)</option>
 		    	</select>
 		    </div>
 		</cfif>

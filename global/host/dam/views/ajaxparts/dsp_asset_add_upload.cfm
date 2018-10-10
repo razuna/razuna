@@ -29,13 +29,17 @@
 <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
 <cfoutput>
 <title>Plupload</title>
-<cfheader name="Expires" value="#GetHttpTimeString(Now())#">
+<!--- <cfheader name="Expires" value="#GetHttpTimeString(Now())#">
 <cfheader name="CACHE-CONTROL" value="NO-CACHE, no-store, must-revalidate">
-<cfheader name="PRAGMA" value="#GetHttpTimeString(Now())#">
+<cfheader name="PRAGMA" value="#GetHttpTimeString(Now())#"> --->
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 <cfparam name="attributes.file_id" default="0">
 <!-- Load Queue widget CSS and jQuery -->
+<!--- CSS --->
+<!--- <link rel="stylesheet" type="text/css" href="#dynpath#/global/dist/app_#attributes.cachetag#.min.css" /> --->
 <link rel="stylesheet" type="text/css" href="#dynpath#/global/dist/upload_#attributes.cachetag#.min.css" />
+<!--- JS --->
+<script type="text/javascript" src="#dynpath#/global/js/jquery-3.3.1.min.js"></script>
 <script type="text/javascript" src="#dynpath#/global/dist/upload_#attributes.cachetag#.min.js"></script>
 <style type="text/css">
 body {
@@ -76,6 +80,118 @@ $(function() {
 			{title : "Zip files", extensions : "zip"}
 		],
 		*/
+
+		// Post init events, bound after the internal events
+        init : {
+        	Init: function() {
+        		$('.plupload_start').hide();
+            },
+            PostInit: function() {
+                // Called after initialization is finished and internal event handlers bound
+                // console.log('[PostInit]');
+ 
+                // document.getElementById('uploadfiles').onclick = function() {
+                //     uploader.start();
+                //     return false;
+                // };
+
+            },
+ 
+            Browse: function(up) {
+                // Called when file picker is clicked
+                // log('[Browse]');
+            },
+ 
+            Refresh: function(up) {
+                // Called when the position or dimensions of the picker change
+                // log('[Refresh]');
+            },
+  
+            StateChanged: function(up) {
+                // Called when the state of the queue is changed
+                // log('[StateChanged]', up.state == plupload.STARTED ? "STARTED" : "STOPPED");
+            },
+  
+            QueueChanged: function(up) {
+            	// console.log('up', up);
+                // Called when queue is changed by adding or removing files
+                // console.log('[QueueChanged]', up.total.queued );
+
+                if ( up.total.queued ) {
+                	$('.plupload_start').css({ 'border' : '1px solid gray', 'font-weight' : 'bold' });
+                	$('.plupload_start').show();
+                }
+                else {
+                	$('.plupload_start').hide();
+
+                }
+
+            },
+ 
+            OptionChanged: function(up, name, value, oldValue) {
+                // Called when one of the configuration options is changed
+                // log('[OptionChanged]', 'Option Name: ', name, 'Value: ', value, 'Old Value: ', oldValue);
+            },
+ 
+            BeforeUpload: function(up, file) {
+                // Called right before the upload for a given file starts, can be used to cancel it if required
+                // log('[BeforeUpload]', 'File: ', file);
+            },
+  
+            UploadProgress: function(up, file) {
+                // Called while file is being uploaded
+                // log('[UploadProgress]', 'File:', file, "Total:", up.total);
+            },
+ 
+            FileFiltered: function(up, file) {
+                // Called when file successfully files all the filters
+                // log('[FileFiltered]', 'File:', file);
+            },
+  
+            FilesAdded: function(up, files) {
+                // Called when files are added to queue
+                // console.log('[FilesAdded]');
+  
+                // plupload.each(files, function(file) {
+                //     console.log('  File:', file);
+                // });
+
+            },
+  
+            FilesRemoved: function(up, files) {
+                // Called when files are removed from queue
+                // console.log('[FilesRemoved]');
+  
+                // plupload.each(files, function(file) {
+                //     console.log('  File:', file);
+                // });
+            },
+  
+            FileUploaded: function(up, file, info) {
+                // Called when file has finished uploading
+                // log('[FileUploaded] File:', file, "Info:", info);
+            },
+  
+            ChunkUploaded: function(up, file, info) {
+                // Called when file chunk has finished uploading
+                // log('[ChunkUploaded] File:', file, "Info:", info);
+            },
+ 
+            UploadComplete: function(up, files) {
+                // Called when all files are either uploaded or failed
+                // log('[UploadComplete]');
+            },
+ 
+            Destroy: function(up) {
+                // Called when uploader is destroyed
+                // log('[Destroy] ');
+            },
+  
+            Error: function(up, args) {
+                // Called when error occurs
+                console.log('[Error] ', args);
+            }
+        },
 
 		// Flash settings
 		flash_swf_url : '#dynpath#/global/js/plupload/plupload.flash.swf',
@@ -132,6 +248,10 @@ $(function() {
 	    uploader.settings.url = uploader.settings.url.split('&filename')[0] + '&filename='+file.name;
 	    return true;
 	});
+
+	// $("##uploader").pluploadQueue.bind('init', function() {
+	    $('.plupload_start').hide();
+	// });
 
 	// Extend global multipart_params for each UploadFile dynamically
 	/*

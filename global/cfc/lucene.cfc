@@ -24,7 +24,11 @@
 *
 --->
 <cfcomponent output="false" extends="extQueryCaching">
-	
+
+	<cffunction name="init" returntype="lucene" access="public" output="false">
+		<cfreturn this />
+	</cffunction>
+
 	<!--- INDEX: Delete --->
 	<cffunction name="index_delete" access="public" output="false">
 		<cfargument name="thestruct" type="struct">
@@ -33,17 +37,18 @@
 		<cfargument name="notfile" type="string" default="F" required="false">
 		<cftry>
 			<!--- Add to lucene delete table --->
-			<cfquery datasource="#application.razuna.datasource#">
+			<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
 			INSERT INTO lucene
-			(id, type, host_id)
+			(id, type, host_id, time_stamp)
 			VALUES (
 				<cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">,
 				<cfqueryparam value="#arguments.category#" cfsqltype="CF_SQL_VARCHAR">,
-				<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">,
+				<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">
 			)
 			</cfquery>
 			<cfcatch type="any">
-				<cfset consoleoutput(true)>
+				<cfset consoleoutput(true, true)>
 				<cfset console(cfcatch)>
 			</cfcatch>
 		</cftry>
@@ -61,11 +66,17 @@
 		<cfargument name="folderid" type="string">
 		<cfargument name="search_type" type="string">
 		<cfargument name="search_rendition" type="string">
-
+		<cfargument name="searchupc" type="any">
+		<cfargument name="thestruct" type="struct" required="false" />
+		<!--- <cfset consoleoutput(true, true)>
+		<cfset console("lucene search arguments", arguments)>
+		<cfabort> --->
+		<!--- Convert search_upc to boolean --->
+		<cfset var _search_upc = arguments.searchupc EQ 'true' ? true : false>
 		<!--- Param --->
 		<cfset var _taskserver = "" />
 		<!--- Query settings --->
-		<cfinvoke component="settings" method="prefs_taskserver" returnvariable="_taskserver" />
+		<cfinvoke component="settings" method="prefs_taskserver" thestruct="#arguments.thestruct#" returnvariable="_taskserver" />
 		<!--- Taskserver URL according to settings --->
 		<cfif _taskserver.taskserver_location EQ "remote">
 			<cfset var _url = _taskserver.taskserver_remote_url />
@@ -77,7 +88,7 @@
 		<cfhttp url="#_url#/api/search.cfc" method="post" charset="utf-8">
 			<cfhttpparam name="method" value="search" type="formfield" />
 			<cfhttpparam name="secret" value="#_taskserver.taskserver_secret#" type="formfield" />
-			<cfhttpparam name="collection" value="#arguments.hostid#" type="formfield" />
+			<cfhttpparam name="collection" value="#arguments.thestruct.razuna.session.hostid#" type="formfield" />
 			<cfhttpparam name="criteria" value="#arguments.criteria#" type="formfield" />
 			<cfhttpparam name="category" value="#arguments.category#" type="formfield" />
 			<cfhttpparam name="startrow" value="#arguments.startrow#" type="formfield" />
@@ -85,6 +96,8 @@
 			<cfhttpparam name="folderid" value="#arguments.folderid#" type="formfield" />
 			<cfhttpparam name="search_type" value="#arguments.search_type#" type="formfield" />
 			<cfhttpparam name="search_rendition" value="#arguments.search_rendition#" type="formfield" />
+			<cfhttpparam name="search_upc" value="#_search_upc#" type="formfield" />
+			<!--- <cfhttpparam name="thestruct" value="#arguments.thestruct#" type="formfield" /> --->
 		</cfhttp>
 		<!--- if statuscode is not 200 --->
 		<cfif cfhttp.statuscode CONTAINS "200">
@@ -115,7 +128,7 @@
 					<cfabort>
 				</cfcatch>
 			</cftry>
-			
+
 		<cfelse>
 			<cfoutput>
 				<h2>A connection error to the search server occured</h2>
@@ -124,18 +137,15 @@
 			<cfdump var="#cfhttp#" label="ERROR" />
 			<cfabort>
 		</cfif>
-		
+
 	</cffunction>
 
-	
 	<!--- INDEX: Update from API --->
 	<cffunction name="index_update_api" access="remote" output="false">
 		<cfargument name="assetid" type="string" required="true">
-		<cfargument name="dsn" type="string" required="true">
-		<cfargument name="prefix" type="string" required="true">
-		<cfargument name="hostid" type="string" required="true">
+		<cfargument name="thestruct" type="struct" required="true" />
 		<!--- Call to update asset --->
-		<cfset rebuildIndex(assetid=arguments.assetid, dsn=arguments.dsn, prefix=arguments.prefix, hostid=arguments.hostid ) />
+		<cfset rebuildIndex(assetid=arguments.assetid, thestruct=arguments.thestruct ) />
 		<!--- Return --->
 		<cfreturn />
 	</cffunction>
@@ -143,52 +153,51 @@
 	<!--- For status --->
 	<cffunction name="statusOfIndex" access="public" output="false">
 		<cfargument name="reset" required="true">
+		<cfargument name="thestruct" type="struct" required="true" />
 		<!--- If the user wants to reset index --->
 		<cfif arguments.reset>
-			<cfset rebuildIndex(assetid='all', dsn=application.razuna.datasource, prefix=session.hostdbprefix, hostid=session.hostid ) />
+			<cfset rebuildIndex(assetid='all', thestruct=arguments.thestruct ) />
 		</cfif>
 		<!--- Var --->
 		<cfset var qry = "" />
 		<!--- Query how many files are not indexed --->
-		<cfquery datasource="#application.razuna.datasource#" name="qry">
+		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qry">
 		SELECT count(img_id) as count, 'Images' as type
-		FROM #session.hostdbprefix#images
+		FROM #arguments.thestruct.razuna.session.hostdbprefix#images
 		WHERE is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 		AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 		UNION ALL
 		SELECT count(vid_id) as count, 'Videos' as type
-		FROM #session.hostdbprefix#videos
+		FROM #arguments.thestruct.razuna.session.hostdbprefix#videos
 		WHERE is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 		AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 		UNION ALL
 		SELECT count(file_id) as count, 'Documents' as type
-		FROM #session.hostdbprefix#files
+		FROM #arguments.thestruct.razuna.session.hostdbprefix#files
 		WHERE is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 		AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 		UNION ALL
 		SELECT count(aud_id) as count, 'Audios' as type
-		FROM #session.hostdbprefix#audios a
+		FROM #arguments.thestruct.razuna.session.hostdbprefix#audios a
 		WHERE is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 		AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 		</cfquery>
 		<!--- Return --->
 		<cfreturn qry />
 	</cffunction>
-	
+
 	<!--- Rebuild Index --->
 	<cffunction name="rebuildIndex" access="public" output="false">
 		<cfargument name="assetid" type="string" required="true">
-		<cfargument name="dsn" type="string" required="true">
-		<cfargument name="prefix" type="string" required="true">
-		<cfargument name="hostid" type="string" required="true">
+		<cfargument name="thestruct" type="struct" required="true" />
 		<!--- Param --->
 		<cfset var _taskserver = "" />
 		<!--- Query settings --->
-		<cfinvoke component="settings" method="prefs_taskserver" returnvariable="_taskserver" />
+		<cfinvoke component="settings" method="prefs_taskserver" thestruct="#arguments.thestruct#" returnvariable="_taskserver" />
 		<!--- Taskserver URL according to settings --->
 		<cfif _taskserver.taskserver_location EQ "remote">
 			<cfset var _url = _taskserver.taskserver_remote_url />
@@ -199,53 +208,51 @@
 		<cfhttp url="#_url#/api/collection.cfc" method="post" charset="utf-8">
 			<cfhttpparam name="method" value="rebuildCollection" type="formfield" />
 			<cfhttpparam name="secret" value="#_taskserver.taskserver_secret#" type="formfield" />
-			<cfhttpparam name="hostid" value="#arguments.hostid#" type="formfield" />
+			<!--- <cfhttpparam name="thestruct" value="#arguments.thestruct#" type="formfield" /> --->
 		</cfhttp>
 		<!--- Set records to non indexed --->
-		<cfquery datasource="#arguments.dsn#">
-		UPDATE #arguments.prefix#images
+		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
+		UPDATE #arguments.thestruct.razuna.session.hostdbprefix#images
 		SET is_indexed = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="0">
-		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
+		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 		AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 		<cfif arguments.assetid NEQ "all">
 			AND img_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#" list="true">)
 		</cfif>
 		</cfquery>
-		<cfquery datasource="#arguments.dsn#">
-		UPDATE #arguments.prefix#videos
+		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
+		UPDATE #arguments.thestruct.razuna.session.hostdbprefix#videos
 		SET is_indexed = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="0">
-		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
+		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 		AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 		<cfif arguments.assetid NEQ "all">
 			AND vid_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#" list="true">)
 		</cfif>
 		</cfquery>
-		<cfquery datasource="#arguments.dsn#">
-		UPDATE #arguments.prefix#audios
+		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
+		UPDATE #arguments.thestruct.razuna.session.hostdbprefix#audios
 		SET is_indexed = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="0">
-		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
+		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 		AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 		<cfif arguments.assetid NEQ "all">
 			AND aud_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#" list="true">)
 		</cfif>
 		</cfquery>
-		<cfquery datasource="#arguments.dsn#">
-		UPDATE #arguments.prefix#files
+		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
+		UPDATE #arguments.thestruct.razuna.session.hostdbprefix#files
 		SET is_indexed = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="0">
-		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
+		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
 		AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 		<cfif arguments.assetid NEQ "all">
 			AND file_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#" list="true">)
 		</cfif>
 		</cfquery>
-		<!--- Set hostid session (needed in resetcachetoken) --->
-		<cfset session.hostid = arguments.hostid>
 		<!--- Flush Caches --->
-		<cfset resetcachetoken("images")>
-		<cfset resetcachetoken("videos")>
-		<cfset resetcachetoken("files")>
-		<cfset resetcachetoken("audios")>
-		<cfset resetcachetoken("search")>
+		<cfset resetcachetoken(type="images", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
+		<cfset resetcachetoken(type="videos", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
+		<cfset resetcachetoken(type="files", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
+		<cfset resetcachetoken(type="audios", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
+		<cfset resetcachetoken(type="search", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 		<!--- Return --->
 		<cfreturn  />
 	</cffunction>

@@ -134,9 +134,7 @@
 					<p>
 						<a href="##" onclick="loadcontent('rightside','#myself#c.staging');$('##userselection').toggle();return false;" style="width:100%;">Approval Area</a>
 					</p>
-					<p>
-						<hr />
-					</p>
+					<p class="p-1"></p>
 				</cfif>
 				<!--- Profile --->
 				<p>
@@ -146,12 +144,12 @@
 						<img width="20" height="20" border="0" src="/razuna/global/host/dam/images/active_directory_user.png">
 					</cfif>
 				</p>
-				<p><hr /></p>
+				<p class="p-1"></p>
 				<!--- Administration. Show if user is admin or if user has access to some admin features --->
 				<cfif session.is_system_admin OR session.is_administrator OR !structisempty(tabaccess_struct)>
 					<p><a href="##" onclick="loadcontent('rightside','#myself#c.admin');$('##userselection').toggle();return false;" style="width:100%;">#myFusebox.getApplicationData().defaults.trans("header_administration")#</a></p>
 					<!--- showwindow('#myself#ajax.admin','#myFusebox.getApplicationData().defaults.trans("header_administration")#',900,1); --->
-					<p><hr /></p>
+					<p class="p-1"></p>
 				</cfif>
 				<!--- Help --->
 				<p>
@@ -168,18 +166,18 @@
 						<a href="http://wiki.razuna.com" target="_blank" onclick="$('##userselection').toggle();">#myFusebox.getApplicationData().defaults.trans("doc_wiki")#</a>
 					</cfif>
 				</p>
-				<p><hr /></p>
+				<p class="p-1"></p>
 				<!--- Account --->
 				<cfif cgi.http_host CONTAINS "razuna.com" AND (session.is_administrator OR session.is_system_admin)>
 					<p><a href="https://yoda.razuna.com/account/#session.hostid#" id="account" target="_blank">#myFusebox.getApplicationData().defaults.trans("acct_settings")#</a></p>
-					<p><hr /></p>
+					<p class="p-1"></p>
 				</cfif>
 				<!--- Languages --->
 				<cfif qry_langs.recordcount NEQ 1>
 					<cfloop query="qry_langs">
 						<p><a href="#myself##xfa.switchlang#&thelang=#lang_name#&v=#createuuid()#">#lang_name#</a></p>
 					</cfloop>
-					<p><hr /></p>
+					<p class="p-1"></p>
 				</cfif>
 				<!--- Feedback --->
 				<p>
@@ -189,7 +187,7 @@
 						<a href="https://help.razuna.com" target="_blank">#myFusebox.getApplicationData().defaults.trans("link_feedback")#</a>
 					</cfif>
 				</p>
-				<p><hr /></p>
+				<!--- <p class="p-1"></p> --->
 				<!--- Log off --->
 				<p><a href="#myself#c.logout&_v=#createuuid('')#">#myFusebox.getApplicationData().defaults.trans("logoff")#</a></p>
 			</div>
@@ -204,7 +202,7 @@
 			<!--- Show basket link --->
 			<cfif cs.show_basket_part>
 				<div style="float:left;vertical-align:top">
-					<a href="##" onclick="tooglefooter('0');loadcontent('rightside','#myself#c.basket_full');$('##footer_drop').css('height','30px');">#myFusebox.getApplicationData().defaults.trans("show_basket")#</a>
+					<a href="##" onclick="tooglefooter('0');loadcontent('rightside','#myself#c.basket_full');$('##footer_drop').css('height','37px');">#myFusebox.getApplicationData().defaults.trans("show_basket")#</a>
 				</div>
 			</cfif>
 			<!--- Feedback --->

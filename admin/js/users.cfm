@@ -22,8 +22,8 @@
 	// Feedback for new user
 	function saveuser(){
 		document.getElementById('updatetext').style.display = "block";
-		document.getElementById('updatetext').innerHTML='<cfoutput>#defaultsObj.trans("success")#</cfoutput>';
+		document.getElementById('updatetext').innerHTML='<cfoutput>#myFusebox.getApplicationData().defaults.trans("success")#</cfoutput>';
 		// document.getElementById('updatetext2').style.visibility = "visible";
-		//document.getElementById('updatetext2').innerHTML='<cfoutput>#defaultsObj.trans("success")#</cfoutput><br>';
+		//document.getElementById('updatetext2').innerHTML='<cfoutput>#myFusebox.getApplicationData().defaults.trans("success")#</cfoutput><br>';
 	}
 </script>

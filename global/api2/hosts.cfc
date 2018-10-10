@@ -31,7 +31,7 @@
 		<cfset var thesession = checkdb(arguments.api_key)>
 		<cfset var thexml ="">
 		<!--- If ISP --->
-		<cfif application.razuna.api.isp>
+		<cfif application.razuna.isp>
 			<cfset var thesession = false>
 		</cfif>
 		<!--- Check to see if session is valid --->
@@ -39,7 +39,7 @@
 			<!--- If user is in sysadmin --->
 			<cfif listFind(session.thegroupofuser,"1",",") GT 0>
 				<!--- Query --->
-				<cfquery datasource="#application.razuna.api.dsn#" name="thexml">
+				<cfquery datasource="#application.razuna.datasource#" name="thexml">
 				SELECT host_id, host_name, host_path, host_db_prefix, host_shard_group
 				FROM hosts
 				</cfquery>
@@ -54,14 +54,14 @@
 		<!--- Return --->
 		<cfreturn thexml>
 	</cffunction>
-	
+
 	<cffunction name="gethostsize" access="remote" output="false" returntype="struct" returnformat="JSON" hint="return size of host(s)">
 		<cfargument name="api_key" required="true" type="string">
 		<cfargument name="host_id" required="false" type="numeric">
 		<!--- Check key --->
 		<cfset var thesession = checkdb(arguments.api_key)>
 		<!--- If ISP --->
-		<cfif application.razuna.api.isp>
+		<cfif application.razuna.isp>
 			<cfset var thesession = false>
 		</cfif>
 		<!--- Check to see if session is valid --->
@@ -72,7 +72,7 @@
 				<cfset var pathoneup = ExpandPath("../")>
 				<cfobject component="global.cfc.hosts" name="hobj"> <!--- Instantiate hosts object for access to its functions --->
 				<!--- Get list of hosts --->
-				<cfquery datasource="#application.razuna.api.dsn#" name="gethosts" cachedwithin="#CreateTimeSpan(0,3,0,0)#">
+				<cfquery datasource="#application.razuna.datasource#" name="gethosts" cachedwithin="#CreateTimeSpan(0,3,0,0)#">
 				SELECT host_id
 				FROM hosts
 				<cfif structkeyexists(arguments,"host_id")>
@@ -82,7 +82,7 @@
 				<cftry>
 					<cfloop query="gethosts">
 						<!--- Get host size  --->
-						<cfset thestruct["#gethosts.host_id#"] = hobj.gethostsize(gethosts.host_id)> 
+						<cfset thestruct["#gethosts.host_id#"] = hobj.gethostsize(gethosts.host_id)>
 					</cfloop>
 					<cfcatch type="any">
 						<cfset thestruct.responsecode = 1>

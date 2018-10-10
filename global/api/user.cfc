@@ -40,7 +40,7 @@
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
 		<!--- Query for the sysadmingroup --->
-		<cfquery datasource="#application.razuna.api.dsn#" name="qryuser">
+		<cfquery datasource="#application.razuna.datasource#" name="qryuser">
 		SELECT groupofuser
 		FROM webservices
 		WHERE sessiontoken = <cfqueryparam value="#arguments.sessiontoken#" cfsqltype="cf_sql_varchar">
@@ -49,14 +49,14 @@
 		<!--- If user is in sysadmin --->
 		<cfif qryuser.recordcount NEQ 0>
 			<!--- Check that we don't have the same user --->
-			<cfquery datasource="#application.razuna.api.dsn#" name="qry_sameuser">
+			<cfquery datasource="#application.razuna.datasource#" name="qry_sameuser">
 			SELECT users.user_email, users.user_login_name, user_id
 			FROM users, ct_users_hosts
 			WHERE (
 				users.user_email = <cfqueryparam value="#arguments.user_email#" cfsqltype="cf_sql_varchar">
 				OR users.user_login_name = <cfqueryparam value="#arguments.user_name#" cfsqltype="cf_sql_varchar">
 				)
-			AND ct_users_hosts.ct_u_h_host_id = #application.razuna.api.hostid["#arguments.sessiontoken#"]#
+			AND ct_users_hosts.ct_u_h_host_id = #application.razuna.hostid["#arguments.sessiontoken#"]#
 			</cfquery>
 			<!--- If user does not exist do the insert --->
 			<cfif qry_sameuser.recordcount EQ 0>
@@ -65,7 +65,7 @@
 				<!--- Hash Password --->
 				<cfset thepass = hash(arguments.user_pass, "MD5", "UTF-8")>
 				<!--- Insert the User into the DB --->
-				<cfquery datasource="#application.razuna.api.dsn#">
+				<cfquery datasource="#application.razuna.datasource#">
 				INSERT INTO users
 				(user_id, user_login_name, user_email, user_pass, user_first_name, user_last_name, user_in_admin,
 				user_create_date, user_active, user_in_dam)
@@ -83,18 +83,18 @@
 				)
 				</cfquery>
 				<!--- Insert the user to the user host cross table --->
-				<cfquery datasource="#application.razuna.api.dsn#">
+				<cfquery datasource="#application.razuna.datasource#">
 				INSERT INTO ct_users_hosts
 				(ct_u_h_user_id, ct_u_h_host_id, rec_uuid)
 				VALUES(
 				<cfqueryparam value="#newuserid#" cfsqltype="CF_SQL_VARCHAR">,
-				#application.razuna.api.hostid["#arguments.sessiontoken#"]#,
+				#application.razuna.hostid["#arguments.sessiontoken#"]#,
 				<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 				)
 				</cfquery>
 				<!--- Insert into group --->
 				<cfif arguments.groupid NEQ 0>
-					<cfquery datasource="#application.razuna.api.dsn#">
+					<cfquery datasource="#application.razuna.datasource#">
 					INSERT INTO	ct_groups_users
 					(ct_g_u_grp_id, ct_g_u_user_id, rec_uuid)
 					VALUES(
@@ -148,10 +148,10 @@
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
 			<!--- Query the user --->
-			<cfquery datasource="#application.razuna.api.dsn#" name="qry">
+			<cfquery datasource="#application.razuna.datasource#" name="qry">
 			SELECT user_login_name, user_email, user_first_name, user_last_name
 			FROM users
-			WHERE user_id = <cfqueryparam value="#application.razuna.api.userid["#arguments.sessiontoken#"]#" cfsqltype="CF_SQL_VARCHAR">
+			WHERE user_id = <cfqueryparam value="#application.razuna.userid["#arguments.sessiontoken#"]#" cfsqltype="CF_SQL_VARCHAR">
 			</cfquery>
 			<!--- If user does not exist do the insert --->
 			<cfif qry.recordcount NEQ 0>
@@ -159,7 +159,7 @@
 				<cfsavecontent variable="thexml"><cfoutput><?xml version="1.0" encoding="UTF-8"?>
 <Response>
 <responsecode>0</responsecode>
-<userid>#application.razuna.api.userid["#arguments.sessiontoken#"]#</userid>
+<userid>#application.razuna.userid["#arguments.sessiontoken#"]#</userid>
 <loginname>#xmlformat(qry.user_login_name)#</loginname>
 <email>#xmlformat(qry.user_email)#</email>
 <firstname>#xmlformat(qry.user_first_name)#</firstname>
@@ -195,7 +195,7 @@
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
 			<!--- Query the user --->
-			<cfquery datasource="#application.razuna.api.dsn#" name="qry">
+			<cfquery datasource="#application.razuna.datasource#" name="qry">
 			SELECT user_id
 			FROM users
 			<cfif arguments.userid NEQ "">
@@ -218,7 +218,7 @@
 					<cfset l = l & "," & #thejson[x][1]#>
 					<!--- Just user fields --->
 					<cfif #thejson[x][1]# CONTAINS "user_">
-						<cfquery datasource="#application.razuna.api.dsn#">
+						<cfquery datasource="#application.razuna.datasource#">
 						UPDATE users
 						SET #thejson[x][1]# = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#thejson[x][2]#">
 						WHERE user_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#qry.user_id#">
@@ -229,7 +229,7 @@
 				<!--- Does a key exists --->
 				<cfif listcontains(l,"group_id") NEQ 0>
 					<!--- There is a group_id remove all existing groups --->
-					<cfquery datasource="#application.razuna.api.dsn#">
+					<cfquery datasource="#application.razuna.datasource#">
 					DELETE FROM ct_groups_users
 					WHERE ct_g_u_user_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#qry.user_id#">
 					</cfquery>
@@ -237,7 +237,7 @@
 					<cfloop index="x" from="1" to="#arrayLen(thejson)#">
 						<!--- Just user fields --->
 						<cfif #thejson[x][1]# CONTAINS "group_id">
-							<cfquery datasource="#application.razuna.api.dsn#">
+							<cfquery datasource="#application.razuna.datasource#">
 							INSERT INTO ct_groups_users
 							(ct_g_u_grp_id, ct_g_u_user_id, rec_uuid)
 							VALUES(
@@ -285,7 +285,7 @@
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
 			<!--- Query the user --->
-			<cfquery datasource="#application.razuna.api.dsn#" name="qry">
+			<cfquery datasource="#application.razuna.datasource#" name="qry">
 			SELECT user_id
 			FROM users
 			<cfif arguments.userid NEQ "">
@@ -300,23 +300,23 @@
 			</cfquery>
 			<!--- User found --->
 			<cfif qry.recordcount EQ 1>
-				<cfquery datasource="#application.razuna.api.dsn#">
+				<cfquery datasource="#application.razuna.datasource#">
 				DELETE FROM ct_users_hosts
 				WHERE ct_u_h_user_id = <cfqueryparam value="#qry.user_id#" cfsqltype="CF_SQL_VARCHAR">
 				</cfquery>
 				<!--- Remove Intra/extranet carts  --->
-				<cfquery datasource="#application.razuna.api.dsn#">
-				DELETE FROM #application.razuna.api.prefix["#arguments.sessiontoken#"]#cart
+				<cfquery datasource="#application.razuna.datasource#">
+				DELETE FROM #application.razuna.prefix["#arguments.sessiontoken#"]#cart
 				WHERE user_id = <cfqueryparam value="#qry.user_id#" cfsqltype="CF_SQL_VARCHAR">
-				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.sessiontoken#"]#">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.hostid["#arguments.sessiontoken#"]#">
 				</cfquery>
 				<!--- Remove user comments  --->
-				<cfquery datasource="#application.razuna.api.dsn#">
+				<cfquery datasource="#application.razuna.datasource#">
 				DELETE FROM users_comments
 				WHERE user_id_r = <cfqueryparam value="#qry.user_id#" cfsqltype="CF_SQL_VARCHAR">
 				</cfquery>
 				<!--- Remove from the User Table --->
-				<cfquery datasource="#application.razuna.api.dsn#">
+				<cfquery datasource="#application.razuna.datasource#">
 				DELETE FROM users
 				WHERE user_id = <cfqueryparam value="#qry.user_id#" cfsqltype="CF_SQL_VARCHAR">
 				</cfquery>

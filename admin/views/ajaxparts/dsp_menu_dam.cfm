@@ -30,63 +30,63 @@
 			<!--- Reports --->
 			<table width="100%" border="0" cellspacing="0" cellpadding="0">
 			<tr>
-			<td height="30" nowrap background="images/button_menu/bggrey.gif" id="divlink_20"><table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="27"><img src="images/button_menu/chart_24.png" alt="" width="24" height="24" border="0" align="left"></td><td width="212" class="textbold">#defaultsObj.trans("reports")#</td></tr></table></td>
+			<td height="30" nowrap background="images/button_menu/bggrey.gif" id="divlink_20"><table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="27"><img src="images/button_menu/chart_24.png" alt="" width="24" height="24" border="0" align="left"></td><td width="212" class="textbold">#myFusebox.getApplicationData().defaults.trans("reports")#</td></tr></table></td>
 			</tr>
 			</table>
 			<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table_border">
 			<tr>
-			<td valign="top"><a href="">&raquo; #defaultsObj.trans("report_stats")# (Website)</a></td>
+			<td valign="top"><a href="">&raquo; #myFusebox.getApplicationData().defaults.trans("report_stats")# (Website)</a></td>
 			</tr>
 			<tr>
-			<td valign="top"><a href="">&raquo; #defaultsObj.trans("report_stats")# (Media Center)</a></td>
+			<td valign="top"><a href="">&raquo; #myFusebox.getApplicationData().defaults.trans("report_stats")# (Media Center)</a></td>
 			</tr>
 			</table>
 			<!--- General Settings --->
 			<table width="100%" border="0" cellspacing="0" cellpadding="0" style="padding-top:15px;">
 			<tr>
-			<td height="30" nowrap background="images/button_menu/bggrey.gif" id="divlink_21"><table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="27"><img src="images/button_menu/settings_24.png" alt="" width="24" height="24" border="0" align="left"></td><td width="212" class="textbold">#defaultsObj.trans("general_settings")#</td></tr></table></td>
+			<td height="30" nowrap background="images/button_menu/bggrey.gif" id="divlink_21"><table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="27"><img src="images/button_menu/settings_24.png" alt="" width="24" height="24" border="0" align="left"></td><td width="212" class="textbold">#myFusebox.getApplicationData().defaults.trans("general_settings")#</td></tr></table></td>
 			</tr>
 			</table>
 			<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table_border">
 			<tr>
-			<td valign="top"><a href="dsp_frame_main_split.cfm?show=ks" target="mainFrame">&raquo; #defaultsObj.trans("keywords")#</a></td>
+			<td valign="top"><a href="dsp_frame_main_split.cfm?show=ks" target="mainFrame">&raquo; #myFusebox.getApplicationData().defaults.trans("keywords")#</a></td>
 			</tr>
 			<tr>
-			<td valign="top"><a href="dsp_frame_main_split.cfm?show=cat" target="mainFrame">&raquo; #defaultsObj.trans("img_set_categories")#</a></td>
+			<td valign="top"><a href="dsp_frame_main_split.cfm?show=cat" target="mainFrame">&raquo; #myFusebox.getApplicationData().defaults.trans("img_set_categories")#</a></td>
 			</tr>
 			<tr>
-			<td valign="top" style="padding-top:10px;"><a href="dsp_frame_main.cfm?show=scheduler" target="mainFrame">&raquo; #defaultsObj.trans("scheduled_uploads")#</a></td>
+			<td valign="top" style="padding-top:10px;"><a href="dsp_frame_main.cfm?show=scheduler" target="mainFrame">&raquo; #myFusebox.getApplicationData().defaults.trans("scheduled_uploads")#</a></td>
 			</tr>
 			<tr>
-			<td valign="top"><a href="dsp_frame_main.cfm?show=remoteusers" target="mainFrame">&raquo; #defaultsObj.trans("img_set_remoteusers")#</a></td>
+			<td valign="top"><a href="dsp_frame_main.cfm?show=remoteusers" target="mainFrame">&raquo; #myFusebox.getApplicationData().defaults.trans("img_set_remoteusers")#</a></td>
 			</tr>
 			</table>
 			<!--- Image Settings --->
 			<table width="100%" border="0" cellspacing="0" cellpadding="0" style="padding-top:15px;">
 			<tr>
-			<td height="30" nowrap background="images/button_menu/bggrey.gif" id="divlink_22"><table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="27"><img src="images/button_menu/filemanager_24.png" alt="" width="24" height="24" border="0" align="left"></td><td width="212" class="textbold">#defaultsObj.trans("image_settings")#</td></tr></table></td>
+			<td height="30" nowrap background="images/button_menu/bggrey.gif" id="divlink_22"><table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="27"><img src="images/button_menu/filemanager_24.png" alt="" width="24" height="24" border="0" align="left"></td><td width="212" class="textbold">#myFusebox.getApplicationData().defaults.trans("image_settings")#</td></tr></table></td>
 			</tr>
 			</table>
 			<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table_border">
 			<tr>
-			<td valign="top"><a href="dsp_frame_main.cfm?show=imgset_pub" target="mainFrame">&raquo; #defaultsObj.trans("img_set_publishers")#</a></td>
+			<td valign="top"><a href="dsp_frame_main.cfm?show=imgset_pub" target="mainFrame">&raquo; #myFusebox.getApplicationData().defaults.trans("img_set_publishers")#</a></td>
 			</tr>
 			<tr>
-			<td valign="top"><a href="dsp_frame_main.cfm?show=imgset_vlist" target="mainFrame">&raquo; #defaultsObj.trans("img_set_valuelists")#</a></td>
+			<td valign="top"><a href="dsp_frame_main.cfm?show=imgset_vlist" target="mainFrame">&raquo; #myFusebox.getApplicationData().defaults.trans("img_set_valuelists")#</a></td>
 			</tr>
 			</table>
 			<!--- Video Settings --->
 			<table width="100%" border="0" cellspacing="0" cellpadding="0" style="padding-top:15px;">
 			<tr>
-			<td height="30" nowrap background="images/button_menu/bggrey.gif" id="divlink_23"><table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="27"><img src="images/button_menu/movie.png" alt="" width="24" height="24" border="0" align="left"></td><td width="212" class="textbold">#defaultsObj.trans("video_settings_global")#</td></tr></table></td>
+			<td height="30" nowrap background="images/button_menu/bggrey.gif" id="divlink_23"><table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="27"><img src="images/button_menu/movie.png" alt="" width="24" height="24" border="0" align="left"></td><td width="212" class="textbold">#myFusebox.getApplicationData().defaults.trans("video_settings_global")#</td></tr></table></td>
 			</tr>
 			</table>
 			<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table_border">
 			<tr>
-			<td valign="top"><a href="dsp_frame_main.cfm?show=vidset_pub" target="mainFrame">&raquo; #defaultsObj.trans("img_set_publishers")#</a></td>
+			<td valign="top"><a href="dsp_frame_main.cfm?show=vidset_pub" target="mainFrame">&raquo; #myFusebox.getApplicationData().defaults.trans("img_set_publishers")#</a></td>
 			</tr>
 			<tr>
-			<td valign="top"><a href="dsp_frame_main.cfm?show=vidset_vlist" target="mainFrame">&raquo; #defaultsObj.trans("img_set_valuelists")#</a></td>
+			<td valign="top"><a href="dsp_frame_main.cfm?show=vidset_vlist" target="mainFrame">&raquo; #myFusebox.getApplicationData().defaults.trans("img_set_valuelists")#</a></td>
 			</tr>
 			</table>
 

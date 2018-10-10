@@ -213,3 +213,21 @@ input, textarea {
 input:focus, textarea:focus { 
 	border: 1px solid #357EC7; 
 }
+
+.white-popup {
+	position: relative;
+	background: #FFF;
+	padding: 20px;
+	width: auto;
+	max-width: 500px;
+	margin: 20px auto;
+	font-size: 16px;
+}
+
+.news_frontpage {
+	text-align: center;
+}
+.news_frontpage p {
+	text-align: center;
+	font-size: 16px;
+}

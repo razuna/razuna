@@ -37,15 +37,15 @@
 			<!--- Param --->
 			<cfset thestorage = "">
 			<!--- Query which file are in this collection --->
-			<cfquery datasource="#application.razuna.api.dsn#" name="qry_col">
+			<cfquery datasource="#application.razuna.datasource#" name="qry_col">
 			SELECT file_id_r
-			FROM #application.razuna.api.prefix["#arguments.sessiontoken#"]#collections_ct_files ct
+			FROM #application.razuna.prefix["#arguments.sessiontoken#"]#collections_ct_files ct
 			WHERE ct.col_id_r = <cfqueryparam value="#arguments.collectionid#" cfsqltype="CF_SQL_VARCHAR">
 			</cfquery>
 			<!--- If above qry return records --->
 			<cfif qry_col.recordcount NEQ 0>
 				<!--- Query the files --->
-				<cfquery datasource="#application.razuna.api.dsn#" name="qry">
+				<cfquery datasource="#application.razuna.datasource#" name="qry">
 				SELECT 
 				i.img_id id, 
 				i.img_filename filename, 
@@ -53,7 +53,7 @@
 				i.img_extension ext,
 				i.thumb_extension thext, 
 				'dummy' as vidimage, 
-				<cfif application.razuna.api.thedatabase EQ "oracle">to_char(NVL(i.img_size, 0))<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">cast(ifnull(i.img_size, 0) AS char)<cfelseif application.razuna.api.thedatabase EQ "mssql">str(isnull(i.img_size, 0))</cfif> AS thesize,
+				<cfif application.razuna.thedatabase EQ "oracle">to_char(NVL(i.img_size, 0))<cfelseif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">cast(ifnull(i.img_size, 0) AS char)<cfelseif application.razuna.thedatabase EQ "mssql">str(isnull(i.img_size, 0))</cfif> AS thesize,
 				i.img_width AS thewidth,
 				i.img_height AS theheight,
 				i.img_filename_org filename_org, 
@@ -69,14 +69,14 @@
 							WHEN count(img_id) = 0 THEN 'false'
 							ELSE 'true'
 						END AS test
-					FROM #application.razuna.api.prefix["#arguments.sessiontoken#"]#images isub
+					FROM #application.razuna.prefix["#arguments.sessiontoken#"]#images isub
 					WHERE isub.img_group = i.img_id
 				) as subassets
-				FROM #application.razuna.api.prefix["#arguments.sessiontoken#"]#images i 
-				LEFT JOIN #application.razuna.api.prefix["#arguments.sessiontoken#"]#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = 1
+				FROM #application.razuna.prefix["#arguments.sessiontoken#"]#images i 
+				LEFT JOIN #application.razuna.prefix["#arguments.sessiontoken#"]#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = 1
 				WHERE i.img_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#ValueList(qry_col.file_id_r)#" list="true">)
 				AND (i.img_group IS NULL OR i.img_group = '')
-				AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.sessiontoken#"]#">
+				AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.hostid["#arguments.sessiontoken#"]#">
 				AND i.is_available = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="1">
 				UNION ALL
 				SELECT 
@@ -86,7 +86,7 @@
 				v.vid_extension ext, 
 				v.vid_extension thext,
 				v.vid_name_image as vidimage, 
-				<cfif application.razuna.api.thedatabase EQ "oracle">to_char(NVL(v.vid_size, 0))<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">cast(ifnull(v.vid_size, 0) AS char)<cfelseif application.razuna.api.thedatabase EQ "mssql">str(isnull(v.vid_size, 0))</cfif> AS thesize,
+				<cfif application.razuna.thedatabase EQ "oracle">to_char(NVL(v.vid_size, 0))<cfelseif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">cast(ifnull(v.vid_size, 0) AS char)<cfelseif application.razuna.thedatabase EQ "mssql">str(isnull(v.vid_size, 0))</cfif> AS thesize,
 				v.vid_width AS thewidth,
 				v.vid_height AS theheight, 
 				v.vid_name_org filename_org,
@@ -102,14 +102,14 @@
 							WHEN count(vid_id) = 0 THEN 'false'
 							ELSE 'true'
 						END AS test
-					FROM #application.razuna.api.prefix["#arguments.sessiontoken#"]#videos vsub
+					FROM #application.razuna.prefix["#arguments.sessiontoken#"]#videos vsub
 					WHERE vsub.vid_group = v.vid_id
 				) as subassets
-				FROM #application.razuna.api.prefix["#arguments.sessiontoken#"]#videos v 
-				LEFT JOIN #application.razuna.api.prefix["#arguments.sessiontoken#"]#videos_text vt ON v.vid_id = vt.vid_id_r AND vt.lang_id_r = 1
+				FROM #application.razuna.prefix["#arguments.sessiontoken#"]#videos v 
+				LEFT JOIN #application.razuna.prefix["#arguments.sessiontoken#"]#videos_text vt ON v.vid_id = vt.vid_id_r AND vt.lang_id_r = 1
 				WHERE v.vid_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#ValueList(qry_col.file_id_r)#" list="true">)
 				AND (v.vid_group IS NULL OR v.vid_group = '')
-				AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.sessiontoken#"]#">
+				AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.hostid["#arguments.sessiontoken#"]#">
 				AND v.is_available = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="1">
 				UNION ALL
 				<!--- Audios --->
@@ -120,7 +120,7 @@
 				a.aud_extension ext,
 				a.aud_extension thext, 
 				'dummy' as vidimage,
-				<cfif application.razuna.api.thedatabase EQ "oracle">to_char(NVL(a.aud_size, 0))<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">cast(ifnull(a.aud_size, 0) AS char)<cfelseif application.razuna.api.thedatabase EQ "mssql">str(isnull(a.aud_size, 0))</cfif> AS thesize,
+				<cfif application.razuna.thedatabase EQ "oracle">to_char(NVL(a.aud_size, 0))<cfelseif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">cast(ifnull(a.aud_size, 0) AS char)<cfelseif application.razuna.thedatabase EQ "mssql">str(isnull(a.aud_size, 0))</cfif> AS thesize,
 				0 AS thewidth,
 				0 AS theheight,
 				a.aud_name_org filename_org, 
@@ -136,14 +136,14 @@
 							WHEN count(aud_id) = 0 THEN 'false'
 							ELSE 'true'
 						END AS test
-					FROM #application.razuna.api.prefix["#arguments.sessiontoken#"]#audios asub
+					FROM #application.razuna.prefix["#arguments.sessiontoken#"]#audios asub
 					WHERE asub.aud_group = a.aud_id
 				) as subassets
-				FROM #application.razuna.api.prefix["#arguments.sessiontoken#"]#audios a 
-				LEFT JOIN #application.razuna.api.prefix["#arguments.sessiontoken#"]#audios_text aut ON a.aud_id = aut.aud_id_r AND aut.lang_id_r = 1
+				FROM #application.razuna.prefix["#arguments.sessiontoken#"]#audios a 
+				LEFT JOIN #application.razuna.prefix["#arguments.sessiontoken#"]#audios_text aut ON a.aud_id = aut.aud_id_r AND aut.lang_id_r = 1
 				WHERE a.aud_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#ValueList(qry_col.file_id_r)#" list="true">)
 				AND (a.aud_group IS NULL OR a.aud_group = '')
-				AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.sessiontoken#"]#">
+				AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.hostid["#arguments.sessiontoken#"]#">
 				AND a.is_available = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="1">
 				UNION ALL
 				SELECT 
@@ -153,7 +153,7 @@
 				f.file_extension ext, 
 				f.file_extension thext, 
 				'dummy' as vidimage, 
-				<cfif application.razuna.api.thedatabase EQ "oracle">to_char(NVL(f.file_size, 0))<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">cast(ifnull(f.file_size, 0) AS char)<cfelseif application.razuna.api.thedatabase EQ "mssql">str(isnull(f.file_size, 0))</cfif> AS thesize,
+				<cfif application.razuna.thedatabase EQ "oracle">to_char(NVL(f.file_size, 0))<cfelseif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">cast(ifnull(f.file_size, 0) AS char)<cfelseif application.razuna.thedatabase EQ "mssql">str(isnull(f.file_size, 0))</cfif> AS thesize,
 				0 AS thewidth,
 				0 AS theheight,
 				f.file_name_org filename_org, 
@@ -164,30 +164,30 @@
 				f.cloud_url,
 				f.cloud_url_org,
 				'false' as subassets
-				FROM #application.razuna.api.prefix["#arguments.sessiontoken#"]#files f 
-				LEFT JOIN #application.razuna.api.prefix["#arguments.sessiontoken#"]#files_desc ft ON f.file_id = ft.file_id_r AND ft.lang_id_r = 1
+				FROM #application.razuna.prefix["#arguments.sessiontoken#"]#files f 
+				LEFT JOIN #application.razuna.prefix["#arguments.sessiontoken#"]#files_desc ft ON f.file_id = ft.file_id_r AND ft.lang_id_r = 1
 				WHERE f.file_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#ValueList(qry_col.file_id_r)#" list="true">)
-				AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.sessiontoken#"]#">
+				AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.hostid["#arguments.sessiontoken#"]#">
 				AND f.is_available = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="1">
 				ORDER BY filename
 				</cfquery>
 				<!--- Check on the storage --->
-				<cfif application.razuna.api.storage EQ "local">
-					<cfset var thestorage = "#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.sessiontoken#"]#">
+				<cfif application.razuna.storage EQ "local">
+					<cfset var thestorage = "#application.razuna.thehttp##cgi.HTTP_HOST#/#application.razuna.dynpath#/assets/#application.razuna.hostid["#arguments.sessiontoken#"]#">
 				<!---
-				<cfelseif application.razuna.api.storage EQ "nirvanix">
+				<cfelseif application.razuna.storage EQ "nirvanix">
 					<cfset thestruct = structnew()>
 					<cfset thestruct.isbrowser = "T">
-					<cfquery datasource="#application.razuna.api.dsn#" name="thestruct.qry_settings_nirvanix">
+					<cfquery datasource="#application.razuna.datasource#" name="thestruct.qry_settings_nirvanix">
 					SELECT set2_nirvanix_name, set2_nirvanix_pass
-					FROM #application.razuna.api.prefix["#arguments.sessiontoken#"]#settings_2
-					WHERE set2_id = <cfqueryparam value="#application.razuna.api.setid#" cfsqltype="cf_sql_numeric">
-					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.sessiontoken#"]#">
+					FROM #application.razuna.prefix["#arguments.sessiontoken#"]#settings_2
+					WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
+					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.hostid["#arguments.sessiontoken#"]#">
 					</cfquery>
-					<cfset nvx = createObject("component","global.cfc.nirvanix").init("#application.razuna.api.nvxappkey#")>
+					<cfset nvx = createObject("component","global.cfc.nirvanix").init("#application.razuna.nvxappkey#")>
 					<cfset nvxsession = nvx.login("#thestruct#")>
-					<cfset var thestorage = "#application.razuna.api.nvxurlservices#/#nvxsession#/razuna/#application.razuna.api.hostid["#arguments.sessiontoken#"]#">
-					<cfset var thestorageshared = "#application.razuna.api.nvxurlservices#/razuna/#application.razuna.api.hostid["#arguments.sessiontoken#"]#">
+					<cfset var thestorage = "#application.razuna.nvxurlservices#/#nvxsession#/razuna/#application.razuna.hostid["#arguments.sessiontoken#"]#">
+					<cfset var thestorageshared = "#application.razuna.nvxurlservices#/razuna/#application.razuna.hostid["#arguments.sessiontoken#"]#">
 				--->
 				</cfif>
 				<!--- Create the XML --->
@@ -205,8 +205,8 @@
 <extension>#xmlformat(ext)#</extension>
 <description>#xmlformat(description)#</description>
 <keywords>#xmlformat(keywords)#</keywords>
-<url><cfif application.razuna.api.storage EQ "amazon" OR application.razuna.api.storage EQ "nirvanix">#cloud_url_org#<cfelse>#thestorage#/#path_to_asset#/#filename_org#</cfif></url>
-<thumbnail><cfif kind EQ "doc" AND ext NEQ "pdf"><cfif FileExists("#ExpandPath("../")#host/dam/images/icons/icon_#ext#.png") IS "no">#application.razuna.api.thehttp##cgi.HTTP_HOST##application.razuna.api.dynpath#/global/host/dam/images/icons/icon_txt.png<cfelse>#application.razuna.api.thehttp##cgi.HTTP_HOST##application.razuna.api.dynpath#/global/host/dam/images/icons/icon_#ext#.png</cfif><cfelseif kind EQ "aud">#application.razuna.api.thehttp##cgi.HTTP_HOST##application.razuna.api.dynpath#/global/host/dam/images/icons/icon_<cfif ext EQ "mp3" OR ext EQ "wav">#ext#<cfelse>aud</cfif>.png<cfelse><cfif application.razuna.api.storage EQ "amazon" OR application.razuna.api.storage EQ "nirvanix">#cloud_url#<cfelse>#thestorage#/#path_to_asset#/<cfif kind EQ "img">thumb_#id#.#thext#<cfelseif kind EQ "vid">#vidimage#<cfelseif kind EQ "doc" AND ext EQ "pdf">#replacenocase(filename_org, ".pdf", ".jpg", "all")#</cfif></cfif></cfif></thumbnail>
+<url><cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">#cloud_url_org#<cfelse>#thestorage#/#path_to_asset#/#filename_org#</cfif></url>
+<thumbnail><cfif kind EQ "doc" AND ext NEQ "pdf"><cfif FileExists("#ExpandPath("../")#host/dam/images/icons/icon_#ext#.png") IS "no">#application.razuna.thehttp##cgi.HTTP_HOST##application.razuna.dynpath#/global/host/dam/images/icons/icon_txt.png<cfelse>#application.razuna.thehttp##cgi.HTTP_HOST##application.razuna.dynpath#/global/host/dam/images/icons/icon_#ext#.png</cfif><cfelseif kind EQ "aud">#application.razuna.thehttp##cgi.HTTP_HOST##application.razuna.dynpath#/global/host/dam/images/icons/icon_<cfif ext EQ "mp3" OR ext EQ "wav">#ext#<cfelse>aud</cfif>.png<cfelse><cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">#cloud_url#<cfelse>#thestorage#/#path_to_asset#/<cfif kind EQ "img">thumb_#id#.#thext#<cfelseif kind EQ "vid">#vidimage#<cfelseif kind EQ "doc" AND ext EQ "pdf">#replacenocase(filename_org, ".pdf", ".jpg", "all")#</cfif></cfif></cfif></thumbnail>
 <size>#thesize#</size>
 <width>#thewidth#</width>
 <height>#theheight#</height>
@@ -246,12 +246,12 @@
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
 			<!--- Query --->
-			<cfquery datasource="#application.razuna.api.dsn#" name="qry">
+			<cfquery datasource="#application.razuna.datasource#" name="qry">
 			SELECT c.col_id, c.change_date, ct.col_name
-			FROM #application.razuna.api.prefix["#arguments.sessiontoken#"]#collections c
-			LEFT JOIN #application.razuna.api.prefix["#arguments.sessiontoken#"]#collections_text ct ON c.col_id = ct.col_id_r AND ct.lang_id_r = <cfqueryparam value="1" cfsqltype="cf_sql_numeric">
+			FROM #application.razuna.prefix["#arguments.sessiontoken#"]#collections c
+			LEFT JOIN #application.razuna.prefix["#arguments.sessiontoken#"]#collections_text ct ON c.col_id = ct.col_id_r AND ct.lang_id_r = <cfqueryparam value="1" cfsqltype="cf_sql_numeric">
 			WHERE c.folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.folderid#">
-			AND c.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.sessiontoken#"]#">
+			AND c.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.hostid["#arguments.sessiontoken#"]#">
 			ORDER BY ct.col_name
 			</cfquery>
 			<!--- Take the result and create XML --->
@@ -261,9 +261,9 @@
 <calledwith>#arguments.folderid#</calledwith>
 <listcollections>
 <cfloop query="qry">
-<cfquery datasource="#application.razuna.api.dsn#" name="qrytotal">
-SELECT count(file_id_r) thetotal, (SELECT count(file_id_r) FROM #application.razuna.api.prefix["#arguments.sessiontoken#"]#collections_ct_files WHERE col_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#col_id#"> AND col_file_type = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="img">) totalimg, (SELECT count(file_id_r) FROM #application.razuna.api.prefix["#arguments.sessiontoken#"]#collections_ct_files WHERE col_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#col_id#"> AND col_file_type = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="vid">) totalvid, (SELECT count(file_id_r) FROM #application.razuna.api.prefix["#arguments.sessiontoken#"]#collections_ct_files WHERE col_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#col_id#"> AND col_file_type = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="doc">) totaldoc, (SELECT count(file_id_r) FROM #application.razuna.api.prefix["#arguments.sessiontoken#"]#collections_ct_files WHERE col_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#col_id#"> AND col_file_type = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="aud">) totalaud
-FROM #application.razuna.api.prefix["#arguments.sessiontoken#"]#collections_ct_files
+<cfquery datasource="#application.razuna.datasource#" name="qrytotal">
+SELECT count(file_id_r) thetotal, (SELECT count(file_id_r) FROM #application.razuna.prefix["#arguments.sessiontoken#"]#collections_ct_files WHERE col_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#col_id#"> AND col_file_type = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="img">) totalimg, (SELECT count(file_id_r) FROM #application.razuna.prefix["#arguments.sessiontoken#"]#collections_ct_files WHERE col_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#col_id#"> AND col_file_type = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="vid">) totalvid, (SELECT count(file_id_r) FROM #application.razuna.prefix["#arguments.sessiontoken#"]#collections_ct_files WHERE col_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#col_id#"> AND col_file_type = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="doc">) totaldoc, (SELECT count(file_id_r) FROM #application.razuna.prefix["#arguments.sessiontoken#"]#collections_ct_files WHERE col_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#col_id#"> AND col_file_type = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="aud">) totalaud
+FROM #application.razuna.prefix["#arguments.sessiontoken#"]#collections_ct_files
 WHERE col_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#col_id#">
 GROUP BY file_id_r
 </cfquery>
@@ -300,40 +300,40 @@ GROUP BY file_id_r
 		<cfset var qSub = 0>
 		<cfset var qRet = 0>
 		<!--- Do the select --->
-		<cfquery datasource="#application.razuna.api.dsn#" name="f_1">
+		<cfquery datasource="#application.razuna.datasource#" name="f_1">
 		SELECT f.folder_id, f.folder_level, f.folder_name, f.folder_id_r, f.folder_owner,
 				CASE
-					WHEN ( f.folder_of_user = 't' AND f.folder_owner = '#application.razuna.api.userid["#arguments.sessiontoken#"]#' AND f.folder_name = 'my folder') THEN 'unlocked'
+					WHEN ( f.folder_of_user = 't' AND f.folder_owner = '#application.razuna.userid["#arguments.sessiontoken#"]#' AND f.folder_name = 'my folder') THEN 'unlocked'
 					WHEN ( f.folder_of_user = 't' AND f.folder_name = 'my folder') THEN 'locked'
 					ELSE 'unlocked'
 				END AS perm,
 				<!--- Check if there are any subfolders --->
 				(
-					SELECT<cfif application.razuna.api.thedatabase EQ "mssql"> TOP 1</cfif> <cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "h2">NVL<cfelseif application.razuna.api.thedatabase EQ "mysql">ifnull<cfelseif application.razuna.api.thedatabase EQ "mssql">isnull</cfif>(s.folder_id, 0)
-					FROM #application.razuna.api.prefix["#arguments.sessiontoken#"]#folders s
-					WHERE s.folder_id <cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "db2"><><cfelse>!=</cfif> f.folder_id
-					AND s.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.sessiontoken#"]#">
+					SELECT<cfif application.razuna.thedatabase EQ "mssql"> TOP 1</cfif> <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2">NVL<cfelseif application.razuna.thedatabase EQ "mysql">ifnull<cfelseif application.razuna.thedatabase EQ "mssql">isnull</cfif>(s.folder_id, 0)
+					FROM #application.razuna.prefix["#arguments.sessiontoken#"]#folders s
+					WHERE s.folder_id <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> f.folder_id
+					AND s.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.hostid["#arguments.sessiontoken#"]#">
 					AND s.folder_id_r = f.folder_id
-					<cfif application.razuna.api.thedatabase EQ "oracle">
+					<cfif application.razuna.thedatabase EQ "oracle">
 						AND ROWNUM = 1
-					<cfelseif application.razuna.api.thedatabase EQ "db2">
+					<cfelseif application.razuna.thedatabase EQ "db2">
 						FETCH FIRST 1 ROWS ONLY
 					<cfelse>
 						LIMIT 1
 					</cfif>
 				)
 				AS subhere
-		FROM #application.razuna.api.prefix["#arguments.sessiontoken#"]#folders f
+		FROM #application.razuna.prefix["#arguments.sessiontoken#"]#folders f
 		WHERE 
 		<cfif Arguments.id gt 0>
-			f.folder_id <cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "db2"><><cfelse>!=</cfif> f.folder_id_r
+			f.folder_id <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> f.folder_id_r
 			AND
 			f.folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Arguments.id#">
 		<cfelse>
 			f.folder_id = f.folder_id_r
 		</cfif>
 		AND f.folder_is_collection = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">
-		AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.sessiontoken#"]#">
+		AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.hostid["#arguments.sessiontoken#"]#">
 		ORDER BY folder_name
 		</cfquery>
 		<!--- dummy QoQ to get correct datatypes --->

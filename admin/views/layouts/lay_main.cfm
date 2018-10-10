@@ -28,30 +28,31 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" >
 <head>
-<title>Razuna - the open source alternative to Digital Asset Management</title>
+<title>Razuna - the open source alternative to Enterprise Digital Asset Management</title>
 <meta http-equiv="content-type" content="text/html;charset=utf-8" />
 <!--- Control the cache. If we have to switch language then reset the cache
 <cfheader name="Expires" value="#GetHttpTimeString(DateAdd('d', 1, Now()))#">
 <cfheader name="PRAGMA" value="#GetHttpTimeString(DateAdd('d', 1, Now()))#"> --->
 <meta http-equiv="X-UA-Compatible" content="chrome=1">
-<cfheader name="Expires" value="#GetHttpTimeString(Now())#">
+<!--- <cfheader name="Expires" value="#GetHttpTimeString(Now())#">
 <cfheader name="CACHE-CONTROL" value="NO-CACHE, no-store, must-revalidate">
-<cfheader name="PRAGMA" value="#GetHttpTimeString(Now())#">
+<cfheader name="PRAGMA" value="#GetHttpTimeString(Now())#"> --->
 <script language="JavaScript" type="text/javascript">var dynpath = '#dynpath#';</script>
 <!--- CSS --->
 <link rel="stylesheet" type="text/css" href="#dynpath#/global/js/jquery-ui-1.12.1.custom/jquery-ui.min.css" />
 <link rel="stylesheet" type="text/css" href="#dynpath#/global/js/jquery-ui-1.12.1.custom/jquery-ui.theme.min.css" />
 <link rel="stylesheet" type="text/css" href="views/layouts/main.css" />
 <link rel="stylesheet" type="text/css" href="views/layouts/error.css" />
-<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/markitup/markitup/skins/simple/style.css" />
-<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/markitup/markitup/sets/html/style.css" />
+<link rel="stylesheet" type="text/css" href="#dynpath#/global/stylesheets/font-awesome-4.7.0/css/font-awesome.min.css" />
+<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/editor/css/froala_editor.pkgd.min.css" />
+<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/editor/css/froala_style.min.css" />
 <!--- Cache JS --->
 <script type="text/javascript" src="#dynpath#/global/js/jquery-1.12.4.min.js"></script>
 <script type="text/javascript" src="#dynpath#/global/js/jquery-ui-1.12.1.custom/jquery-ui.min.js"></script>
 <script type="text/javascript" src="#dynpath#/global/js/jquery.validate.min.js"></script>
 <script type="text/javascript" src="#dynpath#/global/js/jquery.form.js"></script>
-<script type="text/javascript" src="#dynpath#/global/js/markitup/markitup/jquery.markitup.js"></script>
-<script type="text/javascript" src="#dynpath#/global/js/markitup/markitup/sets/html/set.js"></script>
+<script type="text/javascript" src="#dynpath#/global/js/editor/js/froala_editor.pkgd.min.js"></script>
+
 <script type="text/javascript" src="js/global.js"></script>
 <link rel="SHORTCUT ICON" href="favicon.ico" />
 <style>

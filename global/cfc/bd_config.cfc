@@ -29,7 +29,7 @@
 	<cfset variables.isMultiContextJetty = false />
 	
 	<cffunction name="getConfig" access="package" output="false" returntype="struct" 
-			hint="Returns a struct representation of the OpenBD server configuration (bluedragon.xml)">
+			>
 		<cfset var admin = 0 />
 		
 		<cflock scope="Server" type="readonly" timeout="5">
@@ -41,8 +41,8 @@
 	
 
 	<cffunction name="getDatasources" access="public" output="false" returntype="array" 
-			hint="Returns an array containing all the data sources or a specified data source">
-		<cfargument name="dsn" type="string" required="false" default="" hint="The name of the datasource to return" />
+			>
+		<cfargument name="dsn" type="string" required="false" default=""  />
 		
 		<cfset var localConfig = getConfig() />
 		<cfset var returnArray = "" />
@@ -76,8 +76,8 @@
 	</cffunction>
 
 	<cffunction name="verifyDatasource" access="public" output="false" returntype="any" 
-			hint="Verifies a datasource">
-		<cfargument name="dsn" type="string" required="true" hint="Datasource name to verify" />
+			>
+		<cfargument name="dsn" type="string" required="true"  />
 		
 		<cfset var verified = false />
 		<cfset var datasource = getDatasources(arguments.dsn).get(0) />
@@ -210,40 +210,40 @@
 	
 	<!--- Create or update the datasource --->
 	<cffunction name="setDatasource" access="public" output="false" returntype="void" 
-			hint="Creates or updates a datasource">
-		<cfargument name="name" type="string" required="true" hint="OpenBD Datasource Name" />
-		<cfargument name="databasename" type="string" required="false" default="" hint="Database name on the database server" />
-		<cfargument name="server" type="string" required="false" default="" hint="Database server host name or IP address" />
-		<cfargument name="port"	type="numeric" required="false" default="0" hint="Port that is used to access the database server" />
-		<cfargument name="username" type="string" required="false" default="" hint="Database username" />
-		<cfargument name="password" type="string" required="false" default="" hint="Database password" />
+			>
+		<cfargument name="name" type="string" required="true"  />
+		<cfargument name="databasename" type="string" required="false" default=""  />
+		<cfargument name="server" type="string" required="false" default=""  />
+		<cfargument name="port"	type="numeric" required="false" default="0"  />
+		<cfargument name="username" type="string" required="false" default=""  />
+		<cfargument name="password" type="string" required="false" default=""  />
 		<cfargument name="hoststring" type="string" required="false" default="" 
-				hint="JDBC URL for 'other' database types. Databasename, server, and port arguments are ignored if a hoststring is provided." />
-		<cfargument name="filepath" type="string" required="false" default="" hint="File path for file-based databases (H2, etc.)" />
-		<cfargument name="description" type="string" required="false" default="" hint="A description of this data source" />
-		<cfargument name="connectstring" type="string" required="false" default="" hint="Additional connection information" />
-		<cfargument name="initstring" type="string" required="false" default="" hint="Additional initialization settings" />
+				 />
+		<cfargument name="filepath" type="string" required="false" default=""  />
+		<cfargument name="description" type="string" required="false" default=""  />
+		<cfargument name="connectstring" type="string" required="false" default=""  />
+		<cfargument name="initstring" type="string" required="false" default=""  />
 		<cfargument name="connectiontimeout" type="numeric" required="false" default="120" 
-				hint="Number of seconds OpenBD maintains an unused connection before it is destroyed" />
-		<cfargument name="connectionretries" type="numeric" required="false" default="0" hint="Number of connection retry attempts to make" />
+				 />
+		<cfargument name="connectionretries" type="numeric" required="false" default="0"  />
 		<cfargument name="logintimeout" type="numeric" required="false" default="120" 
-				hint="Number of seconds before OpenBD times out the data source connection login attempt" />
-		<cfargument name="maxconnections" type="numeric" required="false" default="3" hint="Maximum number of simultaneous database connections" />
+				 />
+		<cfargument name="maxconnections" type="numeric" required="false" default="3"  />
 		<cfargument name="perrequestconnections" type="boolean" required="false" default="false" 
-				hint="Indication of whether or not to pool connections" />
-		<cfargument name="sqlselect" type="boolean" required="false" default="true" hint="Allow SQL SELECT statements from this datasource" />
-		<cfargument name="sqlinsert" type="boolean" required="false" default="true" hint="Allow SQL INSERT statements from this datasource" />
-		<cfargument name="sqlupdate" type="boolean" required="false" default="true" hint="Allow SQL UPDATE statements from this datasource" />
-		<cfargument name="sqldelete" type="boolean" required="false" default="true" hint="Allow SQL DELETE statements from this datasource" />
-		<cfargument name="sqlstoredprocedures" type="boolean" required="false" default="true" hint="Allow SQL stored procedure calls from this datasource" />
-		<cfargument name="drivername" type="string" required="false" default="" hint="JDBC driver class to use" />
-		<cfargument name="action" type="string" required="false" default="create" hint="Action to take on the datasource (create or update)" />
+				 />
+		<cfargument name="sqlselect" type="boolean" required="false" default="true"  />
+		<cfargument name="sqlinsert" type="boolean" required="false" default="true"  />
+		<cfargument name="sqlupdate" type="boolean" required="false" default="true"  />
+		<cfargument name="sqldelete" type="boolean" required="false" default="true"  />
+		<cfargument name="sqlstoredprocedures" type="boolean" required="false" default="true"  />
+		<cfargument name="drivername" type="string" required="false" default=""  />
+		<cfargument name="action" type="string" required="false" default="create"  />
 		<cfargument name="existingDatasourceName" type="string" required="false" default="" 
-				hint="The existing (old) datasource name so we know what to delete if this is an update" />
-		<cfargument name="cacheResultSetMetadata" type="boolean" required="false" default="false" hint="MySQL specific setting" />
-		<cfargument name="verificationQuery" type="string" required="false" default="" hint="Custom verification query for 'other' driver types" />
-		<cfargument name="h2Mode" type="string" required="false" default="" hint="Compatibility mode for H2 database" />
-		<cfargument name="h2IgnoreCase" type="boolean" required="false" default="true" hint="Boolean indicating whether or not H2 ignores case" />
+				 />
+		<cfargument name="cacheResultSetMetadata" type="boolean" required="false" default="false"  />
+		<cfargument name="verificationQuery" type="string" required="false" default=""  />
+		<cfargument name="h2Mode" type="string" required="false" default=""  />
+		<cfargument name="h2IgnoreCase" type="boolean" required="false" default="true"  />
 		
 		<cfset var localConfig = getConfig() />
 		<cfset var defaultSettings = structNew() />
@@ -333,8 +333,8 @@
 	
 	
 	<cffunction name="registerDriver" access="private" output="false" returntype="boolean" 
-			hint="Registers a driver class to make sure it exists and is available in the classpath">
-		<cfargument name="class" type="string" required="true" hint="JDBC class name" />
+			>
+		<cfargument name="class" type="string" required="true"  />
 	
 		<cfset var javaClass = "" />
 		<cfset var registerJDBCDriver = "" />
@@ -352,8 +352,8 @@
 	</cffunction>
 	
 	<cffunction name="deleteDatasource" access="public" output="false" returntype="void" 
-			hint="Delete the specified data source">
-		<cfargument name="dsn" required="true" type="string" hint="The name of the data source to be deleted" />
+			>
+		<cfargument name="dsn" required="true" type="string"  />
 		
 		<cfset var localConfig = getConfig() />
 		<cfset var dsnIndex = 0 />
@@ -375,9 +375,9 @@
 	</cffunction>
 	
 	<cffunction name="setConfig" access="package" output="false" returntype="void" 
-			hint="Sets the server configuration and tells OpenBD to refresh its settings">
+			>
 		<cfargument name="currentConfig" type="struct" required="true" 
-				hint="The configuration struct, which is a struct representation of bluedragon.xml" />
+				 />
 		
 		<cfset var admin = structNew() />
 		<cfset var xmlConfig = "" />
@@ -394,21 +394,21 @@
 	</cffunction>
 	
 	<cffunction name="formatJDBCURL" access="private" output="false" returntype="string" 
-			hint="Formats a JDBC URL for a specific database driver type">
-		<cfargument name="drivername" type="string" required="true" hint="The name of the database driver class" />
-		<cfargument name="server" type="string" required="true" hint="The database server name or IP address" />
-		<cfargument name="port" type="numeric" required="true" hint="The database server port" />
-		<cfargument name="database" type="string" required="true" hint="The database name" />
-		<cfargument name="connectstring" type="string" required="false" hint="Additional conncetion information" />
-		<cfargument name="filepath" type="string" required="false" default="" hint="The file path for a file-based database" />
+			>
+		<cfargument name="drivername" type="string" required="true"  />
+		<cfargument name="server" type="string" required="true"  />
+		<cfargument name="port" type="numeric" required="true"  />
+		<cfargument name="database" type="string" required="true"  />
+		<cfargument name="connectstring" type="string" required="false"  />
+		<cfargument name="filepath" type="string" required="false" default=""  />
 		<cfargument name="username" type="string" required="false" default="" 
-				hint="Database user name if one is to be included as part of the connection string. Mostly used for file-based databases." />
+				 />
 		<cfargument name="password" type="string" required="false" default="" 
-				hint="Database password if one is to be included as part of the connection string. Mostly used for file-based databases." />
-		<cfargument name="cacheResultSetMetadata" type="boolean" required="false" default="false" hint="MySQL specific setting" />
-		<cfargument name="h2Mode" type="string" required="false" default="" hint="Compatibility mode for H2" />
+				 />
+		<cfargument name="cacheResultSetMetadata" type="boolean" required="false" default="false"  />
+		<cfargument name="h2Mode" type="string" required="false" default=""  />
 		<cfargument name="h2IgnoreCase" type="boolean" required="false" default="true" 
-				hint="Boolean indicating whether or not H2 should ignore case" />
+				 />
 		
 		<cfset var jdbcURL = "" />
 		
@@ -503,8 +503,8 @@
 	</cffunction>
 	
 	<cffunction name="datasourceExists" access="public" output="false" returntype="boolean" 
-				hint="Returns a boolean indicating whether or not a datasource with the specified name exists">
-		<cfargument name="dsn" type="string" required="true" hint="The datasource name to check" />
+				>
+		<cfargument name="dsn" type="string" required="true"  />
 		
 		<cfset var dsnExists = true />
 		<cfset var localConfig = getConfig() />
@@ -528,7 +528,7 @@
 	</cffunction>
 	
 	<cffunction name="getDriverInfo" access="public" output="false" returntype="struct" 
-			hint="Returns a struct containing the information for a particular driver. Currently this is pulled by the driver config page but this can be expanded to get the driver info by other attributes.">
+			>
 		<cfargument name="datasourceconfigpage" type="string" required="false" default="" />
 		<cfargument name="drivername" type="string" required="false" default="" />
 		
@@ -556,19 +556,19 @@
 	</cffunction>
 	
 	<cffunction name="getFileSeparator" access="public" output="false" returntype="string" 
-			hint="Returns the platform-specific file separator">
+			>
 		<cfreturn getJVMProperty("file.separator") />
 	</cffunction>
 	
 	<cffunction name="getJVMProperty" access="public" output="false" returntype="any" 
-			hint="Retrieves a specific JVM property">
-		<cfargument name="propertyName" type="string" required="true" hint="The JVM property to return" />
+			>
+		<cfargument name="propertyName" type="string" required="true"  />
 		
 		<cfreturn createObject("java", "java.lang.System").getProperty(arguments.propertyName) />
 	</cffunction>
 
 	<cffunction name="getJVMProperties" access="public" output="false" returntype="struct" 
-			hint="Returns a struct containing the JVM properties">
+			>
 		<cfreturn createObject("java", "java.lang.System").getProperties() />
 	</cffunction>
 	

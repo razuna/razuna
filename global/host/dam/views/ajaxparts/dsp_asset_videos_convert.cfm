@@ -77,7 +77,7 @@
 								<cfset args = structNew()>
 								<cfset args.detail = qry_detail.detail>
 								<cfset args.thefiletype = "vid">
-								<cfinvoke component="global.cfc.plugins" method="getactions" theaction="show_in_direct_link" args="#args#" returnvariable="pl">
+								<cfinvoke component="global.cfc.plugins" method="getactions" theaction="show_in_direct_link" args="#args#" thestruct="#attributes#" returnvariable="pl">
 								<!--- Show plugin --->
 								<cfloop list="#pl.pview#" delimiters="," index="i">
 									<br />

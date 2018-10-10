@@ -8,10 +8,11 @@
 	adds all the actions of the plugin
 	--->
 	<cffunction name="load" returntype="void">
+		<cfargument name="thestruct" type="struct">
 		<!--- settings page --->
-		<cfset add_action(pid="#this.myID#", action="settings", comp="settings", func="getsettings")>
+		<cfset add_action(pid="#this.myID#", action="settings", comp="settings", func="getsettings", thestruct=arguments.thestruct)>
 		<!--- load on add --->
-		<cfset add_action(pid="#this.myID#", action="on_file_add_done", comp="settings", func="loadForm")>
+		<cfset add_action(pid="#this.myID#", action="on_file_add_done", comp="settings", func="loadForm", thestruct=arguments.thestruct)>
 	</cffunction>
 
 	<!--- 
@@ -24,7 +25,7 @@
 		<!--- You should wrap this in try/catch or add your own calls per version --->
 
 		<!--- For MySQL you have to append the tableoptions here --->
-		<cfset var tableoptions = "ENGINE=InnoDB CHARACTER SET utf8 COLLATE utf8_bin">
+		<cfset var tableoptions = "ENGINE=InnoDB CHARACTER SET utf8 COLLATE utf8_general_ci ROW_FORMAT=DYNAMIC;">
 		<!--- Detault types --->
 		<cfset var theclob = "clob">
 		<cfset var theint = "int">
@@ -43,7 +44,7 @@
 		<!--- Table --->
 		<cftry>
 			<cfquery datasource="#application.razuna.datasource#">
-			CREATE TABLE raz1_metaform 
+			CREATE TABLE raz1_metaform
 			(
 				mf_type		#thevarchar#(100),
 				mf_value 	#thevarchar#(500),
@@ -54,7 +55,7 @@
 			<cfif application.razuna.thedatabase EQ "mysql">#tableoptions#</cfif>
 			</cfquery>
 			<cfcatch type="database">
-				<cfset consoleoutput(true)>
+				<cfset consoleoutput(true, true)>
 				<cfset console(cfcatch)>
 				Maybe add an alter or update execution in here
 			</cfcatch>

@@ -2,11 +2,8 @@
 <cfset myself = myFusebox.getMyself() />
 <cfset theaction = application.fusebox.fuseactionVariable />
 
-<!--- Set the name of the default datasource --->
-<CFOBJECT COMPONENT="global.cfc.settings" NAME="settingsObj">
-
 <!--- Check Config --->
-<cfset settingsObj.getconfigdefaultadmin("#expandPath("../")#",attributes)>
+<cfinvoke component="global.cfc.settings" method="getconfigdefaultadmin" pathoneup="#expandPath("../")#" />
 
 <!--- The WEBROOT --->
 <cfset webroot = #rereplacenocase("#cgi.PATH_INFO#", "[a-z_]+.cfm", "", "ALL")#>
@@ -56,10 +53,7 @@
 </cfif>
 
 <!--- Call the default components which we need on every page. To do this the FB way is quite cubersome --->
-<cfinvoke component="global.cfc.defaults" method="init" returnvariable="defaultsObj">
-	<cfinvokeargument name="dsn" value="#application.razuna.datasource#">
-	<cfinvokeargument name="database" value="#application.razuna.thedatabase#">
-</cfinvoke>
+<!--- <cfinvoke component="global.cfc.defaults" method="init" returnvariable="defaultsObj" /> --->
 
 <!--- Log User Out when Session.login has expired. Timeout of Sessions is set above --->
 <cfif not IsDefined("Attributes.fa") or (Attributes.fa neq "c.login" and Attributes.fa neq "c.dologin" AND attributes.fa NEQ "c.forgotpass" AND attributes.fa NEQ "c.forgotpasssend" AND attributes.fa NEQ "c.switchlang" AND attributes.fa DOES NOT CONTAIN "update" AND application.razuna.firsttime NEQ "true" AND attributes.fa NEQ "c.runschedbackup" AND attributes.fa NEQ "c.logoff" AND attributes.fa NEQ "c.folder_subscribe_task" AND attributes.fa DOES NOT CONTAIN "c.w_")>

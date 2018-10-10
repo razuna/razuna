@@ -34,9 +34,9 @@
 <cfheader name="Expires" value="#GetHttpTimeString(DateAdd('s', cacheTimeSeconds, Now()))#">
 <cfheader name="CACHE-CONTROL" value="max-age=#cacheTimeSeconds#">
 <cfheader name="PRAGMA" value="public"> --->
-<cfheader name="Expires" value="#GetHttpTimeString(Now())#">
+<!--- <cfheader name="Expires" value="#GetHttpTimeString(Now())#">
 <cfheader name="CACHE-CONTROL" value="NO-CACHE, no-store, must-revalidate">
-<cfheader name="PRAGMA" value="#GetHttpTimeString(Now())#">
+<cfheader name="PRAGMA" value="#GetHttpTimeString(Now())#"> --->
 <cfheader name="P3P" value="CP='IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT'" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 <script type="text/javascript">var dynpath = '#dynpath#';</script>
@@ -47,7 +47,7 @@
 <!--- According to widget style we decide here what to load --->
 <cfif qry_widget.widget_style EQ "d">
 	<!--- CSS --->
-	<link rel="stylesheet" type="text/css" href="#dynpath#/global/dist/main_#attributes.cachetag#.min.css" />
+	<link rel="stylesheet" type="text/css" href="#dynpath#/global/dist/app_#attributes.cachetag#.min.css" />
 	<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/jquery-ui-1.12.1.custom/jquery-ui.theme.min.css?_v=#attributes.cachetag#" />
 	<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/widget/overlay.css?_v=#attributes.cachetag#"/>
 	<!--- JS --->

@@ -23,13 +23,32 @@
 * along with Razuna. If not, see <http://www.razuna.com/licenses/>.
 *
 --->
+<!--- <cfdump var="#qry_related#"> --->
 <cfoutput>
 <cfif qry_related.recordcount NEQ 0>
 	<br />
 	<table boder="0" cellpadding="0" cellspacing="0" width="100%">
-		<tr>
-			<td width="100%" nowrap="true" valign="top" colspan="2">
-				<cfloop query="qry_related">
+		<cfloop query="qry_related">
+			<tr>
+				<td width="65" align="center">
+					<!--- Thumbnail --->
+					<cfif link_kind NEQ "lan">
+						<cfif link_kind EQ "url">
+							<cfif link_path_url contains "http">
+								<a href="#link_path_url#" target="_blank">#link_path_url#</a>
+							<cfelse>
+								#link_path_url#
+							</cfif>
+						<cfelse>
+							<a href="#session.thehttp##cgi.HTTP_HOST##cgi.SCRIPT_NAME#?#theaction#=c.sv&f=#vid_id#&v=o" target="_blank"><img src="<cfif application.razuna.storage EQ "local">#cgi.context_path#/assets/#session.hostid#/#path_to_asset#/#vid_name_image#?_v=#hashtag#<cfelse>#cloud_url#</cfif>" style="max-height:50px;max-width:100px;"></a>
+						</cfif>
+					<cfelse>
+						<cfif shared EQ "F"><a href="#session.thehttp##cgi.HTTP_HOST##cgi.SCRIPT_NAME#?#theaction#=c.sv&f=#vid_id#&v=o" target="_blank"><cfelse><a href="#application.razuna.nvxurlservices#/razuna/#session.hostid#/#path_to_asset#/#vid_name_org#" target="_blank"></cfif>
+							<img src="#cgi.context_path#/assets/#session.hostid#/#path_to_asset#/#vid_name_image#?_v=#hashtag#" border="0" style="max-height:50px;max-width:100px;">
+						</a>
+					</cfif>
+				</td>
+				<td nowrap="true">
 					<cfif attributes.s EQ "F">
 						<strong>#ucase(vid_extension)#</strong> (#myFusebox.getApplicationData().defaults.converttomb("#vlength#")# MB, #vid_width#x#vid_height# pixel) [#vid_filename#]<br />
 						<button type="button" class="awesome small green" onclick="window.open('#myself#c.serve_file&file_id=#vid_id#&type=vid','_blank');">#myFusebox.getApplicationData().defaults.trans("download")#</button>
@@ -62,7 +81,7 @@
 						<cfset args.detail.path_to_asset = path_to_asset>
 						<cfset args.detail.vid_name_org = vid_filename>
 						<cfset args.thefiletype = "vid">
-						<cfinvoke component="global.cfc.plugins" method="getactions" theaction="show_in_direct_link" args="#args#" returnvariable="pl">
+						<cfinvoke component="global.cfc.plugins" method="getactions" theaction="show_in_direct_link" args="#args#" thestruct="#attributes#" returnvariable="pl">
 						<!--- Show plugin --->
 						<cfif structKeyExists(pl,"pview")>
 							<cfloop list="#pl.pview#" delimiters="," index="i">
@@ -72,19 +91,12 @@
 						</cfif>
 					</div>
 					<div id="dive#vid_id#" style="display:none;">
-						<cfset eh = vid_height + 40>
+						<cfset eh = vid_height ? vid_height + 40 : 50>
 						<textarea id="inpute#vid_id#" style="width:500px;height:60px;" readonly="readonly"><iframe frameborder="0" src="//#cgi.http_host##cgi.script_name#?#theaction#=c.sv&f=#vid_id#&v=o" scrolling="auto" width="100%" height="#eh#"></iframe></textarea>
 					</div>
-					<br>
-					<!--- Nirvanix --->
-					<cfif application.razuna.storage EQ "nirvanix" AND attributes.s EQ "T">
-						<i>#application.razuna.nvxurlservices#/razuna/#session.hostid#/#path_to_asset#/#vid_filename#</i>
-						<br>
-					</cfif>
-					<br />
-				</cfloop>
-			</td>
-		</tr>
+				</td>
+			</tr>
+		</cfloop>
 	</table>
 </cfif>
 <div id="dialog-confirm-rendition" title="#myFusebox.getApplicationData().defaults.trans("remove_rend_confirm")#" style="display:none;">
