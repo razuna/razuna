@@ -5534,7 +5534,10 @@
 		END AS perm
 	</cfif>
 	, '0' as filecount,
-	if ( (select fn.folder_name as folder_name FROM raz1_folders_name fn WHERE fn.folder_id_r = f.folder_id AND fn.lang_id_r = #arguments.thestruct.razuna.session.thelangid#) != '',  (select fn.folder_name as folder_name FROM raz1_folders_name fn WHERE fn.folder_id_r = f.folder_id AND fn.lang_id_r = #arguments.thestruct.razuna.session.thelangid#), f.folder_name ) as folder_name
+	CASE
+		WHEN (select fn.folder_name as folder_name FROM raz1_folders_name fn WHERE fn.folder_id_r = f.folder_id AND fn.lang_id_r = #arguments.thestruct.razuna.session.thelangid#) != '' 
+		THEN (select fn.folder_name as folder_name FROM raz1_folders_name fn WHERE fn.folder_id_r = f.folder_id AND fn.lang_id_r = #arguments.thestruct.razuna.session.thelangid#)
+	END AS folder_name
 	FROM #arguments.thestruct.razuna.session.hostdbprefix#folders f
 	LEFT JOIN users u ON u.user_id = f.folder_owner
 	LEFT JOIN #arguments.thestruct.razuna.session.hostdbprefix#folders_name fn ON f.folder_id = fn.folder_id_r AND fn.lang_id_r = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.thelangid#">

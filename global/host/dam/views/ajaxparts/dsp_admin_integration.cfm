@@ -29,7 +29,7 @@
 		<cfinclude template="dsp_host_upgrade.cfm">
 	<cfelse>
 		<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
-			<!--- DropBox --->
+			<!--- DropBox
 			<tr>
 				<th colspan="2">#myFusebox.getApplicationData().defaults.trans("header_dropbox")#</th>
 			</tr>
@@ -51,6 +51,7 @@
 					<br /><br />
 				</td>
 			</tr>
+			 --->
 			<!--- Amazon S3 --->
 			<tr>
 				<th colspan="2">#myFusebox.getApplicationData().defaults.trans("sf_type_s3")#</th>
