@@ -38,7 +38,7 @@
 		<select id="database">
 			<option value="h2">H2 (Embedded Database)</option>
 			<option value="mysql">MySQL</option>
-			<option value="mssql">MS SQL</option>
+			<!--- <option value="mssql">MS SQL</option> --->
 			<!--- <option value="oracle">Oracle</option>
 			<option value="db2">DB2</option> --->
 		</select>

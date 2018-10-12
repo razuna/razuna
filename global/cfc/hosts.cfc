@@ -857,7 +857,7 @@
 <!--- Clear database: We have to go trough here since we don't initialize the DB CFC's directly --->
 <cffunction name="cleardb" output="true">
 	<cfargument name="thestruct" type="struct" required="true" />
-	<cfinvoke component="db_#arguments.thestruct.razuna.application.thedatabase#" method="clearall" />
+	<cfinvoke component="db_#arguments.thestruct.razuna.application.thedatabase#" method="clearall" thestruct="#arguments.thestruct#" />
 	<cfreturn />
 </cffunction>
 

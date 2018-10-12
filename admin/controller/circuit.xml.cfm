@@ -21,7 +21,7 @@
 	 	<set name="attributes.pathhere" value="#thispath#" />
 		<!-- CFC: Check db connection and setup the db for first time
 		<invoke object="myFusebox.getApplicationData().hosts" methodcall="checkdb(thestruct=attributes)" returnvariable="status" /> -->
-		<if condition="attributes.firsttime EQ 't'">
+		<if condition="application.razuna.firsttime">
 			<true>
 				<set name="attributes.firsttime" value="T" />
 				<set name="attributes.host_lang" value="1" />
@@ -486,7 +486,7 @@
 		<!-- Save tools settings -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="update_tools(thestruct=attributes)" />
 		<!-- CFC: Set internal firsttime value to false -->
-		<invoke object="myFusebox.getApplicationData().settings" methodcall="firsttime_false('false')" />
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="firsttime_false(theboolean='false', thestruct=attributes)" />
 		<!-- CFC: Set update db -->
 		<invoke object="myFusebox.getApplicationData().update" methodcall="setoptionupdate(thestruct=attributes)" />
 		<!-- Set H2 db path -->

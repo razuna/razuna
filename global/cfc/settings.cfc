@@ -2878,6 +2878,15 @@
 	<cfargument name="db_path" type="string" required="true">
 	<cfargument name="thestruct" type="struct" required="true" />
 	<cfset arguments.thestruct.db_path = arguments.db_path>
+
+	<cfset arguments.thestruct.db_type = arguments.thestruct.razuna.session.firsttime.database_type>
+	<cfset arguments.thestruct.db_name = arguments.thestruct.razuna.session.firsttime.database>
+	<cfset arguments.thestruct.db_server = arguments.thestruct.razuna.session.firsttime.db_server>
+	<cfset arguments.thestruct.db_port = arguments.thestruct.razuna.session.firsttime.db_port>
+	<cfset arguments.thestruct.db_schema = arguments.thestruct.razuna.session.firsttime.db_schema>
+	<cfset arguments.thestruct.db_user = arguments.thestruct.razuna.session.firsttime.db_user>
+	<cfset arguments.thestruct.db_pass = arguments.thestruct.razuna.session.firsttime.db_pass>
+
 	<!--- Pass to function --->
 	<cfset indexingDbInfo(thestruct=arguments.thestruct)>
 	<!--- Return --->
@@ -2893,7 +2902,7 @@
 	<cfset _status.result = true />
 	<cfset _status.error = "" />
 	<!--- Query settings --->
-	<cfset var _taskserver = prefs_taskserver()>
+	<cfset var _taskserver = prefs_taskserver(thestruct=arguments.thestruct)>
 	<!--- Taskserver URL according to settings --->
 	<cfif _taskserver.taskserver_location EQ "remote">
 		<cfset var _url = _taskserver.taskserver_remote_url />

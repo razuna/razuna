@@ -2221,11 +2221,7 @@
   		value				varchar(2000),
   		date_added			timestamp,
   		sched_id			varchar(100),
-  		host_id				bigint,
-  		KEY scripts_id (id_name),
-  		KEY scripts_host_id (host_id),
-  		KEY scripts_date_added (date_added),
-  		KEY scripts_sched_id (sched_id)
+  		host_id				bigint
 		)
 		</cfquery>
 
