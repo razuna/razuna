@@ -103,7 +103,7 @@
 	-->
 	<fuseaction name="sethost">
 		<!-- Get the host settings -->
-		<invoke object="myFusebox.getApplicationData().Hosts" methodcall="getdetail(thestruct=attributes)" returnvariable="qry_host" />
+		<invoke object="myFusebox.getApplicationData().Hosts" methodcall="getdetail(host_id=attributes.host_id, thestruct=attributes)" returnvariable="qry_host" />
 		<!-- Set Sessions -->
 		<set name="session.hostdbprefix" value="#qry_host.host_shard_group#" />
 		<set name="session.hostid" value="#qry_host.host_id#" />
@@ -796,7 +796,7 @@
 	<!-- Validate: Amazon Bucket -->
 	<fuseaction name="prefs_aws_bucket_validate">
 		<!-- CFC -->
-		<invoke object="myFusebox.getApplicationData().amazon" methodcall="validatebucket(attributes.awsbucket)" />
+		<invoke object="myFusebox.getApplicationData().amazon" methodcall="validatebucket(awsbucket=attributes.awsbucket, thestruct=attributes)" />
 	</fuseaction>
 	<!-- Save preferences -->
 	<fuseaction name="prefs_global_save">
@@ -1178,7 +1178,7 @@
 	<!-- Detail -->
 	<fuseaction name="hosts_detail">
 		<!-- CFC: Get host -->
-		<invoke object="myFusebox.getApplicationData().hosts" methodcall="getdetail(thestruct=attributes)" returnvariable="qry_hostsdetail" />
+		<invoke object="myFusebox.getApplicationData().hosts" methodcall="getdetail(host_id=attributes.host_id, thestruct=attributes)" returnvariable="qry_hostsdetail" />
 		<!-- Show -->
 		<do action="ajax.hosts_detail" />
 	</fuseaction>

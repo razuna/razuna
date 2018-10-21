@@ -87,6 +87,9 @@
 		<cfset arguments.thestruct.host_path = "raz" & hostid.id>
 		<cfset arguments.thestruct.host_db_prefix = "raz1_">
 		<cfset arguments.thestruct.host_id = hostid.id>
+		<!--- Set session for the user --->
+		<cfset arguments.thestruct.razuna.session.hostid = hostid.id>
+		<cfset arguments.thestruct.razuna.session.hostdbprefix = arguments.thestruct.host_db_prefix>
 		<cfparam name="arguments.thestruct.host_name_custom" default="" />
 		<!--- NIRVANIX --->
 		<!--- <cfif arguments.thestruct.razuna.application.storage EQ "nirvanix" AND NOT structkeyexists(arguments.thestruct,"restore")>
@@ -150,9 +153,6 @@
 				<cfqueryparam value="#createuuid()#" cfsqltype="CF_SQL_VARCHAR">
 				)
 				</cfquery>
-				<!--- Set session for the user --->
-				<cfset arguments.thestruct.razuna.session.hostid = hostid.id>
-				<cfset arguments.thestruct.razuna.session.hostdbprefix = arguments.thestruct.host_db_prefix>
 			</cfif>
 			<!--- COPY NEWHOST DIR --->
 			<cfif !arguments.thestruct.razuna.application.isp>
@@ -268,7 +268,7 @@
 			<!--- Grab ID --->
 			<cfset langid = listfirst(x,"_")>
 			<!--- Insert --->
-			<cfquery datasource="#arguments.thestruct.dsn#">
+			<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
 			INSERT INTO #arguments.thestruct.host_db_prefix#languages
 			(lang_id, lang_name, lang_active, host_id, rec_uuid)
 			VALUES(
@@ -282,7 +282,7 @@
 			<!--- Setting DB: Titel Intra --->
 			<cfset thelang = "arguments.thestruct.set_title_intra_" & x>
 			<cfset thelang = replacenocase("#thelang#","arguments.thestruct.","","ALL")>
-			<cfquery datasource="#arguments.thestruct.dsn#">
+			<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
 			INSERT INTO #arguments.thestruct.host_db_prefix#settings
 			(set_id, set_pref, host_id, rec_uuid)
 			VALUES(
@@ -294,7 +294,7 @@
 			</cfquery>
 		</cfloop>
 		<!--- SETTING 2 --->
-		<cfquery datasource="#arguments.thestruct.dsn#">
+		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
 		insert into #arguments.thestruct.host_db_prefix#settings_2
 		(set2_id,
 		set2_date_format,
@@ -383,85 +383,87 @@
 		<!--- Create a new ID --->
 		<cfset var newfolderid = createuuid("")>
 		<!--- Create the default Collections Folder --->
-		<cfquery datasource="#arguments.thestruct.dsn#">
+		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
 		Insert into #arguments.thestruct.host_db_prefix#folders
 		(FOLDER_ID, FOLDER_NAME, FOLDER_LEVEL, FOLDER_ID_R, FOLDER_MAIN_ID_R, FOLDER_IS_COLLECTION, host_id)
 		Values('#newfolderid#', 'Collections', 1, '#newfolderid#', '#newfolderid#', 'T', #arguments.thestruct.host_id#)
 		</cfquery>
 		<!--- and description with it --->
-		<cfquery datasource="#arguments.thestruct.dsn#">
+		<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
 		Insert into #arguments.thestruct.host_db_prefix#folders_desc
 		(FOLDER_ID_R, LANG_ID_R, FOLDER_DESC, host_id, rec_uuid)
 		Values('#newfolderid#', 1, 'This is the default collections folder for storing collections.', #arguments.thestruct.host_id#, <cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">)
 		</cfquery>
 		<!--- INTO CACHE --->
-		<cfquery dataSource="#arguments.thestruct.dsn#">
+		<cfquery dataSource="#arguments.thestruct.razuna.application.datasource#">
 		INSERT INTO cache
 		(host_id, cache_token, cache_type)
 		VALUES
 		(<cfqueryparam value="#arguments.thestruct.host_id#" CFSQLType="CF_SQL_NUMERIC">, <cfqueryparam value="#newfolderid#" CFSQLType="CF_SQL_VARCHAR">, <cfqueryparam value="folders" CFSQLType="CF_SQL_VARCHAR">)
 		</cfquery>
-		<cfquery dataSource="#arguments.thestruct.dsn#">
+		<cfquery dataSource="#arguments.thestruct.razuna.application.datasource#">
 		INSERT INTO cache
 		(host_id, cache_token, cache_type)
 		VALUES
 		(<cfqueryparam value="#arguments.thestruct.host_id#" CFSQLType="CF_SQL_NUMERIC">, <cfqueryparam value="#newfolderid#" CFSQLType="CF_SQL_VARCHAR">, <cfqueryparam value="images" CFSQLType="CF_SQL_VARCHAR">)
 		</cfquery>
-		<cfquery dataSource="#arguments.thestruct.dsn#">
+		<cfquery dataSource="#arguments.thestruct.razuna.application.datasource#">
 		INSERT INTO cache
 		(host_id, cache_token, cache_type)
 		VALUES
 		(<cfqueryparam value="#arguments.thestruct.host_id#" CFSQLType="CF_SQL_NUMERIC">, <cfqueryparam value="#newfolderid#" CFSQLType="CF_SQL_VARCHAR">, <cfqueryparam value="videos" CFSQLType="CF_SQL_VARCHAR">)
 		</cfquery>
-		<cfquery dataSource="#arguments.thestruct.dsn#">
+		<cfquery dataSource="#arguments.thestruct.razuna.application.datasource#">
 		INSERT INTO cache
 		(host_id, cache_token, cache_type)
 		VALUES
 		(<cfqueryparam value="#arguments.thestruct.host_id#" CFSQLType="CF_SQL_NUMERIC">, <cfqueryparam value="#newfolderid#" CFSQLType="CF_SQL_VARCHAR">, <cfqueryparam value="files" CFSQLType="CF_SQL_VARCHAR">)
 		</cfquery>
-		<cfquery dataSource="#arguments.thestruct.dsn#">
+		<cfquery dataSource="#arguments.thestruct.razuna.application.datasource#">
 		INSERT INTO cache
 		(host_id, cache_token, cache_type)
 		VALUES
 		(<cfqueryparam value="#arguments.thestruct.host_id#" CFSQLType="CF_SQL_NUMERIC">, <cfqueryparam value="#newfolderid#" CFSQLType="CF_SQL_VARCHAR">, <cfqueryparam value="audios" CFSQLType="CF_SQL_VARCHAR">)
 		</cfquery>
-		<cfquery dataSource="#arguments.thestruct.dsn#">
+		<cfquery dataSource="#arguments.thestruct.razuna.application.datasource#">
 		INSERT INTO cache
 		(host_id, cache_token, cache_type)
 		VALUES
 		(<cfqueryparam value="#arguments.thestruct.host_id#" CFSQLType="CF_SQL_NUMERIC">, <cfqueryparam value="#newfolderid#" CFSQLType="CF_SQL_VARCHAR">, <cfqueryparam value="labels" CFSQLType="CF_SQL_VARCHAR">)
 		</cfquery>
-		<cfquery dataSource="#arguments.thestruct.dsn#">
+		<cfquery dataSource="#arguments.thestruct.razuna.application.datasource#">
 		INSERT INTO cache
 		(host_id, cache_token, cache_type)
 		VALUES
 		(<cfqueryparam value="#arguments.thestruct.host_id#" CFSQLType="CF_SQL_NUMERIC">, <cfqueryparam value="#newfolderid#" CFSQLType="CF_SQL_VARCHAR">, <cfqueryparam value="logs" CFSQLType="CF_SQL_VARCHAR">)
 		</cfquery>
-		<cfquery dataSource="#arguments.thestruct.dsn#">
+		<cfquery dataSource="#arguments.thestruct.razuna.application.datasource#">
 		INSERT INTO cache
 		(host_id, cache_token, cache_type)
 		VALUES
 		(<cfqueryparam value="#arguments.thestruct.host_id#" CFSQLType="CF_SQL_NUMERIC">, <cfqueryparam value="#newfolderid#" CFSQLType="CF_SQL_VARCHAR">, <cfqueryparam value="search" CFSQLType="CF_SQL_VARCHAR">)
 		</cfquery>
-		<cfquery dataSource="#arguments.thestruct.dsn#">
+		<cfquery dataSource="#arguments.thestruct.razuna.application.datasource#">
 		INSERT INTO cache
 		(host_id, cache_token, cache_type)
 		VALUES
 		(<cfqueryparam value="#arguments.thestruct.host_id#" CFSQLType="CF_SQL_NUMERIC">, <cfqueryparam value="#newfolderid#" CFSQLType="CF_SQL_VARCHAR">, <cfqueryparam value="settings" CFSQLType="CF_SQL_VARCHAR">)
 		</cfquery>
-		<cfquery dataSource="#arguments.thestruct.dsn#">
+		<cfquery dataSource="#arguments.thestruct.razuna.application.datasource#">
 		INSERT INTO cache
 		(host_id, cache_token, cache_type)
 		VALUES
 		(<cfqueryparam value="#arguments.thestruct.host_id#" CFSQLType="CF_SQL_NUMERIC">, <cfqueryparam value="#newfolderid#" CFSQLType="CF_SQL_VARCHAR">, <cfqueryparam value="users" CFSQLType="CF_SQL_VARCHAR">)
 		</cfquery>
-		<cfquery dataSource="#arguments.thestruct.dsn#">
+		<cfquery dataSource="#arguments.thestruct.razuna.application.datasource#">
 		INSERT INTO cache
 		(host_id, cache_token, cache_type)
 		VALUES
 		(<cfqueryparam value="#arguments.thestruct.host_id#" CFSQLType="CF_SQL_NUMERIC">, <cfqueryparam value="#newfolderid#" CFSQLType="CF_SQL_VARCHAR">, <cfqueryparam value="general" CFSQLType="CF_SQL_VARCHAR">)
 		</cfquery>
 		<cfcatch type="any">
+			<cfset consoleoutput(true, true)>
+			<cfset console("NEW HOST ERROR", cfcatch )>
 		</cfcatch>
 	</cftry>
 	<cfreturn />
@@ -515,15 +517,18 @@
 
 <!--- ------------------------------------------------------------------------------------- --->
 <!--- Get one detailled record --->
-<cffunction  name="getdetail" returntype="query" output="false" access="public">
+<cffunction name="getdetail" returntype="query" output="false" access="public">
 	<cfargument name="thestruct" type="Struct">
+	<cfargument name="host_id" type="String" default="1">
+	<cfset arguments.thestruct.razuna.session.hostid = arguments.host_id>
+	<cfset session.hostid = arguments.host_id>
 	<!--- function internal vars --->
 	<cfset var localquery = 0>
 	<!--- function-body --->
 	<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="localquery">
 	SELECT host_id, host_name, host_path, host_db_prefix, host_lang, host_type, host_shard_group, host_name_custom
 	FROM hosts
-	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.hostid#">
+	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.host_id#">
 	</cfquery>
 	<cfreturn localquery>
 </cffunction>
@@ -680,19 +685,19 @@
 			<!--- Loop over tables --->
 			<cfloop query="tbl">
 				<!--- MSSQL --->
-				<cfif arguments.thestruct.database EQ "mssql">
+				<cfif arguments.thestruct.razuna.application.thedatabase EQ "mssql">
 					<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
 					ALTER TABLE #arguments.thestruct.razuna.application.theschema#.#table_name# NOCHECK CONSTRAINT ALL
 					</cfquery>
 				</cfif>
 				<!--- MySQL --->
-				<cfif arguments.thestruct.database EQ "mysql">
+				<cfif arguments.thestruct.razuna.application.thedatabase EQ "mysql">
 					<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
 					SET foreign_key_checks = 0
 					</cfquery>
 				</cfif>
 				<!--- H2 --->
-				<cfif arguments.thestruct.database EQ "h2">
+				<cfif arguments.thestruct.razuna.application.thedatabase EQ "h2">
 					<cfquery datasource="#arguments.thestruct.razuna.application.datasource#">
 					ALTER TABLE #table_name# SET REFERENTIAL_INTEGRITY false
 					</cfquery>
@@ -759,7 +764,7 @@
 	<cfargument name="thestruct" type="Struct">
 	<!--- function internal vars --->
 	<!--- get host info for the below variables --->
-	<cfset var qrythishost = getDetail(arguments.thestruct)>
+	<cfset var qrythishost = getDetail(host_id=arguments.thestruct.host_id, thestruct=arguments.thestruct)>
 	<cfset var iLoop = "">
 	<!--- set variables which we need in the create app files below --->
 	<cfset var thisid = arguments.thestruct.host_id>
