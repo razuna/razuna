@@ -3165,7 +3165,7 @@
 		<!-- Set userid into session -->
 		<set name="session.theuserid" value="#qry_user.user_id#" />
 		<!-- Set proper host data -->
-		<invoke object="myFusebox.getApplicationData().hosts" methodcall="getdetail(thestruct=attributes)" returnvariable="qry_host" />
+		<invoke object="myFusebox.getApplicationData().hosts" methodcall="getdetail(host_id=attributes.hostid, thestruct=attributes)" returnvariable="qry_host" />
 		<set name="session.hostdbprefix" value="#qry_host.host_shard_group#" />
 		<!-- Set to not create a folder since we only upload files -->
 		<set name="attributes.nofolder" value="true" />

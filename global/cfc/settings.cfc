@@ -125,7 +125,7 @@
 	<cfargument name="thestruct" type="struct" required="true" />
 	<cfset var cachetoken = getcachetoken(type="settings", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
 	<!--- Get host --->
-	<cfinvoke component="hosts" method="getdetail" thestruct="#arguments.thestruct#" returnvariable="qry_host" />
+	<cfinvoke component="hosts" method="getdetail" host_id="#arguments.thestruct.razuna.session.hostid#" thestruct="#arguments.thestruct#" returnvariable="qry_host" />
 	<cfset var qry = "">
 	<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #cachetoken#prefs_global */ SET2_DATE_FORMAT, SET2_DATE_FORMAT_DEL, SET2_EMAIL_SERVER, SET2_EMAIL_FROM, SET2_EMAIL_SMTP_USER,
@@ -141,7 +141,7 @@
 <cffunction name="prefs_meta">
 	<cfargument name="thestruct" type="struct" required="true" />
 	<cfset var cachetoken = getcachetoken(type="settings", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
-	<cfinvoke component="hosts" method="getdetail" thestruct="#arguments.thestruct#" returnvariable="qry_host" />
+	<cfinvoke component="hosts" method="getdetail" host_id="#arguments.thestruct.razuna.session.hostid#" thestruct="#arguments.thestruct#" returnvariable="qry_host" />
 	<cfset var qry = "">
 	<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #cachetoken#prefs_meta */ set2_meta_author, set2_meta_publisher, set2_meta_copyright, set2_meta_robots, set2_meta_revisit
@@ -156,7 +156,7 @@
 <cffunction name="prefs_dam">
 	<cfargument name="thestruct" type="struct" required="true" />
 	<cfset var cachetoken = getcachetoken(type="settings", hostid=arguments.thestruct.razuna.session.hostid, thestruct=arguments.thestruct)>
-	<cfinvoke component="hosts" method="getdetail" thestruct="#arguments.thestruct#" returnvariable="qry_host" />
+	<cfinvoke component="hosts" method="getdetail" host_id="#arguments.thestruct.razuna.session.hostid#" thestruct="#arguments.thestruct#" returnvariable="qry_host" />
 	<cfset var qry = "">
 	<cfquery datasource="#arguments.thestruct.razuna.application.datasource#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #cachetoken#prefs_dam */ set2_intranet_gen_download, set2_doc_download, set2_img_download_org, set2_intranet_reg_emails,
@@ -678,7 +678,7 @@
 <!--- Save Settings --->
 <cffunction name="update" access="public">
 	<cfargument name="thestruct" type="Struct">
-		<cfinvoke component="hosts" method="getdetail" thestruct="#arguments.thestruct#" returnvariable="qry_host" />
+		<cfinvoke component="hosts" method="getdetail" host_id="#arguments.thestruct.razuna.session.hostid#" thestruct="#arguments.thestruct#" returnvariable="qry_host" />
 		<!--- save all settings which are language relevant. loop trough the form fields which begin with set_ --->
 		<cfloop collection="#arguments.thestruct#" item="myform">
 			<cfif #myform# CONTAINS "set_">
