@@ -2880,7 +2880,7 @@
 	<cfset arguments.thestruct.db_path = arguments.db_path>
 
 	<cfset arguments.thestruct.db_type = arguments.thestruct.razuna.session.firsttime.database_type>
-	<cfset arguments.thestruct.db_name = arguments.thestruct.razuna.session.firsttime.database>
+	<cfset arguments.thestruct.db_name = arguments.thestruct.razuna.session.firsttime.db_name>
 	<cfset arguments.thestruct.db_server = arguments.thestruct.razuna.session.firsttime.db_server>
 	<cfset arguments.thestruct.db_port = arguments.thestruct.razuna.session.firsttime.db_port>
 	<cfset arguments.thestruct.db_schema = arguments.thestruct.razuna.session.firsttime.db_schema>
