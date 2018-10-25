@@ -359,7 +359,7 @@
 			<cfset theconnectstring = "AUTO_RECONNECT=TRUE;AUTO_SERVER=TRUE">
 		<cfelseif arguments.thestruct.razuna.session.firsttime.database_type EQ "mysql">
 			<cfset thedrivername = "com.mysql.jdbc.Driver">
-			<cfset theconnectstring = "zeroDateTimeBehavior=convertToNull">
+			<cfset theconnectstring = "zeroDateTimeBehavior=convertToNull&useSSL=false">
 		<cfelseif arguments.thestruct.razuna.session.firsttime.database_type EQ "mssql">
 			<cfset thedrivername = "net.sourceforge.jtds.jdbc.Driver">
 		<cfelseif arguments.thestruct.razuna.session.firsttime.database_type EQ "oracle">
