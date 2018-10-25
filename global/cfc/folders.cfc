@@ -5534,10 +5534,12 @@
 		END AS perm
 	</cfif>
 	, '0' as filecount,
-	CASE
-		WHEN NOT EXISTS(select fn.folder_name as folder_name FROM #arguments.thestruct.razuna.session.hostdbprefix#folders_name fn WHERE fn.folder_id_r = f.folder_id AND fn.lang_id_r = #arguments.thestruct.razuna.session.thelangid#) THEN f.folder_name
-		WHEN EXISTS(select fn.folder_name as folder_name FROM #arguments.thestruct.razuna.session.hostdbprefix#folders_name fn WHERE fn.folder_id_r = f.folder_id AND fn.lang_id_r = #arguments.thestruct.razuna.session.thelangid#) THEN fn.folder_name
-	END AS folder_name
+	(
+		CASE
+			WHEN NOT EXISTS(select 1 FROM #arguments.thestruct.razuna.session.hostdbprefix#folders_name fn WHERE fn.folder_id_r = f.folder_id AND fn.lang_id_r = #arguments.thestruct.razuna.session.thelangid#) THEN f.folder_name
+			WHEN EXISTS(select 1 FROM #arguments.thestruct.razuna.session.hostdbprefix#folders_name fn WHERE fn.folder_id_r = f.folder_id AND fn.lang_id_r = #arguments.thestruct.razuna.session.thelangid#) THEN (select fn.folder_name as folder_name FROM #arguments.thestruct.razuna.session.hostdbprefix#folders_name fn WHERE fn.folder_id_r = f.folder_id AND fn.lang_id_r = #arguments.thestruct.razuna.session.thelangid#)
+		END
+	) AS folder_name
 	FROM #arguments.thestruct.razuna.session.hostdbprefix#folders f
 	LEFT JOIN users u ON u.user_id = f.folder_owner
 	LEFT JOIN #arguments.thestruct.razuna.session.hostdbprefix#folders_name fn ON f.folder_id = fn.folder_id_r AND fn.lang_id_r = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.razuna.session.thelangid#">
@@ -5670,10 +5672,12 @@
 			</cfif>
 		</cfif>
 		,
-		CASE
-			WHEN NOT EXISTS(select fn.folder_name as folder_name FROM #arguments.thestruct.razuna.session.hostdbprefix#folders_name fn WHERE fn.folder_id_r = f.folder_id AND fn.lang_id_r = #arguments.thestruct.razuna.session.thelangid#) THEN f.folder_name
-			WHEN EXISTS(select fn.folder_name as folder_name FROM #arguments.thestruct.razuna.session.hostdbprefix#folders_name fn WHERE fn.folder_id_r = f.folder_id AND fn.lang_id_r = #arguments.thestruct.razuna.session.thelangid#) THEN fn.folder_name
-		END AS folder_name
+		(
+			CASE
+				WHEN NOT EXISTS(select 1 FROM #arguments.thestruct.razuna.session.hostdbprefix#folders_name fn WHERE fn.folder_id_r = f.folder_id AND fn.lang_id_r = #arguments.thestruct.razuna.session.thelangid#) THEN f.folder_name
+				WHEN EXISTS(select 1 FROM #arguments.thestruct.razuna.session.hostdbprefix#folders_name fn WHERE fn.folder_id_r = f.folder_id AND fn.lang_id_r = #arguments.thestruct.razuna.session.thelangid#) THEN (select fn.folder_name as folder_name FROM #arguments.thestruct.razuna.session.hostdbprefix#folders_name fn WHERE fn.folder_id_r = f.folder_id AND fn.lang_id_r = #arguments.thestruct.razuna.session.thelangid#)
+			END
+		) AS folder_name
 		FROM #arguments.prefix#folders f
 		WHERE f.folder_id = <cfqueryparam value="#arguments.folder_id_r#" cfsqltype="CF_SQL_VARCHAR">
 		AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
