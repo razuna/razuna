@@ -1,6 +1,8 @@
 # Razuna - The open source alternative to Enterprise Digital Asset Management
 
-Razuna is still actively developed. Please see our public RoadMap at https://trello.com/b/VyTSxfpf
+Razuna is still actively developed. However, access to the latest version and features is granted to paying support subscription customers only and for our customers on the hosted or cloud server edition.
+
+Please see our public RoadMap at https://trello.com/b/VyTSxfpf
 
 ## Support
 
